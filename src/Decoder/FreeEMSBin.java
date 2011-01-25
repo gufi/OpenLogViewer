@@ -34,6 +34,8 @@ import java.io.IOException;
  *
  * @author Bryan
  */
+
+
 public class FreeEMSBin {
 
     private final short ESCAPE_BYTE = 0xBB;// for unsigned byte
@@ -113,17 +115,27 @@ public class FreeEMSBin {
         204.8 // ADC7 V
     };
 
+
+
     // NO default constructor, a file or path to a file MUST be given
     // Reason: File()'s constructors are ambiguous cannot give a null value
-    public FreeEMSBin(String s) {
+    /**
+     * FreeEmsBin Constructor: <code>String</code> path to your binary log
+     * @param <code>String</code> path
+     *
+     */
+    public FreeEMSBin(String path) {
 
-        this(new File(s));
+        this(new File(path));
 
 
     }
-
+    /**
+     * FreeEmsBin Constructor: <code>File</code> object of your Binary log
+     * @param <code>File</code> f
+     */
     public FreeEMSBin(File f) {
-
+        logLoaded = false;
         logFile = f;
         startFound = false;
         wholePacket = new short[3000];
@@ -132,19 +144,30 @@ public class FreeEMSBin {
         decodeLog();
 
     }
-
-    public void setLog(String s) {
-        this.setLog(new File(s));
+    /**
+     * setLog will take a String path to a new log and reset
+     * @param <code>String</code> path
+     */
+    public void setLog(String path) {
+        this.setLog(new File(path));
     }
-
+    /**
+     * setLog alternative with File object of your binary log
+     * @param <code>File</code> f
+     */
     public void setLog(File f) {
         logFile = f;
-    }
+        decodedLog = new GenericLog(headers);
+        startFound = false;
+        packetLength = 0;
+        logLoaded = false;
 
+    }
+    /**
+     * DecodeLog will use the current <code>logFile</code> parse through it and when required pass the job <br>
+     * to the required method of this class such as decodePacket or checksum.
+     */
     public void decodeLog() {
-        byte t = (byte) (Byte.MAX_VALUE + 1);
-        System.out.println(t);
-        logLoaded = true;
         try {
             // file setup
             byte[] readByte = new byte[1];
@@ -199,12 +222,17 @@ public class FreeEMSBin {
 
     }
 
-    private boolean decodePacket(short[] packet) {
-        int flags = (int)( packet[0] & 0xff); // used for parsing packets, need to find this info
+    /**
+     * This method decodes a packet by splitting up the data into larger datatypes to keep the unsigned info <br>
+     * This method could probably use a litle work
+     * @param packet is a <code>short</code> array containing 1 full packet
+     *
+     */
+    private void decodePacket(short[] packet) {
+        // int flags = (int)( packet[0] & 0xff); // used for parsing packets, need to find this info
         int payLoadId = (int) (((packet[1] & 0xff) * 256) + (packet[2] & 0xff));
         //int seq = (int) packet[3]; // unused
-        int size = 0; // unused
-        String metaTemp = "";
+        int size = 0; // unused if not a 401 payLoadId
 
         int x = 0;
         int leadingBytes = 0;
@@ -234,20 +262,17 @@ public class FreeEMSBin {
                 } else {
                     x++;
                 }
-            } else if (payLoadId == 3) {
-                metaTemp += Character.toString((char) packet[x+leadingBytes]);
-                x++;
-            } else {
+            }  else {
                 x++; // rare cases where the packet gets ignored
             }
         }
-        if (payLoadId == 3) {
-            decodedLog.addMetaData(metaTemp);
-        }
-        //System.out.println("Packet Decoded");
-        return true;
     }
-
+    /**
+     * performs a check sum based on the packet data <br>
+     * the checksum needs to be improved however
+     * @param packet
+     * @return true or false based on if the checksum passes
+     */
     private boolean checksum(short[] packet) {
         if (packetLength > 0) {
             int payLoadId = (int) ((packet[1] * 256) + packet[2]);
@@ -263,13 +288,6 @@ public class FreeEMSBin {
 
                     sum += packet[x];
                     x++;
-
-                  // if (headers[x / 2].equalsIgnoreCase("TFCTot")) {
-                  //      sum += (short) (packet[x] * 256) + packet[x + 1];// special case signed short
-                  //  } else {
-                  //      sum += (int) (packet[x] * 256) + packet[x + 1];// unsigned shorts
-                  //  }
-                  //  x = x + 2;
                 }
 
                 //math for checksum: SUM % 256 == ChecksumByte
@@ -282,6 +300,8 @@ public class FreeEMSBin {
            
            // System.out.println( (short)(sum & 0xff)  + " " + checksum +" = " + (short)(((short)(sum & 0xff)-(short)(checksum & 0xff))& 0xff) );
 
+            // The math for doing this should just be adding up the sum of the 96 bytes and then % 256 == packet[packetLength-1]
+
             if ((short)(((short)(sum & 0xff)-checksum) & 0xff) == 188) { /// im sure this could be done better
                
                 return true;
@@ -291,7 +311,11 @@ public class FreeEMSBin {
         }
         return false;
     }
-
+    /**
+     * takes the byte to be escaped and returns the proper value
+     * @param uByte - byte to be Un-escaped
+     * @return -1 if bad data or the proper value of the escaped byte
+     */
     private short unEscapeByte(short uByte) {
         if (uByte == ESCAPED_START_BYTE) {
             return START_BYTE;
@@ -303,7 +327,10 @@ public class FreeEMSBin {
             return (short) -1;
         }
     }
-
+    /**
+     *
+     * @return getGenericLog() returns the reference to the generic log the binary data has been converted to
+     */
     public GenericLog getGenericLog() {
         if (logLoaded) {
             return decodedLog;
@@ -311,7 +338,11 @@ public class FreeEMSBin {
             return null;
         }
     }
-
+    /**
+     *
+     * @return Misc data about this log
+     * <br> to be implemented in full later
+     */
     @Override
     public String toString() {
         return super.toString();

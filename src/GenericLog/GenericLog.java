@@ -25,7 +25,6 @@ package GenericLog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  *
@@ -34,7 +33,11 @@ import java.util.Set;
 public class GenericLog extends HashMap {
 
     private String metaData;
-
+    /**
+     * provide a <code>String</code> array of headers<br>
+     * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
+     * @param headers - of the data to be converted
+     */
     public GenericLog(String[] headers) {
         super();
         for (int x = 0; x < headers.length; x++) {
@@ -43,20 +46,35 @@ public class GenericLog extends HashMap {
         metaData = "";
 
     }
-
+    /**
+     * Add a piece of data to the <code>ArrayList</code> associated with the <code>key</code>
+     * @param key - header
+     * @param value - data to be added
+     * @return true or false if it was successfully added
+     */
     public boolean addValue(String key, double value) {
         ArrayList logElement = (ArrayList) this.get(key);
         return logElement.add(value);
     }
 
-    public void addMetaData(String md) {
+    /**
+     * Add metadata This is information about the log being converted such as the location it was from or the date<br>
+     * This method does not add to its self so in order to add more info you must VAR.addMetaData(VAR.getMetaData() + NEWINFO)
+     * @param md
+     */
+    public void setMetaData(String md) {
         metaData = md;
     }
-
+    /**
+     *
+     * @return String containing the current meta data
+     */
     public String getMetadata() {
         return metaData;
     }
-
+    /**
+     * Test the log, this will output data to the console only
+     */
     public void testLog() {
         Iterator i = this.keySet().iterator();
         ArrayList al;
@@ -64,7 +82,7 @@ public class GenericLog extends HashMap {
         while (i.hasNext()) {
             head = (String) i.next();
             al = (ArrayList) this.get(head);
-            System.out.printf("%s10",head);
+            System.out.printf("%10s",head);
             for (int x = 0; x < al.size() - 1; x++) {
                 System.out.printf("%10.3f ", al.get(x));
             }
