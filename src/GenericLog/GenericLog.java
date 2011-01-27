@@ -30,7 +30,7 @@ import java.util.Iterator;
  *
  * @author Bryan
  */
-public class GenericLog extends HashMap {
+public class GenericLog extends HashMap<String, ArrayList>  {
 
     private String metaData;
     /**
@@ -41,7 +41,7 @@ public class GenericLog extends HashMap {
     public GenericLog(String[] headers) {
         super();
         for (int x = 0; x < headers.length; x++) {
-            this.put(headers[x], new ArrayList(100));
+            this.put(headers[x], new ArrayList<Double>(100));
         }
         metaData = "";
 
@@ -90,4 +90,7 @@ public class GenericLog extends HashMap {
         }
         System.out.print(this.metaData);
     }
+
+
+
 }
