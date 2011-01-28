@@ -36,7 +36,8 @@ import java.io.IOException;
  */
 
 
-public class FreeEMSBin {
+public class FreeEMSBin implements Runnable { // implements runnable to make this class theadable
+//public class FreeEMSBin extends Thread {
 
     private final short ESCAPE_BYTE = 0xBB;// for unsigned byte
     private final short START_BYTE = 0xAA;// for unsigned byte
@@ -52,7 +53,8 @@ public class FreeEMSBin {
     private GenericLog decodedLog;
     private boolean logLoaded;
     int packetLength;//track packet length
-    String[] headers = {// "Flags", "PAYID", "SEQ", "SIZE", // uncomment to add these headers to the Generic Log, they are not passed for values however
+    private Thread t;
+    String[] headers = {
         "IAT", "CHT", "TPS", "EGO", "MAP", "AAP", "BRV", "MAT", "EGO2", "IAP", "MAF", "DMAP", "DTPS", "RPM", "DRPM", "DDRPM",
         "LMain", "VEM", "Lambda", "AirFlo", "DensFu", "BasePW", "ETE", "TFCTot", "EffPW", "IDT", "RefPW", "SP1", "SP2", "SP3", "SP4", "SP5",
         "IAT V", "CHT V", "TPS V", "EGO V", "MAP V", "AAP V", "BRV V", "MAT V", "EGO2 v", "IAP V", "MAF V", "ADC3", "ADC4", "ADC5", "ADC6", "ADC7"
@@ -141,7 +143,10 @@ public class FreeEMSBin {
         wholePacket = new short[3000];
         packetLength = 0;
         decodedLog = new GenericLog(headers);
-        decodeLog();
+        t = new Thread(this, "FreeEMSBin Loading");
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+       // decodeLog();
 
     }
     /**
@@ -167,7 +172,8 @@ public class FreeEMSBin {
      * DecodeLog will use the current <code>logFile</code> parse through it and when required pass the job <br>
      * to the required method of this class such as decodePacket or checksum.
      */
-    public void decodeLog() {
+    //public void decodeLog() {
+    public void run(){
         try {
             // file setup
             byte[] readByte = new byte[1];
@@ -178,7 +184,6 @@ public class FreeEMSBin {
 
             while (logStream.read(readByte) != -1) {
                 uByte = (short) (readByte[0] & 0xff); // mask the byte in case something screwey happens
-
                 if (uByte == START_BYTE) {
                     if (!startFound) {
                         startFound = true;
@@ -214,6 +219,8 @@ public class FreeEMSBin {
             }
 
             logLoaded = true;
+            System.out.println("LogLoaded");
+
         } catch (IOException IOE) {
             System.out.println(IOE.getMessage());
             //TO-DO: Add code to handle or warn of the error
@@ -246,7 +253,7 @@ public class FreeEMSBin {
 
 
         int offset = packetLength - size;
-        
+
         while (x < packetLength-offset) {
             if (payLoadId == 401) {
                 if (x  < size) {
@@ -297,13 +304,13 @@ public class FreeEMSBin {
                 return true; // only checksums for payloadid's of 401
             }
 
-           
+
            // System.out.println( (short)(sum & 0xff)  + " " + checksum +" = " + (short)(((short)(sum & 0xff)-(short)(checksum & 0xff))& 0xff) );
 
             // The math for doing this should just be adding up the sum of the 96 bytes and then % 256 == packet[packetLength-1]
 
             if ((short)(((short)(sum & 0xff)-checksum) & 0xff) == 188) { /// im sure this could be done better
-               
+
                 return true;
             } else {
                 return false;
