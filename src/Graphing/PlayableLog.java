@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.Timer;
 
@@ -21,57 +22,92 @@ import javax.swing.JPanel;
  *
  * @author Bryan
  */
-public class PlayableLog extends JPanel implements ActionListener {
-
-
+public class PlayableLog extends JPanel implements ActionListener, Serializable {
 
     Timer timer;
     GenericLog genLog;
-    int current;
-    boolean play;
+    int delay;
+    int current; // startpoint of where to start the graph ( data-wise )
+    boolean play; // true = play graph, false = pause graph
 
+    /**
+     * Create a blank JPanel of Playable Log type
+     * typical usage of this would be to instantiate the object and then <br>
+     * <code>playableLog.setLog(GenericLog log);</code>
+     */
     public PlayableLog() {
         super();
-        genLog = null;
-        timer = new Timer(10, this);
-        timer.setInitialDelay(1000);
+        genLog = new GenericLog();
+        timer = new Timer(0, this);
+        timer.setInitialDelay(0);
         timer.start();
         play = false;
         current = 0;
+        delay = 10;
+
     }
 
+    /**
+     * used by a swing.Timer object to change variables dealing with the actual animation of the class
+     * @param e
+     */
     public void actionPerformed(ActionEvent e) {
-        if(play) {
-            current++;
-            //if(current == 200) current = 0;
-        }
 
+        if (play) {
+            current++;
+        }
         repaint();
     }
 
-     public void paintComponent(Graphics g) {
-         //super.paintComponents(g);
+    /**
+     * This is an overriden method that does the painting of the graph based on a key
+     * @param g
+     */
+    @Override
+    public void paintComponent(Graphics g) {
+        //super.paintComponents(g);
+        /* TO-DO:
+         * Alot of this code needs to be moved to a on change listener and only have this function redraw the background from a imagebuffer
+         * of sorts, in otherwords this way only the decorations have to be drawn when the screen is resized
+         */
+
+        Dimension d = this.getSize();
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.clearRect(0, 0, d.width, d.height); // clear the view otherwise previously drawn objects will continue to persist
+        g2d.setBackground(Color.YELLOW); // this does nothing unsure why
+        g2d.setColor(Color.BLACK); // set color of background of graph
+        g2d.fillRect(0, 0, d.width, d.height); // Draw the background which is just flat black
+        g2d.setColor(Color.GRAY);
+        g2d.drawLine((int)(d.width/2), 0, (int)(d.width/2), d.height); // middle vertical divider,
+        //g2d.setColor(Color.WHITE);
+        g2d.drawLine(0, (int)(d.height/2), d.width,(int)(d.height/2)); // middle horizontal divider
+        g2d.setColor(Color.BLUE); // set color of the drawn graph
+
+        if (genLog.isLogLoaded() == 1) {
+            int[] xPoints = xAxis(d.width); // get the x Points
+            int[] yPoints = yAxis("SP5", d); // get the y Points
+            g2d.drawPolyline(xPoints, yPoints, d.width); // draw the graph
+        }
+        else if(genLog.isLogLoaded() == 0) {
+            g2d.setColor(Color.white);
+            g2d.drawString("Loading Log Please wait...", 10, 10);
+        }
+        else if(genLog.isLogLoaded() == -1) {
+            g2d.setColor(Color.white);
+            g2d.drawString("Please Load a Log.", 10, 10);
+        }
 
 
-         Dimension d = this.getSize();
-         Graphics2D g2d = (Graphics2D)g;
-         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-         g2d.clearRect(0, 0, d.width, d.height);
-         g2d.setBackground(Color.YELLOW);
-         g2d.setColor(Color.BLACK);
-         g2d.fillRect(0, 0, d.width,d.height );
-         g2d.setColor(Color.BLUE);
-         //g2d.drawOval(0, 0, 200+current, 150+current);
-         if(genLog != null) {
-             int[] xPoints = xAxis(d.width);
-             int[] yPoints = yAxis("SP5", d);
-             g2d.drawPolyline(xPoints, yPoints, d.width);
-         }
+    }
 
-     }
-
-     private int[] xAxis(int dataNum) {
-        int[] xAxis = new int[dataNum];
+    /**
+     * This takes the width of <code>this</code> and creates a <code>int[]</code> with the x Coordinates of the graph
+     * @param width - width of the JPanel
+     * @return if the width of the JPanel is 800px the returned <code>int[]</code> will be int[width] with the contents of 0-799
+     */
+    private int[] xAxis(int width) {
+        int[] xAxis = new int[width];
         int x = 0;
         while (x < xAxis.length) {
             xAxis[x] = x;
@@ -80,7 +116,13 @@ public class PlayableLog extends JPanel implements ActionListener {
         return xAxis;
     }
 
-     private int[] yAxis(String key, Dimension d) {
+    /**
+     * This will control the Y coordinates of the graph, iterating through the data based on the <code>key</code>
+     * @param key - Data that is to be converted the graph points
+     * @param d - Dimensions of the graph
+     * @return yAxis will return an <code>int[]</code> based on the data given
+     */
+    private int[] yAxis(String key, Dimension d) {
         int x = 0;
         ArrayList<Double> data = genLog.get(key);
         int[] yAxis = new int[d.width];
@@ -91,154 +133,56 @@ public class PlayableLog extends JPanel implements ActionListener {
         return yAxis;
     }
 
+    /**
+     * chartNumber converts the raw data given to it to a graphable point
+     * @param <code>elemData</code> - data to be converted
+     * @param <code>height</code> - height of the JPanel
+     * @return <code>int</code> convted data from (height / (elemData / height ))
+     */
     private int chartNumber(Double elemData, int height) {
         int point = 0;
-        if(elemData != 0) point = (int)(height / (elemData / height));
+        if (elemData != 0) {
+            point = (int) (height / (elemData / height));
+        }
         return point;
     }
 
+    /**
+     * Set the GenericLog of the Playablegraph, this is the dataset that all graphing will be based on
+     * @param genLog - GenericLog
+     */
     public void setLog(GenericLog genLog) {
         this.genLog = genLog;
     }
 
+    /**
+     * Allows the graph to begin animating
+     */
     public void play() {
+        timer.setDelay(delay);
         play = true;
     }
 
+    public void pause() {
+        play = false;
+    }
+
+    public void fastForward() {
+       if((delay-1) >= 0) {
+           delay--;
+           timer.setDelay(delay);
+       }
+    }
+
+    public void slowDown() {
+       delay++;
+       timer.setDelay(delay);
+    }
+
+    /**
+     * Stops the graph from playing back
+     */
     public void stop() {
         play = false;
     }
-
-
 }
-
-
-
-
-
-
-/*
-    int current;
-    GenericLog logData;
-    boolean play;
-    String header;
-    Timer animate;
-    public PlayableLog(GenericLog logData, String header) {
-       // this.setMinimumSize(new Dimension(500,500));
-       // this.setPreferredSize(new Dimension(500,500));
-        this.header = header;
-        this.logData = logData;
-        this.play = false;
-        this.current = 0;
-        this.animate = new Timer(20,this);
-        this.animate.setInitialDelay(1);
-        this.animate.start();
-        this.setMinimumSize(new Dimension(500,500));
-        this.setPreferredSize(new Dimension(500,500));
-        this.setSize(new Dimension(500,500));
-        this.setOpaque(false);
-        this.setVisible(true);
-    }
-
-
-
-    public void Play() {
-        play = true;
-    }
-
-    public void Pause() {
-        play = false;
-    }
-
-    public void Stop() {
-        Pause();
-        Reset();
-    }
-
-    public void Reset() {
-        current = 0;
-    }
-
-    @Override
-    public void update(Graphics g) {
-
-    paint(g);
-
-
-    }
-    // draw a single graph
-
-
-
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        int gWindowX = (int) this.getSize().getWidth(); // get current Width of the jpanel, this may change as the screen is resized
-        int gWindowY = (int) this.getSize().getHeight(); // same here but Height
-        System.out.println(this.getGraphics() == null);
-
-
-
-        Graphics2D g2d = (Graphics2D) this.getGraphics();
-        //g2d.setXORMode(g2d.getBackground());
-
-
-
-        //Graphics graph = g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setColor(Color.BLUE);
-        int[] xAxisArray = yAxis(header, gWindowX);
-        int[] yAxisArray = xAxis();
-        g2d.drawPolyline(xAxisArray, yAxisArray, 30);
-        g2d.drawLine(0, 0, 600, 600);
-        //g2d.dispose();
-        //g2d.
-        //  for(int x =0; x < 30; x++){
-        //   System.out.println(current + "\n" + xAxisArray[x] + " " + yAxisArray[x]);
-        //  }
-
-
-    }
-
-    private int[] xAxis() {
-        int[] xAxis = new int[30];
-        int x = 0;
-        while (x < xAxis.length) {
-            xAxis[x] = x;
-            x++;
-        }
-        return xAxis;
-    }
-
-    
-
-    
-
-    public void actionPerformed(ActionEvent e) {
-       
-        if (logData != null && play)  current++;
-    }
-
-    public void run() {
-        System.out.println("Thread Running");
-        try {
-            while (true) {
-                //  System.out.println("still running");
-                
-                if (logData != null && play) {
-                    System.out.println(animate.isRunning());
-                    if(!animate.isRunning()) animate.start();
-                     this.getParent().repaint();
-                    System.out.println(current);
-
-                }
-            }
-        } catch (NullPointerException NPE) {
-            System.out.println("NPE: " + NPE.toString());
-        } catch (Exception e) {
-            System.out.println("Thread Stopped Running :" + e.toString());
-        }
-    }
-
-}
-*/

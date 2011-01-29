@@ -22,6 +22,10 @@
  */
 package GenericLog;
 
+import datareader.DataLogReaderApp;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +37,15 @@ import java.util.Iterator;
 public class GenericLog extends HashMap<String, ArrayList>  {
 
     private String metaData;
+    protected final PropertyChangeSupport PCS;
+    private int logLoaded;
+
+    public GenericLog() {
+        super();
+        logLoaded = -1;
+        PCS = new PropertyChangeSupport(this);
+        metaData = "";
+    }
     /**
      * provide a <code>String</code> array of headers<br>
      * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
@@ -40,10 +53,15 @@ public class GenericLog extends HashMap<String, ArrayList>  {
      */
     public GenericLog(String[] headers) {
         super();
+
+        logLoaded = -1;
+        PCS = new PropertyChangeSupport(this);
+
+        metaData = "";
         for (int x = 0; x < headers.length; x++) {
             this.put(headers[x], new ArrayList<Double>(100));
         }
-        metaData = "";
+        
 
     }
     /**
@@ -56,6 +74,17 @@ public class GenericLog extends HashMap<String, ArrayList>  {
         ArrayList logElement = (ArrayList) this.get(key);
         return logElement.add(value);
     }
+
+    public void setLogLoaded(int logLoaded) {
+        int isLogLoaded = this.logLoaded;
+         this.logLoaded = logLoaded;
+        PCS.firePropertyChange("LogLoaded", isLogLoaded, logLoaded);
+    }
+
+    public int isLogLoaded() {
+        return this.logLoaded;
+    }
+
 
     /**
      * Add metadata This is information about the log being converted such as the location it was from or the date<br>
@@ -89,6 +118,18 @@ public class GenericLog extends HashMap<String, ArrayList>  {
             System.out.println();
         }
         System.out.print(this.metaData);
+    }
+
+   // public void propertyChange(PropertyChangeEvent evt) {
+    //    DataLogReaderApp.getInstance().setLog();
+   // }
+
+    public void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
+        PCS.addPropertyChangeListener(name, listener);
+    }
+
+    public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
+        PCS.removePropertyChangeListener(propertyName, listener);
     }
 
 

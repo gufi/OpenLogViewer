@@ -20,12 +20,12 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-
-
-
 package Decoder;
 
 import GenericLog.GenericLog;
+import datareader.DataLogReaderApp;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,8 +34,6 @@ import java.io.IOException;
  *
  * @author Bryan
  */
-
-
 public class FreeEMSBin implements Runnable { // implements runnable to make this class theadable
 //public class FreeEMSBin extends Thread {
 
@@ -51,7 +49,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     private FileInputStream logStream;
     private boolean startFound;
     private GenericLog decodedLog;
-    private boolean logLoaded;
     int packetLength;//track packet length
     private Thread t;
     String[] headers = {
@@ -117,8 +114,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         204.8 // ADC7 V
     };
 
-
-
     // NO default constructor, a file or path to a file MUST be given
     // Reason: File()'s constructors are ambiguous cannot give a null value
     /**
@@ -132,23 +127,36 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
 
     }
+
     /**
      * FreeEmsBin Constructor: <code>File</code> object of your Binary log
      * @param <code>File</code> f
      */
     public FreeEMSBin(File f) {
-        logLoaded = false;
         logFile = f;
         startFound = false;
         wholePacket = new short[3000];
         packetLength = 0;
         decodedLog = new GenericLog(headers);
+        decodedLog.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {
+            public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {
+                if((Integer)propertyChangeEvent.getNewValue() == 0){
+                    DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+                    DataLogReaderApp.getInstance().getPlayableLog().repaint();
+                }
+                else if((Integer)propertyChangeEvent.getNewValue() == 1) {
+                
+                }
+            }
+        });
+
         t = new Thread(this, "FreeEMSBin Loading");
-        t.setPriority(Thread.MAX_PRIORITY);
+        t.setPriority(Thread.MIN_PRIORITY);
         t.start();
-       // decodeLog();
+        // decodeLog();
 
     }
+
     /**
      * setLog will take a String path to a new log and reset
      * @param <code>String</code> path
@@ -156,24 +164,25 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     public void setLog(String path) {
         this.setLog(new File(path));
     }
+
     /**
      * setLog alternative with File object of your binary log
      * @param <code>File</code> f
      */
     public void setLog(File f) {
         logFile = f;
-        decodedLog = new GenericLog(headers);
+        //decodedLog = new GenericLog(headers);
         startFound = false;
         packetLength = 0;
-        logLoaded = false;
 
     }
+
     /**
      * DecodeLog will use the current <code>logFile</code> parse through it and when required pass the job <br>
      * to the required method of this class such as decodePacket or checksum.
      */
     //public void decodeLog() {
-    public void run(){
+    public void run() {
         try {
             // file setup
             byte[] readByte = new byte[1];
@@ -181,7 +190,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
             startFound = false;
             logStream = new FileInputStream(logFile);
-
+            decodedLog.setLogLoaded(0);
             while (logStream.read(readByte) != -1) {
                 uByte = (short) (readByte[0] & 0xff); // mask the byte in case something screwey happens
                 if (uByte == START_BYTE) {
@@ -217,15 +226,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
                 //else-> No else because if the start byte or start found conditions
                 // were not met then ignore data untill start is found due to a packet being bad
             }
-
-            logLoaded = true;
-            System.out.println("LogLoaded");
+            decodedLog.setLogLoaded(1);
+            
 
         } catch (IOException IOE) {
             System.out.println(IOE.getMessage());
             //TO-DO: Add code to handle or warn of the error
-            logLoaded = false;
-        }
+            
+        } 
 
     }
 
@@ -254,14 +262,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
         int offset = packetLength - size;
 
-        while (x < packetLength-offset) {
+        while (x < packetLength - offset) {
             if (payLoadId == 401) {
-                if (x  < size) {
+                if (x < size) {
                     double d = 0;
                     if (headers[x / 2].equalsIgnoreCase("TFCTot")) {
-                        d = ((short) (packet[x+leadingBytes] * 256) + packet[x+leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
+                        d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
                     } else {
-                        d = (int) ((packet[x+leadingBytes] * 256) + packet[x+leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
+                        d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
                     }
                     //System.out.println(x / 2);
                     decodedLog.addValue(headers[x / 2], d); // unsigned shorts
@@ -269,11 +277,12 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
                 } else {
                     x++;
                 }
-            }  else {
+            } else {
                 x++; // rare cases where the packet gets ignored
             }
         }
     }
+
     /**
      * performs a check sum based on the packet data <br>
      * the checksum needs to be improved however
@@ -283,7 +292,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     private boolean checksum(short[] packet) {
         if (packetLength > 0) {
             int payLoadId = (int) ((packet[1] * 256) + packet[2]);
-            short checksum = (short)(packet[packetLength - 1]);
+            short checksum = (short) (packet[packetLength - 1]);
             int size = 0;
             byte sum = 0;
             //checksum
@@ -291,7 +300,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
                 int x = 6; // start at index 6
                 size = (int) ((packet[4] * 256) + packet[5]);
                 int offset = packetLength - size;
-                while (x < packetLength - offset-2) {
+                while (x < packetLength - offset - 2) {
 
                     sum += packet[x];
                     x++;
@@ -305,11 +314,11 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
             }
 
 
-           // System.out.println( (short)(sum & 0xff)  + " " + checksum +" = " + (short)(((short)(sum & 0xff)-(short)(checksum & 0xff))& 0xff) );
+            // System.out.println( (short)(sum & 0xff)  + " " + checksum +" = " + (short)(((short)(sum & 0xff)-(short)(checksum & 0xff))& 0xff) );
 
             // The math for doing this should just be adding up the sum of the 96 bytes and then % 256 == packet[packetLength-1]
 
-            if ((short)(((short)(sum & 0xff)-checksum) & 0xff) == 188) { /// im sure this could be done better
+            if ((short) (((short) (sum & 0xff) - checksum) & 0xff) == 188) { /// im sure this could be done better
 
                 return true;
             } else {
@@ -318,6 +327,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         }
         return false;
     }
+
     /**
      * takes the byte to be escaped and returns the proper value
      * @param uByte - byte to be Un-escaped
@@ -334,17 +344,21 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
             return (short) -1;
         }
     }
+
     /**
      *
      * @return getGenericLog() returns the reference to the generic log the binary data has been converted to
      */
-    public GenericLog getGenericLog() {
+    /*public GenericLog getGenericLog() {
         if (logLoaded) {
             return decodedLog;
         } else {
             return null;
         }
-    }
+    }*/
+
+
+
     /**
      *
      * @return Misc data about this log
