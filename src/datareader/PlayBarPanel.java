@@ -24,6 +24,8 @@
 package datareader;
 
 import Decoder.FreeEMSBin;
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 /**
@@ -31,7 +33,9 @@ import javax.swing.JPanel;
  * @author Bryan
  */
 public class PlayBarPanel extends JPanel {
-
+    /**
+     * Default JPanel constructor initializing the playbar buttons
+     */
     public PlayBarPanel() {
         super();
         reverseButton = new javax.swing.JButton();
@@ -42,7 +46,9 @@ public class PlayBarPanel extends JPanel {
         ejectButton = new javax.swing.JButton();
         initComponents();
     }
-
+    /**
+     * Method to control and setup the components of the playbar
+     */
     private void initComponents() {
         this.setName("this"); // NOI18N
         this.setPreferredSize(new java.awt.Dimension(857, 40));
@@ -55,6 +61,7 @@ public class PlayBarPanel extends JPanel {
         reverseButton.setContentAreaFilled(false);
         reverseButton.setName("reverseButton"); // NOI18N
         reverseButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 reverseButtonMouseReleased(evt);
             }
@@ -68,6 +75,7 @@ public class PlayBarPanel extends JPanel {
         playButton.setContentAreaFilled(false);
         playButton.setName("playButton"); // NOI18N
         playButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 playButtonMouseReleased(evt);
             }
@@ -81,6 +89,7 @@ public class PlayBarPanel extends JPanel {
         pauseButton.setContentAreaFilled(false);
         pauseButton.setName("pauseButton"); // NOI18N
         pauseButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 pauseButtonMouseReleased(evt);
             }
@@ -94,6 +103,7 @@ public class PlayBarPanel extends JPanel {
         stopButton.setContentAreaFilled(false);
         stopButton.setName("stopButton"); // NOI18N
         stopButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 stopButtonMouseReleased(evt);
             }
@@ -107,6 +117,7 @@ public class PlayBarPanel extends JPanel {
         fastForwardButton.setContentAreaFilled(false);
         fastForwardButton.setName("fastForwardButton"); // NOI18N
         fastForwardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 fastForwardButtonMouseReleased(evt);
             }
@@ -120,35 +131,58 @@ public class PlayBarPanel extends JPanel {
         ejectButton.setContentAreaFilled(false);
         ejectButton.setName("ejectButton"); // NOI18N
         ejectButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 ejectButtonMouseReleased(evt);
             }
         });
         this.add(ejectButton);
     }
-
+    /**
+     * modifys the state of the PlayableLog to begin playing
+     * @param evt
+     */
     private void playButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getPlayableLog().play();
+        DataLogReaderApp.getInstance().getDrawnGraph().play();
     }
+    /**
+     * Modifys the state of the PlayableLog to pause
+     * @param evt
+     */
     private void pauseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getPlayableLog().pause();
+        DataLogReaderApp.getInstance().getDrawnGraph().pause();
     }
+    /**
+     * Modifys the state of the PlayableLog to stop and reset to the beginning
+     * @param evt
+     */
     private void stopButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getPlayableLog().stop();
+        DataLogReaderApp.getInstance().getDrawnGraph().stop();
     }
+    /**
+     * Speeds up the play back speed of the PlayableLog
+     * @param evt
+     */
     private void fastForwardButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getPlayableLog().fastForward();
+        DataLogReaderApp.getInstance().getDrawnGraph().fastForward();
     }
+    /**
+     * Slows down the play back speed of the Playable Log
+     * @param evt
+     */
     private void reverseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getPlayableLog().slowDown();
+        DataLogReaderApp.getInstance().getDrawnGraph().slowDown();
     }
-
+    /**
+     * Un-Implimented currently, future plans are to have this as an alternate to open a new log
+     * @param evt
+     */
     private void ejectButtonMouseReleased(java.awt.event.MouseEvent evt) {
-
-         fems = new FreeEMSBin("C:\\Users\\Bryan\\Desktop\\inputlog.bin");
         
+         //DataLogReaderApp.openFile();
+         DataLogReaderApp.getInstance().getDrawnGraph().reset();
     }
-    private FreeEMSBin fems;
+   // private FreeEMSBin fems;
     private javax.swing.JButton playButton;
     private javax.swing.JButton reverseButton;
     private javax.swing.JButton stopButton;

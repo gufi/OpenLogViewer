@@ -35,6 +35,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.Timer;
 
 import javax.swing.JPanel;
@@ -52,10 +53,14 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     private boolean play; // true = play graph, false = pause graph
     private int xMouseCoord;
     private int yMouseCoord;
+    private ArrayList<Double> yAxisData;
+    private String[] headers;// used to suplement the graph being drawn from a loop
+    private Dimension prevD;
+    private int currentMax;
     //MouseMotion Flags
-
     //MouseListener Flags
     private boolean mouseEntered;
+
     /**
      * Create a blank JPanel of Playable Log type
      * typical usage of this would be to instantiate the object and then <br>
@@ -64,6 +69,8 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     public DrawnGraph() {
         super();
         genLog = new GenericLog();
+        currentMax = 0;
+        yAxisData = null;
         timer = new Timer(0, this);
         timer.setInitialDelay(0);
         timer.start();
@@ -74,10 +81,26 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         mouseEntered = false;
         xMouseCoord = -100;
         yMouseCoord = -100;
+        prevD = new Dimension(this.getSize());
         addMouseListener(this);
+
         addMouseMotionListener(this);
 
 
+    }
+
+    private int getCurrentMax() {
+        Iterator i = genLog.keySet().iterator();
+        ArrayList al;
+        String head = "";
+        if (i.hasNext()) {
+            head = (String) i.next();
+            ArrayList temp = genLog.get(head);
+            return temp.size();
+
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -85,9 +108,9 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      * @param e
      */
     public void actionPerformed(ActionEvent e) {
-
         if (play) {
             current++;
+            advanceGraph("SP5", this.getSize());
         }
         repaint();
     }
@@ -103,41 +126,58 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
          * Alot of this code needs to be moved to a on change listener and only have this function redraw the background from a imagebuffer
          * of sorts, in otherwords this way only the decorations have to be drawn when the screen is resized
          */
-
         Dimension d = this.getSize();
+
+
+
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.clearRect(0, 0, d.width, d.height); // clear the view otherwise previously drawn objects will continue to persist
-        g2d.setBackground(Color.YELLOW); // this does nothing unsure why
-
         g2d.setColor(Color.BLACK); // set color of background of graph
         g2d.fillRect(0, 0, d.width, d.height); // Draw the background which is just flat black
         g2d.setColor(Color.GRAY);
-        g2d.drawLine((int)(d.width/2), 0, (int)(d.width/2), d.height); // middle vertical divider,
-        g2d.drawLine(0, (int)(d.height/2), d.width,(int)(d.height/2)); // middle horizontal divider
-        
+        g2d.drawLine((int) (d.width / 2), 0, (int) (d.width / 2), d.height); // middle vertical divider,
+        g2d.drawLine(0, (int) (d.height / 2), d.width, (int) (d.height / 2)); // middle horizontal divider
 
-        //Draw Mouse location information
-        if(mouseEntered) {
-            g2d.setColor(Color.red);
-            g2d.drawString("Mouse at: " + this.xMouseCoord + " " + this.yMouseCoord, this.xMouseCoord+10, this.yMouseCoord+10);
-        }
+
+
 
         // begin Graph drawing
-        g2d.setColor(Color.BLUE); // set color of the drawn graph
+
+
         if (genLog.getLogStatus() == 1) {
-            int[] xPoints = xAxis(d.width); // get the x Points
-            int[] yPoints = yAxis("SP5", d); // get the y Points
-            g2d.drawPolyline(xPoints, yPoints, d.width); // draw the graph
-        }
-        else if(genLog.getLogStatus() == 0) {
+            if (this.yAxisData == null) {
+                currentMax = getCurrentMax();
+                initGraph("SP5", d);
+            }
+            //Draw Mouse location information
+            if (mouseEntered && this.xMouseCoord < yAxisData.size()) {
+                g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
+                g2d.setColor(Color.red);
+                g2d.drawString(yAxisData.get(this.xMouseCoord).toString(), this.xMouseCoord + 10, this.yMouseCoord + 10);
+            }
+            if (yAxisData.size() > 0) {
+                if (!prevD.equals(d)) {
+                    System.out.println("resized");
+                    this.initGraph("SP5", d); // here because of screen resizing
+                }
+
+                g2d.drawString(Integer.toString(current), 30, 30);
+                int[] xPoints;
+                g2d.setColor(Color.BLUE); // set color of the drawn graph
+                xPoints = xAxis(yAxisData.size() - 1); // get the x Points
+                int[] yPoints = yAxis(d); // get the y Points
+                g2d.drawPolyline(xPoints, yPoints, yAxisData.size() - 1); // draw the graph
+
+                prevD.setSize(d); // remember last size incase screen gets resized will be used to properly modify yAxisData
+            }
+        } else if (genLog.getLogStatus() == 0) {
             g2d.setColor(Color.white);
             g2d.drawString("Loading Log Please wait...", 10, 10);
-        }
-        else if(genLog.getLogStatus() == -1) {
+        } else if (genLog.getLogStatus() == -1) {
             g2d.setColor(Color.white);
             g2d.drawString("Please Load a Log.", 10, 10);
         }
+
 
 
     }
@@ -148,7 +188,8 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      * @return if the width of the JPanel is 800px the returned <code>int[]</code> will be int[width] with the contents of 0-799
      */
     private int[] xAxis(int width) {
-        int[] xAxis = new int[width];
+
+        int[] xAxis = new int[width];// fix this
         int x = 0;
         while (x < xAxis.length) {
             xAxis[x] = x;
@@ -158,20 +199,65 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     }
 
     /**
-     * This will control the Y coordinates of the graph, iterating through the data based on the <code>key</code>
+     * This will control the Y coordinates of the graph
      * @param key - Data that is to be converted the graph points
      * @param d - Dimensions of the graph
      * @return yAxis will return an <code>int[]</code> based on the data given
      */
-    private int[] yAxis(String key, Dimension d) {
+    private int[] yAxis(Dimension d) {
+
+        //System.out.println(yAxisData.size());
         int x = 0;
-        ArrayList<Double> data = genLog.get(key);
         int[] yAxis = new int[d.width];
-        while ((x < d.width) && (current + x < data.size() - 1)) {
-            yAxis[x] = chartNumber(data.get(current + x), d.height);
-            x++;
+        if (yAxisData != null && yAxisData.size() > 0) {
+            while ((x < d.width) && (x < yAxisData.size() - 1)) {
+                yAxis[x] = chartNumber(yAxisData.get(x), d.height);
+                x++;
+            }
         }
         return yAxis;
+
+    }
+
+    private void initGraph(String key, Dimension d) {
+
+
+        // initialize arraylist for first time
+        if (genLog != null) {
+            ArrayList<Double> data = genLog.get(key); // get data array reference
+            if (current < currentMax) {
+
+                yAxisData = new ArrayList<Double>();// init
+                if (current < d.width / 2) {// starting of the graph
+                    int x = 0;
+                    while (x < (d.width / 2) - current) {
+                        yAxisData.add(0.0);
+                        x++;
+                    }
+                    yAxisData.addAll(data.subList(0, d.width - x));
+                } else if ((d.width / 2 + current) < currentMax) {// middle areas of the graph
+                    yAxisData.addAll(data.subList(current - d.width / 2, d.width / 2 + current)); // set Data index
+                } else { // ending parts of the graph
+                    yAxisData.addAll(data.subList(current - d.width / 2, data.size() - 1));
+                }
+            }
+            this.repaint();
+        }
+    }
+
+    private void advanceGraph(String key, Dimension d) {
+        ArrayList<Double> data = genLog.get(key); // get data array refernce
+
+        if ((current + d.width / 2) < currentMax) {
+            yAxisData.add(data.get(current + d.width / 2));
+        }
+        //if (yAxisData.size() > 0 ) {
+        if ((yAxisData.size() > d.width / 2 + 1)) {
+            yAxisData.remove(0);
+        } else {
+            play = false;
+        }
+
     }
 
     /**
@@ -193,7 +279,10 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      * @param genLog - GenericLog
      */
     public void setLog(GenericLog genLog) {
+        play = false;
+        current = 0;
         this.genLog = genLog;
+
     }
 
     /**
@@ -201,30 +290,36 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      */
     public void play() {
         setTimerDelay();
-        if(this.play) play = false;
-        else play = true;
+        if (this.play) {
+            play = false;
+        } else {
+            play = true;
+        }
     }
+
     /**
      * pauses the graphing playback
      */
     public void pause() {
         play = false;
     }
+
     /**
      * increases speed of the graph by 1 ms untill 0, at which speed cannot be advanced any further and will essentially update as fast as possible
      */
     public void fastForward() {
-       if((delay-1) >= 0) {
-           delay--;
-           setTimerDelay();
-       }
+        if ((delay - 1) >= 0) {
+            delay--;
+            setTimerDelay();
+        }
     }
+
     /**
      * Slows the speed of playback by 1 ms
      */
     public void slowDown() {
-       delay++;
-       setTimerDelay();
+        delay++;
+        setTimerDelay();
     }
 
     /**
@@ -234,10 +329,16 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         play = false;
     }
 
+    public void reset() {
+        current = 0;
+        initGraph("SP5", this.getSize());
+    }
+
     private void setTimerDelay() {
         timer.setDelay(this.delay);
     }
- //MOUSE MOTION LISTENER FUNCTIONALITY
+    //MOUSE MOTION LISTENER FUNCTIONALITY
+
     private void getMouseCoords(MouseEvent e) {
         xMouseCoord = e.getX();
         yMouseCoord = e.getY();
@@ -253,9 +354,18 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     }
 
 //MOUSE LISTENER FUNCTIONALITY
-
     public void mouseClicked(MouseEvent e) {
-        play();
+
+        int move = e.getX() - (int) (this.getSize().width / 2);
+        if (move + current < currentMax) {
+            if (move + current < 0) {
+                current = 0;
+            } else {
+                System.out.println(move + current + " " + currentMax);
+                current += move;
+            }
+            this.initGraph("SP5", this.getSize());
+        }
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -271,7 +381,4 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
 
     public void mouseReleased(MouseEvent e) {
     }
-
-
-
 }

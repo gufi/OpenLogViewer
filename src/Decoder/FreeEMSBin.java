@@ -55,7 +55,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         "IAT", "CHT", "TPS", "EGO", "MAP", "AAP", "BRV", "MAT", "EGO2", "IAP", "MAF", "DMAP", "DTPS", "RPM", "DRPM", "DDRPM",
         "LMain", "VEM", "Lambda", "AirFlo", "DensFu", "BasePW", "ETE", "TFCTot", "EffPW", "IDT", "RefPW", "SP1", "SP2", "SP3", "SP4", "SP5",
         "IAT V", "CHT V", "TPS V", "EGO V", "MAP V", "AAP V", "BRV V", "MAT V", "EGO2 v", "IAP V", "MAF V", "ADC3", "ADC4", "ADC5", "ADC6", "ADC7"
-    }; //This needs to be converted to resorses or gathered externally at some point
+    }; //This needs to be converted to resourses or gathered externally at some point
     private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
 
         // CORE VARS
@@ -118,7 +118,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     // Reason: File()'s constructors are ambiguous cannot give a null value
     /**
      * FreeEmsBin Constructor: <code>String</code> path to your binary log
-     * @param <code>String</code> path
+     * @param String path
      *
      */
     public FreeEMSBin(String path) {
@@ -130,7 +130,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
     /**
      * FreeEmsBin Constructor: <code>File</code> object of your Binary log
-     * @param <code>File</code> f
+     * @param File f
      */
     public FreeEMSBin(File f) {
         logFile = f;
@@ -138,17 +138,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         wholePacket = new short[3000];
         packetLength = 0;
         decodedLog = new GenericLog(headers);
-        decodedLog.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {
-            public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {
-                if((Integer)propertyChangeEvent.getNewValue() == 0){
-                    DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-                    DataLogReaderApp.getInstance().getPlayableLog().repaint();
-                }
-                else if((Integer)propertyChangeEvent.getNewValue() == 1) {
-                
-                }
-            }
-        });
 
         t = new Thread(this, "FreeEMSBin Loading");
         t.setPriority(Thread.MIN_PRIORITY);
@@ -159,7 +148,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
     /**
      * setLog will take a String path to a new log and reset
-     * @param <code>String</code> path
+     * @param String path
      */
     public void setLog(String path) {
         this.setLog(new File(path));
@@ -167,7 +156,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
     /**
      * setLog alternative with File object of your binary log
-     * @param <code>File</code> f
+     * @param File f
      */
     public void setLog(File f) {
         logFile = f;
@@ -190,7 +179,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
             startFound = false;
             logStream = new FileInputStream(logFile);
-            decodedLog.setLogLoaded(0);
+            decodedLog.setLogStatus(0);
             while (logStream.read(readByte) != -1) {
                 uByte = (short) (readByte[0] & 0xff); // mask the byte in case something screwey happens
                 if (uByte == START_BYTE) {
@@ -226,7 +215,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
                 //else-> No else because if the start byte or start found conditions
                 // were not met then ignore data untill start is found due to a packet being bad
             }
-            decodedLog.setLogLoaded(1);
+            decodedLog.setLogStatus(1);
             
 
         } catch (IOException IOE) {

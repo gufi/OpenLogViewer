@@ -31,8 +31,10 @@ package datareader;
 
 import Decoder.FreeEMSBin;
 import GenericLog.GenericLog;
-import Graphing.PlayableLog;
+import Graphing.DrawnGraph;
 import java.awt.Dimension;
+import java.io.File;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -48,7 +50,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        pl = new PlayableLog();
+        drawnGraph = new DrawnGraph();
         playBar = new PlayBarPanel();
         
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -64,12 +66,12 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         jPanel1.setName("jPanel1"); // NOI18N
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        pl.setName("pl"); // NOI18N
-        pl.setPreferredSize(new Dimension(600,400));
-        pl.setLayout(new java.awt.FlowLayout());
+        drawnGraph.setName("pl"); // NOI18N
+        drawnGraph.setPreferredSize(new Dimension(600,400));
+        drawnGraph.setLayout(new java.awt.FlowLayout());
         
 
-        jPanel1.add(pl, java.awt.BorderLayout.CENTER);
+        jPanel1.add(drawnGraph, java.awt.BorderLayout.CENTER);
 
         
 
@@ -99,11 +101,11 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         pack();
     }
     private void openFileMenuItemMouseReleased( java.awt.event.MouseEvent evt) {
-
+        DataLogReaderApp.openFile();
     }
 
     public void setLog(GenericLog genericLog) {
-        pl.setLog(genericLog);
+        drawnGraph.setLog(genericLog);
     }
     
     /**
@@ -126,8 +128,20 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         });
     }
 
-    public PlayableLog getPlayableLog() {
-        return pl;
+    public DrawnGraph getDrawnGraph() {
+        return drawnGraph;
+    }
+
+    public static void openFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        DLRFileFilter filter = new DLRFileFilter();
+        fileChooser.setFileFilter(filter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int acceptValue = fileChooser.showOpenDialog(DataLogReaderApp.getInstance());
+        if(acceptValue == JFileChooser.APPROVE_OPTION) {
+            File openFile = fileChooser.getSelectedFile();
+            new FreeEMSBin(openFile);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -138,11 +152,11 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JPanel jPanel1;
-    private PlayableLog pl;
+    private DrawnGraph drawnGraph;
     private PlayBarPanel playBar;
     
     // End of variables declaration//GEN-END:variables
     private GenericLog genLog;
     private FreeEMSBin fems;
-    //PlayableLog pl;
+    //DrawnGraph drawnGraph;
 }
