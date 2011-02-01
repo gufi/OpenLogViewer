@@ -157,7 +157,6 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
             }
             if (yAxisData.size() > 0) {
                 if (!prevD.equals(d)) {
-                    System.out.println("resized");
                     this.initGraph("SP5", d); // here because of screen resizing
                 }
 
@@ -361,7 +360,6 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
             if (move + current < 0) {
                 current = 0;
             } else {
-                System.out.println(move + current + " " + currentMax);
                 current += move;
             }
             this.initGraph("SP5", this.getSize());
