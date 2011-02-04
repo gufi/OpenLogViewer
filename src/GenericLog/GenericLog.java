@@ -26,15 +26,13 @@ import datareader.DataLogReaderApp;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  *
  * @author Bryan
  */
-public class GenericLog extends HashMap<String, ArrayList>  {
+public class GenericLog extends HashMap<String, GenericDataElement>  {
 
     final public static int LOG_NOT_LOADED = -1;
     final public static int LOG_LOADING = 0;
@@ -54,7 +52,7 @@ public class GenericLog extends HashMap<String, ArrayList>  {
                     DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
                 }
                 else if((Integer)propertyChangeEvent.getNewValue() == 1) {
-                    DataLogReaderApp.getInstance().getDrawnGraph().repaint();
+                    DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
                 }
             }
         });
@@ -94,7 +92,7 @@ public class GenericLog extends HashMap<String, ArrayList>  {
      * @return true or false if it was successfully added
      */
     public boolean addValue(String key, double value) {
-        ArrayList logElement = (ArrayList) this.get(key);
+        GenericDataElement logElement = (GenericDataElement) this.get(key);
         return logElement.add(value);
     }
     /**
@@ -116,7 +114,7 @@ public class GenericLog extends HashMap<String, ArrayList>  {
 
     public void setHeaders(String[] headers) {
         for (int x = 0; x < headers.length; x++) {
-            this.put(headers[x], new ArrayList<Double>(100));
+            this.put(headers[x], new GenericDataElement());
         }
     }
 

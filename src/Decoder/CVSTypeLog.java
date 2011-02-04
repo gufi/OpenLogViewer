@@ -23,7 +23,6 @@
 package Decoder;
 
 import GenericLog.GenericLog;
-import GenericLog.GenericLog;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
