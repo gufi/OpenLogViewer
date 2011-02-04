@@ -71,7 +71,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         genLog = new GenericLog();
         currentMax = 0;
         yAxisData = null;
-        timer = new Timer(0, this);
+        timer = new Timer(1000, this);
         timer.setInitialDelay(0);
         timer.start();
         play = false;
@@ -110,7 +110,8 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     public void actionPerformed(ActionEvent e) {
         if (play) {
             current++;
-            advanceGraph("SP5", this.getSize());
+            advanceGraph("RPM", this.getSize());
+            
         }
         repaint();
     }
@@ -147,7 +148,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         if (genLog.getLogStatus() == 1) {
             if (this.yAxisData == null) {
                 currentMax = getCurrentMax();
-                initGraph("SP5", d);
+                initGraph("RPM", d);
             }
             //Draw Mouse location information
             if (mouseEntered && this.xMouseCoord < yAxisData.size()) {
@@ -157,7 +158,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
             }
             if (yAxisData.size() > 0) {
                 if (!prevD.equals(d)) {
-                    this.initGraph("SP5", d); // here because of screen resizing
+                    this.initGraph("RPM", d); // here because of screen resizing
                 }
 
                 g2d.drawString(Integer.toString(current), 30, 30);
@@ -244,6 +245,10 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         }
     }
 
+    public void reInitGraph() {
+        initGraph("RPM", this.getSize());
+    }
+
     private void advanceGraph(String key, Dimension d) {
         ArrayList<Double> data = genLog.get(key); // get data array refernce
 
@@ -301,6 +306,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      */
     public void pause() {
         play = false;
+        timer.setDelay(1000);
     }
 
     /**
@@ -326,11 +332,12 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      */
     public void stop() {
         play = false;
+        timer.setDelay(1000);
     }
 
     public void reset() {
         current = 0;
-        initGraph("SP5", this.getSize());
+        initGraph("RPM", this.getSize());
     }
 
     private void setTimerDelay() {
@@ -362,7 +369,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
             } else {
                 current += move;
             }
-            this.initGraph("SP5", this.getSize());
+            this.initGraph("RPM", this.getSize());
         }
     }
 

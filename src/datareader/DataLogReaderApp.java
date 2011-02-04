@@ -29,9 +29,11 @@
 
 package datareader;
 
+import Decoder.CVSTypeLog;
 import Decoder.FreeEMSBin;
 import GenericLog.GenericLog;
 import Graphing.DrawnGraph;
+import Utils.Utilities;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -134,13 +136,16 @@ public class DataLogReaderApp extends javax.swing.JFrame {
 
     public static void openFile() {
         JFileChooser fileChooser = new JFileChooser();
-        DLRFileFilter filter = new DLRFileFilter();
-        fileChooser.setFileFilter(filter);
-        fileChooser.setAcceptAllFileFilterUsed(false);
+        FreeEMSFileFilter filter = new FreeEMSFileFilter();
+        CVSTypeFileFilter filter2 = new CVSTypeFileFilter();
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.addChoosableFileFilter(filter2);
+        //fileChooser.setAcceptAllFileFilterUsed(false);
         int acceptValue = fileChooser.showOpenDialog(DataLogReaderApp.getInstance());
         if(acceptValue == JFileChooser.APPROVE_OPTION) {
             File openFile = fileChooser.getSelectedFile();
-            new FreeEMSBin(openFile);
+            if(Utilities.getExtension(openFile).equals("bin")) new FreeEMSBin(openFile);
+            else new CVSTypeLog(openFile);
         }
     }
 

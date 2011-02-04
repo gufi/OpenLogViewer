@@ -36,10 +36,10 @@ import java.util.Iterator;
  */
 public class GenericLog extends HashMap<String, ArrayList>  {
 
-    final static int LOG_NOT_LOADED = -1;
-    final static int LOG_LOADING = 0;
-    final static int LOG_LOADED = 1;
-    final static String LOG_STATUS = "LogStatus";
+    final public static int LOG_NOT_LOADED = -1;
+    final public static int LOG_LOADING = 0;
+    final public static int LOG_LOADED = 1;
+    final private static String LOG_STATUS = "LogStatus";
     private String metaData;
     protected final PropertyChangeSupport PCS;
     private int logLoaded;
@@ -48,6 +48,16 @@ public class GenericLog extends HashMap<String, ArrayList>  {
         super();
         logLoaded = -1;
         PCS = new PropertyChangeSupport(this);
+        addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {
+            public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {
+                if((Integer)propertyChangeEvent.getNewValue() == 0){
+                    DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+                }
+                else if((Integer)propertyChangeEvent.getNewValue() == 1) {
+                    DataLogReaderApp.getInstance().getDrawnGraph().repaint();
+                }
+            }
+        });
         metaData = "";
         
     }
@@ -67,16 +77,14 @@ public class GenericLog extends HashMap<String, ArrayList>  {
                     DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
                 }
                 else if((Integer)propertyChangeEvent.getNewValue() == 1) {
-
+                    DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
                 }
             }
         });
 
         metaData = "";
-        for (int x = 0; x < headers.length; x++) {
-            this.put(headers[x], new ArrayList<Double>(100));
-        }
         
+        this.setHeaders(headers);
 
     }
     /**
@@ -104,6 +112,12 @@ public class GenericLog extends HashMap<String, ArrayList>  {
      */
     public int getLogStatus() {
         return this.logLoaded;
+    }
+
+    public void setHeaders(String[] headers) {
+        for (int x = 0; x < headers.length; x++) {
+            this.put(headers[x], new ArrayList<Double>(100));
+        }
     }
 
 

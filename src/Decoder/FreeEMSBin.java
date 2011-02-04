@@ -23,9 +23,6 @@
 package Decoder;
 
 import GenericLog.GenericLog;
-import datareader.DataLogReaderApp;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -140,31 +137,13 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         decodedLog = new GenericLog(headers);
 
         t = new Thread(this, "FreeEMSBin Loading");
-        t.setPriority(Thread.MIN_PRIORITY);
+        t.setPriority(Thread.MAX_PRIORITY);
         t.start();
         // decodeLog();
 
     }
 
-    /**
-     * setLog will take a String path to a new log and reset
-     * @param String path
-     */
-    public void setLog(String path) {
-        this.setLog(new File(path));
-    }
-
-    /**
-     * setLog alternative with File object of your binary log
-     * @param File f
-     */
-    public void setLog(File f) {
-        logFile = f;
-        //decodedLog = new GenericLog(headers);
-        startFound = false;
-        packetLength = 0;
-
-    }
+    
 
     /**
      * DecodeLog will use the current <code>logFile</code> parse through it and when required pass the job <br>
