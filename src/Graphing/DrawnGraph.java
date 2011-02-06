@@ -38,7 +38,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.Timer;
-
 import javax.swing.JPanel;
 
 /**
@@ -58,6 +57,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     private ArrayList<String> activeHeaders;// used to suplement the graph being drawn from a loop
     private Dimension prevD;
     private int currentMax;
+    private boolean antiAliasing;
     //MouseMotion Flags
     //MouseListener Flags
     private boolean mouseEntered;
@@ -66,7 +66,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     private long currentTime;
     private long builtTime;
     private boolean showFPS;
-    private Color[] color = { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.RED, Color.WHITE, Color.YELLOW };
+    private Color[] color = {Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.RED, Color.WHITE, Color.YELLOW};
 
     /**
      * Create a blank JPanel of Playable Log type
@@ -93,10 +93,8 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         yMouseCoord = -100;
         prevD = new Dimension(this.getSize());
         currentTime = System.currentTimeMillis();
+        antiAliasing = false;
         activeHeaders = new ArrayList();
-        activeHeaders.add("RPM");
-        activeHeaders.add("MAPcounts");
-        activeHeaders.add("O2");
         addMouseListener(this);
 
         addMouseMotionListener(this);
@@ -156,7 +154,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
 
 
         Graphics2D g2d = (Graphics2D) g;
-        if (FPS > 30 && delay < 50 || delay >= 50) { // turns on and off depending on graphics card and number of graphs, anti aliasing looks great but takes a toll on speed
+        if (antiAliasing) { // turns on and off depending on graphics card and number of graphs, anti aliasing looks great but takes a toll on speed
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // if statement is for performance during redraws
         }
         g2d.setColor(Color.BLACK); // set color of background of graph
@@ -182,32 +180,33 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
                 initGraph(d);
             } else {
 
-                
+
                 if (yAxisData.size() > 0) {
                     if (!prevD.equals(d)) {
                         this.initGraph(d); // here because of screen resizing
                     }
                     g2d.setColor(Color.RED);
-                    g2d.drawString(Integer.toString(current), 30, 30);
+                    g2d.drawString(Integer.toString((int) ((double) (current + 1) / (double) currentMax * 100)) + "%", 30, 30);
 
                     for (int y = 0; y < activeHeaders.size(); y++) {
+                        GenericDataElement GDE = yAxisData.get(activeHeaders.get(y));
                         int[] xPoints;
-                        g2d.setColor(color[y]); // set color of the drawn graph
-                        xPoints = xAxis(yAxisData.get(activeHeaders.get(y)).size() - 1); // get the x Points
+                        g2d.setColor(color[activeHeaders.size()%(1+y)]); // set color of the drawn graph
+                        xPoints = xAxis(GDE.size() - 1); // get the x Points
                         int[] yPoints = yAxis(activeHeaders.get(y), d); // get the y Points
-                        g2d.drawPolyline(xPoints, yPoints, yAxisData.get(activeHeaders.get(y)).size() - 1); // draw the graph
+                        g2d.drawPolyline(xPoints, yPoints, GDE.size() - 1); // draw the graph
+                        //Draw Mouse location information
+                        if (mouseEntered && this.xMouseCoord < GDE.size()) {
+                            g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
+                            g2d.setColor(color[activeHeaders.size()%(1+y)]);
+
+                            g2d.drawString(activeHeaders.get(y) + ": " +GDE.get(this.xMouseCoord).toString(), this.xMouseCoord + 15, this.yMouseCoord + 20 + (20 * y));
+                        }
                     }
                     prevD.setSize(d); // remember last size incase screen gets resized will be used to properly modify yAxisData
                 }
-                //Draw Mouse location information
-                for (int y = 0; y < activeHeaders.size(); y++) {
-                    if (mouseEntered && this.xMouseCoord < yAxisData.get(activeHeaders.get(y)).size()) {
-                        g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
-                        g2d.setColor(color[y]);
 
-                        g2d.drawString(yAxisData.get(activeHeaders.get(y)).get(this.xMouseCoord).toString(), this.xMouseCoord + 15, this.yMouseCoord + 20 + (20*y));
-                    }
-                }
+
             }
         } else if (genLog.getLogStatus() == 0) {
             g2d.setColor(Color.white);
@@ -244,18 +243,27 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      * @return yAxis will return an <code>int[]</code> based on the data given
      */
     private int[] yAxis(String key, Dimension d) {
-
+        GenericDataElement GDE = yAxisData.get(key);
         //System.out.println(yAxisData.size());
         int x = 0;
         int[] yAxis = new int[d.width];
-        if (yAxisData != null && yAxisData.get(key).size() > 0) {
-            while ((x < d.width) && (x < yAxisData.get(key).size() - 1)) {
-                yAxis[x] = chartNumber(yAxisData.get(key).get(x), d.height, genLog.get(key).getLowValue(), genLog.get(key).getHighValue());
+        if (yAxisData != null && GDE.size() > 0) {
+            while ((x < d.width) && (x < GDE.size() - 1)) {
+
+                yAxis[x] = chartNumber(GDE.get(x), d.height, genLog.get(key).getLowValue(), genLog.get(key).getHighValue());
                 x++;
             }
         }
         return yAxis;
 
+    }
+
+    public void setAntiAlising(boolean tf) {
+        this.antiAliasing = tf;
+    }
+
+    public boolean getAntiAliasing() {
+        return this.antiAliasing;
     }
 
     private void initGraph(Dimension d) {
@@ -267,26 +275,28 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
             if (current < currentMax) {
                 yAxisData = new GenericLog();// init
                 for (int y = 0; y < activeHeaders.size(); y++) {
-                    
+
 
                     yAxisData.put(activeHeaders.get(y), new GenericDataElement());
+                    GenericDataElement GDE = yAxisData.get(activeHeaders.get(y));
                     if (current < d.width / 2) {// starting of the graph
                         int x = 0;
                         while (x < (d.width / 2) - current) {
-                            yAxisData.get(activeHeaders.get(y)).add(0.0);
+                            GDE.add(0.0);
                             x++;
                         }
-                        yAxisData.get(activeHeaders.get(y)).addAll(genLog.get(activeHeaders.get(y)).subList(0, d.width - x));
+                        GDE.addAll(genLog.get(activeHeaders.get(y)).subList(0, d.width - x));
                     } else if ((d.width / 2 + current) < currentMax) {// middle areas of the graph
-                        yAxisData.get(activeHeaders.get(y)).addAll(genLog.get(activeHeaders.get(y)).subList(current - d.width / 2, d.width / 2 + current)); // set Data index
+                        GDE.addAll(genLog.get(activeHeaders.get(y)).subList(current - d.width / 2, d.width / 2 + current)); // set Data index
                     } else { // ending parts of the graph
-                        yAxisData.get(activeHeaders.get(y)).addAll(genLog.get(activeHeaders.get(y)).subList(current - d.width / 2, genLog.get(activeHeaders.get(y)).size() - 1));
+                        GDE.addAll(genLog.get(activeHeaders.get(y)).subList(current - d.width / 2, genLog.get(activeHeaders.get(y)).size() - 1));
                     }
-                    yAxisData.get(activeHeaders.get(y)).setHighValue(genLog.get(activeHeaders.get(y)).getHighValue());
-                    yAxisData.get(activeHeaders.get(y)).setLowValue(genLog.get(activeHeaders.get(y)).getLowValue());
+                    GDE.setHighValue(genLog.get(activeHeaders.get(y)).getHighValue());
+                    GDE.setLowValue(genLog.get(activeHeaders.get(y)).getLowValue());
                 }
 
             }
+            System.gc();
             this.repaint();
         }
     }
@@ -298,7 +308,6 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
 
     private void advanceGraph(Dimension d) {
         for (int y = 0; y < activeHeaders.size(); y++) {
-
             if ((current + d.width / 2) < currentMax) {
                 yAxisData.addValue(activeHeaders.get(y), genLog.get(activeHeaders.get(y)).get(current + d.width / 2));
             }
@@ -317,7 +326,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      * @param <code>height</code> - height of the JPanel
      * @return <code>int</code> converted data from (height / (elemData / height ))
      */
-    private int chartNumber( Double elemData, int height, double minValue, double maxValue) {
+    private int chartNumber(Double elemData, int height, double minValue, double maxValue) {
         int point = 0;
         if (elemData != 0) {
             point = (int) (height - (height * ((elemData - minValue) / (maxValue - minValue))));
@@ -337,6 +346,20 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         current = 0;
         this.genLog = genLog;
 
+    }
+
+    public void addActiveHeader(String header) {
+        activeHeaders.add(header);
+    }
+
+    public boolean removeActiveHeader(String header) {
+        for (int i = 0; i < activeHeaders.size(); i++) {
+            if (header.equals(activeHeaders.get(i))) {
+                activeHeaders.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

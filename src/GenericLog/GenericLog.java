@@ -32,33 +32,37 @@ import java.util.HashMap;
  *
  * @author Bryan
  */
-public class GenericLog extends HashMap<String, GenericDataElement>  {
+public class GenericLog extends HashMap<String, GenericDataElement> {
 
     final public static int LOG_NOT_LOADED = -1;
     final public static int LOG_LOADING = 0;
     final public static int LOG_LOADED = 1;
-    final private static String LOG_STATUS = "LogStatus";
+    final private static String LOG_STATUS = "LogLoaded";
     private String metaData;
     protected final PropertyChangeSupport PCS;
     private int logLoaded;
+    private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
+
+        public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
+            if ((Integer) propertyChangeEvent.getNewValue() == 0) {
+                DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+
+            } else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
+                DataLogReaderApp.getInstance().getGraphMenu().updateFromLog((GenericLog) propertyChangeEvent.getSource());
+                DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
+            }
+        }
+    };
 
     public GenericLog() {
         super();
         logLoaded = -1;
         PCS = new PropertyChangeSupport(this);
-        addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {
-            public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {
-                if((Integer)propertyChangeEvent.getNewValue() == 0){
-                    DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-                }
-                else if((Integer)propertyChangeEvent.getNewValue() == 1) {
-                    DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
-                }
-            }
-        });
+        addPropertyChangeListener("LogLoaded", autoLoad);
         metaData = "";
-        
+
     }
+
     /**
      * provide a <code>String</code> array of headers<br>
      * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
@@ -69,22 +73,14 @@ public class GenericLog extends HashMap<String, GenericDataElement>  {
 
         logLoaded = -1;
         PCS = new PropertyChangeSupport(this);
-        addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {
-            public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {
-                if((Integer)propertyChangeEvent.getNewValue() == 0){
-                    DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-                }
-                else if((Integer)propertyChangeEvent.getNewValue() == 1) {
-                    DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
-                }
-            }
-        });
+        addPropertyChangeListener("LogLoaded", autoLoad);
 
         metaData = "";
-        
+
         this.setHeaders(headers);
 
     }
+
     /**
      * Add a piece of data to the <code>ArrayList</code> associated with the <code>key</code>
      * @param key - header
@@ -95,15 +91,17 @@ public class GenericLog extends HashMap<String, GenericDataElement>  {
         GenericDataElement logElement = (GenericDataElement) this.get(key);
         return logElement.add(value);
     }
+
     /**
      * Set the state of the log
      * @param logLoaded GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
      */
     public void setLogStatus(int logLoaded) {
         int isLogLoaded = this.logLoaded;
-         this.logLoaded = logLoaded;
+        this.logLoaded = logLoaded;
         PCS.firePropertyChange("LogLoaded", isLogLoaded, logLoaded);
     }
+
     /**
      *
      * @return -1 if log not loaded 0 if loading or 1 if log is loaded
@@ -118,7 +116,6 @@ public class GenericLog extends HashMap<String, GenericDataElement>  {
         }
     }
 
-
     /**
      * Add metadata This is information about the log being converted such as the location it was from or the date<br>
      * This method does not add to its self so in order to add more info you must VAR.addMetaData(VAR.getMetaData() + NEWINFO)
@@ -127,6 +124,7 @@ public class GenericLog extends HashMap<String, GenericDataElement>  {
     public void setMetaData(String md) {
         metaData = md;
     }
+
     /**
      *
      * @return String containing the current meta data
@@ -138,39 +136,39 @@ public class GenericLog extends HashMap<String, GenericDataElement>  {
      * Test the log, this will output data to the console only
      * code kept incase it was needed at some point
      */
-   /* public void testLog() {
-        Iterator i = this.keySet().iterator();
-        ArrayList al;
-        String head = "";
-        while (i.hasNext()) {
-            head = (String) i.next();
-            al = (ArrayList) this.get(head);
-            System.out.printf("%10s",head);
-            for (int x = 0; x < al.size() - 1; x++) {
-                System.out.printf("%10.3f ", al.get(x));
-            }
-            System.out.println();
-        }
-        System.out.print(this.metaData);
+    /* public void testLog() {
+    Iterator i = this.keySet().iterator();
+    ArrayList al;
+    String head = "";
+    while (i.hasNext()) {
+    head = (String) i.next();
+    al = (ArrayList) this.get(head);
+    System.out.printf("%10s",head);
+    for (int x = 0; x < al.size() - 1; x++) {
+    System.out.printf("%10.3f ", al.get(x));
+    }
+    System.out.println();
+    }
+    System.out.print(this.metaData);
     }*/
 
-   /**
-    * Add a property change listener to the generic log, REQUIRED!!
-    * GenericLog.LOG_STATUS is the name of the status property
-    * @param name
-    * @param listener
-    * <code>new OBJECT.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {<br>
-    *       public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {<br>
-    *           DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-    *           ...Insert code here...<br>
-    *
-    *       }<br>
-    *   });</code>
-    */
-
+    /**
+     * Add a property change listener to the generic log, REQUIRED!!
+     * GenericLog.LOG_STATUS is the name of the status property
+     * @param name
+     * @param listener
+     * <code>new OBJECT.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {<br>
+     *       public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {<br>
+     *           DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+     *           ...Insert code here...<br>
+     *
+     *       }<br>
+     *   });</code>
+     */
     public void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
         PCS.addPropertyChangeListener(name, listener);
     }
+
     /**
      * Remove a PropertyChangeListener
      * @param propertyName name of listener
@@ -179,7 +177,4 @@ public class GenericLog extends HashMap<String, GenericDataElement>  {
     public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
         PCS.removePropertyChangeListener(propertyName, listener);
     }
-
-
-
 }

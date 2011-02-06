@@ -51,55 +51,58 @@ public class DataLogReaderApp extends javax.swing.JFrame {
 
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        mainPanel = new javax.swing.JPanel();
         drawnGraph = new DrawnGraph();
         playBar = new PlayBarPanel();
         
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        mainMenuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        editMenu = new javax.swing.JMenu();
+        graphMenu = new GraphMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         setLayout(new java.awt.BorderLayout());
-        add(jPanel1, java.awt.BorderLayout.CENTER);
+        add(mainPanel, java.awt.BorderLayout.CENTER);
 
-        jPanel1.setName("jPanel1"); // NOI18N
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        mainPanel.setName("jPanel1"); // NOI18N
+        mainPanel.setLayout(new java.awt.BorderLayout());
 
         drawnGraph.setName("pl"); // NOI18N
         drawnGraph.setPreferredSize(new Dimension(600,400));
         drawnGraph.setLayout(new java.awt.FlowLayout());
         
 
-        jPanel1.add(drawnGraph, java.awt.BorderLayout.CENTER);
+        mainPanel.add(drawnGraph, java.awt.BorderLayout.CENTER);
 
         
 
-        jPanel1.add(playBar, java.awt.BorderLayout.SOUTH);
+        mainPanel.add(playBar, java.awt.BorderLayout.SOUTH);
 
-        jMenuBar1.setName("jMenuBar1"); // NOI18N
+        mainMenuBar.setName("jMenuBar1"); // NOI18N
 
-        jMenu1.setText("File");
-        jMenu1.setName("jMenu1"); // NOI18N
+        fileMenu.setText("File");
+        fileMenu.setName("jMenu1"); // NOI18N
 
         openFileMenuItem.setText("Open Log");
         openFileMenuItem.setName("openlog"); // NOI18N
         openFileMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 openFileMenuItemMouseReleased(evt);
             }
         });
-        jMenu1.add(openFileMenuItem);
+        fileMenu.add(openFileMenuItem);
 
-        jMenuBar1.add(jMenu1);
+        mainMenuBar.add(fileMenu);
 
-        jMenu2.setText("Edit");
-        jMenu2.setName("jMenu2"); // NOI18N
-        jMenuBar1.add(jMenu2);
+        editMenu.setText("Edit");
+        editMenu.setName("jMenu2"); // NOI18N
+        mainMenuBar.add(editMenu);
+        mainMenuBar.add(graphMenu);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(mainMenuBar);
         pack();
     }
     private void openFileMenuItemMouseReleased( java.awt.event.MouseEvent evt) {
@@ -134,6 +137,10 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         return drawnGraph;
     }
 
+    public GraphMenu getGraphMenu() {
+        return graphMenu;
+    }
+
     public static void openFile() {
         JFileChooser fileChooser = new JFileChooser();
         FreeEMSFileFilter filter = new FreeEMSFileFilter();
@@ -152,13 +159,14 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static DataLogReaderApp mainAppRef;
 
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem openFileMenuItem;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel mainPanel;
     private DrawnGraph drawnGraph;
     private PlayBarPanel playBar;
+    private GraphMenu graphMenu;
     
     // End of variables declaration//GEN-END:variables
     private GenericLog genLog;

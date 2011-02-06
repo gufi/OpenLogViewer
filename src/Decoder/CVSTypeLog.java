@@ -71,14 +71,12 @@ public class CVSTypeLog extends BaseDecoder {
                 }
                 splitLine = line.split(delimiter);
                 if (splitLine[0].matches("[a-zA-Z]*") ) {
-                    System.out.println(splitLine[0] + ":" );
                     this.getDecodedLog().setHeaders(splitLine);
                     headers = splitLine;
                 } else {
                     for (int x = 0; x < splitLine.length; x++) {
                         this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
                     }
-                    System.out.println();
                 }
 
             }
@@ -97,7 +95,6 @@ public class CVSTypeLog extends BaseDecoder {
         } else if (line.contains("\\")) {
             return "\\";
         }
-        System.out.println("No delimiter Found");
         return "\t";
     }
 }
