@@ -51,6 +51,8 @@ public class CVSTypeFileFilter extends FileFilter {
         String extension = Utilities.getExtension(f);
         if (extension.equals("log")) {
             return true;
+        }else if (extension.equals("csv")) {
+            return true;
         }
 
         //if nothing is satisfied return false

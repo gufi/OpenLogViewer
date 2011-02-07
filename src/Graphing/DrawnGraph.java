@@ -329,12 +329,13 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      */
     private int chartNumber(Double elemData, int height, double minValue, double maxValue) {
         int point = 0;
-        if (elemData != 0) {
+        //if (elemData != 0) {
             point = (int) (height - (height * ((elemData - minValue) / (maxValue - minValue))));
             //min value = this.height
             //max value = 0
             // conversion would be (elemdata - minValue ) / (maxValue-minValue)
-        }
+        //}
+        //else point = height;
         return point;
     }
 

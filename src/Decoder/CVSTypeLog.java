@@ -49,37 +49,32 @@ public class CVSTypeLog extends BaseDecoder {
 
     }
 
-
-
-
     protected void decodeLog() throws IOException {
         Scanner scan = new Scanner(new FileReader(getLogFile()));
 
-            String line = "";
-            String delimiter = "";
-            String[] splitLine = new String[1];
-            String[] headers = new String[1];
-            if (scan.hasNextLine()) {
-                scan.nextLine(); // jump past first line as its just pointless shit like "/Null" or the ecu revision
-                
-            }
-            while (scan.hasNextLine()) {
-                line = scan.nextLine();
-                
-                if (delimiter.isEmpty()) {
-                    delimiter = scanForDelimiter(line);
-                }
+        String line = "";
+        String delimiter = "";
+        String[] splitLine = new String[1];
+        String[] headers = new String[1];
+        while (scan.hasNextLine() && delimiter.isEmpty()) {
+            line = scan.nextLine(); // jump past first line as its just pointless shit like "/Null" or the ecu revision
+            delimiter = scanForDelimiter(line);
+            if (!delimiter.isEmpty()) {
                 splitLine = line.split(delimiter);
-                if (splitLine[0].matches("[a-zA-Z]*") ) {
-                    this.getDecodedLog().setHeaders(splitLine);
-                    headers = splitLine;
-                } else {
-                    for (int x = 0; x < splitLine.length; x++) {
-                        this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
-                    }
-                }
-
+                headers = splitLine;
+                this.getDecodedLog().setHeaders(splitLine);
             }
+            System.out.println(delimiter);
+        }
+        while (scan.hasNextLine()) {
+            line = scan.nextLine();
+            splitLine = line.split(delimiter);
+
+            for (int x = 0; x < splitLine.length; x++) {
+                this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
+            }
+
+        }
 
     }
 
@@ -95,6 +90,6 @@ public class CVSTypeLog extends BaseDecoder {
         } else if (line.contains("\\")) {
             return "\\";
         }
-        return "\t";
+        return "";
     }
 }
