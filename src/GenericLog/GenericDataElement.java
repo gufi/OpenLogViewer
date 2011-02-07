@@ -31,36 +31,36 @@ import java.util.ArrayList;
  */
 public class GenericDataElement extends ArrayList<Double> {
     
-    private double highValue;
-    private double lowValue;
+    private Double maxValue;
+    private Double minValue;
 
     public GenericDataElement() {
         super();
-        highValue = Double.MIN_VALUE;
-        lowValue = Double.MAX_VALUE;
+        maxValue = Double.MIN_VALUE;
+        minValue = Double.MAX_VALUE;
     }
 
     @Override
     public boolean add(Double d) {
-        if(highValue < d) highValue = d;
-        if(lowValue > d) lowValue = d;
+        if(maxValue < d) maxValue = d;
+        if(minValue > d) minValue = d;
         return super.add(d);
     }
 
-    public double getHighValue() {
-        return highValue;
+    public Double getMaxValue() {
+        return maxValue;
     }
 
-    public void setHighValue(double highValue) {
-        this.highValue = highValue;
+    public void setMaxValue(Double highValue) {
+        this.maxValue = highValue;
     }
 
-    public double getLowValue() {
-        return lowValue;
+    public Double getMinValue() {
+        return minValue;
     }
 
-    public void setLowValue(double lowValue) {
-        this.lowValue = lowValue;
+    public void setMinValue(Double lowValue) {
+        this.minValue = lowValue;
     }
 
 

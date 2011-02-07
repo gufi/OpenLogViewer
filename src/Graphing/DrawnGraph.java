@@ -66,7 +66,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     private long currentTime;
     private long builtTime;
     private boolean showFPS;
-    private Color[] color = {Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.RED, Color.WHITE, Color.YELLOW};
+    private ArrayList<Color> color ;
 
     /**
      * Create a blank JPanel of Playable Log type
@@ -86,7 +86,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         delay = 10;
         FPScounter = 0;
         FPS = 0;
-        showFPS = true;
+        showFPS = false;
         //mouseinformation
         mouseEntered = false;
         xMouseCoord = -100;
@@ -95,6 +95,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         currentTime = System.currentTimeMillis();
         antiAliasing = false;
         activeHeaders = new ArrayList();
+        color = new ArrayList<Color>();
         addMouseListener(this);
 
         addMouseMotionListener(this);
@@ -191,14 +192,14 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
                     for (int y = 0; y < activeHeaders.size(); y++) {
                         GenericDataElement GDE = yAxisData.get(activeHeaders.get(y));
                         int[] xPoints;
-                        g2d.setColor(color[activeHeaders.size()%(1+y)]); // set color of the drawn graph
+                        g2d.setColor(color.get(y)); // set color of the drawn graph
                         xPoints = xAxis(GDE.size() - 1); // get the x Points
                         int[] yPoints = yAxis(activeHeaders.get(y), d); // get the y Points
                         g2d.drawPolyline(xPoints, yPoints, GDE.size() - 1); // draw the graph
                         //Draw Mouse location information
                         if (mouseEntered && this.xMouseCoord < GDE.size()) {
                             g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
-                            g2d.setColor(color[activeHeaders.size()%(1+y)]);
+                            g2d.setColor(color.get(y));
 
                             g2d.drawString(activeHeaders.get(y) + ": " +GDE.get(this.xMouseCoord).toString(), this.xMouseCoord + 15, this.yMouseCoord + 20 + (20 * y));
                         }
@@ -250,7 +251,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         if (yAxisData != null && GDE.size() > 0) {
             while ((x < d.width) && (x < GDE.size() - 1)) {
 
-                yAxis[x] = chartNumber(GDE.get(x), d.height, genLog.get(key).getLowValue(), genLog.get(key).getHighValue());
+                yAxis[x] = chartNumber(GDE.get(x), d.height, genLog.get(key).getMinValue(), genLog.get(key).getMaxValue());
                 x++;
             }
         }
@@ -291,8 +292,8 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
                     } else { // ending parts of the graph
                         GDE.addAll(genLog.get(activeHeaders.get(y)).subList(current - d.width / 2, genLog.get(activeHeaders.get(y)).size() - 1));
                     }
-                    GDE.setHighValue(genLog.get(activeHeaders.get(y)).getHighValue());
-                    GDE.setLowValue(genLog.get(activeHeaders.get(y)).getLowValue());
+                    GDE.setMaxValue(genLog.get(activeHeaders.get(y)).getMaxValue());
+                    GDE.setMinValue(genLog.get(activeHeaders.get(y)).getMinValue());
                 }
 
             }
@@ -345,21 +346,30 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         play = false;
         current = 0;
         this.genLog = genLog;
+        activeHeaders = new ArrayList<String>();
+        color = new ArrayList<Color>();
 
     }
 
     public void addActiveHeader(String header) {
         activeHeaders.add(header);
+        color.add(new Color(255,255,255));
     }
 
     public boolean removeActiveHeader(String header) {
         for (int i = 0; i < activeHeaders.size(); i++) {
             if (header.equals(activeHeaders.get(i))) {
                 activeHeaders.remove(i);
+                color.remove(i);
                 return true;
             }
         }
         return false;
+    }
+
+    public void setColor(int i, Color c) {
+        color.set(i,c);
+        this.repaint();
     }
 
     /**
