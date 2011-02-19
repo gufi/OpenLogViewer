@@ -32,9 +32,9 @@ package datareader;
 import Decoder.CVSTypeLog;
 import Decoder.FreeEMSBin;
 import GenericLog.GenericLog;
-import Graphing.DrawnGraph;
 import Graphing.LayeredGraph;
 import Utils.Utilities;
+import datareader.optionpane.OptionFrame;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -51,7 +51,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     }
 
     private void initComponents() {
-
+        optionFrame = new OptionFrame("Option Pane");
         mainPanel = new javax.swing.JPanel();
         //drawnGraph = new DrawnGraph();
         layeredGraph = new LayeredGraph();
@@ -150,6 +150,10 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         return graphMenu;
     }
 
+    public OptionFrame getOptionFrame() {
+        return optionFrame;
+    }
+
     public static void openFile() {
         JFileChooser fileChooser = new JFileChooser();
         FreeEMSFileFilter filter = new FreeEMSFileFilter();
@@ -181,5 +185,6 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     private GenericLog genLog;
     private FreeEMSBin fems;
+    private OptionFrame optionFrame;
     //DrawnGraph drawnGraph;
 }

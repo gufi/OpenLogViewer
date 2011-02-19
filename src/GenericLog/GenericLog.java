@@ -48,7 +48,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
                 DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
                 DataLogReaderApp.getInstance().getLayeredGraph().setStatus(0);
             } else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
-                DataLogReaderApp.getInstance().getGraphMenu().updateFromLog((GenericLog) propertyChangeEvent.getSource());
+                DataLogReaderApp.getInstance().getOptionFrame().updateFromLog((GenericLog) propertyChangeEvent.getSource());
                 DataLogReaderApp.getInstance().getLayeredGraph().setStatus(1);
             }
         }
