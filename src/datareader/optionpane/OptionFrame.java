@@ -55,7 +55,7 @@ public class OptionFrame extends JFrame {
                 }
                 if (!minField.getText().equals("")) {
                     if (GDE != null) {
-                        GDE.setMaxValue(Double.parseDouble(maxField.getText()));
+                        GDE.setMinValue(Double.parseDouble(minField.getText()));
                         somethingChanged = true;
                     }
                 }
