@@ -20,6 +20,10 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
+
+/**
+ * This Class is no longer used for Graphing purposes, implementation has been moved to LayeredGraph GraphLayer and InfoLayer
+ */
 package Graphing;
 
 import GenericLog.GenericDataElement;
@@ -37,14 +41,14 @@ import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.swing.JLayeredPane;
 import javax.swing.Timer;
-import javax.swing.JPanel;
 
 /**
  *
  * @author Bryan
  */
-public class DrawnGraph extends JPanel implements ActionListener, Serializable, MouseMotionListener, MouseListener {
+public class DrawnGraph extends JLayeredPane implements ActionListener, Serializable, MouseMotionListener, MouseListener {
 
     private Timer timer;
     private GenericLog genLog;
@@ -66,7 +70,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     private long currentTime;
     private long builtTime;
     private boolean showFPS;
-    private ArrayList<Color> color ;
+    private ArrayList<Color> color;
 
     /**
      * Create a blank JPanel of Playable Log type
@@ -97,15 +101,11 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         activeHeaders = new ArrayList();
         color = new ArrayList<Color>();
         addMouseListener(this);
-
         addMouseMotionListener(this);
-
-
     }
 
     private int getCurrentMax() {
         Iterator i = genLog.keySet().iterator();
-
         String head = "";
         if (i.hasNext()) {
             head = (String) i.next();
@@ -136,9 +136,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      */
     @Override
     public void paintComponent(Graphics g) {
-
         Dimension d = this.getSize();
-
         builtTime += System.currentTimeMillis() - currentTime;
         currentTime = System.currentTimeMillis();
         if (builtTime <= 1000) {
@@ -151,9 +149,6 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
             FPScounter = 0;
             builtTime = 0;
         }
-
-
-
         Graphics2D g2d = (Graphics2D) g;
         if (antiAliasing) { // turns on and off depending on graphics card and number of graphs, anti aliasing looks great but takes a toll on speed
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // if statement is for performance during redraws
@@ -163,25 +158,17 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
         g2d.setColor(Color.GRAY);
         g2d.drawLine((int) (d.width / 2), 0, (int) (d.width / 2), d.height); // middle vertical divider,
         g2d.drawLine(0, (int) (d.height / 2), d.width, (int) (d.height / 2)); // middle horizontal divider
-
-
         g2d.setColor(Color.green);
         if (showFPS) {
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             g2d.drawString("Delay:" + Integer.toString(delay), 30, 90);
         }
-
-
         // begin Graph drawing
-
-
         if (genLog.getLogStatus() == 1) {
             if (this.yAxisData == null) {
                 currentMax = getCurrentMax();
                 initGraph(d);
             } else {
-
-
                 if (yAxisData.size() > 0) {
                     if (!prevD.equals(d)) {
                         this.initGraph(d); // here because of screen resizing
@@ -201,7 +188,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
                             g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
                             g2d.setColor(color.get(y));
 
-                            g2d.drawString(activeHeaders.get(y) + ": " +GDE.get(this.xMouseCoord).toString(), this.xMouseCoord + 15, this.yMouseCoord + 20 + (20 * y));
+                            g2d.drawString(activeHeaders.get(y) + ": " + GDE.get(this.xMouseCoord).toString(), this.xMouseCoord + 15, this.yMouseCoord + 20 + (20 * y));
                         }
                     }
                     prevD.setSize(d); // remember last size incase screen gets resized will be used to properly modify yAxisData
@@ -245,7 +232,6 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
      */
     private int[] yAxis(String key, Dimension d) {
         GenericDataElement GDE = yAxisData.get(key);
-        //System.out.println(yAxisData.size());
         int x = 0;
         int[] yAxis = new int[d.width];
         if (yAxisData != null && GDE.size() > 0) {
@@ -330,10 +316,10 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     private int chartNumber(Double elemData, int height, double minValue, double maxValue) {
         int point = 0;
         //if (elemData != 0) {
-            point = (int) (height - (height * ((elemData - minValue) / (maxValue - minValue))));
-            //min value = this.height
-            //max value = 0
-            // conversion would be (elemdata - minValue ) / (maxValue-minValue)
+        point = (int) (height - (height * ((elemData - minValue) / (maxValue - minValue))));
+        //min value = this.height
+        //max value = 0
+        // conversion would be (elemdata - minValue ) / (maxValue-minValue)
         //}
         //else point = height;
         return point;
@@ -354,7 +340,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
 
     public void addActiveHeader(String header) {
         activeHeaders.add(header);
-        color.add(new Color(255,255,255));
+        color.add(new Color(255, 255, 255));
     }
 
     public boolean removeActiveHeader(String header) {
@@ -369,7 +355,7 @@ public class DrawnGraph extends JPanel implements ActionListener, Serializable, 
     }
 
     public void setColor(int i, Color c) {
-        color.set(i,c);
+        color.set(i, c);
         this.repaint();
     }
 

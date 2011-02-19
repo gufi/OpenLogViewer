@@ -26,8 +26,8 @@ import GenericLog.GenericDataElement;
 import GenericLog.GenericLog;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -83,6 +83,7 @@ public class GraphMenu extends JMenu {
 
             public void actionPerformed(ActionEvent e) {
                 optionFrame.setVisible(true);
+                if(!optionFrame.isShowing()) optionFrame.setExtendedState(optionFrame.NORMAL);
             }
         });
         antiAliasing = new JCheckBoxMenuItem();
@@ -93,7 +94,8 @@ public class GraphMenu extends JMenu {
 
             public void actionPerformed(ActionEvent e) {
                 JCheckBoxMenuItem j = (JCheckBoxMenuItem) e.getSource();
-                DataLogReaderApp.getInstance().getDrawnGraph().setAntiAlising(j.isSelected());
+             //   DataLogReaderApp.getInstance().getDrawnGraph().setAntiAlising(j.isSelected());
+                DataLogReaderApp.getInstance().getLayeredGraph().setAntiAliasing(j.isSelected());
             }
         });
         this.add(antiAliasing);
@@ -105,7 +107,7 @@ public class GraphMenu extends JMenu {
         if (optionFrame == null) {
             this.add(optionPaneItem);
             optionFrame = new OptionFrame("Option Pane");
-            optionFrame.setPreferredSize(DataLogReaderApp.getInstance().getPreferredSize());
+            optionFrame.setPreferredSize(new Dimension(800,200));
             optionFrame.setSize(optionFrame.getPreferredSize());
         } else {
             optionFrame.getHeaderPanel().removeAll();
@@ -120,10 +122,11 @@ public class GraphMenu extends JMenu {
             toBeAdded = new GCheckBox();
             toBeAdded.setName(head);
             toBeAdded.setText(head);
+            toBeAdded.setRef(GDE);
             toBeAdded.setSelected(false);
             optionFrame.getHeaderPanel().add(toBeAdded);
         }
-        optionFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        optionFrame.setDefaultCloseOperation(optionFrame.ICONIFIED);
         optionFrame.setVisible(true);
     }
 
@@ -164,19 +167,25 @@ public class GraphMenu extends JMenu {
 
                 public void actionPerformed(ActionEvent e) {
                     if(!maxField.getText().equals("")) {
-                        gLogRef.get((String)activeList.getSelectedItem()).setMaxValue(Double.parseDouble(maxField.getText()));
+                       GenericDataElement GDE = (GenericDataElement)activeList.getSelectedItem();
+                       GDE.setMaxValue(Double.parseDouble(maxField.getText()));
                     }
                     if(!minField.getText().equals("")) {
-                        gLogRef.get((String)activeList.getSelectedItem()).setMinValue(Double.parseDouble(minField.getText()));
+                        GenericDataElement GDE = (GenericDataElement)activeList.getSelectedItem();
+                       GDE.setMaxValue(Double.parseDouble(maxField.getText()));
                     }
+                    DataLogReaderApp.getInstance().getLayeredGraph().repaint();
                 }
             });
             changeColor.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    GenericDataElement GDE = (GenericDataElement)activeList.getSelectedItem();
+
                     Color newColor = JColorChooser.showDialog(
                      optionFrame,
-                     "Choose Background Color", Color.WHITE);
-                    DataLogReaderApp.getInstance().getDrawnGraph().setColor(optionFrame.getActiveList().getSelectedIndex(), newColor);
+                     "Choose Background Color", GDE.getColor());
+                    GDE.setColor(newColor);
+                    DataLogReaderApp.getInstance().getLayeredGraph().repaint();
                 }
             });
 
@@ -223,23 +232,31 @@ public class GraphMenu extends JMenu {
     }
 
     private class GCheckBox extends JCheckBox implements ActionListener {
-
+        GenericDataElement GDE;
         public GCheckBox() {
             super();
             addActionListener(this);
 
         }
 
+        public void setRef(GenericDataElement GDE) {
+            this.GDE = GDE;
+        }
+
+        public GenericDataElement getGDE(){
+            return GDE;
+        }
+
         public void actionPerformed(ActionEvent e) {
             GCheckBox i = (GCheckBox) e.getSource();
             if (i.isSelected()) {
-                optionFrame.getActiveList().addItem(i.getName());
-                DataLogReaderApp.getInstance().getDrawnGraph().addActiveHeader(i.getName());
-                DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
+                optionFrame.getActiveList().addItem(GDE);
+
+                DataLogReaderApp.getInstance().getLayeredGraph().addGraph(i.getName());
             } else {
-                optionFrame.getActiveList().removeItem(i.getName());
-                if (DataLogReaderApp.getInstance().getDrawnGraph().removeActiveHeader(i.getName())) {
-                    DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
+                optionFrame.getActiveList().removeItem(GDE);
+                if(DataLogReaderApp.getInstance().getLayeredGraph().removeGraph(i.getName())){
+                    DataLogReaderApp.getInstance().getLayeredGraph().repaint();
                 }
             }
         }

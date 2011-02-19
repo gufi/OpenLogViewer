@@ -64,7 +64,6 @@ public class CVSTypeLog extends BaseDecoder {
                 headers = splitLine;
                 this.getDecodedLog().setHeaders(splitLine);
             }
-            System.out.println(delimiter);
         }
         while (scan.hasNextLine()) {
             line = scan.nextLine();

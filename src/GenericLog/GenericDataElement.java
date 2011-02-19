@@ -23,7 +23,9 @@
 
 package GenericLog;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -32,36 +34,69 @@ import java.util.ArrayList;
 public class GenericDataElement extends ArrayList<Double> {
     
     private Double maxValue;
+    private Double newMaxValue;
     private Double minValue;
-
+    private Double newMinValue;
+    private Color color;
+    private Color newColor;
+    private String name;
     public GenericDataElement() {
         super();
         maxValue = Double.MIN_VALUE;
+        newMaxValue = maxValue;
         minValue = Double.MAX_VALUE;
+        newMinValue = minValue;
+        Random r = new Random();
+        color = Color.getHSBColor(r.nextFloat(), 1.0F, 1.0F);
+        newColor = color;
     }
 
     @Override
     public boolean add(Double d) {
-        if(maxValue < d) maxValue = d;
-        if(minValue > d) minValue = d;
+        if(newMaxValue < d) newMaxValue = d;
+        if(newMinValue > d) newMinValue = d;
         return super.add(d);
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public Double getMaxValue() {
-        return maxValue;
+        return newMaxValue;
     }
 
     public void setMaxValue(Double highValue) {
-        this.maxValue = highValue;
+        this.newMaxValue = highValue;
     }
 
     public Double getMinValue() {
-        return minValue;
+        return newMinValue;
     }
 
     public void setMinValue(Double lowValue) {
-        this.minValue = lowValue;
+        this.newMinValue = lowValue;
     }
+    
+    public Color getColor() {
+        return newColor;
+    }
+    
+    public void setColor(Color c) {
+        newColor = c;
+    }
+
+    public void reset() {
+        newMinValue = minValue;
+        newMaxValue = maxValue;
+        newColor = color;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
 
 
 

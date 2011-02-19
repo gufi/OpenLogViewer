@@ -46,10 +46,10 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
         public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
             if ((Integer) propertyChangeEvent.getNewValue() == 0) {
                 DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-
+                DataLogReaderApp.getInstance().getLayeredGraph().setStatus(0);
             } else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
                 DataLogReaderApp.getInstance().getGraphMenu().updateFromLog((GenericLog) propertyChangeEvent.getSource());
-                DataLogReaderApp.getInstance().getDrawnGraph().reInitGraph();
+                DataLogReaderApp.getInstance().getLayeredGraph().setStatus(1);
             }
         }
     };
@@ -112,7 +112,9 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 
     public void setHeaders(String[] headers) {
         for (int x = 0; x < headers.length; x++) {
-            this.put(headers[x], new GenericDataElement());
+            GenericDataElement GDE = new GenericDataElement();
+            GDE.setName(headers[x]);
+            this.put(headers[x], GDE);
         }
     }
 

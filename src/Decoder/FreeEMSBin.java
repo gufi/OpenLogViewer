@@ -239,7 +239,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
                     } else {
                         d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
                     }
-                    //System.out.println(x / 2);
                     decodedLog.addValue(headers[x / 2], d); // unsigned shorts
                     x = x + 2;
                 } else {
@@ -273,19 +272,9 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
                     sum += packet[x];
                     x++;
                 }
-
-                //math for checksum: SUM % 256 == ChecksumByte
-
-
             } else {
                 return true; // only checksums for payloadid's of 401
             }
-
-
-            // System.out.println( (short)(sum & 0xff)  + " " + checksum +" = " + (short)(((short)(sum & 0xff)-(short)(checksum & 0xff))& 0xff) );
-
-            // The math for doing this should just be adding up the sum of the 96 bytes and then % 256 == packet[packetLength-1]
-
             if ((short) (((short) (sum & 0xff) - checksum) & 0xff) == 188) { /// im sure this could be done better
 
                 return true;

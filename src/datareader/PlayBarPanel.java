@@ -143,35 +143,35 @@ public class PlayBarPanel extends JPanel {
      * @param evt
      */
     private void playButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getDrawnGraph().play();
+        DataLogReaderApp.getInstance().getLayeredGraph().play();
     }
     /**
      * Modifys the state of the PlayableLog to pause
      * @param evt
      */
     private void pauseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getDrawnGraph().pause();
+        DataLogReaderApp.getInstance().getLayeredGraph().pause();
     }
     /**
      * Modifys the state of the PlayableLog to stop and reset to the beginning
      * @param evt
      */
     private void stopButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getDrawnGraph().stop();
+        DataLogReaderApp.getInstance().getLayeredGraph().stop();
     }
     /**
      * Speeds up the play back speed of the PlayableLog
      * @param evt
      */
     private void fastForwardButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getDrawnGraph().fastForward();
+        DataLogReaderApp.getInstance().getLayeredGraph().fastForward();
     }
     /**
      * Slows down the play back speed of the Playable Log
      * @param evt
      */
     private void reverseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getDrawnGraph().slowDown();
+        DataLogReaderApp.getInstance().getLayeredGraph().slowDown();
     }
     /**
      * Un-Implimented currently, future plans are to have this as an alternate to open a new log
@@ -180,7 +180,7 @@ public class PlayBarPanel extends JPanel {
     private void ejectButtonMouseReleased(java.awt.event.MouseEvent evt) {
         
          //DataLogReaderApp.openFile();
-         DataLogReaderApp.getInstance().getDrawnGraph().reset();
+         DataLogReaderApp.getInstance().getLayeredGraph().reset();
     }
    // private FreeEMSBin fems;
     private javax.swing.JButton playButton;

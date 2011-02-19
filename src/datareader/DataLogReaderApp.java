@@ -33,6 +33,7 @@ import Decoder.CVSTypeLog;
 import Decoder.FreeEMSBin;
 import GenericLog.GenericLog;
 import Graphing.DrawnGraph;
+import Graphing.LayeredGraph;
 import Utils.Utilities;
 import java.awt.Dimension;
 import java.io.File;
@@ -52,7 +53,8 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        drawnGraph = new DrawnGraph();
+        //drawnGraph = new DrawnGraph();
+        layeredGraph = new LayeredGraph();
         playBar = new PlayBarPanel();
         
         mainMenuBar = new javax.swing.JMenuBar();
@@ -69,12 +71,14 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         mainPanel.setName("jPanel1"); // NOI18N
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        drawnGraph.setName("pl"); // NOI18N
-        drawnGraph.setPreferredSize(new Dimension(600,400));
-        drawnGraph.setLayout(new java.awt.FlowLayout());
+        //drawnGraph.setName("pl"); // NOI18N
+        //drawnGraph.setPreferredSize(new Dimension(600,400));
+        //drawnGraph.setLayout(new java.awt.FlowLayout());
         
 
-        mainPanel.add(drawnGraph, java.awt.BorderLayout.CENTER);
+        //mainPanel.add(drawnGraph, java.awt.BorderLayout.CENTER);
+        layeredGraph.setPreferredSize(new Dimension(600,400));
+        mainPanel.add(layeredGraph,java.awt.BorderLayout.CENTER);
 
         
 
@@ -110,7 +114,8 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     }
 
     public void setLog(GenericLog genericLog) {
-        drawnGraph.setLog(genericLog);
+        //drawnGraph.setLog(genericLog);
+        layeredGraph.setLog(genericLog);
     }
     
     /**
@@ -133,8 +138,12 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         });
     }
 
-    public DrawnGraph getDrawnGraph() {
-        return drawnGraph;
+   // public DrawnGraph getDrawnGraph() {
+   //     return drawnGraph;
+    //}
+
+    public LayeredGraph getLayeredGraph() {
+        return layeredGraph;
     }
 
     public GraphMenu getGraphMenu() {
@@ -164,7 +173,8 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JPanel mainPanel;
-    private DrawnGraph drawnGraph;
+    //private DrawnGraph drawnGraph;
+    private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
     
