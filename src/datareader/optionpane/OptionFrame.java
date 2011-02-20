@@ -59,14 +59,16 @@ public class OptionFrame extends JFrame {
                         somethingChanged = true;
                     }
                 }
-                
+
             }
-            if(!changeColor.getForeground().equals(GDE.getColor())) {
+            if (!changeColor.getForeground().equals(GDE.getColor())) {
                 Color newColor = Color.decode(changeColor.getForeground().toString());
                 GDE.setColor(newColor);
                 somethingChanged = true;
             }
-            if(somethingChanged) DataLogReaderApp.getInstance().getLayeredGraph().repaint();
+            if (somethingChanged) {
+                DataLogReaderApp.getInstance().getLayeredGraph().repaint();
+            }
         }
     };
     ActionListener colorChangeListener = new ActionListener() {
@@ -85,12 +87,15 @@ public class OptionFrame extends JFrame {
         }
     };
     ActionListener updateMinMax = new ActionListener() {
-      public void actionPerformed(ActionEvent e){
-          GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
-          maxField.setText(GDE.getMaxValue().toString());
-          minField.setText(GDE.getMinValue().toString());
-          changeColor.setForeground(GDE.getColor());
-      }
+
+        public void actionPerformed(ActionEvent e) {
+            GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
+            if (GDE != null) {
+                maxField.setText(GDE.getMaxValue().toString());
+                minField.setText(GDE.getMinValue().toString());
+                changeColor.setForeground(GDE.getColor());
+            }
+        }
     };
 
     public OptionFrame(String title) throws HeadlessException {
