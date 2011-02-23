@@ -122,7 +122,10 @@ public class GraphLayer extends JPanel {
                     drawnData.add(0.0);
                     x++;
                 }
-                drawnData.addAll(GDE.subList(0, d.width - x));
+                int to = 0;
+                if(GDE.size()-1 < d.width-x) to = GDE.size()-1;
+                else to = d.width-x;
+                drawnData.addAll(GDE.subList(0, to));
             } else if ((d.width / 2 + lg.getCurrent()) < GDE.size()) {
                 drawnData.addAll(GDE.subList(lg.getCurrent() - d.width/2, d.width / 2 + lg.getCurrent()));
             } else {

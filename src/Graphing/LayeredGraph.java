@@ -115,11 +115,14 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     private void removeAllGraphs() {
-        for (int i = 0; i < this.getComponentCount(); i++) {
+        System.out.println("Total components " + this.getComponentCount());
+        for (int i = 0; this.getComponentCount() > 1; ) {
             if (this.getComponent(i) instanceof GraphLayer) {
-                this.remove(i);
+                this.remove(getComponent(i));
             }
+            else i++;
         }
+        System.out.println("Total components " + this.getComponentCount());
         repaint();
     }
 

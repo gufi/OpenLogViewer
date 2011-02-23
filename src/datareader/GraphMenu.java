@@ -22,13 +22,9 @@
  */
 package datareader;
 
-import GenericLog.GenericDataElement;
-import GenericLog.GenericLog;
 import datareader.optionpane.OptionFrame;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -72,17 +68,6 @@ public class GraphMenu extends JMenu {
                 }
             }
         });
-        /*antiAliasing = new JCheckBoxMenuItem();
-        antiAliasing.setText("AntiAliasing");
-        antiAliasing.setName("antialiasing");
-        antiAliasing.setSelected(false);
-        antiAliasing.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-        JCheckBoxMenuItem j = (JCheckBoxMenuItem) e.getSource();
-        DataLogReaderApp.getInstance().getLayeredGraph().setAntiAliasing(j.isSelected());
-        }
-        });
-        this.add(antiAliasing);*/
         this.add(optionPaneItem);
 
     }

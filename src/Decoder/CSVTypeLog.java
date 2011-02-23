@@ -32,15 +32,15 @@ import java.util.Scanner;
  *
  * @author Bryan
  */
-public class CVSTypeLog extends BaseDecoder {
+public class CSVTypeLog extends BaseDecoder {
 
-    public CVSTypeLog(String path) {
+    public CSVTypeLog(String path) {
 
         this(new File(path));
 
     }
 
-    public CVSTypeLog(File f) {
+    public CSVTypeLog(File f) {
         this.setLogFile(f);
         this.setDecodedLog(new GenericLog());
         this.setT(new Thread(this, "CVS Type Log Loading"));
@@ -56,39 +56,52 @@ public class CVSTypeLog extends BaseDecoder {
         String delimiter = "";
         String[] splitLine = new String[1];
         String[] headers = new String[1];
-        while (scan.hasNextLine() && delimiter.isEmpty()) {
-            line = scan.nextLine(); // jump past first line as its just pointless shit like "/Null" or the ecu revision
-            delimiter = scanForDelimiter(line);
-            if (!delimiter.isEmpty()) {
-                splitLine = line.split(delimiter);
+        delimiter = scanForDelimiter();
+
+        boolean headerSet = false;
+        while (scan.hasNextLine() && !headerSet) {
+            line = scan.nextLine();
+            splitLine = line.split(delimiter);
+            if (splitLine.length == fieldCount) {
                 headers = splitLine;
                 this.getDecodedLog().setHeaders(splitLine);
+                headerSet = true;
             }
         }
         while (scan.hasNextLine()) {
             line = scan.nextLine();
+
             splitLine = line.split(delimiter);
-
-            for (int x = 0; x < splitLine.length; x++) {
-                this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
+            if (splitLine.length == fieldCount) {
+                for (int x = 0; x < splitLine.length; x++) {
+                    this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
+                }
             }
-
         }
 
     }
+    int fieldCount = -1;
 
-    private String scanForDelimiter(String line) {
-        if (line.contains("\t")) {
-            return "\t";
-        } else if (line.contains(",")) {
-            return ",";
-        } else if (line.contains(":")) {
-            return ":";
-        } else if (line.contains("/")) {
-            return "/";
-        } else if (line.contains("\\")) {
-            return "\\";
+    private String scanForDelimiter() throws IOException {
+        String delim[] = {"\t", ",", ":", "/", "\\\\"};
+        Scanner scan = new Scanner(new FileReader(getLogFile()));
+        String delimiterFind = "";
+        String[] split = new String[1];
+        int delimNum = -1;
+        for (int i = 0; i < 10 && scan.hasNext(); i++) {
+            delimiterFind = scan.nextLine();
+            for (int j = 0; j < delim.length; j++) {
+                split = delimiterFind.split(delim[j]);
+                if (split.length > fieldCount) {
+                    fieldCount = split.length;
+                    delimNum = j;
+                }
+            }
         }
-        return "";
+
+
+
+        scan.close();
+        return delim[delimNum];
     }
 }

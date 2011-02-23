@@ -29,7 +29,7 @@
 
 package datareader;
 
-import Decoder.CVSTypeLog;
+import Decoder.CSVTypeLog;
 import Decoder.FreeEMSBin;
 import GenericLog.GenericLog;
 import Graphing.LayeredGraph;
@@ -157,7 +157,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     public static void openFile() {
         JFileChooser fileChooser = new JFileChooser();
         FreeEMSFileFilter filter = new FreeEMSFileFilter();
-        CVSTypeFileFilter filter2 = new CVSTypeFileFilter();
+        CSVTypeFileFilter filter2 = new CSVTypeFileFilter();
         fileChooser.addChoosableFileFilter(filter);
         fileChooser.addChoosableFileFilter(filter2);
         //fileChooser.setAcceptAllFileFilterUsed(false);
@@ -165,7 +165,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         if(acceptValue == JFileChooser.APPROVE_OPTION) {
             File openFile = fileChooser.getSelectedFile();
             if(Utilities.getExtension(openFile).equals("bin")) new FreeEMSBin(openFile);
-            else new CVSTypeLog(openFile);
+            else new CSVTypeLog(openFile);
         }
     }
 

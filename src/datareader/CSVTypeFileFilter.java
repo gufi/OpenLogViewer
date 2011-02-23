@@ -30,9 +30,9 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Bryan
  */
-public class CVSTypeFileFilter extends FileFilter {
+public class CSVTypeFileFilter extends FileFilter {
 
-    public CVSTypeFileFilter() {
+    public CSVTypeFileFilter() {
         super();
     }
 
@@ -52,6 +52,9 @@ public class CVSTypeFileFilter extends FileFilter {
         if (extension.equals("log")) {
             return true;
         }else if (extension.equals("csv")) {
+            return true;
+        }
+        else if (extension.equals("xls")) {
             return true;
         }
 
