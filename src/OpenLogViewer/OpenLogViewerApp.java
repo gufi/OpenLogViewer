@@ -60,6 +60,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
+        quitFileMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         graphMenu = new GraphMenu();
 
@@ -92,6 +93,16 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
             }
         });
         fileMenu.add(openFileMenuItem);
+
+        quitFileMenuItem.setText("Quit");
+        quitFileMenuItem.setName("quit");
+        quitFileMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                System.exit(0);
+            }
+        });
+        fileMenu.add(quitFileMenuItem);
 
         mainMenuBar.add(fileMenu);
 
@@ -166,6 +177,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem openFileMenuItem;
+    private javax.swing.JMenuItem quitFileMenuItem;
     private javax.swing.JPanel mainPanel;
     private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
