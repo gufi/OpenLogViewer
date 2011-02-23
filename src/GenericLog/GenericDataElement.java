@@ -53,8 +53,15 @@ public class GenericDataElement extends ArrayList<Double> {
 
     @Override
     public boolean add(Double d) {
-        if(newMaxValue < d) newMaxValue = d;
-        if(newMinValue > d) newMinValue = d;
+        if(newMaxValue < d) {
+            maxValue = d;
+            newMaxValue = d;
+        }
+        if(newMinValue > d) {
+            minValue = d;
+            newMinValue = d;
+        }
+
         return super.add(d);
     }
 

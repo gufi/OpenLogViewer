@@ -35,12 +35,21 @@ public class OptionFrame extends JFrame {
     private JPanel headerPanel;
     private JPanel optionPanel;
     private JComboBox activeList;
-    JLabel minLabel = new JLabel("Min: ");
-    JLabel maxLabel = new JLabel("Max: ");
-    JTextField maxField = new JTextField(10);
-    JTextField minField = new JTextField(10);
-    JButton setButton = new JButton("Commit");
-    JButton changeColor = new JButton("Change Color");
+    private JLabel minLabel = new JLabel("Min: ");
+    private JLabel maxLabel = new JLabel("Max: ");
+    private JTextField maxField = new JTextField(10);
+    private JTextField minField = new JTextField(10);
+    private JButton setButton = new JButton("Commit");
+    private JButton changeColor = new JButton("Change Color");
+    private JButton resetButton = new JButton("Reset");
+    ActionListener resetButtonActionListener = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+            GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
+            GDE.reset();
+            OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+        }
+    };
     ActionListener commitButtonActionListener = new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -122,7 +131,8 @@ public class OptionFrame extends JFrame {
         optionPanel.add(activeList);
         setButton.addActionListener(commitButtonActionListener);
         changeColor.addActionListener(colorChangeListener);
-
+        resetButton.addActionListener(resetButtonActionListener);
+        resetButton.setToolTipText("Reset selected graph to its origional settings (min,max,color)");
 
         maxLabel.setBounds(0, 30, 100, 20);
         optionPanel.add(maxLabel);
@@ -138,6 +148,8 @@ public class OptionFrame extends JFrame {
         optionPanel.add(changeColor);
         setButton.setBounds(0, 90, 200, 20);
         optionPanel.add(setButton);
+        resetButton.setBounds(0,110,200,20);
+        optionPanel.add(resetButton);
 
 
     }
@@ -210,6 +222,7 @@ public class OptionFrame extends JFrame {
             GCheckBox i = (GCheckBox) e.getSource();
             OptionFrame of = OpenLogViewerApp.getInstance().getOptionFrame();
             if (i.isSelected()) {
+
                 of.getActiveList().addItem(GDE);
                 of.getActiveList().setSelectedItem(GDE);
 
