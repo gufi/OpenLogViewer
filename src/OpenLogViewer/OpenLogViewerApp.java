@@ -155,6 +155,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
             File openFile = fileChooser.getSelectedFile();
             if(Utilities.getExtension(openFile).equals("bin") || fileChooser.getFileFilter() instanceof FreeEMSFileFilter) new FreeEMSBin(openFile);
             else new CSVTypeLog(openFile);
+            if (openFile != null) OpenLogViewerApp.getInstance().setTitle("OpenLogViewer - " + openFile.getName());
         }
     }
 
