@@ -56,33 +56,35 @@ public class OptionFrame extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
-            boolean somethingChanged = false;
-            if (!maxField.getText().equals(minField.getText())) {
-                if (!maxField.getText().equals("")) {
-                    if (GDE != null) {
-                        GDE.setMaxValue(Double.parseDouble(maxField.getText()));
-                        somethingChanged = true;
+            if (GDE != null) {
+                boolean somethingChanged = false;
+                if (!maxField.getText().equals(minField.getText())) {
+                    if (!maxField.getText().equals("")) {
+                        if (GDE != null) {
+                            GDE.setMaxValue(Double.parseDouble(maxField.getText()));
+                            somethingChanged = true;
+                        }
                     }
-                }
-                if (!minField.getText().equals("")) {
-                    if (GDE != null) {
-                        GDE.setMinValue(Double.parseDouble(minField.getText()));
-                        somethingChanged = true;
+                    if (!minField.getText().equals("")) {
+                        if (GDE != null) {
+                            GDE.setMinValue(Double.parseDouble(minField.getText()));
+                            somethingChanged = true;
+                        }
                     }
+
                 }
 
-            }
-            
-            if (!changeColor.getForeground().equals(GDE.getColor())) {
-                Color newColor = new Color(changeColor.getForeground().getRGB());
+                if (!changeColor.getForeground().equals(GDE.getColor())) {
+                    Color newColor = new Color(changeColor.getForeground().getRGB());
 
-                GDE.setColor(newColor);
-                findCheck(GDE);
-                somethingChanged = true;
-            }
-            if (somethingChanged) {
+                    GDE.setColor(newColor);
+                    findCheck(GDE);
+                    somethingChanged = true;
+                }
+                if (somethingChanged) {
 
-                OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+                    OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+                }
             }
         }
     };
