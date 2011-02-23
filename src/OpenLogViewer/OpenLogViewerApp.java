@@ -35,6 +35,8 @@ import Graphing.LayeredGraph;
 import Utils.Utilities;
 import OpenLogViewer.optionpane.OptionFrame;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
@@ -87,21 +89,19 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
 
         openFileMenuItem.setText("Open Log");
         openFileMenuItem.setName("openlog"); // NOI18N
-        openFileMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+        openFileMenuItem.addActionListener(new ActionListener() {
 
-            @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                openFileMenuItemMouseReleased(evt);
+            public void actionPerformed(ActionEvent e) {
+                openFileMenuItemMouseReleased(e);
             }
         });
         fileMenu.add(openFileMenuItem);
 
         quitFileMenuItem.setText("Quit");
         quitFileMenuItem.setName("quit");
-        quitFileMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+        quitFileMenuItem.addActionListener(new ActionListener() {
 
-            @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+            public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         });
@@ -118,7 +118,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         pack();
     }
 
-    private void openFileMenuItemMouseReleased(java.awt.event.MouseEvent evt) {
+    private void openFileMenuItemMouseReleased(ActionEvent evt) {
         OpenLogViewerApp.openFile();
     }
 
