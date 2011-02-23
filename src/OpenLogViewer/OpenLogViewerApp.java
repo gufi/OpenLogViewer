@@ -56,46 +56,49 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private void initComponents() {
         optionFrame = new OptionFrame("Option Pane");
         mainPanel = new javax.swing.JPanel();
-        //drawnGraph = new DrawnGraph();
         layeredGraph = new LayeredGraph();
         playBar = new PlayBarPanel();
-
+        graphMenu = new GraphMenu();
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        editMenu = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
         quitFileMenuItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
-        graphMenu = new GraphMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        setLayout(new java.awt.BorderLayout());
-        add(mainPanel, java.awt.BorderLayout.CENTER);
 
-        mainPanel.setName("Main Panel"); // NOI18N
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        this.setLayout(new java.awt.BorderLayout());
+
+        ////////////////////////////////////////////////////////////
+        ///setup mainpanel
+        ///////////////////////////////////////////////////////////
+        this.add(mainPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.setName("Main Panel");
         mainPanel.setLayout(new java.awt.BorderLayout());
 
         layeredGraph.setPreferredSize(new Dimension(600, 400));
+
+
         mainPanel.add(layeredGraph, java.awt.BorderLayout.CENTER);
-
-
-
         mainPanel.add(playBar, java.awt.BorderLayout.SOUTH);
 
-        mainMenuBar.setName("jMenuBar1"); // NOI18N
 
-        fileMenu.setText("File");
-        fileMenu.setName("file"); // NOI18N
 
+
+        //////////////////////////////////////////////////////////////////
+        ///////////File Menu
+        //////////////////////////////////////////////////////////////////
         openFileMenuItem.setText("Open Log");
-        openFileMenuItem.setName("openlog"); // NOI18N
+        openFileMenuItem.setName("openlog");
         openFileMenuItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 openFileMenuItemMouseReleased(e);
             }
         });
-        fileMenu.add(openFileMenuItem);
+
 
         quitFileMenuItem.setText("Quit");
         quitFileMenuItem.setName("quit");
@@ -105,13 +108,26 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
                 System.exit(0);
             }
         });
+
+
+        fileMenu.setText("File");
+        fileMenu.setName("file");
+        fileMenu.add(openFileMenuItem);
         fileMenu.add(quitFileMenuItem);
 
-        mainMenuBar.add(fileMenu);
-
+        ////////////////////////////////////////////////////////////////////
+        ///////////////Edit Menu
+        ////////////////////////////////////////////////////////////////////
         editMenu.setText("Edit");
         editMenu.setName("edit"); // NOI18N
+
+        mainMenuBar.setName("Main Menu");
+        mainMenuBar.add(fileMenu);
         mainMenuBar.add(editMenu);
+        ////////////////////////////////////////////////////////////////////
+        ///////////////////Graph menu
+        /////////////////////GraphMenu.java
+        ////////////////////////////////////////////////////////////////////
         mainMenuBar.add(graphMenu);
 
         setJMenuBar(mainMenuBar);
@@ -138,10 +154,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
-
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
                 try {
                     // Set cross-platform Java L&F (also called "Metal")

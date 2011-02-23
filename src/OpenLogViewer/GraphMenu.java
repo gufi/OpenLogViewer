@@ -35,9 +35,7 @@ import javax.swing.JMenuItem;
  */
 public class GraphMenu extends JMenu {
 
-    private JCheckBoxMenuItem antiAliasing;
     private JMenuItem optionPaneItem;
-    private OptionFrame optionFrame;
 
     public GraphMenu(String s, boolean b) {
         super(s, b);

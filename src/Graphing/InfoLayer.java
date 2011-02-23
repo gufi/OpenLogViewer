@@ -43,6 +43,8 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     int xMouseCoord;
     int yMouseCoord;
     boolean mouseOver;
+    private Color vertBar = new Color(255, 255, 255, 100);
+    private Color textBackground = new Color(0, 0, 0, 170);
 
     public InfoLayer() {
         logStatus = GenericLog.LOG_NOT_LOADED;
@@ -71,21 +73,19 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             Dimension d = this.getSize();
             LayeredGraph lp = (LayeredGraph) this.getParent();
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             if (mouseOver) {
-                g2d.setColor(new Color(255,255,255,100));
-                g2d.drawLine(d.width/2, 0, d.width/2, d.height);
+                g2d.setColor(vertBar);
+                g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);
                 g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
 
                 for (int i = 0; i < lp.getComponentCount(); i++) {
                     if (lp.getComponent(i) instanceof GraphLayer) {
                         GraphLayer gl = (GraphLayer) lp.getComponent(i);
-                        
-                            g2d.setColor(gl.getColor());
-                            //g2d.drawString("blah " + Double.toString(gl.getData().get(xMouseCoord + lp.getCurrent())), xMouseCoord, yMouseCoord + 20 + (20 * i));
-                            g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), xMouseCoord+20, yMouseCoord + 15 + (15*i));
-                        
+                        g2d.setColor(textBackground);
+                        g2d.fillRect(xMouseCoord , yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
+                        g2d.setColor(gl.getColor());
+                        g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), xMouseCoord +2, yMouseCoord + 15 + (15 * i));
                     }
                 }
             }
