@@ -97,7 +97,10 @@ public class GraphLayer extends JPanel {
     }
 
     public Double getMouseInfo(int i ) {
-        if(i < drawnData.size())return drawnData.get(i);
+        LayeredGraph lg = (LayeredGraph)this.getParent();
+        int getIt = i+lg.getCurrent()-this.getSize().width/2;
+        if(getIt < GDE.size() && getIt > 0) return GDE.get(getIt);
+        //if(i < drawnData.size())return drawnData.get(i);
         else return 0.0;
     }
 
