@@ -48,7 +48,7 @@ public class FreeEMSFileFilter extends FileFilter {
             return true;
         }
         String extension = Utilities.getExtension(f);
-        if( extension.equals("bin")) return true;
+        if(extension != null && extension.equals("bin")) return true;
 
         //if nothing is satisfied return false
         return false;
