@@ -47,6 +47,8 @@ public class OptionFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
             GDE.reset();
+            findCheck(GDE);
+            changeColor.setForeground(GDE.getColor());
             OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
         }
     };
@@ -70,12 +72,17 @@ public class OptionFrame extends JFrame {
                 }
 
             }
+            
             if (!changeColor.getForeground().equals(GDE.getColor())) {
-                Color newColor = Color.decode(changeColor.getForeground().toString());
+                //System.out.println(GDE.getColor().toString() + " " + changeColor.getForeground().toString());
+                Color newColor = new Color(changeColor.getForeground().getRGB());
+
                 GDE.setColor(newColor);
+                findCheck(GDE);
                 somethingChanged = true;
             }
             if (somethingChanged) {
+
                 OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
             }
         }
@@ -88,7 +95,7 @@ public class OptionFrame extends JFrame {
                 Color newColor = JColorChooser.showDialog(
                         OpenLogViewerApp.getInstance().getOptionFrame(),
                         "Choose Background Color", GDE.getColor());
-                GDE.setColor(newColor);
+                //GDE.setColor(newColor);
                 changeColor.setForeground(newColor);
                 changeColor.repaint();
                 //OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
@@ -148,7 +155,7 @@ public class OptionFrame extends JFrame {
         optionPanel.add(changeColor);
         setButton.setBounds(0, 90, 200, 20);
         optionPanel.add(setButton);
-        resetButton.setBounds(0,110,200,20);
+        resetButton.setBounds(0, 110, 200, 20);
         optionPanel.add(resetButton);
 
 
@@ -201,6 +208,19 @@ public class OptionFrame extends JFrame {
         this.activeList = activeList;
     }
 
+    private void findCheck(GenericDataElement GDE) {
+        for (int i = 0; i < headerPanel.getComponentCount(); i++) {
+            if (headerPanel.getComponent(i) instanceof GCheckBox) {
+                GCheckBox gcb = (GCheckBox) headerPanel.getComponent(i);
+                if (gcb.getGDE() == GDE) {
+                    gcb.setBackground(GDE.getColor());
+                    gcb.repaint();
+                }
+            }
+        }
+
+    }
+
     private class GCheckBox extends JCheckBox implements ActionListener {
 
         GenericDataElement GDE;
@@ -212,6 +232,7 @@ public class OptionFrame extends JFrame {
 
         public void setRef(GenericDataElement GDE) {
             this.GDE = GDE;
+
         }
 
         public GenericDataElement getGDE() {
@@ -225,10 +246,12 @@ public class OptionFrame extends JFrame {
 
                 of.getActiveList().addItem(GDE);
                 of.getActiveList().setSelectedItem(GDE);
-
+                i.setBackground(GDE.getColor());
+                i.repaint();
                 OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(i.getName());
             } else {
                 of.getActiveList().removeItem(GDE);
+                i.setBackground(null);
                 if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(i.getName())) {
                     OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
                 }
