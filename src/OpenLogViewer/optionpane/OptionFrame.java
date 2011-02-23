@@ -44,16 +44,20 @@ public class OptionFrame extends JFrame {
     private JButton resetButton = new JButton("Reset");
     ActionListener resetButtonActionListener = new ActionListener() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
-            GDE.reset();
-            findCheck(GDE);
-            changeColor.setForeground(GDE.getColor());
-            OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+            if (GDE != null) {
+                GDE.reset();
+                findCheck(GDE);
+                changeColor.setForeground(GDE.getColor());
+                OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+            }
         }
     };
     ActionListener commitButtonActionListener = new ActionListener() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
             if (GDE != null) {
@@ -90,6 +94,7 @@ public class OptionFrame extends JFrame {
     };
     ActionListener colorChangeListener = new ActionListener() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
             if (GDE != null) {
@@ -104,6 +109,7 @@ public class OptionFrame extends JFrame {
     };
     ActionListener updateMinMax = new ActionListener() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
             if (GDE != null) {
@@ -180,7 +186,7 @@ public class OptionFrame extends JFrame {
             toBeAdded.setSelected(false);
             this.getHeaderPanel().add(toBeAdded);
         }
-        this.setDefaultCloseOperation(this.ICONIFIED);
+        this.setDefaultCloseOperation(OptionFrame.ICONIFIED);
         this.setVisible(true);
     }
 
@@ -239,6 +245,7 @@ public class OptionFrame extends JFrame {
             return GDE;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             GCheckBox i = (GCheckBox) e.getSource();
             OptionFrame of = OpenLogViewerApp.getInstance().getOptionFrame();

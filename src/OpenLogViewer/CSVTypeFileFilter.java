@@ -54,6 +54,8 @@ public class CSVTypeFileFilter extends FileFilter {
                 return true;
             } else if (extension.equals("xls")) {
                 return true;
+            }else if (extension.equals("msl")) {
+                return true;
             }
         }
         //if nothing is satisfied return false
