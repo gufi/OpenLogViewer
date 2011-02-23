@@ -1,27 +1,27 @@
-/* DataReader
+/* OpenLogViewer
  *
  * Copyright 2011
  *
- * This file is part of the DataReader project.
+ * This file is part of the OpenLogViewer project.
  *
- * DataReader software is free software: you can redistribute it and/or modify
+ * OpenLogViewer software is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DataReader software is distributed in the hope that it will be useful,
+ * OpenLogViewer software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with any DataReader software.  If not, see http://www.gnu.org/licenses/
+ * along with any OpenLogViewer software.  If not, see http://www.gnu.org/licenses/
  *
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
 
-package datareader;
+package OpenLogViewer;
 
 import Decoder.FreeEMSBin;
 import java.io.File;
@@ -54,7 +54,7 @@ public class PlayBarPanel extends JPanel {
         this.setPreferredSize(new java.awt.Dimension(857, 40));
         this.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
 
-        reverseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/datareader/resources/Playbar_01.png"))); // NOI18N
+        reverseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_01.png"))); // NOI18N
         reverseButton.setAlignmentY(0.0F);
         reverseButton.setBorder(null);
         reverseButton.setBorderPainted(false);
@@ -68,7 +68,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(reverseButton);
 
-        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/datareader/resources/Playbar_02.png"))); // NOI18N
+        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_02.png"))); // NOI18N
         playButton.setAlignmentY(0.0F);
         playButton.setBorder(null);
         playButton.setBorderPainted(false);
@@ -82,7 +82,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(playButton);
 
-        pauseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/datareader/resources/Playbar_03.png"))); // NOI18N
+        pauseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_03.png"))); // NOI18N
         pauseButton.setAlignmentY(0.0F);
         pauseButton.setBorder(null);
         pauseButton.setBorderPainted(false);
@@ -96,7 +96,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(pauseButton);
 
-        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/datareader/resources/Playbar_04.png"))); // NOI18N
+        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_04.png"))); // NOI18N
         stopButton.setAlignmentY(0.0F);
         stopButton.setBorder(null);
         stopButton.setBorderPainted(false);
@@ -110,7 +110,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(stopButton);
 
-        fastForwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/datareader/resources/Playbar_05.png"))); // NOI18N
+        fastForwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_05.png"))); // NOI18N
         fastForwardButton.setAlignmentY(0.0F);
         fastForwardButton.setBorder(null);
         fastForwardButton.setBorderPainted(false);
@@ -124,7 +124,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(fastForwardButton);
 
-        ejectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/datareader/resources/Playbar_06.png"))); // NOI18N
+        ejectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_06.png"))); // NOI18N
         ejectButton.setAlignmentY(0.0F);
         ejectButton.setBorder(null);
         ejectButton.setBorderPainted(false);
@@ -143,35 +143,35 @@ public class PlayBarPanel extends JPanel {
      * @param evt
      */
     private void playButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getLayeredGraph().play();
+        OpenLogViewerApp.getInstance().getLayeredGraph().play();
     }
     /**
      * Modifys the state of the PlayableLog to pause
      * @param evt
      */
     private void pauseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getLayeredGraph().pause();
+        OpenLogViewerApp.getInstance().getLayeredGraph().pause();
     }
     /**
      * Modifys the state of the PlayableLog to stop and reset to the beginning
      * @param evt
      */
     private void stopButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getLayeredGraph().stop();
+        OpenLogViewerApp.getInstance().getLayeredGraph().stop();
     }
     /**
      * Speeds up the play back speed of the PlayableLog
      * @param evt
      */
     private void fastForwardButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getLayeredGraph().fastForward();
+        OpenLogViewerApp.getInstance().getLayeredGraph().fastForward();
     }
     /**
      * Slows down the play back speed of the Playable Log
      * @param evt
      */
     private void reverseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.getInstance().getLayeredGraph().slowDown();
+        OpenLogViewerApp.getInstance().getLayeredGraph().slowDown();
     }
     /**
      * Un-Implimented currently, future plans are to have this as an alternate to open a new log
@@ -179,8 +179,8 @@ public class PlayBarPanel extends JPanel {
      */
     private void ejectButtonMouseReleased(java.awt.event.MouseEvent evt) {
         
-         //DataLogReaderApp.openFile();
-         DataLogReaderApp.getInstance().getLayeredGraph().reset();
+         //OpenLogViewerApp.openFile();
+         OpenLogViewerApp.getInstance().getLayeredGraph().reset();
     }
    // private FreeEMSBin fems;
     private javax.swing.JButton playButton;

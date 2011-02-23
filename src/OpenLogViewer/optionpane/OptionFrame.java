@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package datareader.optionpane;
+package OpenLogViewer.optionpane;
 
 import GenericLog.GenericDataElement;
 import GenericLog.GenericLog;
-import datareader.DataLogReaderApp;
+import OpenLogViewer.OpenLogViewerApp;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -67,7 +67,7 @@ public class OptionFrame extends JFrame {
                 somethingChanged = true;
             }
             if (somethingChanged) {
-                DataLogReaderApp.getInstance().getLayeredGraph().repaint();
+                OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
             }
         }
     };
@@ -77,12 +77,12 @@ public class OptionFrame extends JFrame {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
             if (GDE != null) {
                 Color newColor = JColorChooser.showDialog(
-                        DataLogReaderApp.getInstance().getOptionFrame(),
+                        OpenLogViewerApp.getInstance().getOptionFrame(),
                         "Choose Background Color", GDE.getColor());
                 GDE.setColor(newColor);
                 changeColor.setForeground(newColor);
                 changeColor.repaint();
-                //DataLogReaderApp.getInstance().getLayeredGraph().repaint();
+                //OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
             }
         }
     };
@@ -208,16 +208,16 @@ public class OptionFrame extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             GCheckBox i = (GCheckBox) e.getSource();
-            OptionFrame of = DataLogReaderApp.getInstance().getOptionFrame();
+            OptionFrame of = OpenLogViewerApp.getInstance().getOptionFrame();
             if (i.isSelected()) {
                 of.getActiveList().addItem(GDE);
                 of.getActiveList().setSelectedItem(GDE);
 
-                DataLogReaderApp.getInstance().getLayeredGraph().addGraph(i.getName());
+                OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(i.getName());
             } else {
                 of.getActiveList().removeItem(GDE);
-                if (DataLogReaderApp.getInstance().getLayeredGraph().removeGraph(i.getName())) {
-                    DataLogReaderApp.getInstance().getLayeredGraph().repaint();
+                if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(i.getName())) {
+                    OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
                 }
             }
         }

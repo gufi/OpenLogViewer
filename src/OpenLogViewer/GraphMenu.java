@@ -1,28 +1,28 @@
-/* DataReader
+/* OpenLogViewer
  *
  * Copyright 2011
  *
- * This file is part of the DataReader project.
+ * This file is part of the OpenLogViewer project.
  *
- * DataReader software is free software: you can redistribute it and/or modify
+ * OpenLogViewer software is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DataReader software is distributed in the hope that it will be useful,
+ * OpenLogViewer software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with any DataReader software.  If not, see http://www.gnu.org/licenses/
+ * along with any OpenLogViewer software.  If not, see http://www.gnu.org/licenses/
  *
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package datareader;
+package OpenLogViewer;
 
-import datareader.optionpane.OptionFrame;
+import OpenLogViewer.optionpane.OptionFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JCheckBoxMenuItem;
@@ -63,8 +63,8 @@ public class GraphMenu extends JMenu {
         optionPaneItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (!DataLogReaderApp.getInstance().getOptionFrame().isVisible()) {
-                    DataLogReaderApp.getInstance().getOptionFrame().setVisible(true);
+                if (!OpenLogViewerApp.getInstance().getOptionFrame().isVisible()) {
+                    OpenLogViewerApp.getInstance().getOptionFrame().setVisible(true);
                 }
             }
         });

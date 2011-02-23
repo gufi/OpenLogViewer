@@ -1,28 +1,28 @@
-/* DataReader
+/* OpenLogViewer
  *
  * Copyright 2011
  *
- * This file is part of the DataReader project.
+ * This file is part of the OpenLogViewer project.
  *
- * DataReader software is free software: you can redistribute it and/or modify
+ * OpenLogViewer software is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DataReader software is distributed in the hope that it will be useful,
+ * OpenLogViewer software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with any DataReader software.  If not, see http://www.gnu.org/licenses/
+ * along with any OpenLogViewer software.  If not, see http://www.gnu.org/licenses/
  *
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
 package GenericLog;
 
-import datareader.DataLogReaderApp;
+import OpenLogViewer.OpenLogViewerApp;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -45,11 +45,11 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 
         public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
             if ((Integer) propertyChangeEvent.getNewValue() == 0) {
-                DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-                DataLogReaderApp.getInstance().getLayeredGraph().setStatus(0);
+                OpenLogViewerApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+                OpenLogViewerApp.getInstance().getLayeredGraph().setStatus(0);
             } else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
-                DataLogReaderApp.getInstance().getOptionFrame().updateFromLog((GenericLog) propertyChangeEvent.getSource());
-                DataLogReaderApp.getInstance().getLayeredGraph().setStatus(1);
+                OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog((GenericLog) propertyChangeEvent.getSource());
+                OpenLogViewerApp.getInstance().getLayeredGraph().setStatus(1);
             }
         }
     };
@@ -161,7 +161,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
      * @param listener
      * <code>new OBJECT.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {<br>
      *       public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {<br>
-     *           DataLogReaderApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+     *           OpenLogViewerApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
      *           ...Insert code here...<br>
      *
      *       }<br>

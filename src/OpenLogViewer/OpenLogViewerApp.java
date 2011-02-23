@@ -1,40 +1,40 @@
-/* DataReader
+/* OpenLogViewer
  *
  * Copyright 2011
  *
- * This file is part of the DataReader project.
+ * This file is part of the OpenLogViewer project.
  *
- * DataReader software is free software: you can redistribute it and/or modify
+ * OpenLogViewer software is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DataReader software is distributed in the hope that it will be useful,
+ * OpenLogViewer software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with any DataReader software.  If not, see http://www.gnu.org/licenses/
+ * along with any OpenLogViewer software.  If not, see http://www.gnu.org/licenses/
  *
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
 
 /*
- * DataLogReaderApp.java
+ * OpenLogViewerApp.java
  *
  * Created on Jan 26, 2011, 2:55:31 PM
  */
 
-package datareader;
+package OpenLogViewer;
 
 import Decoder.CSVTypeLog;
 import Decoder.FreeEMSBin;
 import GenericLog.GenericLog;
 import Graphing.LayeredGraph;
 import Utils.Utilities;
-import datareader.optionpane.OptionFrame;
+import OpenLogViewer.optionpane.OptionFrame;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -43,10 +43,10 @@ import javax.swing.JFileChooser;
  *
  * @author Bryan
  */
-public class DataLogReaderApp extends javax.swing.JFrame {
+public class OpenLogViewerApp extends javax.swing.JFrame {
 
-    /** Creates new form DataLogReaderApp */
-    public DataLogReaderApp() {
+    /** Creates new form OpenLogViewerApp */
+    public OpenLogViewerApp() {
         initComponents();
     }
 
@@ -68,15 +68,9 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         setLayout(new java.awt.BorderLayout());
         add(mainPanel, java.awt.BorderLayout.CENTER);
 
-        mainPanel.setName("jPanel1"); // NOI18N
+        mainPanel.setName("Main Panel"); // NOI18N
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        //drawnGraph.setName("pl"); // NOI18N
-        //drawnGraph.setPreferredSize(new Dimension(600,400));
-        //drawnGraph.setLayout(new java.awt.FlowLayout());
-        
-
-        //mainPanel.add(drawnGraph, java.awt.BorderLayout.CENTER);
         layeredGraph.setPreferredSize(new Dimension(600,400));
         mainPanel.add(layeredGraph,java.awt.BorderLayout.CENTER);
 
@@ -87,7 +81,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         mainMenuBar.setName("jMenuBar1"); // NOI18N
 
         fileMenu.setText("File");
-        fileMenu.setName("jMenu1"); // NOI18N
+        fileMenu.setName("file"); // NOI18N
 
         openFileMenuItem.setText("Open Log");
         openFileMenuItem.setName("openlog"); // NOI18N
@@ -102,7 +96,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         mainMenuBar.add(fileMenu);
 
         editMenu.setText("Edit");
-        editMenu.setName("jMenu2"); // NOI18N
+        editMenu.setName("edit"); // NOI18N
         mainMenuBar.add(editMenu);
         mainMenuBar.add(graphMenu);
 
@@ -110,11 +104,10 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         pack();
     }
     private void openFileMenuItemMouseReleased( java.awt.event.MouseEvent evt) {
-        DataLogReaderApp.openFile();
+        OpenLogViewerApp.openFile();
     }
 
     public void setLog(GenericLog genericLog) {
-        //drawnGraph.setLog(genericLog);
         layeredGraph.setLog(genericLog);
     }
     
@@ -122,7 +115,7 @@ public class DataLogReaderApp extends javax.swing.JFrame {
      * Returns the reference to this instance, it is meant to be a method to make getting the main frame simpler
      * @return <code>this</code> instance
      */
-    public static DataLogReaderApp getInstance() {
+    public static OpenLogViewerApp getInstance() {
         return mainAppRef;
     }
 
@@ -132,15 +125,12 @@ public class DataLogReaderApp extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-               mainAppRef = new DataLogReaderApp();
+               mainAppRef = new OpenLogViewerApp();
                        mainAppRef.setVisible(true);
+                       mainAppRef.setTitle("OpenLogViewer -");
             }
         });
     }
-
-   // public DrawnGraph getDrawnGraph() {
-   //     return drawnGraph;
-    //}
 
     public LayeredGraph getLayeredGraph() {
         return layeredGraph;
@@ -160,31 +150,27 @@ public class DataLogReaderApp extends javax.swing.JFrame {
         CSVTypeFileFilter filter2 = new CSVTypeFileFilter();
         fileChooser.addChoosableFileFilter(filter);
         fileChooser.addChoosableFileFilter(filter2);
-        //fileChooser.setAcceptAllFileFilterUsed(false);
-        int acceptValue = fileChooser.showOpenDialog(DataLogReaderApp.getInstance());
+        int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
         if(acceptValue == JFileChooser.APPROVE_OPTION) {
             File openFile = fileChooser.getSelectedFile();
-            if(Utilities.getExtension(openFile).equals("bin")) new FreeEMSBin(openFile);
+            if(Utilities.getExtension(openFile).equals("bin") || fileChooser.getFileFilter() instanceof FreeEMSFileFilter) new FreeEMSBin(openFile);
             else new CSVTypeLog(openFile);
         }
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    public static DataLogReaderApp mainAppRef;
+    // Variables declaration -
+    public static OpenLogViewerApp mainAppRef;
 
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JPanel mainPanel;
-    //private DrawnGraph drawnGraph;
     private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
     
-    // End of variables declaration//GEN-END:variables
     private GenericLog genLog;
     private FreeEMSBin fems;
     private OptionFrame optionFrame;
-    //DrawnGraph drawnGraph;
 }
