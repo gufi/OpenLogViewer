@@ -74,7 +74,6 @@ public class OptionFrame extends JFrame {
             }
             
             if (!changeColor.getForeground().equals(GDE.getColor())) {
-                //System.out.println(GDE.getColor().toString() + " " + changeColor.getForeground().toString());
                 Color newColor = new Color(changeColor.getForeground().getRGB());
 
                 GDE.setColor(newColor);
@@ -95,7 +94,6 @@ public class OptionFrame extends JFrame {
                 Color newColor = JColorChooser.showDialog(
                         OpenLogViewerApp.getInstance().getOptionFrame(),
                         "Choose Background Color", GDE.getColor());
-                //GDE.setColor(newColor);
                 changeColor.setForeground(newColor);
                 changeColor.repaint();
                 //OpenLogViewerApp.getInstance().getLayeredGraph().repaint();

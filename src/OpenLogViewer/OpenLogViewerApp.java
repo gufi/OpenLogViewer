@@ -26,7 +26,6 @@
  *
  * Created on Jan 26, 2011, 2:55:31 PM
  */
-
 package OpenLogViewer;
 
 import Decoder.CSVTypeLog;
@@ -38,6 +37,8 @@ import OpenLogViewer.optionpane.OptionFrame;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -56,7 +57,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         //drawnGraph = new DrawnGraph();
         layeredGraph = new LayeredGraph();
         playBar = new PlayBarPanel();
-        
+
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
@@ -72,10 +73,10 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         mainPanel.setName("Main Panel"); // NOI18N
         mainPanel.setLayout(new java.awt.BorderLayout());
 
-        layeredGraph.setPreferredSize(new Dimension(600,400));
-        mainPanel.add(layeredGraph,java.awt.BorderLayout.CENTER);
+        layeredGraph.setPreferredSize(new Dimension(600, 400));
+        mainPanel.add(layeredGraph, java.awt.BorderLayout.CENTER);
 
-        
+
 
         mainPanel.add(playBar, java.awt.BorderLayout.SOUTH);
 
@@ -87,6 +88,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         openFileMenuItem.setText("Open Log");
         openFileMenuItem.setName("openlog"); // NOI18N
         openFileMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+
             @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 openFileMenuItemMouseReleased(evt);
@@ -97,6 +99,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         quitFileMenuItem.setText("Quit");
         quitFileMenuItem.setName("quit");
         quitFileMenuItem.addMouseListener(new java.awt.event.MouseAdapter() {
+
             @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 System.exit(0);
@@ -114,14 +117,15 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         setJMenuBar(mainMenuBar);
         pack();
     }
-    private void openFileMenuItemMouseReleased( java.awt.event.MouseEvent evt) {
+
+    private void openFileMenuItemMouseReleased(java.awt.event.MouseEvent evt) {
         OpenLogViewerApp.openFile();
     }
 
     public void setLog(GenericLog genericLog) {
         layeredGraph.setLog(genericLog);
     }
-    
+
     /**
      * Returns the reference to this instance, it is meant to be a method to make getting the main frame simpler
      * @return <code>this</code> instance
@@ -131,14 +135,29 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     }
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
+
+
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
-               mainAppRef = new OpenLogViewerApp();
-                       mainAppRef.setVisible(true);
-                       mainAppRef.setTitle("OpenLogViewer -");
+                try {
+                    // Set cross-platform Java L&F (also called "Metal")
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                } catch (UnsupportedLookAndFeelException e) {
+                    // handle exception
+                } catch (ClassNotFoundException e) {
+                    // handle exception
+                } catch (InstantiationException e) {
+                    // handle exception
+                } catch (IllegalAccessException e) {
+                    // handle exception
+                }
+                mainAppRef = new OpenLogViewerApp();
+                mainAppRef.setVisible(true);
+                mainAppRef.setTitle("OpenLogViewer -");
             }
         });
     }
@@ -162,17 +181,20 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         fileChooser.addChoosableFileFilter(filter);
         fileChooser.addChoosableFileFilter(filter2);
         int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
-        if(acceptValue == JFileChooser.APPROVE_OPTION) {
+        if (acceptValue == JFileChooser.APPROVE_OPTION) {
             File openFile = fileChooser.getSelectedFile();
-            if(Utilities.getExtension(openFile).equals("bin") || fileChooser.getFileFilter() instanceof FreeEMSFileFilter) new FreeEMSBin(openFile);
-            else new CSVTypeLog(openFile);
-            if (openFile != null) OpenLogViewerApp.getInstance().setTitle("OpenLogViewer - " + openFile.getName());
+            if (Utilities.getExtension(openFile).equals("bin") || fileChooser.getFileFilter() instanceof FreeEMSFileFilter) {
+                new FreeEMSBin(openFile);
+            } else {
+                new CSVTypeLog(openFile);
+            }
+            if (openFile != null) {
+                OpenLogViewerApp.getInstance().setTitle("OpenLogViewer - " + openFile.getName());
+            }
         }
     }
-
     // Variables declaration -
     public static OpenLogViewerApp mainAppRef;
-
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuBar mainMenuBar;
@@ -182,7 +204,6 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
-    
     private GenericLog genLog;
     private FreeEMSBin fems;
     private OptionFrame optionFrame;
