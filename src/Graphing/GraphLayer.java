@@ -61,8 +61,8 @@ public class GraphLayer extends JPanel {
     public void paint(Graphics g) { // overridden paint because there will be no other painting other than this
       
         if(!this.getParent().getSize().equals(this.getSize())) {
-            initGraph();
             this.setSize(this.getParent().getSize());
+            initGraph();
         }
         Dimension d = this.getSize();
         Graphics2D g2d = (Graphics2D) g;

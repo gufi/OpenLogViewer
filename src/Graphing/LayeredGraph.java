@@ -71,6 +71,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+        
         if (play && current < currentMax && genLog.size() > 0) {
             current++;
             advanceGraph();
@@ -80,6 +81,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         }
 
     }
+    
 
     public void addGraph(String header) {
         boolean p = play;
