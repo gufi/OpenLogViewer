@@ -20,7 +20,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -171,6 +170,7 @@ public class OptionFrame extends JFrame {
 
 
         this.getHeaderPanel().removeAll();
+        this.repaint();
         this.getActiveList().removeAllItems();
 
         Iterator i = gl.keySet().iterator();
