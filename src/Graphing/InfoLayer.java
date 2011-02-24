@@ -39,6 +39,7 @@ import javax.swing.JPanel;
  */
 public class InfoLayer extends JPanel implements MouseMotionListener, MouseListener {
 
+    int zoom;
     int logStatus;
     int xMouseCoord;
     int yMouseCoord;
@@ -47,6 +48,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     private Color textBackground = new Color(0, 0, 0, 170);
 
     public InfoLayer() {
+        zoom = 1;
         logStatus = GenericLog.LOG_NOT_LOADED;
         xMouseCoord = -100;
         xMouseCoord = -100;
@@ -95,6 +97,13 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     public void setGraphStatus(int logStatus) {
         this.logStatus = logStatus;
         repaint();
+    }
+
+    public void zoomIn() {
+        if(zoom <= 10) zoom++;
+    }
+    public void zoomOut() {
+        if(zoom > 1) zoom--;
     }
 
     //MOUSE MOTION LISTENER FUNCTIONALITY

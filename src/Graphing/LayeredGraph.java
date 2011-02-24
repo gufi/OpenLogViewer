@@ -44,6 +44,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     private boolean antiAliasing;
     private InfoLayer infoLayer;
     int currentMax;
+    int zoom;
     //MouseMotion Flags
     //MouseListener Flags
 
@@ -58,7 +59,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         current = 0;
         antiAliasing = false;
         infoLayer = new InfoLayer();
-        
+        zoom = 1;
         init();
     }
     private void init() {
@@ -86,11 +87,12 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
             stop();
         }
         GraphLayer graph = new GraphLayer();
+        graph.setZoom(zoom);
         graph.setSize(this.getSize());
-        
         graph.setName(header);
         this.add(graph);
         graph.setData(genLog.get(header));
+        
         getCurrentMax();
         if (p) {
             play();
@@ -167,6 +169,36 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
                 gl.advanceGraph();
             }
         }
+    }
+
+    public void zoomIn() {
+        if(zoom <= 10) zoom++;
+        for (int i = 0; i < this.getComponentCount(); i++) {
+            if (this.getComponent(i) instanceof GraphLayer) {
+                GraphLayer gl = (GraphLayer) this.getComponent(i);
+                gl.zoomIn();
+            }else if(this.getComponent(i) instanceof InfoLayer) {
+                InfoLayer il = (InfoLayer) this.getComponent(i);
+                il.zoomIn();
+            }
+        }
+        this.initGraph();
+        repaint();
+    }
+
+    public void zoomOut() {
+        if(zoom > 1) zoom--;
+        for (int i = 0; i < this.getComponentCount(); i++) {
+            if (this.getComponent(i) instanceof GraphLayer) {
+                GraphLayer gl = (GraphLayer) this.getComponent(i);
+                gl.zoomOut();
+            }else if(this.getComponent(i) instanceof InfoLayer) {
+                InfoLayer il = (InfoLayer) this.getComponent(i);
+                il.zoomOut();
+            }
+        }
+        this.initGraph();
+        repaint();
     }
 
     /**

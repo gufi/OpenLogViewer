@@ -38,6 +38,8 @@ public class PlayBarPanel extends JPanel {
      */
     public PlayBarPanel() {
         super();
+        zoomInButton = new javax.swing.JButton();
+        zoomOutButton = new javax.swing.JButton();
         reverseButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         pauseButton = new javax.swing.JButton();
@@ -53,6 +55,34 @@ public class PlayBarPanel extends JPanel {
         this.setName("this"); // NOI18N
         this.setPreferredSize(new java.awt.Dimension(857, 40));
         this.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
+        
+        zoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_+.png"))); // NOI18N
+        zoomInButton.setAlignmentY(0.0F);
+        zoomInButton.setBorder(null);
+        zoomInButton.setBorderPainted(false);
+        zoomInButton.setContentAreaFilled(false);
+        zoomInButton.setName("reverseButton"); // NOI18N
+        zoomInButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                zoomInButtonMouseReleased(evt);
+            }
+        });
+        this.add(zoomInButton);
+
+        zoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_-.png"))); // NOI18N
+        zoomOutButton.setAlignmentY(0.0F);
+        zoomOutButton.setBorder(null);
+        zoomOutButton.setBorderPainted(false);
+        zoomOutButton.setContentAreaFilled(false);
+        zoomOutButton.setName("reverseButton"); // NOI18N
+        zoomOutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                zoomOutButtonMouseReleased(evt);
+            }
+        });
+        this.add(zoomOutButton);
 
         reverseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OpenLogViewer/resources/Playbar_01.png"))); // NOI18N
         reverseButton.setAlignmentY(0.0F);
@@ -139,6 +169,20 @@ public class PlayBarPanel extends JPanel {
         this.add(ejectButton);
     }
     /**
+     * modifys the state of the PlayableLog zoom in 1 pixel up to 10 pixels
+     * @param evt
+     */
+    private void zoomInButtonMouseReleased( java.awt.event.MouseEvent evt ){
+        OpenLogViewerApp.getInstance().getLayeredGraph().zoomIn();
+    }
+    /**
+     * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
+     * @param evt
+     */
+    private void zoomOutButtonMouseReleased( java.awt.event.MouseEvent evt ){
+        OpenLogViewerApp.getInstance().getLayeredGraph().zoomOut();
+    }
+    /**
      * modifys the state of the PlayableLog to begin playing
      * @param evt
      */
@@ -183,6 +227,8 @@ public class PlayBarPanel extends JPanel {
          OpenLogViewerApp.getInstance().getLayeredGraph().reset();
     }
    // private FreeEMSBin fems;
+    private javax.swing.JButton zoomInButton;
+    private javax.swing.JButton zoomOutButton;
     private javax.swing.JButton playButton;
     private javax.swing.JButton reverseButton;
     private javax.swing.JButton stopButton;

@@ -41,6 +41,7 @@ public class GraphLayer extends JPanel {
     private GenericDataElement GDE;
     private Color graphColor;
     private LinkedList<Double> drawnData;
+    private int zoom;
 
     public GraphLayer() {
         this.setOpaque(false);
@@ -48,8 +49,7 @@ public class GraphLayer extends JPanel {
         this.
         GDE = null;
         drawnData = new LinkedList<Double>();
-        //Random r = new Random();
-        //graphColor = Color.getHSBColor(r.nextFloat(), 1.0F, 1.0F);
+        zoom = 1;
     }
 
     public GraphLayer(GenericDataElement GDE) {
@@ -73,8 +73,8 @@ public class GraphLayer extends JPanel {
             dat2.next();
             int i = 0;
               while(dat2.hasNext())  {
-                g2d.drawLine(i, chartNumber((Double)dat.next(), d.height, GDE.getMinValue(), GDE.getMaxValue()), i+1, chartNumber((Double)dat2.next(), d.height, GDE.getMinValue(), GDE.getMaxValue()));
-                i++;
+                g2d.drawLine(i, chartNumber((Double)dat.next(), d.height, GDE.getMinValue(), GDE.getMaxValue()), i+zoom, chartNumber((Double)dat2.next(), d.height, GDE.getMinValue(), GDE.getMaxValue()));
+                i+=zoom;
               }
         }
     }
@@ -98,9 +98,8 @@ public class GraphLayer extends JPanel {
 
     public Double getMouseInfo(int i ) {
         LayeredGraph lg = (LayeredGraph)this.getParent();
-        int getIt = i+lg.getCurrent()-this.getSize().width/2;
+        int getIt = (i/zoom)+lg.getCurrent()-((this.getSize().width/2)/zoom);
         if(getIt < GDE.size() && getIt > 0) return GDE.get(getIt);
-        //if(i < drawnData.size())return drawnData.get(i);
         else return 0.0;
     }
 
@@ -118,10 +117,11 @@ public class GraphLayer extends JPanel {
             LayeredGraph lg = (LayeredGraph) this.getParent();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
+            int zoomFactor = (d.width/2)/zoom+2; // add two datapoints to be drawn due to zoom clipping at the ends
             
-            if (lg.getCurrent() < d.width / 2) {
+            if (lg.getCurrent() < zoomFactor) {
                 int x = 0;
-                while (x < (d.width / 2) - lg.getCurrent()) {
+                while (x < (zoomFactor) - lg.getCurrent()) {
                     drawnData.add(0.0);
                     x++;
                 }
@@ -129,22 +129,25 @@ public class GraphLayer extends JPanel {
                 if(GDE.size()-1 < d.width-x) to = GDE.size()-1;
                 else to = d.width-x;
                 drawnData.addAll(GDE.subList(0, to));
-            } else if ((d.width / 2 + lg.getCurrent()) < GDE.size()) {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - d.width/2, d.width / 2 + lg.getCurrent()));
+            } else if ((zoomFactor + lg.getCurrent()) < GDE.size()) {
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, zoomFactor + lg.getCurrent()));
             } else {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - d.width / 2, GDE.size() - 1));
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, GDE.size() - 1));
             }
         }
     }
 
     public void advanceGraph() {
+
         if (GDE != null) {
             LayeredGraph lg = (LayeredGraph) this.getParent();
             Dimension d = this.getSize();
-            if ((lg.getCurrent() + d.width / 2) < GDE.size()) {
-                drawnData.add(GDE.get(lg.getCurrent() + d.width / 2));
+            int zoomFactor = (d.width/2)/zoom;
+
+            if ((lg.getCurrent() + zoomFactor) < GDE.size()) {
+                drawnData.add(GDE.get(lg.getCurrent() + zoomFactor));
             }
-            if (drawnData.size() > d.width / 2 + 1) {
+            if (drawnData.size() > zoomFactor + 1) {
                 drawnData.remove(0);
             } else {
                 lg.stop();
@@ -155,5 +158,15 @@ public class GraphLayer extends JPanel {
 
     public int graphSize() {
         return GDE.size();
+    }
+
+    public void zoomIn() {
+        if(zoom <= 10) zoom++;
+    }
+    public void zoomOut() {
+        if(zoom > 1) zoom--;
+    }
+    public void setZoom(int z) {
+        zoom = z;
     }
 }
