@@ -125,7 +125,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     public void mouseClicked(MouseEvent e) {
         LayeredGraph lg = (LayeredGraph) this.getParent();
 
-        int move = e.getX() - (int) (this.getSize().width / 2);
+        int move = (e.getX()/zoom) - (int) ((this.getSize().width / 2)/zoom);
         if (move + lg.getCurrent() < lg.getCurrentMax()) {
             if (move + lg.getCurrent() < 0) {
                 lg.setCurrent(0);
