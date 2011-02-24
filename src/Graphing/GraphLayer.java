@@ -73,7 +73,12 @@ public class GraphLayer extends JPanel {
             dat2.next();
             int i = 0;
               while(dat2.hasNext())  {
-                g2d.drawLine(i, chartNumber((Double)dat.next(), d.height, GDE.getMinValue(), GDE.getMaxValue()), i+zoom, chartNumber((Double)dat2.next(), d.height, GDE.getMinValue(), GDE.getMaxValue()));
+                  int a = chartNumber((Double)dat.next(), d.height, GDE.getMinValue(), GDE.getMaxValue());
+                  int b = chartNumber((Double)dat2.next(), d.height, GDE.getMinValue(), GDE.getMaxValue());
+                  if(zoom > 5) {
+                      g2d.fillOval(i-2, a-2, 4, 4);
+                  }
+                g2d.drawLine(i, a, i+zoom, b);
                 i+=zoom;
               }
         }
@@ -117,11 +122,11 @@ public class GraphLayer extends JPanel {
             LayeredGraph lg = (LayeredGraph) this.getParent();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
-            int zoomFactor = (d.width/2)/zoom+2; // add two datapoints to be drawn due to zoom clipping at the ends
+            int zoomFactor = (d.width/2)/zoom; // add two datapoints to be drawn due to zoom clipping at the ends
             
             if (lg.getCurrent() < zoomFactor) {
                 int x = 0;
-                while (x < (zoomFactor) - lg.getCurrent()) {
+                while (x <= (zoomFactor) - lg.getCurrent()) {
                     drawnData.add(0.0);
                     x++;
                 }
@@ -129,10 +134,10 @@ public class GraphLayer extends JPanel {
                 if(GDE.size()-1 < d.width-x) to = GDE.size()-1;
                 else to = d.width-x;
                 drawnData.addAll(GDE.subList(0, to));
-            } else if ((zoomFactor + lg.getCurrent()) < GDE.size()) {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, zoomFactor + lg.getCurrent()));
+            } else if ((zoomFactor + lg.getCurrent()+1) < GDE.size()) {
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor-1, zoomFactor + lg.getCurrent()+1));
             } else {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, GDE.size() - 1));
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor-1, GDE.size()));
             }
         }
     }
