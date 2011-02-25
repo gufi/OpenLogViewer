@@ -30,6 +30,7 @@ package OpenLogViewer;
 
 import Decoder.CSVTypeLog;
 import Decoder.FreeEMSBin;
+import Decoder.FreeEMSByteLA;
 import GenericLog.GenericLog;
 import Graphing.LayeredGraph;
 import Utils.Utilities;
@@ -189,15 +190,17 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
 
     public static void openFile() {
         JFileChooser fileChooser = new JFileChooser();
-        FreeEMSFileFilter filter = new FreeEMSFileFilter();
-        CSVTypeFileFilter filter2 = new CSVTypeFileFilter();
-        fileChooser.addChoosableFileFilter(filter);
-        fileChooser.addChoosableFileFilter(filter2);
+        fileChooser.addChoosableFileFilter(new FreeEMSFileFilter());
+        fileChooser.addChoosableFileFilter(new CSVTypeFileFilter());
+        fileChooser.addChoosableFileFilter(new FreeEMSLAFileFilter());
+
         int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
         if (acceptValue == JFileChooser.APPROVE_OPTION) {
             File openFile = fileChooser.getSelectedFile();
             if (Utilities.getExtension(openFile).equals("bin") || fileChooser.getFileFilter() instanceof FreeEMSFileFilter) {
                 new FreeEMSBin(openFile);
+            }else if (Utilities.getExtension(openFile).equals("la") || fileChooser.getFileFilter() instanceof FreeEMSLAFileFilter) {
+                new FreeEMSByteLA(openFile);
             } else {
                 new CSVTypeLog(openFile);
             }
@@ -217,7 +220,5 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
-    private GenericLog genLog;
-    private FreeEMSBin fems;
     private OptionFrame optionFrame;
 }
