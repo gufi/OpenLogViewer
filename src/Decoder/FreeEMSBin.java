@@ -132,7 +132,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     public FreeEMSBin(File f) {
         logFile = f;
         startFound = false;
-        wholePacket = new short[3000];
+        wholePacket = new short[6000];
         packetLength = 0;
         decodedLog = new GenericLog(headers);
 
@@ -221,8 +221,8 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         int leadingBytes = 0;
         // set size according to payload
         if (payLoadId == 401) {
-            size = (int) (((packet[4] & 0xff) * 256) + (packet[5] & 0xff));
-            leadingBytes = 6;
+            size = (int) (((packet[3] & 0xff) * 256) + (packet[4] & 0xff));
+            leadingBytes = 5;
         } else {
             leadingBytes = 5; // size is not included for non 401 payload id's
         }
@@ -257,32 +257,17 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
      * @return true or false based on if the checksum passes
      */
     private boolean checksum(short[] packet) {
-        if (packetLength > 0) {
-            int payLoadId = (int) ((packet[1] * 256) + packet[2]);
-            short checksum = (short) (packet[packetLength - 1]);
-            int size = 0;
-            byte sum = 0;
-            //checksum
-            if (payLoadId == 401) {
-                int x = 6; // start at index 6
-                size = (int) ((packet[4] * 256) + packet[5]);
-                int offset = packetLength - size;
-                while (x < packetLength - offset - 2) {
-
-                    sum += packet[x];
-                    x++;
-                }
-            } else {
-                return true; // only checksums for payloadid's of 401
-            }
-            if ((short) (((short) (sum & 0xff) - checksum) & 0xff) == 188) { /// im sure this could be done better
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
+    	if(packetLength > 0){
+    		short includedSum = packet[packetLength -1]; // sum is last byte
+    		long veryBIGsum = 0;
+    		for(int x=0;x<packetLength-1;x++){
+    			veryBIGsum += packet[x];
+    		}
+    		short calculatedSum = (short)(veryBIGsum % 256);
+    		return (calculatedSum == includedSum) ? true : false;
+    	}else{
+    		return false;
+    	}
     }
 
     /**

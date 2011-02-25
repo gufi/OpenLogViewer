@@ -214,32 +214,17 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
      * @return true or false based on if the checksum passes
      */
     private boolean checksum(short[] packet, int length) {
-        if (length > 0) {
-            int payLoadId = (int) ((packet[1] * 256) + packet[2]);
-            short checksum = (short) (packet[length - 1]);
-            int size = 0;
-            byte sum = 0;
-            //checksum
-            if (payLoadId == 401) {
-                int x = 6; // start at index 6
-                size = (int) ((packet[4] * 256) + packet[5]);
-                int offset = length - size;
-                while (x < length - offset - 2) {
-
-                    sum += packet[x];
-                    x++;
-                }
-            } else {
-                return true; // only checksums for payloadid's of 401
-            }
-            if ((short) (((short) (sum & 0xff) - checksum) & 0xff) == 188) { /// im sure this could be done better
-
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
+    	if(length > 0){
+    		short includedSum = packet[length -1]; // sum is last byte
+    		long veryBIGsum = 0;
+    		for(int x=0;x<length-1;x++){
+    			veryBIGsum += packet[x];
+    		}
+    		short calculatedSum = (short)(veryBIGsum % 256);
+    		return (calculatedSum == includedSum) ? true : false;
+    	}else{
+    		return false;
+    	}
     }
 
     /**
