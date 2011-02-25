@@ -150,6 +150,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
      * to the required method of this class such as decodePacket or checksum.
      */
     //public void decodeLog() {
+    @Override
     public void run() {
         try {
             // file setup
@@ -264,7 +265,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     			veryBIGsum += packet[x];
     		}
     		short calculatedSum = (short)(veryBIGsum % 256);
-    		return (calculatedSum == includedSum) ? true : false;
+    		return (calculatedSum == includedSum);
     	}else{
     		return false;
     	}
