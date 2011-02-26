@@ -41,10 +41,10 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     private int delay;
     private int current; // startpoint of where to start the graph ( data-wise )
     private boolean play; // true = play graph, false = pause graph
-    private boolean antiAliasing;
     private InfoLayer infoLayer;
     int currentMax;
-    int zoom;
+    Zoom zoom;
+
     //MouseMotion Flags
     //MouseListener Flags
 
@@ -57,9 +57,8 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         timer.setInitialDelay(0);
         play = false;
         current = 0;
-        antiAliasing = false;
         infoLayer = new InfoLayer();
-        zoom = 1;
+        zoom = new Zoom();
         init();
     }
     private void init() {
@@ -174,31 +173,33 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void zoomIn() {
-        if(zoom <= 10) zoom++;
-        for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                GraphLayer gl = (GraphLayer) this.getComponent(i);
-                gl.zoomIn();
-            }else if(this.getComponent(i) instanceof InfoLayer) {
-                InfoLayer il = (InfoLayer) this.getComponent(i);
-                il.zoomIn();
-            }
-        }
+        
+        if(zoom.getZoom() <= 10) zoom.setZoom(zoom.getZoom()+1);
+        //for (int i = 0; i < this.getComponentCount(); i++) {
+        //    if (this.getComponent(i) instanceof GraphLayer) {
+        //        GraphLayer gl = (GraphLayer) this.getComponent(i);
+        //        gl.zoomIn();
+        //    }else if(this.getComponent(i) instanceof InfoLayer) {
+        //        InfoLayer il = (InfoLayer) this.getComponent(i);
+        //        il.zoomIn();
+        //    }
+        //}
         this.initGraph();
         repaint();
     }
 
     public void zoomOut() {
-        if(zoom > 1) zoom--;
-        for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                GraphLayer gl = (GraphLayer) this.getComponent(i);
-                gl.zoomOut();
-            }else if(this.getComponent(i) instanceof InfoLayer) {
-                InfoLayer il = (InfoLayer) this.getComponent(i);
-                il.zoomOut();
-            }
-        }
+
+        if(zoom.getZoom() > 1) zoom.setZoom(zoom.getZoom()-1);
+        //for (int i = 0; i < this.getComponentCount(); i++) {
+        //    if (this.getComponent(i) instanceof GraphLayer) {
+        //        GraphLayer gl = (GraphLayer) this.getComponent(i);
+        //        gl.zoomOut();
+        //    }else if(this.getComponent(i) instanceof InfoLayer) {
+        //        InfoLayer il = (InfoLayer) this.getComponent(i);
+        //        il.zoomOut();
+        //    }
+        //}
         this.initGraph();
         repaint();
     }
@@ -259,9 +260,6 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         timer.setDelay(this.delay);
     }
 
-    public void setAntiAliasing(boolean tf) {
-        antiAliasing = tf;
-    }
     public void setStatus(int status) {
         infoLayer.setGraphStatus(status);
     }
@@ -272,6 +270,17 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
                 gl.setColor(newColor);
 
             }
+        }
+    }
+
+    public class Zoom {
+        private int zoom =1;
+
+        public int getZoom() {
+            return zoom;
+        }
+        public void setZoom(int z) {
+            zoom = z;
         }
     }
 

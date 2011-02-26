@@ -29,7 +29,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
 import javax.swing.JPanel;
 
 /**
@@ -39,9 +38,8 @@ import javax.swing.JPanel;
 public class GraphLayer extends JPanel {
 
     private GenericDataElement GDE;
-    private Color graphColor;
     private LinkedList<Double> drawnData;
-    private int zoom;
+    private LayeredGraph.Zoom zoom;
 
     public GraphLayer() {
         this.setOpaque(false);
@@ -49,7 +47,7 @@ public class GraphLayer extends JPanel {
         this.
         GDE = null;
         drawnData = new LinkedList<Double>();
-        zoom = 1;
+        
     }
 
     public GraphLayer(GenericDataElement GDE) {
@@ -75,11 +73,11 @@ public class GraphLayer extends JPanel {
               while(dat2.hasNext())  {
                   int a = chartNumber((Double)dat.next(), d.height, GDE.getMinValue(), GDE.getMaxValue());
                   int b = chartNumber((Double)dat2.next(), d.height, GDE.getMinValue(), GDE.getMaxValue());
-                  if(zoom > 5) {
+                  if(zoom.getZoom() > 5) {
                       g2d.fillOval(i-2, a-2, 4, 4);
                   }
-                g2d.drawLine(i, a, i+zoom, b);
-                i+=zoom;
+                g2d.drawLine(i, a, i+zoom.getZoom(), b);
+                i+=zoom.getZoom();
               }
         }
     }
@@ -103,18 +101,15 @@ public class GraphLayer extends JPanel {
 
     public Double getMouseInfo(int i ) {
         LayeredGraph lg = (LayeredGraph)this.getParent();
-        int getIt = (i/zoom)+lg.getCurrent()-((this.getSize().width/2)/zoom);
+        int getIt = (i/zoom.getZoom())+lg.getCurrent()-((this.getSize().width/2)/zoom.getZoom());
         if(getIt < GDE.size() && getIt > 0) return GDE.get(getIt);
         else return 0.0;
     }
-
-    public void setColor(Color c) {
-        graphColor = c;
-        repaint();
-    }
-
     public Color getColor() {
         return GDE.getColor();
+    }
+    public void setColor(Color c) {
+        GDE.setColor(c);
     }
 
     public void initGraph() {
@@ -122,7 +117,7 @@ public class GraphLayer extends JPanel {
             LayeredGraph lg = (LayeredGraph) this.getParent();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
-            int zoomFactor = (d.width/2)/zoom; // add two datapoints to be drawn due to zoom clipping at the ends
+            int zoomFactor = (d.width/2)/zoom.getZoom(); // add two datapoints to be drawn due to zoom clipping at the ends
             
             if (lg.getCurrent() < zoomFactor) {
                 int x = 0;
@@ -147,7 +142,7 @@ public class GraphLayer extends JPanel {
         if (GDE != null) {
             LayeredGraph lg = (LayeredGraph) this.getParent();
             Dimension d = this.getSize();
-            int zoomFactor = (d.width/2)/zoom;
+            int zoomFactor = (d.width/2)/zoom.getZoom();
 
             if ((lg.getCurrent() + zoomFactor) < GDE.size()) {
                 drawnData.add(GDE.get(lg.getCurrent() + zoomFactor));
@@ -165,13 +160,11 @@ public class GraphLayer extends JPanel {
         return GDE.size();
     }
 
-    public void zoomIn() {
-        if(zoom <= 10) zoom++;
-    }
-    public void zoomOut() {
-        if(zoom > 1) zoom--;
-    }
-    public void setZoom(int z) {
+    public void setZoom(LayeredGraph.Zoom z) {
         zoom = z;
     }
+
+   
+
+
 }

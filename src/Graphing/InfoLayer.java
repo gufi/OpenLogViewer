@@ -27,7 +27,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -39,16 +38,16 @@ import javax.swing.JPanel;
  */
 public class InfoLayer extends JPanel implements MouseMotionListener, MouseListener {
 
-    int zoom;
-    int logStatus;
-    int xMouseCoord;
-    int yMouseCoord;
+    private LayeredGraph.Zoom zoom;
+    private int logStatus;
+    private int xMouseCoord;
+    private int yMouseCoord;
     boolean mouseOver;
     private Color vertBar = new Color(255, 255, 255, 100);
     private Color textBackground = new Color(0, 0, 0, 170);
 
+
     public InfoLayer() {
-        zoom = 1;
         logStatus = GenericLog.LOG_NOT_LOADED;
         xMouseCoord = -100;
         xMouseCoord = -100;
@@ -99,11 +98,9 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
         repaint();
     }
 
-    public void zoomIn() {
-        if(zoom <= 10) zoom++;
-    }
-    public void zoomOut() {
-        if(zoom > 1) zoom--;
+    
+    public void setZoom(LayeredGraph.Zoom z){
+        zoom = z;
     }
 
     //MOUSE MOTION LISTENER FUNCTIONALITY
@@ -125,7 +122,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     public void mouseClicked(MouseEvent e) {
         LayeredGraph lg = (LayeredGraph) this.getParent();
 
-        int move = (e.getX()/zoom) - (int) ((this.getSize().width / 2)/zoom);
+        int move = (e.getX()/zoom.getZoom()) - (int) ((this.getSize().width / 2)/zoom.getZoom());
         if (move + lg.getCurrent() < lg.getCurrentMax()) {
             if (move + lg.getCurrent() < 0) {
                 lg.setCurrent(0);
