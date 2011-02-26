@@ -42,7 +42,6 @@ public class OptionFrame extends JFrame {
     private JButton changeColor = new JButton("Change Color");
     private JButton resetButton = new JButton("Reset");
     ActionListener resetButtonActionListener = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
@@ -55,7 +54,6 @@ public class OptionFrame extends JFrame {
         }
     };
     ActionListener commitButtonActionListener = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
@@ -74,9 +72,7 @@ public class OptionFrame extends JFrame {
                             somethingChanged = true;
                         }
                     }
-
                 }
-
                 if (!changeColor.getForeground().equals(GDE.getColor())) {
                     Color newColor = new Color(changeColor.getForeground().getRGB());
 
@@ -92,7 +88,6 @@ public class OptionFrame extends JFrame {
         }
     };
     ActionListener colorChangeListener = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
@@ -107,7 +102,6 @@ public class OptionFrame extends JFrame {
         }
     };
     ActionListener updateMinMax = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();

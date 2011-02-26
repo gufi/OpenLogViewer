@@ -40,7 +40,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     private final short ESCAPED_ESCAPE_BYTE = 0x44;// for unsigned byte
     private final short ESCAPED_START_BYTE = 0x55;// for unsigned byte
     private final short ESCAPED_STOP_BYTE = 0x33;// for unsigned byte
-    private final int CHECKSUM_VAL = 256;
     private short[] wholePacket;// for unsigned byte
     private File logFile;
     private FileInputStream logStream;
@@ -139,8 +138,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         t = new Thread(this, "FreeEMSBin Loading");
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();
-        // decodeLog();
-
     }
 
     
@@ -207,8 +204,8 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     }
 
     /**
-     * This method decodes a packet by splitting up the data into larger datatypes to keep the unsigned info <br>
-     * This method could probably use a litle work
+     * This method decodes a packet by splitting up the data into larger data types to keep the unsigned info <br>
+     * This method could probably use a little work
      * @param packet is a <code>short</code> array containing 1 full packet
      *
      */
@@ -227,10 +224,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         } else {
             leadingBytes = 5; // size is not included for non 401 payload id's
         }
-
-
         int offset = packetLength - size;
-
         while (x < packetLength - offset) {
             if (payLoadId == 401) {
                 if (x < size) {

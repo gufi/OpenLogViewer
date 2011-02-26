@@ -28,6 +28,9 @@
  */
 package OpenLogViewer;
 
+import OpenLogViewer.filefilter.FreeEMSFileFilter;
+import OpenLogViewer.filefilter.FreeEMSLAFileFilter;
+import OpenLogViewer.filefilter.CSVTypeFileFilter;
 import Decoder.CSVTypeLog;
 import Decoder.FreeEMSBin;
 import Decoder.FreeEMSByteLA;

@@ -20,35 +20,44 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-
-package OpenLogViewer;
+package OpenLogViewer.filefilter;
 
 import Utils.Utilities;
-import java.io.*;
+import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 /**
  *
  * @author Bryan
  */
-public class FreeEMSLAFileFilter extends FileFilter {
-    public FreeEMSLAFileFilter () {
+public class CSVTypeFileFilter extends FileFilter {
+
+    public CSVTypeFileFilter() {
         super();
     }
 
     @Override
     public String getDescription() {
-       return "FreeEMS LA Binary Logs";
+        return "Compatable MegaSquirt DataLogs";
     }
 
     @Override
     public boolean accept(File f) {
-        if(f.isDirectory()) {
+        if (f.isDirectory()) {
             return true;
         }
         String extension = Utilities.getExtension(f);
-        if(extension != null && extension.equals("la")) return true;
-
+        if (extension != null) {
+            if (extension.equals("log")) {
+                return true;
+            } else if (extension.equals("csv")) {
+                return true;
+            } else if (extension.equals("xls")) {
+                return true;
+            }else if (extension.equals("msl")) {
+                return true;
+            }
+        }
         //if nothing is satisfied return false
         return false;
     }
