@@ -175,7 +175,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
 
     public void zoomIn() {
         
-        if(zoom.getZoom() <= 10) zoom.setZoom(zoom.getZoom()+1);
+        if(zoom.getZoom() <= 50) zoom.setZoom(zoom.getZoom()+1);
         //for (int i = 0; i < this.getComponentCount(); i++) {
         //    if (this.getComponent(i) instanceof GraphLayer) {
         //        GraphLayer gl = (GraphLayer) this.getComponent(i);

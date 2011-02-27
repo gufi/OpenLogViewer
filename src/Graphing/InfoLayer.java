@@ -109,16 +109,19 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
         yMouseCoord = e.getY();
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         mouseMoved(e);
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         getMouseCoords(e);
         repaint(); // call repaint because otherwise we are at the whim of the speed of playback to update mouse info
     }
 
 //MOUSE LISTENER FUNCTIONALITY
+    @Override
     public void mouseClicked(MouseEvent e) {
         LayeredGraph lg = (LayeredGraph) this.getParent();
 
@@ -131,21 +134,29 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             }
             lg.initGraph();
             lg.repaint();
+        } else {
+            lg.setCurrent(lg.getCurrentMax()-1);
+            lg.initGraph();
+            lg.repaint();
         }
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         mouseOver = true;
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         mouseOver = false;
         repaint();
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
     }
 }
