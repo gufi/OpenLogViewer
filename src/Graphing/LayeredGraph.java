@@ -63,6 +63,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
     private void init() {
         infoLayer.setSize(400,600);
+        infoLayer.setZoom(zoom);
         this.setLayer(infoLayer, 99);
         this.setBackground(Color.BLACK);
         this.setOpaque(true);
