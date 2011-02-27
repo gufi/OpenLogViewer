@@ -37,7 +37,6 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
     final public static int LOG_NOT_LOADED = -1;
     final public static int LOG_LOADING = 0;
     final public static int LOG_LOADED = 1;
-    final private static String LOG_STATUS = "LogLoaded";
     private String metaData;
     protected final PropertyChangeSupport PCS;
     private int logLoaded;
@@ -134,26 +133,6 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
     public String getMetadata() {
         return metaData;
     }
-    /*
-     * Test the log, this will output data to the console only
-     * code kept incase it was needed at some point
-     */
-    /* public void testLog() {
-    Iterator i = this.keySet().iterator();
-    ArrayList al;
-    String head = "";
-    while (i.hasNext()) {
-    head = (String) i.next();
-    al = (ArrayList) this.get(head);
-    System.out.printf("%10s",head);
-    for (int x = 0; x < al.size() - 1; x++) {
-    System.out.printf("%10.3f ", al.get(x));
-    }
-    System.out.println();
-    }
-    System.out.print(this.metaData);
-    }*/
-
     /**
      * Add a property change listener to the generic log, REQUIRED!!
      * GenericLog.LOG_STATUS is the name of the status property

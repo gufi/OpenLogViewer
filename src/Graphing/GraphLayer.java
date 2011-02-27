@@ -119,7 +119,7 @@ public class GraphLayer extends JPanel {
             drawnData = new LinkedList<Double>();
             int zoomFactor = (d.width/2)/zoom.getZoom(); // add two datapoints to be drawn due to zoom clipping at the ends
             
-            if (lg.getCurrent() < zoomFactor-1) {
+            if (lg.getCurrent() < zoomFactor+1) {
                 int x = 0;
                 while (x <= (zoomFactor) - lg.getCurrent()) {
                     drawnData.add(0.0);
