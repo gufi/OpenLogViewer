@@ -50,15 +50,17 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
 
     public LayeredGraph() {
         super();
+        play = false;
         delay = 10;
+        current = 0;
         currentMax = 0;
         genLog = new GenericLog();
         timer = new Timer(delay, this);
         timer.setInitialDelay(0);
-        play = false;
-        current = 0;
+        
         infoLayer = new InfoLayer();
         zoom = new Zoom();
+        
         init();
     }
     private void init() {
@@ -95,7 +97,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         this.add(graph);
         graph.setData(genLog.get(header));
         
-        getCurrentMax();
+        setCurrentMax();
         if (p) {
             play();
         }
@@ -136,15 +138,18 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
 
     }
 
-    public int getCurrentMax() {
+    public void setCurrentMax() {
         for(int i = 0; i < this.getComponentCount(); i++) {
             if(getComponent(i) instanceof GraphLayer){
                 GraphLayer gl = (GraphLayer) getComponent(i);
                 currentMax = gl.graphSize();
-                return currentMax;
+                break;
             }
         }
-        return 0;
+    }
+
+    public int getCurrentMax() {
+        return currentMax;
     }
 
     public int getCurrent() {
