@@ -76,9 +76,11 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             Graphics2D g2d = (Graphics2D) g;
 
             if (mouseOver) {
+
+                int lineDraw =zoom.getZoom()+(xMouseCoord/zoom.getZoom())*zoom.getZoom();
                 g2d.setColor(vertBar);
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);
-                g2d.drawLine(this.xMouseCoord, 0, (int) this.xMouseCoord, d.height); // middle vertical divider,
+                g2d.drawLine(lineDraw, 0, lineDraw, d.height); // middle vertical divider,
 
                 for (int i = 0; i < lp.getComponentCount(); i++) {
                     if (lp.getComponent(i) instanceof GraphLayer) {
@@ -86,7 +88,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
                         g2d.setColor(textBackground);
                         g2d.fillRect(xMouseCoord , yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
                         g2d.setColor(gl.getColor());
-                        g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), xMouseCoord +2, yMouseCoord + 15 + (15 * i));
+                        g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), lineDraw +2, yMouseCoord + 15 + (15 * i));
                     }
                 }
             }

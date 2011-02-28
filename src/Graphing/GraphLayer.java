@@ -96,7 +96,7 @@ public class GraphLayer extends JPanel {
     public Double getMouseInfo(int i) {
         LayeredGraph lg = (LayeredGraph) this.getParent();
         int getIt = (i / zoom.getZoom()) + lg.getCurrent() - ((this.getSize().width / 2) / zoom.getZoom());
-        if (getIt < GDE.size() && getIt > 0) {
+        if (getIt < GDE.size() && getIt >= 0) {
             return GDE.get(getIt);
         } else {
             return 0.0;
@@ -117,7 +117,7 @@ public class GraphLayer extends JPanel {
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
             int zoomFactor = ((d.width+zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
-
+            if(d.width/2 > zoom.getZoom()*zoomFactor)zoomFactor++;// without this certain zoom factors will cause data to be misdrawn on screen
             if (lg.getCurrent() <= zoomFactor) {
                 int x = 0;
                 int fill = (zoomFactor) - lg.getCurrent();
@@ -132,10 +132,10 @@ public class GraphLayer extends JPanel {
                     to = (d.width / zoom.getZoom()) - x+2;
                 }
                 drawnData.addAll(GDE.subList(0, to));
-            } else if ((zoomFactor + lg.getCurrent() + 1) < GDE.size()) {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor  , zoomFactor + 1 + lg.getCurrent()));
+            } else if ((zoomFactor + lg.getCurrent() + 2) < GDE.size()) {
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor  , zoomFactor + 2 + lg.getCurrent()));
             } else {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor  , GDE.size()));
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor , GDE.size()));
             }
         }
     }
