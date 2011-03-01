@@ -46,6 +46,7 @@ public class PropertiesPane extends JFrame {
     //ScriptEngine math = new ScriptEngineManager().getEngineByName("JavaScript");
     File OLVProperties;
     ArrayList<SingleProperty> properties;
+    ArrayList<SingleProperty> removeProperties;
     JPanel propertyPanel;
     JPanel propertyView;
 
@@ -72,6 +73,7 @@ public class PropertiesPane extends JFrame {
     }
 
     public void setProperties(ArrayList<SingleProperty> p) {
+        removeProperties = new ArrayList<SingleProperty>();
         properties = p;
         setupForLoad();
     }
@@ -84,19 +86,26 @@ public class PropertiesPane extends JFrame {
             System.out.println("find some where else ");
 
         } else {
-            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
         }
         if (!OLVProperties.exists()) {
+            System.out.println("Made");
             try {
-                if (OLVProperties.createNewFile()) {
-                    loadProperties();
+                if (OLVProperties.mkdir()) {
+                    System.out.println("Made");
+                    OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+                    if (OLVProperties.createNewFile()) {
+                        System.out.println("Made");
+                        loadProperties();
+                    }
                 } else {
                     //find somewhere else
                 }
             } catch (IOException IOE) {
-                System.out.print(IOE.toString());
+                System.out.print(IOE.getMessage());
             }
         } else {
+            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
             loadProperties();
         }
     }
@@ -142,7 +151,6 @@ public class PropertiesPane extends JFrame {
 
         JButton okButton = new JButton("OK");
         JButton cancel = new JButton("Cancel");
-        JButton apply = new JButton("Apply");
 
         okButton.addActionListener(new ActionListener() {
 
@@ -151,18 +159,17 @@ public class PropertiesPane extends JFrame {
                 OpenLogViewerApp.getInstance().getPropertyPane().save();
                 OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
             }
-
         });
-        apply.addActionListener(new ActionListener() {
+        cancel.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                OpenLogViewerApp.getInstance().getPropertyPane().save();
-            }
 
+                OpenLogViewerApp.getInstance().getPropertyPane().resetProperties();
+                OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
+            }
         });
-        
-        aPanel.add(apply);
+
         aPanel.add(cancel);
         aPanel.add(okButton);
 
@@ -196,7 +203,8 @@ public class PropertiesPane extends JFrame {
 
     public void save() {
         try {
-            // Create file
+            removeProperties.clear();
+            updateProperties();
             FileWriter fstream = new FileWriter(OLVProperties);
             BufferedWriter out = new BufferedWriter(fstream);
             for (int i = 0; i < properties.size(); i++) {
@@ -207,6 +215,26 @@ public class PropertiesPane extends JFrame {
             out.close();
         } catch (Exception e) {//Catch exception if any
             System.err.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void updateProperties() {
+        for (int i = 0; i < propertyView.getComponentCount(); i++) {
+            PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+            pp.updateSP();
+        }
+    }
+
+    public void resetProperties() {
+        for (int i = 0; i < propertyView.getComponentCount(); i++) {
+            PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+            pp.reset();
+        }
+        if(removeProperties.size() > 0){
+            for(int i = 0; i < removeProperties.size(); i++){
+                addProperty(removeProperties.get(i));
+            }
+            removeProperties.clear();
         }
     }
 
@@ -241,7 +269,10 @@ public class PropertiesPane extends JFrame {
         for (int i = 0; i < propertyView.getComponentCount();) {
             PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
             if (pp.getCheck().isSelected()) {
-                removeProperty(pp.getSp());
+                if (!removeProperties.contains(pp.getSp())) {
+                    removeProperties.add(pp.getSp());
+                }
+                removeProperty(pp.getSp());/// move this to add to a queue of things to remove, incase of cancel
                 propertyView.remove(propertyView.getComponent(i));
                 propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height - 60));
 
@@ -286,6 +317,7 @@ public class PropertiesPane extends JFrame {
             colorBox.setPreferredSize(new Dimension(30, 20));
             check = new JCheckBox();
             colorBox.addMouseListener(new MouseListener() {
+
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     Color newColor = JColorChooser.showDialog(
@@ -293,20 +325,22 @@ public class PropertiesPane extends JFrame {
                             "Choose New Color", colorBox.getBackground());
                     if (newColor != null) {
                         colorBox.setBackground(newColor);
-                        JPanel jp = (JPanel)e.getSource();
-                        PropertyPanel pp = (PropertyPanel)jp.getParent();
-                        pp.getSp().setColor(newColor);
+
                     }
                 }
+
                 @Override
                 public void mouseClicked(MouseEvent e) {
                 }
+
                 @Override
                 public void mouseEntered(MouseEvent e) {
                 }
+
                 @Override
                 public void mouseExited(MouseEvent e) {
                 }
+
                 @Override
                 public void mousePressed(MouseEvent e) {
                 }
@@ -321,21 +355,35 @@ public class PropertiesPane extends JFrame {
             add(splitBox);
             add(check);
         }
+
         public JCheckBox getCheck() {
             return check;
         }
+
         public void setCheck(JCheckBox check) {
             this.check = check;
         }
+
         public SingleProperty getSp() {
             return sp;
         }
+
         public void setSp(SingleProperty sp) {
             this.sp = sp;
         }
+
+        public void updateSP() {
+            sp.setMin(Double.parseDouble(minBox.getText()));
+            sp.setMax(Double.parseDouble(maxBox.getText()));
+            sp.setColor(colorBox.getBackground());
+            sp.setSplit(Integer.parseInt(splitBox.getText()));
+        }
+
         public void reset() {
             minBox.setText(Double.toString(sp.getMin()));
             minBox.setText(Double.toString(sp.getMin()));
+            colorBox.setBackground(sp.getColor());
+            splitBox.setText(Integer.toString(sp.getSplit()));
         }
     }
 }
