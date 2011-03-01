@@ -17,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -176,6 +175,7 @@ public class OptionFrame extends JFrame {
         while (i.hasNext()) {
             head = (String) i.next();
             GenericDataElement GDE = gl.get(head);
+            checkForProperties(GDE);
             toBeAdded = new GCheckBox();
             toBeAdded.setName(head);
             toBeAdded.setText(head);
@@ -188,6 +188,17 @@ public class OptionFrame extends JFrame {
 
         this.setDefaultCloseOperation(OptionFrame.ICONIFIED);
         this.setVisible(true);
+    }
+
+    private void checkForProperties(GenericDataElement GDE) {
+        for(int i = 0;i < OpenLogViewerApp.getInstance().getProperties().size();i++){
+            if(OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())){
+                GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
+                GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
+                GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
+                break;
+            }
+        }
     }
 
     public JPanel getHeaderPanel() {

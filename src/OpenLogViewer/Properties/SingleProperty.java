@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package OpenLogViewer.Properties;
 
 import java.awt.Color;
@@ -67,21 +66,26 @@ public class SingleProperty implements Comparable {
         this.split = split;
     }
 
-
     public String toString() {
         return header + "="
                 + color.getRed()
-                + ","+ color.getGreen()
-                + ","+ color.getBlue()
-                + ","+ min
-                + ","+ max
-                + ","+ split;
+                + "," + color.getGreen()
+                + "," + color.getBlue()
+                + "," + min
+                + "," + max
+                + "," + split;
     }
-     public int compareTo(Object o) {
-            if(o instanceof SingleProperty) {
-                SingleProperty sp = (SingleProperty)o;
-                return this.getHeader().compareToIgnoreCase(sp.getHeader());
-            }
-            else return -1;
+
+    public int compareTo(Object o) {
+        if (o instanceof SingleProperty) {
+            SingleProperty sp = (SingleProperty) o;
+            return this.getHeader().compareToIgnoreCase(sp.getHeader());
+        } else {
+            return -1;
         }
+    }
+
+    public boolean equals(String header) {
+        return header.toLowerCase().equals(this.getHeader().toLowerCase());
+    }
 }
