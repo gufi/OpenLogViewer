@@ -238,16 +238,20 @@ public class PropertiesPane extends JFrame {
         }
     }
 
-    private void addProperty(SingleProperty sp) {
-        boolean found = false;
+    public boolean exists(SingleProperty sp) {
+
         for (int i = 0; i < propertyView.getComponentCount(); i++) {
             PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
             if (pp.getSp().getHeader().equalsIgnoreCase(sp.getHeader())) {
-                found = true;
-                break;
+                return true;
             }
         }
-        if (!found) {
+        return false;
+    }
+
+    public void addProperty(SingleProperty sp) {
+        
+        if (!exists(sp)) {
             properties.add(sp);
 
             Collections.sort(properties);

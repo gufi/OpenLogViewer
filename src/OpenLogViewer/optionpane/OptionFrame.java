@@ -181,7 +181,9 @@ public class OptionFrame extends JFrame {
             toBeAdded.setText(head);
             toBeAdded.setRef(GDE);
             toBeAdded.setSelected(false);
-            checkForProperties(toBeAdded,GDE);
+            if(checkForProperties(toBeAdded,GDE)) {
+                toBeAdded.setBackground(GDE.getColor());
+            }
             checkBoxes.add(toBeAdded);
             Collections.sort(checkBoxes);
             this.getHeaderPanel().add(toBeAdded,checkBoxes.indexOf(toBeAdded));
@@ -191,7 +193,7 @@ public class OptionFrame extends JFrame {
         this.setVisible(true);
     }
 
-    private void checkForProperties(GCheckBox GCB,GenericDataElement GDE) {
+    private boolean checkForProperties(GCheckBox GCB,GenericDataElement GDE) {
         for(int i = 0;i < OpenLogViewerApp.getInstance().getProperties().size();i++){
             if(OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())){
                 GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
@@ -202,11 +204,11 @@ public class OptionFrame extends JFrame {
                     getActiveList().setSelectedItem(GDE);
                     GCB.setSelected(true);
                     OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(GDE.getName());
+                    return true;
                 }
-
-                break;
             }
         }
+        return false;
     }
 
     public JPanel getHeaderPanel() {
