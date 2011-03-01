@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Owner
  */
-public class SingleProperty {
+public class SingleProperty implements Comparable {
 
     Color color;
     private String header;
@@ -77,4 +77,11 @@ public class SingleProperty {
                 + ","+ max
                 + ","+ split;
     }
+     public int compareTo(Object o) {
+            if(o instanceof SingleProperty) {
+                SingleProperty sp = (SingleProperty)o;
+                return this.getHeader().compareToIgnoreCase(sp.getHeader());
+            }
+            else return -1;
+        }
 }

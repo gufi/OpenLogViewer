@@ -20,7 +20,6 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-
 package GenericLog;
 
 import java.awt.Color;
@@ -31,8 +30,8 @@ import java.util.Random;
  *
  * @author Bryan
  */
-public class GenericDataElement extends ArrayList<Double> {
-    
+public class GenericDataElement extends ArrayList<Double> implements Comparable {
+
     private Double maxValue;
     private Double newMaxValue;
     private Double minValue;
@@ -40,6 +39,7 @@ public class GenericDataElement extends ArrayList<Double> {
     private Color color;
     private Color newColor;
     private String name;
+
     public GenericDataElement() {
         super();
         maxValue = Double.MIN_VALUE;
@@ -53,11 +53,11 @@ public class GenericDataElement extends ArrayList<Double> {
 
     @Override
     public boolean add(Double d) {
-        if(newMaxValue < d) {
+        if (newMaxValue < d) {
             maxValue = d;
             newMaxValue = d;
         }
-        if(newMinValue > d) {
+        if (newMinValue > d) {
             minValue = d;
             newMinValue = d;
         }
@@ -65,8 +65,12 @@ public class GenericDataElement extends ArrayList<Double> {
         return super.add(d);
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Double getMaxValue() {
@@ -84,11 +88,11 @@ public class GenericDataElement extends ArrayList<Double> {
     public void setMinValue(Double lowValue) {
         this.newMinValue = lowValue;
     }
-    
+
     public Color getColor() {
         return newColor;
     }
-    
+
     public void setColor(Color c) {
         newColor = c;
     }
@@ -104,8 +108,13 @@ public class GenericDataElement extends ArrayList<Double> {
         return this.name;
     }
 
-
-
-
-
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof GenericDataElement) {
+            GenericDataElement GDE = (GenericDataElement) o;
+            return this.getName().compareToIgnoreCase(GDE.getName());
+        } else {
+            return -1;
+        }
+    }
 }

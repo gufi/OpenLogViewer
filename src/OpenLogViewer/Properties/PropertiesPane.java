@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -83,19 +84,16 @@ public class PropertiesPane extends JFrame {
         File homeDir = new File(System.getProperty("user.home"));
 
         if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
-            System.out.println("find some where else ");
+            System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
 
         } else {
             OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
         }
         if (!OLVProperties.exists()) {
-            System.out.println("Made");
             try {
                 if (OLVProperties.mkdir()) {
-                    System.out.println("Made");
                     OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
                     if (OLVProperties.createNewFile()) {
-                        System.out.println("Made");
                         loadProperties();
                     }
                 } else {
@@ -249,7 +247,10 @@ public class PropertiesPane extends JFrame {
         }
         if (!found) {
             properties.add(sp);
-            propertyView.add(new PropertyPanel(sp));
+
+            Collections.sort(properties);
+            propertyView.add(new PropertyPanel(sp),properties.indexOf(sp));
+
             propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
 
             propertyView.revalidate();
@@ -284,7 +285,7 @@ public class PropertiesPane extends JFrame {
         propertyView.repaint();
     }
 
-    private class PropertyPanel extends JPanel {
+    private class PropertyPanel extends JPanel implements Comparable {
 
         SingleProperty sp;
         JCheckBox check;
@@ -385,5 +386,15 @@ public class PropertiesPane extends JFrame {
             colorBox.setBackground(sp.getColor());
             splitBox.setText(Integer.toString(sp.getSplit()));
         }
+
+        @Override
+        public int compareTo(Object o) {
+            if(o instanceof PropertyPanel) {
+                PropertyPanel pp = (PropertyPanel)o;
+                return this.sp.getHeader().compareToIgnoreCase(pp.getSp().getHeader());
+            }
+            else return -1;
+        }
+
     }
 }

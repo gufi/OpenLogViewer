@@ -14,6 +14,8 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -41,6 +43,7 @@ public class OptionFrame extends JFrame {
     private JButton setButton = new JButton("Commit");
     private JButton changeColor = new JButton("Change Color");
     private JButton resetButton = new JButton("Reset");
+    private ArrayList<GCheckBox> checkBoxes = new ArrayList<GCheckBox>();
     ActionListener resetButtonActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -119,7 +122,7 @@ public class OptionFrame extends JFrame {
         optionPanel = new JPanel();
         activeList = new JComboBox();
         activeList.setEditable(false);
-        activeList.setModel(new DefaultComboBoxModel());
+        activeList.setModel(new SortComboBoxModel());
         activeList.setSize(200, 30);
         activeList.addActionListener(updateMinMax);
         headerPanel.setLayout(new GridLayout(10, 5));
@@ -166,7 +169,7 @@ public class OptionFrame extends JFrame {
         this.getHeaderPanel().removeAll();
         this.repaint();
         this.getActiveList().removeAllItems();
-
+        checkBoxes.clear();
         Iterator i = gl.keySet().iterator();
         String head = "";
         GCheckBox toBeAdded = null;
@@ -178,8 +181,11 @@ public class OptionFrame extends JFrame {
             toBeAdded.setText(head);
             toBeAdded.setRef(GDE);
             toBeAdded.setSelected(false);
-            this.getHeaderPanel().add(toBeAdded);
+            checkBoxes.add(toBeAdded);
+            Collections.sort(checkBoxes);
+            this.getHeaderPanel().add(toBeAdded,checkBoxes.indexOf(toBeAdded));
         }
+
         this.setDefaultCloseOperation(OptionFrame.ICONIFIED);
         this.setVisible(true);
     }
@@ -221,7 +227,7 @@ public class OptionFrame extends JFrame {
 
     }
 
-    private class GCheckBox extends JCheckBox implements ActionListener {
+    private class GCheckBox extends JCheckBox implements ActionListener,Comparable {
 
         GenericDataElement GDE;
 
@@ -246,6 +252,7 @@ public class OptionFrame extends JFrame {
             if (i.isSelected()) {
 
                 of.getActiveList().addItem(GDE);
+                //of.getActiveList()
                 of.getActiveList().setSelectedItem(GDE);
                 i.setBackground(GDE.getColor());
                 i.repaint();
@@ -258,5 +265,14 @@ public class OptionFrame extends JFrame {
                 }
             }
         }
+
+        @Override
+        public int compareTo(Object o) {
+            if(o instanceof GCheckBox){
+                GCheckBox GCB = (GCheckBox)o;
+                return this.GDE.compareTo(GCB.getGDE());
+            }else return -1;
+        }
+
     }
 }
