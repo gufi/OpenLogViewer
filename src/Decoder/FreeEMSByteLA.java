@@ -186,14 +186,36 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
         int T7 = 0;
         decodedLog.addValue("PTIT", PTIT);
         
-        // make this generic later.
-        if(PTIT == 3){
+        if((PTIT % 2) == 1){
         	T0 = 1;
+        	PTIT -= 1;
+        }
+        if((PTIT % 4) == 2){
         	T1 = 1;
-        }else if(PTIT == 2){
-        	T1 = 1;
-        }else if(PTIT == 1){
-        	T0 = 1;
+        	PTIT -= 2;
+        }
+        if((PTIT % 8) == 4){
+        	T2 = 1;
+        	PTIT -= 4;
+        }
+        if((PTIT % 16) == 8){
+        	T3 = 1;
+        	PTIT -= 8;
+        }
+        if((PTIT % 32) == 16){
+        	T4 = 1;
+        	PTIT -= 16;
+        }
+        if((PTIT % 64) == 32){
+        	T5 = 1;
+        	PTIT -= 32;
+        }
+        if((PTIT % 128) == 64){
+        	T6 = 1;
+        	PTIT -= 64;
+        }
+        if(PTIT == 128){
+        	T7 = 1;
         }
 
         decodedLog.addValue("Line", count);
