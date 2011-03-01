@@ -49,6 +49,7 @@ public class CSVTypeLog extends BaseDecoder {
 
     }
 
+    @Override
     protected void decodeLog() throws IOException {
         Scanner scan = new Scanner(new FileReader(getLogFile()));
 
@@ -98,9 +99,6 @@ public class CSVTypeLog extends BaseDecoder {
                 }
             }
         }
-
-
-
         scan.close();
         return delim[delimNum];
     }

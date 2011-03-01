@@ -36,12 +36,15 @@ import Decoder.FreeEMSBin;
 import Decoder.FreeEMSByteLA;
 import GenericLog.GenericLog;
 import Graphing.LayeredGraph;
+import OpenLogViewer.Properties.PropertiesPane;
+import OpenLogViewer.Properties.SingleProperty;
 import Utils.Utilities;
 import OpenLogViewer.optionpane.OptionFrame;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -58,6 +61,9 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     }
 
     private void initComponents() {
+        properties = new ArrayList<SingleProperty>();
+        prefFrame = new PropertiesPane("Properties");
+        prefFrame.setProperties(properties);
         optionFrame = new OptionFrame("Option Pane");
         mainPanel = new javax.swing.JPanel();
         layeredGraph = new LayeredGraph();
@@ -68,6 +74,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         editMenu = new javax.swing.JMenu();
         openFileMenuItem = new javax.swing.JMenuItem();
         quitFileMenuItem = new javax.swing.JMenuItem();
+        propertiesOptionMenuItem = new javax.swing.JMenuItem() ;
 
 
 
@@ -125,6 +132,21 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         editMenu.setText("Edit");
         editMenu.setName("edit"); // NOI18N
 
+        propertiesOptionMenuItem.setText("Properties");
+        propertiesOptionMenuItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OpenLogViewerApp.getInstance().getPropertyPane().setVisible(true);
+            }
+
+        });
+        editMenu.add(propertiesOptionMenuItem);
+
+
+        //////////////////////////////////////////////////////////////////
+        //////////////Addto mainMenu
+        /////////////////////////////////////////////////////////////////
         mainMenuBar.setName("Main Menu");
         mainMenuBar.add(fileMenu);
         mainMenuBar.add(editMenu);
@@ -191,6 +213,14 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         return optionFrame;
     }
 
+    public PropertiesPane getPropertyPane() {
+        return prefFrame;
+    }
+
+    public ArrayList<SingleProperty> getProperties() {
+        return properties;
+    }
+
     public static void openFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.addChoosableFileFilter(new FreeEMSFileFilter());
@@ -219,9 +249,12 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JMenuItem quitFileMenuItem;
+    private javax.swing.JMenuItem propertiesOptionMenuItem;
     private javax.swing.JPanel mainPanel;
     private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
     private OptionFrame optionFrame;
+    private PropertiesPane prefFrame;
+    private ArrayList<SingleProperty> properties;
 }
