@@ -261,8 +261,12 @@ public class PropertiesPane extends JFrame {
             pp.setSp(sp);
             pp.reset();
         }
-        save();
 
+    }
+
+    public void addPropertyAndSave(SingleProperty sp) {
+        addProperty(sp);
+        save();
     }
 
     private void removeProperty(SingleProperty sp) {

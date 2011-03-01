@@ -124,7 +124,7 @@ public class OptionFrame extends JFrame {
             sp.setColor(changeColor.getForeground());
             sp.setMax(Double.parseDouble(maxField.getText()));
             sp.setMin(Double.parseDouble(minField.getText()));
-            OpenLogViewerApp.getInstance().getPropertyPane().addProperty(sp);
+            OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(sp);
         }
     };
 
