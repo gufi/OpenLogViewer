@@ -238,31 +238,30 @@ public class PropertiesPane extends JFrame {
         }
     }
 
-    public boolean exists(SingleProperty sp) {
+    private PropertyPanel exists(SingleProperty sp) {
 
         for (int i = 0; i < propertyView.getComponentCount(); i++) {
             PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
             if (pp.getSp().getHeader().equalsIgnoreCase(sp.getHeader())) {
-                return true;
+                return pp;
             }
         }
-        return false;
+        return null;
     }
 
     public void addProperty(SingleProperty sp) {
-        
-        if (!exists(sp)) {
+        PropertyPanel pp = exists(sp);
+        if (pp == null) {
             properties.add(sp);
-
             Collections.sort(properties);
             propertyView.add(new PropertyPanel(sp), properties.indexOf(sp));
-
             propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
-
             propertyView.revalidate();
         } else {
-            //popupdialog that this already exists
+            pp.setSp(sp);
+            pp.reset();
         }
+        save();
 
     }
 
@@ -404,6 +403,7 @@ public class PropertiesPane extends JFrame {
             minBox.setText(Double.toString(sp.getMin()));
             colorBox.setBackground(sp.getColor());
             splitBox.setText(Integer.toString(sp.getSplit()));
+            activeBox.setSelectedItem(Boolean.toString(sp.isActive()));
         }
 
         @Override

@@ -7,6 +7,7 @@ package OpenLogViewer.optionpane;
 import GenericLog.GenericDataElement;
 import GenericLog.GenericLog;
 import OpenLogViewer.OpenLogViewerApp;
+import OpenLogViewer.Properties.SingleProperty;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,6 +43,7 @@ public class OptionFrame extends JFrame {
     private JButton setButton = new JButton("Commit");
     private JButton changeColor = new JButton("Change Color");
     private JButton resetButton = new JButton("Reset");
+    private JButton saveButton = new JButton("Save Propertys");
     private ArrayList<GCheckBox> checkBoxes = new ArrayList<GCheckBox>();
     ActionListener resetButtonActionListener = new ActionListener() {
         @Override
@@ -114,6 +116,17 @@ public class OptionFrame extends JFrame {
             }
         }
     };
+    ActionListener saveButtonActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SingleProperty sp = new SingleProperty();
+            sp.setHeader(getActiveList().getSelectedItem().toString());
+            sp.setColor(changeColor.getForeground());
+            sp.setMax(Double.parseDouble(maxField.getText()));
+            sp.setMin(Double.parseDouble(minField.getText()));
+            OpenLogViewerApp.getInstance().getPropertyPane().addProperty(sp);
+        }
+    };
 
     public OptionFrame(String title) throws HeadlessException {
         super(title);
@@ -140,6 +153,7 @@ public class OptionFrame extends JFrame {
         setButton.addActionListener(commitButtonActionListener);
         changeColor.addActionListener(colorChangeListener);
         resetButton.addActionListener(resetButtonActionListener);
+        saveButton.addActionListener(saveButtonActionListener);
         resetButton.setToolTipText("Reset selected graph to its origional settings (min,max,color)");
 
         maxLabel.setBounds(0, 30, 100, 20);
@@ -158,6 +172,8 @@ public class OptionFrame extends JFrame {
         optionPanel.add(setButton);
         resetButton.setBounds(0, 110, 200, 20);
         optionPanel.add(resetButton);
+        saveButton.setBounds(0,130,200,20);
+        optionPanel.add(saveButton);
 
 
     }
