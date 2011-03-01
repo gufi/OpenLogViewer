@@ -84,7 +84,7 @@ public class PropertiesPane extends JFrame {
             System.out.println("find some where else ");
 
         } else {
-            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + "OpenLogViewer" + systemDelim + "OLVProperties.olv");
+            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
         }
         if (!OLVProperties.exists()) {
             try {
