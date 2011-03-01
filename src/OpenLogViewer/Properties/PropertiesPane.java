@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -55,7 +56,7 @@ public class PropertiesPane extends JFrame {
         super(title);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setPreferredSize(new Dimension(350, 500));
-        this.setSize(new Dimension(450, 500));
+        this.setSize(new Dimension(550, 500));
         this.setJMenuBar(createMenuBar());
 
 
@@ -144,7 +145,7 @@ public class PropertiesPane extends JFrame {
 
     private JPanel createAcceptPanel() {
         JPanel aPanel = new JPanel();
-        aPanel.setPreferredSize(new Dimension(400, 32));
+        aPanel.setPreferredSize(new Dimension(500, 32));
         aPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
 
         JButton okButton = new JButton("OK");
@@ -190,6 +191,7 @@ public class PropertiesPane extends JFrame {
                 sp.setMin(Double.parseDouble(prop[3]));
                 sp.setMax(Double.parseDouble(prop[4]));
                 sp.setSplit(Integer.parseInt(prop[5]));
+                sp.setActive(Boolean.parseBoolean(prop[6]));
                 addProperty(sp);
             }
             scan.close();
@@ -228,8 +230,8 @@ public class PropertiesPane extends JFrame {
             PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
             pp.reset();
         }
-        if(removeProperties.size() > 0){
-            for(int i = 0; i < removeProperties.size(); i++){
+        if (removeProperties.size() > 0) {
+            for (int i = 0; i < removeProperties.size(); i++) {
                 addProperty(removeProperties.get(i));
             }
             removeProperties.clear();
@@ -249,7 +251,7 @@ public class PropertiesPane extends JFrame {
             properties.add(sp);
 
             Collections.sort(properties);
-            propertyView.add(new PropertyPanel(sp),properties.indexOf(sp));
+            propertyView.add(new PropertyPanel(sp), properties.indexOf(sp));
 
             propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
 
@@ -293,17 +295,19 @@ public class PropertiesPane extends JFrame {
         JTextField minBox;
         JTextField maxBox;
         JTextField splitBox;
+        JComboBox activeBox;
 
         public PropertyPanel(SingleProperty sp) {
             super();
             this.sp = sp;
             this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
             this.setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
-            setPreferredSize(new Dimension(400, 50));
+            setPreferredSize(new Dimension(500, 50));
             JLabel minLabel = new JLabel("Min:");
             JLabel maxLabel = new JLabel("Max:");
             JLabel colorLabel = new JLabel("Color:");
             JLabel splitLabel = new JLabel("Split:");
+            JLabel activeLabel = new JLabel("Active:");
             splitBox = new JTextField();
             splitBox.setPreferredSize(new Dimension(15, 20));
             splitBox.setText(Integer.toString(sp.getSplit()));
@@ -316,7 +320,14 @@ public class PropertiesPane extends JFrame {
             colorBox = new JPanel();
             colorBox.setBackground(sp.getColor());
             colorBox.setPreferredSize(new Dimension(30, 20));
+            String[] tf = {"False", "True"};
+            activeBox = new JComboBox(tf);
+            if (sp.isActive()) {
+                activeBox.setSelectedIndex(1);
+            }
+            activeBox.setPreferredSize(new Dimension(60, 20));
             check = new JCheckBox();
+
             colorBox.addMouseListener(new MouseListener() {
 
                 @Override
@@ -354,6 +365,8 @@ public class PropertiesPane extends JFrame {
             add(maxBox);
             add(splitLabel);
             add(splitBox);
+            add(activeLabel);
+            add(activeBox);
             add(check);
         }
 
@@ -378,6 +391,8 @@ public class PropertiesPane extends JFrame {
             sp.setMax(Double.parseDouble(maxBox.getText()));
             sp.setColor(colorBox.getBackground());
             sp.setSplit(Integer.parseInt(splitBox.getText()));
+            String active = (String) activeBox.getSelectedItem();
+            sp.setActive(Boolean.parseBoolean(active));
         }
 
         public void reset() {
@@ -389,12 +404,12 @@ public class PropertiesPane extends JFrame {
 
         @Override
         public int compareTo(Object o) {
-            if(o instanceof PropertyPanel) {
-                PropertyPanel pp = (PropertyPanel)o;
+            if (o instanceof PropertyPanel) {
+                PropertyPanel pp = (PropertyPanel) o;
                 return this.sp.getHeader().compareToIgnoreCase(pp.getSp().getHeader());
+            } else {
+                return -1;
             }
-            else return -1;
         }
-
     }
 }

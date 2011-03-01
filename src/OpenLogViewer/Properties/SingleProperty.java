@@ -12,11 +12,12 @@ import java.awt.Color;
  */
 public class SingleProperty implements Comparable {
 
-    Color color;
+    private Color color;
     private String header;
     private double min;
     private double max;
     private int split;
+    private boolean active;
 
     public SingleProperty() {
         color = Color.RED;
@@ -24,6 +25,7 @@ public class SingleProperty implements Comparable {
         min = 0;
         max = 0;
         split = 0;
+        active = false;
     }
 
     public Color getColor() {
@@ -66,6 +68,14 @@ public class SingleProperty implements Comparable {
         this.split = split;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public String toString() {
         return header + "="
                 + color.getRed()
@@ -73,7 +83,8 @@ public class SingleProperty implements Comparable {
                 + "," + color.getBlue()
                 + "," + min
                 + "," + max
-                + "," + split;
+                + "," + split
+                + "," + Boolean.toString(active);
     }
 
     public int compareTo(Object o) {

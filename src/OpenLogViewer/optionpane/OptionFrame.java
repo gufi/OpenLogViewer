@@ -175,12 +175,13 @@ public class OptionFrame extends JFrame {
         while (i.hasNext()) {
             head = (String) i.next();
             GenericDataElement GDE = gl.get(head);
-            checkForProperties(GDE);
             toBeAdded = new GCheckBox();
+
             toBeAdded.setName(head);
             toBeAdded.setText(head);
             toBeAdded.setRef(GDE);
             toBeAdded.setSelected(false);
+            checkForProperties(toBeAdded,GDE);
             checkBoxes.add(toBeAdded);
             Collections.sort(checkBoxes);
             this.getHeaderPanel().add(toBeAdded,checkBoxes.indexOf(toBeAdded));
@@ -190,12 +191,19 @@ public class OptionFrame extends JFrame {
         this.setVisible(true);
     }
 
-    private void checkForProperties(GenericDataElement GDE) {
+    private void checkForProperties(GCheckBox GCB,GenericDataElement GDE) {
         for(int i = 0;i < OpenLogViewerApp.getInstance().getProperties().size();i++){
             if(OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())){
                 GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
                 GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
                 GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
+                if(OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
+                    getActiveList().addItem(GDE);
+                    getActiveList().setSelectedItem(GDE);
+                    GCB.setSelected(true);
+                    OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(GDE.getName());
+                }
+
                 break;
             }
         }
@@ -235,7 +243,6 @@ public class OptionFrame extends JFrame {
                 }
             }
         }
-
     }
 
     private class GCheckBox extends JCheckBox implements ActionListener,Comparable {
