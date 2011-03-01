@@ -86,7 +86,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
                     if (lp.getComponent(i) instanceof GraphLayer) {
                         GraphLayer gl = (GraphLayer) lp.getComponent(i);
                         g2d.setColor(textBackground);
-                        g2d.fillRect(xMouseCoord , yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
+                        g2d.fillRect(lineDraw , yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
                         g2d.setColor(gl.getColor());
                         g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), lineDraw +2, yMouseCoord + 15 + (15 * i));
                     }

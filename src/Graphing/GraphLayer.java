@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.swing.JPanel;
@@ -60,17 +61,28 @@ public class GraphLayer extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         if (drawnData != null && drawnData.size() > 0) {
             g2d.setColor(GDE.getColor());
-            Iterator dat = drawnData.iterator();// first number
-            Iterator dat2 = drawnData.iterator();
-            dat2.next();
+            Iterator dat = drawnData.iterator();
             int i = 0;
-            while (dat2.hasNext()) {
-                int a = chartNumber((Double) dat.next(), d.height, GDE.getMinValue(), GDE.getMaxValue());
-                int b = chartNumber((Double) dat2.next(), d.height, GDE.getMinValue(), GDE.getMaxValue());
+            Double chartNum = 0.0;
+            try {
+                chartNum = (Double) dat.next();
+            } catch (ConcurrentModificationException CME) {
+                System.out.println(CME.getMessage());
+            }
+            while (dat.hasNext()) {
+                int a = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
+                try {
+                    chartNum = (Double) dat.next();
+                } catch (ConcurrentModificationException CME) {
+                    System.out.println(CME.getMessage());
+                }
+                int b = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
+
                 if (zoom.getZoom() > 5) {
                     g2d.fillOval(i - 2, a - 2, 4, 4);
                 }
                 g2d.drawLine(i, a, i + zoom.getZoom(), b);
+
                 i += zoom.getZoom();
             }
         }
@@ -116,8 +128,10 @@ public class GraphLayer extends JPanel {
             LayeredGraph lg = (LayeredGraph) this.getParent();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
-            int zoomFactor = ((d.width+zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
-            if(d.width/2 > zoom.getZoom()*zoomFactor)zoomFactor++;// without this certain zoom factors will cause data to be misdrawn on screen
+            int zoomFactor = ((d.width + zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
+            if (d.width / 2 > zoom.getZoom() * zoomFactor) {
+                zoomFactor++;// without this certain zoom factors will cause data to be misdrawn on screen
+            }
             if (lg.getCurrent() <= zoomFactor) {
                 int x = 0;
                 int fill = (zoomFactor) - lg.getCurrent();
@@ -126,16 +140,16 @@ public class GraphLayer extends JPanel {
                     x++;
                 }
                 int to = 0;
-                if (GDE.size() - 1 < (d.width / zoom.getZoom()) - x+2) {// get the whole array because its stupid short
-                    to = (GDE.size()-1);
+                if (GDE.size() - 1 < (d.width / zoom.getZoom()) - x + 2) {// get the whole array because its stupid short
+                    to = (GDE.size() - 1);
                 } else { // get the first width-zoom-x
-                    to = (d.width / zoom.getZoom()) - x+2;
+                    to = (d.width / zoom.getZoom()) - x + 2;
                 }
                 drawnData.addAll(GDE.subList(0, to));
             } else if ((zoomFactor + lg.getCurrent() + 2) < GDE.size()) {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor  , zoomFactor + 2 + lg.getCurrent()));
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, zoomFactor + 2 + lg.getCurrent()));
             } else {
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor , GDE.size()));
+                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, GDE.size()));
             }
         }
     }
