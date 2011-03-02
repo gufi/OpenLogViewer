@@ -138,6 +138,9 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 OpenLogViewerApp.getInstance().getPropertyPane().setVisible(true);
+                OpenLogViewerApp.getInstance().getPropertyPane().setAlwaysOnTop(true);
+                OpenLogViewerApp.getInstance().getPropertyPane().setAlwaysOnTop(false);
+                
             }
 
         });

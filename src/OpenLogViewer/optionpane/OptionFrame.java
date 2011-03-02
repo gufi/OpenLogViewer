@@ -15,9 +15,12 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -36,16 +39,44 @@ public class OptionFrame extends JFrame {
     private JPanel headerPanel;
     private JPanel optionPanel;
     private JComboBox activeList;
+    private final String SELECT_ALL = "Select All";
+    private final String DESELECT_ALL = "Deselect All";
     private JLabel minLabel = new JLabel("Min: ");
     private JLabel maxLabel = new JLabel("Max: ");
     private JTextField maxField = new JTextField(10);
     private JTextField minField = new JTextField(10);
-    private JButton setButton = new JButton("Commit");
+    private JButton commitButton = new JButton("Commit");
     private JButton changeColor = new JButton("Change Color");
     private JButton resetButton = new JButton("Reset");
-    private JButton saveButton = new JButton("Save Propertys");
+    private JButton saveButton = new JButton("Commit and Save");
+    private JButton selectAllButton = new JButton(SELECT_ALL);
     private ArrayList<GCheckBox> checkBoxes = new ArrayList<GCheckBox>();
+    ActionListener selectAllButtonActionListener = new ActionListener() {
+         @Override
+        public void actionPerformed(ActionEvent e) {
+             JButton SAB = (JButton)e.getSource();
+             int checkCount = OpenLogViewerApp.getInstance().getOptionFrame().getHeaderPanel().getComponentCount();
+             if(SAB.getText().equals(SELECT_ALL)){
+                 SAB.setText(DESELECT_ALL);
+                for (int i =0;i < checkCount; i++) {
+                    GCheckBox GCB = (GCheckBox)OpenLogViewerApp.getInstance().getOptionFrame().getHeaderPanel().getComponent(i);
+                    if(!GCB.isSelected()){
+                        GCB.setSelected(true);
+                    }
+                }
+             }else if(SAB.getText().equals(DESELECT_ALL)) {
+                 SAB.setText(SELECT_ALL);
+                 for (int i =0;i < checkCount; i++) {
+                    GCheckBox GCB = (GCheckBox)OpenLogViewerApp.getInstance().getOptionFrame().getHeaderPanel().getComponent(i);
+                    if(GCB.isSelected()){
+                        GCB.setSelected(false);
+                    }
+                }
+             }
+         }
+    };
     ActionListener resetButtonActionListener = new ActionListener() {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
@@ -61,12 +92,14 @@ public class OptionFrame extends JFrame {
         }
     };
     ActionListener commitButtonActionListener = new ActionListener() {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             commit();
         }
     };
     ActionListener colorChangeListener = new ActionListener() {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
@@ -81,6 +114,7 @@ public class OptionFrame extends JFrame {
         }
     };
     ActionListener updateMinMax = new ActionListener() {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
@@ -88,11 +122,12 @@ public class OptionFrame extends JFrame {
                 maxField.setText(GDE.getMaxValue().toString());
                 minField.setText(GDE.getMinValue().toString());
                 changeColor.setForeground(GDE.getColor());
-                
+
             }
         }
     };
     ActionListener saveButtonActionListener = new ActionListener() {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             SingleProperty sp = new SingleProperty();
@@ -127,10 +162,11 @@ public class OptionFrame extends JFrame {
         optionPanel.setMinimumSize(new Dimension(200, 500));
         optionPanel.setPreferredSize(optionPanel.getMinimumSize());
         optionPanel.add(activeList);
-        setButton.addActionListener(commitButtonActionListener);
+        commitButton.addActionListener(commitButtonActionListener);
         changeColor.addActionListener(colorChangeListener);
         resetButton.addActionListener(resetButtonActionListener);
         saveButton.addActionListener(saveButtonActionListener);
+        selectAllButton.addActionListener(selectAllButtonActionListener);
         resetButton.setToolTipText("Reset selected graph to its origional settings (min,max,color)");
 
         maxLabel.setBounds(0, 30, 100, 20);
@@ -145,12 +181,15 @@ public class OptionFrame extends JFrame {
 
         changeColor.setBounds(0, 70, 200, 20);
         optionPanel.add(changeColor);
-        setButton.setBounds(0, 90, 200, 20);
-        optionPanel.add(setButton);
-        resetButton.setBounds(0, 110, 200, 20);
-        optionPanel.add(resetButton);
-        saveButton.setBounds(0,130,200,20);
+        commitButton.setBounds(0, 90, 200, 20);
+        optionPanel.add(commitButton);
+        saveButton.setBounds(0, 110, 200, 20);
         optionPanel.add(saveButton);
+        resetButton.setBounds(0, 130, 100, 20);
+        optionPanel.add(resetButton);
+        selectAllButton.setBounds(100, 130, 100, 20);
+        optionPanel.add(selectAllButton);
+
 
 
     }
@@ -173,30 +212,26 @@ public class OptionFrame extends JFrame {
             toBeAdded.setName(head);
             toBeAdded.setText(head);
             toBeAdded.setRef(GDE);
-            toBeAdded.setSelected(false);
-            if(checkForProperties(toBeAdded,GDE)) {
+            if (checkForProperties(toBeAdded, GDE)) {
                 toBeAdded.setBackground(GDE.getColor());
             }
             checkBoxes.add(toBeAdded);
             Collections.sort(checkBoxes);
-            this.getHeaderPanel().add(toBeAdded,checkBoxes.indexOf(toBeAdded));
+            this.getHeaderPanel().add(toBeAdded, checkBoxes.indexOf(toBeAdded));
         }
 
         this.setDefaultCloseOperation(OptionFrame.ICONIFIED);
         this.setVisible(true);
     }
 
-    private boolean checkForProperties(GCheckBox GCB,GenericDataElement GDE) {
-        for(int i = 0;i < OpenLogViewerApp.getInstance().getProperties().size();i++){
-            if(OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())){
+    private boolean checkForProperties(GCheckBox GCB, GenericDataElement GDE) {
+        for (int i = 0; i < OpenLogViewerApp.getInstance().getProperties().size(); i++) {
+            if (OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())) {
                 GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
                 GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
                 GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
-                if(OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
-                    getActiveList().addItem(GDE);
-                    getActiveList().setSelectedItem(GDE);
+                if (OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
                     GCB.setSelected(true);
-                    OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(GDE.getName());
                     return true;
                 }
             }
@@ -242,43 +277,68 @@ public class OptionFrame extends JFrame {
 
     private void commit() {
         GenericDataElement GDE = (GenericDataElement) activeList.getSelectedItem();
-            if (GDE != null) {
-                boolean somethingChanged = false;
-                if (!maxField.getText().equals(minField.getText())) {
-                    if (!maxField.getText().equals("")) {
-                        if (GDE != null) {
-                            GDE.setMaxValue(Double.parseDouble(maxField.getText()));
-                            somethingChanged = true;
-                        }
-                    }
-                    if (!minField.getText().equals("")) {
-                        if (GDE != null) {
-                            GDE.setMinValue(Double.parseDouble(minField.getText()));
-                            somethingChanged = true;
-                        }
+        if (GDE != null) {
+            boolean somethingChanged = false;
+            if (!maxField.getText().equals(minField.getText())) {
+                if (!maxField.getText().equals("")) {
+                    if (GDE != null) {
+                        GDE.setMaxValue(Double.parseDouble(maxField.getText()));
+                        somethingChanged = true;
                     }
                 }
-                if (!changeColor.getForeground().equals(GDE.getColor())) {
-                    Color newColor = new Color(changeColor.getForeground().getRGB());
-
-                    GDE.setColor(newColor);
-                    findCheck(GDE);
-                    somethingChanged = true;
-                }
-                if (somethingChanged) {
-
-                    OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+                if (!minField.getText().equals("")) {
+                    if (GDE != null) {
+                        GDE.setMinValue(Double.parseDouble(minField.getText()));
+                        somethingChanged = true;
+                    }
                 }
             }
+            if (!changeColor.getForeground().equals(GDE.getColor())) {
+                Color newColor = new Color(changeColor.getForeground().getRGB());
+
+                GDE.setColor(newColor);
+                findCheck(GDE);
+                somethingChanged = true;
+            }
+            if (somethingChanged) {
+
+                OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+            }
+        }
     }
 
-    private class GCheckBox extends JCheckBox implements ActionListener,Comparable {
+    private class GCheckBox extends JCheckBox implements ActionListener, Comparable {
 
         GenericDataElement GDE;
+        ItemListener itemListener = new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                int state = e.getStateChange();
+                GCheckBox i = (GCheckBox) e.getSource();
+                OptionFrame of = OpenLogViewerApp.getInstance().getOptionFrame();
+                if (state == ItemEvent.SELECTED) {
+
+                    of.getActiveList().addItem(GDE);
+                    //of.getActiveList()
+                    of.getActiveList().setSelectedItem(GDE);
+                    i.setBackground(GDE.getColor());
+                    i.repaint();
+                    OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(i.getName());
+                } else if (state == ItemEvent.DESELECTED) {
+                    of.getActiveList().removeItem(GDE);
+                    i.setBackground(null);
+                    if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(i.getName())) {
+                        OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+                    }
+                }
+            }
+        };
 
         public GCheckBox() {
             super();
             addActionListener(this);
+            addItemListener(itemListener);
         }
 
         public void setRef(GenericDataElement GDE) {
@@ -292,7 +352,12 @@ public class OptionFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            GCheckBox i = (GCheckBox) e.getSource();
+            //insertGraph();
+        }
+
+        /*private void insertGraph() {
+            //GCheckBox i = (GCheckBox) e.getSource();
+            GCheckBox i = this;
             OptionFrame of = OpenLogViewerApp.getInstance().getOptionFrame();
             if (i.isSelected()) {
 
@@ -309,15 +374,16 @@ public class OptionFrame extends JFrame {
                     OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
                 }
             }
-        }
+        }*/
 
         @Override
         public int compareTo(Object o) {
-            if(o instanceof GCheckBox){
-                GCheckBox GCB = (GCheckBox)o;
+            if (o instanceof GCheckBox) {
+                GCheckBox GCB = (GCheckBox) o;
                 return this.GDE.compareTo(GCB.getGDE());
-            }else return -1;
+            } else {
+                return -1;
+            }
         }
-
     }
 }

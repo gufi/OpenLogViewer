@@ -64,6 +64,8 @@ public class GraphMenu extends JMenu {
                 if (!OpenLogViewerApp.getInstance().getOptionFrame().isVisible()) {
                     OpenLogViewerApp.getInstance().getOptionFrame().setVisible(true);
                 }
+                OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(true);
+                OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(false);
             }
         });
         this.add(optionPaneItem);
