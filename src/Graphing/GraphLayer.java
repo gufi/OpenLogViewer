@@ -41,13 +41,18 @@ public class GraphLayer extends JPanel {
     private GenericDataElement GDE;
     private LinkedList<Double> drawnData;
     private LayeredGraph.Zoom zoom;
+    private int nullData;
 
     public GraphLayer() {
         this.setOpaque(false);
         this.setLayout(null);
         this.GDE = null;
         drawnData = new LinkedList<Double>();
-
+        this.nullData = 0;
+    }
+    private int getCurrent() {
+        LayeredGraph lg = (LayeredGraph)this.getParent();
+        return lg.getCurrent();
     }
 
     @Override
@@ -69,6 +74,8 @@ public class GraphLayer extends JPanel {
             } catch (ConcurrentModificationException CME) {
                 System.out.println(CME.getMessage());
             }
+
+
             while (dat.hasNext()) {
                 int a = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
                 try {
@@ -77,12 +84,12 @@ public class GraphLayer extends JPanel {
                     System.out.println(CME.getMessage());
                 }
                 int b = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
-
+                if(i >= nullData*zoom.getZoom()){
                 if (zoom.getZoom() > 5) {
                     g2d.fillOval(i - 2, a - 2, 4, 4);
                 }
                 g2d.drawLine(i, a, i + zoom.getZoom(), b);
-
+                }
                 i += zoom.getZoom();
             }
         }
@@ -135,10 +142,12 @@ public class GraphLayer extends JPanel {
             if (lg.getCurrent() <= zoomFactor) {
                 int x = 0;
                 int fill = (zoomFactor) - lg.getCurrent();
+                nullData = fill;
                 while (x < fill) {
                     drawnData.add(0.0);
                     x++;
                 }
+
                 int to = 0;
                 if (GDE.size() - 1 < (d.width / zoom.getZoom()) - x + 2) {// get the whole array because its stupid short
                     to = (GDE.size() - 1);
@@ -147,8 +156,10 @@ public class GraphLayer extends JPanel {
                 }
                 drawnData.addAll(GDE.subList(0, to));
             } else if ((zoomFactor + lg.getCurrent() + 2) < GDE.size()) {
+                nullData = 0;
                 drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, zoomFactor + 2 + lg.getCurrent()));
             } else {
+                nullData = 0;
                 drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, GDE.size()));
             }
         }
@@ -163,6 +174,7 @@ public class GraphLayer extends JPanel {
 
             if ((lg.getCurrent() + zoomFactor) < GDE.size()) {
                 drawnData.add(GDE.get(lg.getCurrent() + zoomFactor));
+                if(nullData > 0) nullData--;
             }
             if (drawnData.size() > zoomFactor + 1) {
                 drawnData.remove(0);
