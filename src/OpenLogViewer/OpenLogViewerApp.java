@@ -242,6 +242,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
             }
             if (openFile != null) {
                 OpenLogViewerApp.getInstance().setTitle("OpenLogViewer - " + openFile.getName());
+                System.gc();
             }
         }
     }

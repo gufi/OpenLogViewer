@@ -81,31 +81,35 @@ public class PropertiesPane extends JFrame {
     }
 
     private void setupForLoad() {
-        String systemDelim = File.separator;
-        File homeDir = new File(System.getProperty("user.home"));
+        try {
+            String systemDelim = File.separator;
+            File homeDir = new File(System.getProperty("user.home"));
 
-        if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
-            System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
+            if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
+                System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
 
-        } else {
-            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
-        }
-        if (!OLVProperties.exists()) {
-            try {
-                if (OLVProperties.mkdir()) {
-                    OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
-                    if (OLVProperties.createNewFile()) {
-                        loadProperties();
-                    }
-                } else {
-                    //find somewhere else
-                }
-            } catch (IOException IOE) {
-                System.out.print(IOE.getMessage());
+            } else {
+                OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
             }
-        } else {
-            OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
-            loadProperties();
+            if (!OLVProperties.exists()) {
+                try {
+                    if (OLVProperties.mkdir()) {
+                        OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+                        if (OLVProperties.createNewFile()) {
+                            loadProperties();
+                        }
+                    } else {
+                        //find somewhere else
+                    }
+                } catch (IOException IOE) {
+                    System.out.print(IOE.getMessage());
+                }
+            } else {
+                OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+                loadProperties();
+            }
+        } catch (Exception E) {
+            System.out.print(E.getMessage());
         }
     }
 
