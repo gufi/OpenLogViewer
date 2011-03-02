@@ -126,9 +126,11 @@ public class PropertiesPane extends JFrame {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
+                if(!s.equals("") || s != null){
                 SingleProperty newprop = new SingleProperty();
                 newprop.setHeader(s);
                 addProperty(newprop);
+                }
             }
         });
 

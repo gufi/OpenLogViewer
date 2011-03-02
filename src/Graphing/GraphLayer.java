@@ -136,7 +136,7 @@ public class GraphLayer extends JPanel {
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
             int zoomFactor = ((d.width + zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
-            if (d.width / 2 > zoom.getZoom() * zoomFactor) {
+            if ((double)d.width / 2 > zoom.getZoom() * (double)(zoomFactor)) {
                 zoomFactor++;// without this certain zoom factors will cause data to be misdrawn on screen
             }
             if (lg.getCurrent() <= zoomFactor) {
