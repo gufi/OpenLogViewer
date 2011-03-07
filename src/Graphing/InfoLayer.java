@@ -46,7 +46,6 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     private Color vertBar = new Color(255, 255, 255, 100);
     private Color textBackground = new Color(0, 0, 0, 170);
 
-
     public InfoLayer() {
         logStatus = GenericLog.LOG_NOT_LOADED;
         xMouseCoord = -100;
@@ -56,9 +55,25 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
         addMouseListener(this);
         addMouseMotionListener(this);
     }
+    int FPScounter = 0;
+    int FPS = 0;
+    private long currentTime;
+    private long builtTime;
 
     @Override
     public void paint(Graphics g) { // overriden paint because there will be no components in this pane
+        builtTime += System.currentTimeMillis() - currentTime;
+        currentTime = System.currentTimeMillis();
+        if (builtTime <= 1000) {
+            FPScounter++;
+        } else {
+            FPS = FPScounter;
+            if (FPScounter != 0) {
+                FPS += (1000 % FPScounter) * 0.001;
+            }
+            FPScounter = 0;
+            builtTime = 0;
+        }
 
         if (!this.getSize().equals(this.getParent().getSize())) {
             this.setSize(this.getParent().getSize());
@@ -74,10 +89,10 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             Dimension d = this.getSize();
             LayeredGraph lp = (LayeredGraph) this.getParent();
             Graphics2D g2d = (Graphics2D) g;
-
+            g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             if (mouseOver) {
 
-                int lineDraw =zoom.getZoom()+(xMouseCoord/zoom.getZoom())*zoom.getZoom();
+                int lineDraw = zoom.getZoom() + (xMouseCoord / zoom.getZoom()) * zoom.getZoom();
                 g2d.setColor(vertBar);
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height); // middle vertical divider,
@@ -86,9 +101,9 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
                     if (lp.getComponent(i) instanceof GraphLayer) {
                         GraphLayer gl = (GraphLayer) lp.getComponent(i);
                         g2d.setColor(textBackground);
-                        g2d.fillRect(lineDraw , yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
+                        g2d.fillRect(lineDraw, yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
                         g2d.setColor(gl.getColor());
-                        g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), lineDraw +2, yMouseCoord + 15 + (15 * i));
+                        g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), lineDraw + 2, yMouseCoord + 15 + (15 * i));
                     }
                 }
             }
@@ -100,8 +115,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
         repaint();
     }
 
-    
-    public void setZoom(LayeredGraph.Zoom z){
+    public void setZoom(LayeredGraph.Zoom z) {
         zoom = z;
     }
 
@@ -127,7 +141,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     public void mouseClicked(MouseEvent e) {
         LayeredGraph lg = (LayeredGraph) this.getParent();
 
-        int move = (e.getX()/zoom.getZoom()) - (int) ((this.getSize().width / 2)/zoom.getZoom());
+        int move = (e.getX() / zoom.getZoom()) - (int) ((this.getSize().width / 2) / zoom.getZoom());
         if (move + lg.getCurrent() < lg.getCurrentMax()) {
             if (move + lg.getCurrent() < 0) {
                 lg.setCurrent(0);
@@ -137,7 +151,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             lg.initGraph();
             lg.repaint();
         } else {
-            lg.setCurrent(lg.getCurrentMax()-1);
+            lg.setCurrent(lg.getCurrentMax() - 1);
             lg.initGraph();
             lg.repaint();
         }

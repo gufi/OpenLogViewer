@@ -41,7 +41,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
     private String name;
 
     public GenericDataElement() {
-        super();
+        super(50000);
         maxValue = Double.MIN_VALUE;
         newMaxValue = maxValue;
         minValue = Double.MAX_VALUE;
