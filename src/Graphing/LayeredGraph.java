@@ -43,10 +43,8 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     private boolean play; // true = play graph, false = pause graph
     private InfoLayer infoLayer;
     int currentMax;
+    private int totalSplits;
     Zoom zoom;
-
-    //MouseMotion Flags
-    //MouseListener Flags
 
     public LayeredGraph() {
         super();
@@ -57,14 +55,15 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         genLog = new GenericLog();
         timer = new Timer(delay, this);
         timer.setInitialDelay(0);
-        
+        totalSplits = 1;
         infoLayer = new InfoLayer();
         zoom = new Zoom();
-        
+
         init();
     }
+
     private void init() {
-        infoLayer.setSize(400,600);
+        infoLayer.setSize(400, 600);
         infoLayer.setZoom(zoom);
         this.setLayer(infoLayer, 99);
         this.setBackground(Color.BLACK);
@@ -73,17 +72,16 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        
+
         if (play && current < currentMax && genLog.size() > 0) {
             current++;
             advanceGraph();
             repaint();
-        }else {
+        } else {
             stop();
         }
 
     }
-    
 
     public void addGraph(String header) {
         boolean p = play;
@@ -95,8 +93,10 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         graph.setSize(this.getSize());
         graph.setName(header);
         this.add(graph);
+        this.addHierarchyBoundsListener(graph);// updates graph size automatically
+        genLog.get(header).addPropertyChangeListener("Split", graph);
         graph.setData(genLog.get(header));
-        
+
         setCurrentMax();
         if (p) {
             play();
@@ -110,6 +110,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
                 GraphLayer t = (GraphLayer) this.getComponent(i);
                 if (t.getData() == temp) {
                     this.remove(t);
+                    this.removeHierarchyBoundsListener(t);
                     return true;
                 }
             }
@@ -118,11 +119,14 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     private void removeAllGraphs() {
-        for (int i = 0; this.getComponentCount() > 1; ) {
+        for (int i = 0; this.getComponentCount() > 1;) {
             if (this.getComponent(i) instanceof GraphLayer) {
+                this.removeHierarchyBoundsListener((GraphLayer) getComponent(i));
                 this.remove(getComponent(i));
+                
+            } else {
+                i++;
             }
-            else i++;
         }
         repaint();
     }
@@ -139,8 +143,8 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void setCurrentMax() {
-        for(int i = 0; i < this.getComponentCount(); i++) {
-            if(getComponent(i) instanceof GraphLayer){
+        for (int i = 0; i < this.getComponentCount(); i++) {
+            if (getComponent(i) instanceof GraphLayer) {
                 GraphLayer gl = (GraphLayer) getComponent(i);
                 currentMax = gl.graphSize();
                 break;
@@ -179,13 +183,17 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void zoomIn() {
-        if(zoom.getZoom() <= 50) zoom.setZoom(zoom.getZoom()+1);
+        if (zoom.getZoom() <= 50) {
+            zoom.setZoom(zoom.getZoom() + 1);
+        }
         this.initGraph();
         repaint();
     }
 
     public void zoomOut() {
-        if(zoom.getZoom() > 1) zoom.setZoom(zoom.getZoom()-1);
+        if (zoom.getZoom() > 1) {
+            zoom.setZoom(zoom.getZoom() - 1);
+        }
         this.initGraph();
         repaint();
     }
@@ -248,25 +256,43 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     public void setStatus(int status) {
         infoLayer.setGraphStatus(status);
     }
+
     public void setColor(String header, Color newColor) {
-        for(int i = 0; i < this.getComponentCount(); i++) {
-            if(this.getComponent(i) instanceof GraphLayer && this.getComponent(i).getName().equals(header)) {
-                GraphLayer gl = (GraphLayer)this.getComponent(i);
+        for (int i = 0; i < this.getComponentCount(); i++) {
+            if (this.getComponent(i) instanceof GraphLayer && this.getComponent(i).getName().equals(header)) {
+                GraphLayer gl = (GraphLayer) this.getComponent(i);
                 gl.setColor(newColor);
 
             }
         }
     }
 
+    public int getTotalSplits() {
+        return totalSplits;
+    }
+
+    public void setTotalSplits(int totalSplits) {
+        if (totalSplits > 0) {
+            this.totalSplits = totalSplits;
+            for(int i = 0; i < this.getComponentCount(); i++){
+                if(this.getComponent(i) instanceof GraphLayer){
+                    GraphLayer gl = (GraphLayer)this.getComponent(i);
+                    gl.sizeGraph();
+                }
+            }
+        }
+    }
+
     public class Zoom {
-        private int zoom =1;
+
+        private int zoom = 1;
 
         public int getZoom() {
             return zoom;
         }
+
         public void setZoom(int z) {
             zoom = z;
         }
     }
-
 }

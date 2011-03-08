@@ -264,6 +264,11 @@ public class PropertiesPane extends JFrame {
             propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
             propertyView.revalidate();
         } else {
+            for(int i = 0; i < properties.size(); i++){
+                if(properties.get(i).getHeader().equalsIgnoreCase(sp.getHeader())){
+                    properties.set(i, sp);
+                }
+            }
             pp.setSp(sp);
             pp.reset();
         }
@@ -410,7 +415,7 @@ public class PropertiesPane extends JFrame {
 
         public void reset() {
             minBox.setText(Double.toString(sp.getMin()));
-            minBox.setText(Double.toString(sp.getMin()));
+            maxBox.setText(Double.toString(sp.getMax()));
             colorBox.setBackground(sp.getColor());
             splitBox.setText(Integer.toString(sp.getSplit()));
             activeBox.setSelectedItem(Boolean.toString(sp.isActive()));

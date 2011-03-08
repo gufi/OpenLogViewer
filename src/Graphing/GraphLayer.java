@@ -27,6 +27,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,7 +40,7 @@ import javax.swing.JPanel;
  *
  * @author Bryan
  */
-public class GraphLayer extends JPanel {
+public class GraphLayer extends JPanel implements HierarchyBoundsListener,PropertyChangeListener {
 
     private GenericDataElement GDE;
     private LinkedList<Double> drawnData;
@@ -57,11 +61,29 @@ public class GraphLayer extends JPanel {
     }
 
     @Override
+    public void ancestorMoved(HierarchyEvent e) {
+    }
+
+    @Override
+    public void ancestorResized(HierarchyEvent e) {
+        if (e.getID() == HierarchyEvent.ANCESTOR_RESIZED) {
+            sizeGraph();
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(evt.getPropertyName().equalsIgnoreCase("Split")){
+            sizeGraph();
+        }
+    }
+
+
+
+    @Override
     public void paint(Graphics g) { // overridden paint because there will be no other painting other than this
 
         if (!this.getParent().getSize().equals(this.getSize())) {
-            this.setSize(this.getParent().getSize());
-            initGraph();
         }
         Dimension d = this.getSize();
         Graphics2D g2d = (Graphics2D) g;
@@ -72,21 +94,20 @@ public class GraphLayer extends JPanel {
             Double chartNum = 0.0;
             try {
                 chartNum = (Double) dat.next();
-
-
-
+                int a = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
                 while (dat.hasNext()) {
-                    int a = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
+
 
                     chartNum = (Double) dat.next();
 
-                    int b = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
+                    int b = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
                     if (i >= nullData * zoom.getZoom()) {
                         if (zoom.getZoom() > 5) {
                             g2d.fillOval(i - 2, a - 2, 4, 4);
                         }
                         g2d.drawLine(i, a, i + zoom.getZoom(), b);
                     }
+                    a = b;
                     i += zoom.getZoom();
                 }
             } catch (ConcurrentModificationException CME) {
@@ -96,6 +117,7 @@ public class GraphLayer extends JPanel {
     }
 
     private int chartNumber(Double elemData, int height, double minValue, double maxValue) {
+
         int point = 0;
         if (maxValue != minValue) {
             point = (int) (height - (height * ((elemData - minValue) / (maxValue - minValue))));
@@ -105,6 +127,7 @@ public class GraphLayer extends JPanel {
 
     public void setData(GenericDataElement GDE) {
         this.GDE = GDE;
+        sizeGraph();
         initGraph();
     }
 
@@ -136,7 +159,7 @@ public class GraphLayer extends JPanel {
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
             int zoomFactor = ((d.width + zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
-            if ((double)d.width / 2 > zoom.getZoom() * (double)(zoomFactor)) {
+            if ((double) d.width / 2 > zoom.getZoom() * (double) (zoomFactor)) {
                 zoomFactor++;// without this certain zoom factors will cause data to be misdrawn on screen
             }
             if (lg.getCurrent() <= zoomFactor) {
@@ -163,6 +186,22 @@ public class GraphLayer extends JPanel {
                 drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, GDE.size()));
             }
         }
+    }
+
+    public void sizeGraph() {
+        LayeredGraph lg = (LayeredGraph) this.getParent();
+//        Dimension d = lg.getSize();
+        int wherePixel = 0 ;
+        if (lg.getTotalSplits() > 1) {
+            if (GDE.getSplitNumber() <= lg.getTotalSplits()) {
+                wherePixel += lg.getHeight() / lg.getTotalSplits() * GDE.getSplitNumber() - (lg.getHeight() / lg.getTotalSplits());
+            } else {
+                wherePixel += lg.getHeight() / lg.getTotalSplits() * lg.getTotalSplits() - (lg.getHeight() / lg.getTotalSplits());
+            }
+        }
+
+        this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
+        initGraph();
     }
 
     public void advanceGraph() {

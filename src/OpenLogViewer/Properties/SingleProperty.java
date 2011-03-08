@@ -24,7 +24,7 @@ public class SingleProperty implements Comparable {
         header = "";
         min = 0;
         max = 0;
-        split = 0;
+        split = 1;
         active = false;
     }
 
@@ -65,6 +65,9 @@ public class SingleProperty implements Comparable {
     }
 
     public void setSplit(int split) {
+        if(split < 1){
+            split = 1;
+        }
         this.split = split;
     }
 

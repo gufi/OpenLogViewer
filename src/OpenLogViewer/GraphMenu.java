@@ -22,12 +22,12 @@
  */
 package OpenLogViewer;
 
-import OpenLogViewer.optionpane.OptionFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -36,6 +36,7 @@ import javax.swing.JMenuItem;
 public class GraphMenu extends JMenu {
 
     private JMenuItem optionPaneItem;
+    private JMenuItem graphMenuSplit;
 
     public GraphMenu(String s, boolean b) {
         super(s, b);
@@ -68,6 +69,16 @@ public class GraphMenu extends JMenu {
                 OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(false);
             }
         });
+        
+        graphMenuSplit = new JMenuItem("Set Split View");
+        graphMenuSplit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e ) {
+                OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(Integer.parseInt(JOptionPane.showInputDialog(new JFrame(), "How many splits of the graphing view do you want")));
+            }
+        });
+
+
+        this.add(graphMenuSplit);
         this.add(optionPaneItem);
 
     }

@@ -23,6 +23,8 @@
 package GenericLog;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -39,9 +41,12 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
     private Color color;
     private Color newColor;
     private String name;
+    private int splitNumber;
+    private PropertyChangeSupport PCS;
 
     public GenericDataElement() {
         super(50000);
+        PCS = new PropertyChangeSupport(this);
         maxValue = Double.MIN_VALUE;
         newMaxValue = maxValue;
         minValue = Double.MAX_VALUE;
@@ -49,6 +54,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
         Random r = new Random();
         color = Color.getHSBColor(r.nextFloat(), 1.0F, 1.0F);
         newColor = color;
+        int splitNumber = 1;
     }
 
     @Override
@@ -97,10 +103,32 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
         newColor = c;
     }
 
+    public int getSplitNumber() {
+        return splitNumber;
+    }
+
+    public void setSplitNumber(int splitNumber) {
+        if(splitNumber < 1 ) {
+            splitNumber = 1;
+        }
+        int old = this.splitNumber;
+        this.splitNumber = splitNumber;
+        PCS.firePropertyChange("Split", old, this.splitNumber);
+
+    }
+
     public void reset() {
         newMinValue = minValue;
         newMaxValue = maxValue;
         newColor = color;
+    }
+
+    public void addPropertyChangeListener(String property, PropertyChangeListener PCL) {
+        PCS.addPropertyChangeListener(property, PCL);
+    }
+
+    public void removePropertyChangeListener(String property, PropertyChangeListener PCL) {
+        PCS.removePropertyChangeListener(property, PCL);
     }
 
     @Override

@@ -49,6 +49,8 @@ public class OptionFrame extends JFrame {
     private JButton resetButton = new JButton("Reset");
     private JButton saveButton = new JButton("Commit and Save");
     private JButton selectAllButton = new JButton(SELECT_ALL);
+    private JLabel splitLabel = new JLabel("Split:");
+    private JTextField splitField = new JTextField(10);
     private ArrayList<GCheckBox> checkBoxes = new ArrayList<GCheckBox>();
     ActionListener selectAllButtonActionListener = new ActionListener() {
          @Override
@@ -85,6 +87,7 @@ public class OptionFrame extends JFrame {
                 findCheck(GDE);
                 maxField.setText(Double.toString(GDE.getMaxValue()));
                 minField.setText(Double.toString(GDE.getMinValue()));
+                splitField.setText(Integer.toString(GDE.getSplitNumber()));
                 changeColor.setForeground(GDE.getColor());
                 OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
             }
@@ -120,6 +123,7 @@ public class OptionFrame extends JFrame {
             if (GDE != null) {
                 maxField.setText(GDE.getMaxValue().toString());
                 minField.setText(GDE.getMinValue().toString());
+                splitField.setText(Integer.toString(GDE.getSplitNumber()));
                 changeColor.setForeground(GDE.getColor());
 
             }
@@ -134,6 +138,8 @@ public class OptionFrame extends JFrame {
             sp.setColor(changeColor.getForeground());
             sp.setMax(Double.parseDouble(maxField.getText()));
             sp.setMin(Double.parseDouble(minField.getText()));
+            sp.setSplit(Integer.parseInt(splitField.getText()));
+            System.out.println(sp.toString());
             OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(sp);
             commit();
         }
@@ -152,7 +158,7 @@ public class OptionFrame extends JFrame {
         this.add(headerPanel, BorderLayout.CENTER);
         initOptionPanel();
         this.add(optionPanel, BorderLayout.EAST);
-        this.setSize(new Dimension(800, 200));
+        this.setSize(new Dimension(800, 220));
     }
 
     private void initOptionPanel() {
@@ -178,15 +184,20 @@ public class OptionFrame extends JFrame {
         minField.setBounds(100, 50, 100, 20);
         optionPanel.add(minField);
 
-        changeColor.setBounds(0, 70, 200, 20);
+        splitLabel.setBounds(0,70,100,20);
+        optionPanel.add(splitLabel);
+        splitField.setBounds(100,70,100,20);
+        optionPanel.add(splitField);
+
+        changeColor.setBounds(0, 90, 200, 20);
         optionPanel.add(changeColor);
-        commitButton.setBounds(0, 90, 200, 20);
+        commitButton.setBounds(0, 110, 200, 20);
         optionPanel.add(commitButton);
-        saveButton.setBounds(0, 110, 200, 20);
+        saveButton.setBounds(0, 130, 200, 20);
         optionPanel.add(saveButton);
-        resetButton.setBounds(0, 130, 100, 20);
+        resetButton.setBounds(0, 150, 100, 20);
         optionPanel.add(resetButton);
-        selectAllButton.setBounds(100, 130, 100, 20);
+        selectAllButton.setBounds(100, 150, 100, 20);
         optionPanel.add(selectAllButton);
 
 
@@ -229,6 +240,7 @@ public class OptionFrame extends JFrame {
                 GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
                 GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
                 GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
+                GDE.setSplitNumber(OpenLogViewerApp.getInstance().getProperties().get(i).getSplit());
                 if (OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
                     GCB.setSelected(true);
                     return true;
@@ -297,6 +309,10 @@ public class OptionFrame extends JFrame {
 
                 GDE.setColor(newColor);
                 findCheck(GDE);
+                somethingChanged = true;
+            }
+            if (!splitField.getText().equals("")){
+                GDE.setSplitNumber(Integer.parseInt(splitField.getText()));
                 somethingChanged = true;
             }
             if (somethingChanged) {
