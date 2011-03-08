@@ -54,7 +54,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
         Random r = new Random();
         color = Color.getHSBColor(r.nextFloat(), 1.0F, 1.0F);
         newColor = color;
-        int splitNumber = 1;
+        splitNumber = 1;
     }
 
     @Override

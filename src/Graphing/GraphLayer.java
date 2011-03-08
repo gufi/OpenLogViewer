@@ -23,6 +23,7 @@
 package Graphing;
 
 import GenericLog.GenericDataElement;
+import OpenLogViewer.OpenLogViewerApp;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -189,7 +190,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
     }
 
     public void sizeGraph() {
-        LayeredGraph lg = (LayeredGraph) this.getParent();
+        LayeredGraph lg = OpenLogViewerApp.getInstance().getLayeredGraph();
 //        Dimension d = lg.getSize();
         int wherePixel = 0 ;
         if (lg.getTotalSplits() > 1) {
