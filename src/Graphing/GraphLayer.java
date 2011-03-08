@@ -95,7 +95,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
             Double chartNum = 0.0;
             try {
                 chartNum = (Double) dat.next();
-                int a = chartNumber(chartNum, d.height, GDE.getMinValue(), GDE.getMaxValue());
+                int a = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
                 while (dat.hasNext()) {
 
 
