@@ -34,7 +34,7 @@ import javax.swing.JTextField;
  * @author Bryan
  */
 public class OptionFrame extends JFrame {
-
+/*
     private JPanel headerPanel;
     private JPanel optionPanel;
     private JComboBox activeList;
@@ -139,7 +139,6 @@ public class OptionFrame extends JFrame {
             sp.setMax(Double.parseDouble(maxField.getText()));
             sp.setMin(Double.parseDouble(minField.getText()));
             sp.setSplit(Integer.parseInt(splitField.getText()));
-            System.out.println(sp.toString());
             OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(sp);
             commit();
         }
@@ -322,7 +321,7 @@ public class OptionFrame extends JFrame {
         }
     }
 
-    private class GCheckBox extends JCheckBox implements ActionListener, Comparable {
+    private class GCheckBox extends JCheckBox implements Comparable {
 
         GenericDataElement GDE;
         ItemListener itemListener = new ItemListener() {
@@ -352,7 +351,6 @@ public class OptionFrame extends JFrame {
 
         public GCheckBox() {
             super();
-            addActionListener(this);
             addItemListener(itemListener);
         }
 
@@ -365,31 +363,7 @@ public class OptionFrame extends JFrame {
             return GDE;
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //insertGraph();
-        }
-
-        /*private void insertGraph() {
-            //GCheckBox i = (GCheckBox) e.getSource();
-            GCheckBox i = this;
-            OptionFrame of = OpenLogViewerApp.getInstance().getOptionFrame();
-            if (i.isSelected()) {
-
-                of.getActiveList().addItem(GDE);
-                //of.getActiveList()
-                of.getActiveList().setSelectedItem(GDE);
-                i.setBackground(GDE.getColor());
-                i.repaint();
-                OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(i.getName());
-            } else {
-                of.getActiveList().removeItem(GDE);
-                i.setBackground(null);
-                if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(i.getName())) {
-                    OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
-                }
-            }
-        }*/
+        
 
         @Override
         public int compareTo(Object o) {
@@ -401,4 +375,6 @@ public class OptionFrame extends JFrame {
             }
         }
     }
+ * */
+ 
 }

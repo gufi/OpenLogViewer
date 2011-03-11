@@ -40,6 +40,7 @@ import OpenLogViewer.Properties.PropertiesPane;
 import OpenLogViewer.Properties.SingleProperty;
 import Utils.Utilities;
 import OpenLogViewer.optionpane.OptionFrame;
+import OpenLogViewer.optionpane.OptionFrameV2;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,7 +65,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         properties = new ArrayList<SingleProperty>();
         prefFrame = new PropertiesPane("Properties");
         prefFrame.setProperties(properties);
-        optionFrame = new OptionFrame("Option Pane");
+        optionFrame = new OptionFrameV2();
         mainPanel = new javax.swing.JPanel();
         layeredGraph = new LayeredGraph();
         playBar = new PlayBarPanel();
@@ -212,7 +213,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         return graphMenu;
     }
 
-    public OptionFrame getOptionFrame() {
+    public OptionFrameV2 getOptionFrame() {
         return optionFrame;
     }
 
@@ -258,7 +259,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private LayeredGraph layeredGraph;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
-    private OptionFrame optionFrame;
+    private OptionFrameV2 optionFrame;
     private PropertiesPane prefFrame;
     private ArrayList<SingleProperty> properties;
 }

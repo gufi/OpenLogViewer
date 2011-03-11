@@ -23,8 +23,13 @@
 package GenericLog;
 
 import java.awt.Color;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,7 +37,7 @@ import java.util.Random;
  *
  * @author Bryan
  */
-public class GenericDataElement extends ArrayList<Double> implements Comparable {
+public class GenericDataElement extends ArrayList<Double> implements Comparable, Serializable, Transferable {
 
     private Double maxValue;
     private Double newMaxValue;
@@ -43,6 +48,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
     private String name;
     private int splitNumber;
     private PropertyChangeSupport PCS;
+    private DataFlavor[] dataFlavor;
 
     public GenericDataElement() {
         super(50000);
@@ -55,6 +61,20 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
         color = Color.getHSBColor(r.nextFloat(), 1.0F, 1.0F);
         newColor = color;
         splitNumber = 1;
+        addFlavors();
+    }
+
+    private void addFlavors() {
+        dataFlavor = new DataFlavor[3];
+        //try {
+        dataFlavor[0] = new DataFlavor(DataFlavor.javaSerializedObjectMimeType+
+                ";class=\"" + GenericDataElement.class.getName() + "\"",
+                "OLV GenericDataElement");
+        dataFlavor[1] = DataFlavor.stringFlavor;
+        dataFlavor[2] = DataFlavor.getTextPlainUnicodeFlavor();
+        //}catch (ClassNotFoundException CNFE) {
+        //    System.out.println(CNFE.getMessage());
+       // }
     }
 
     @Override
@@ -130,12 +150,12 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
     public void removePropertyChangeListener(String property, PropertyChangeListener PCL) {
         PCS.removePropertyChangeListener(property, PCL);
     }
-
+    ///Object
     @Override
     public String toString() {
         return this.name;
     }
-
+    //Comparable
     @Override
     public int compareTo(Object o) {
         if (o instanceof GenericDataElement) {
@@ -145,4 +165,36 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable 
             return -1;
         }
     }
+    //Transferable
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if(flavor.equals(dataFlavor[0])) {
+            return this;
+        }else if(flavor.equals(dataFlavor[1])){
+            return "Unsupported";
+        }else if(flavor.equals(dataFlavor[2])){
+            return "Unsupported";
+        }
+        else {
+            throw new UnsupportedFlavorException(flavor);
+        }
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+        return dataFlavor;
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        for(int i = 0; i<dataFlavor.length;i++){
+            if(flavor.equals(dataFlavor[i])){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //Seralizable
+
 }

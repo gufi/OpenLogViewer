@@ -156,7 +156,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
 
     public void initGraph() {
         if (GDE != null) {
-            LayeredGraph lg = (LayeredGraph) this.getParent();
+            LayeredGraph lg = OpenLogViewerApp.getInstance().getLayeredGraph();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
             int zoomFactor = ((d.width + zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
