@@ -273,8 +273,7 @@ public class OptionFrameV2 extends JFrame {
             Component c = e.getComponent();
             GCheckBox GCB = (GCheckBox) c;
             GCB.setDragging(true);
-            System.out.println(e.getModifiers());
-            if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 4 || e.getModifiers() == 18)) {// 4 == right mouse button
+            if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 4 || e.getModifiers() == 18 || e.getModifiers() == 20)) {// 4 == right mouse button
                 if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
                     Component cn = c.getParent().getParent().getComponentAt(layeredPane.getMousePosition());
                     if (cn instanceof JPanel) {
