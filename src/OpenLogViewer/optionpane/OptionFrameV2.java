@@ -297,7 +297,7 @@ public class OptionFrameV2 extends JFrame {
         int j = 0;
         int leftSide = 0;
         for(int it = 0;it < tmpList.size();it++){
-            if (20 + (20 * j) > inactiveHeaders.getHeight()) {
+            if (20 + (20 * (j+1)) > inactiveHeaders.getHeight()) {
                 j = 0;
                 leftSide += 120;
             }
@@ -423,6 +423,8 @@ public class OptionFrameV2 extends JFrame {
 
         public void setRef(GenericDataElement GDE) {
             this.GDE = GDE;
+            // this line is here because if the tool tip is never set no mouse events
+            // will ever be created for tool tips
             this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue() +
                                 "</b><br>Min Value: <b>" + GDE.getMinValue() +
                                 "</b><br>Total Length: <b>" + GDE.size() + "</b> data points" +
@@ -434,7 +436,6 @@ public class OptionFrameV2 extends JFrame {
                                 "</b><br>Min Value: <b>" + GDE.getMinValue() +
                                 "</b><br>Total Length: <b>" + GDE.size() + "</b> data points" +
                                 "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
-             System.out.println(" HA" +getToolTipText());
              return getToolTipText();
         }
 
