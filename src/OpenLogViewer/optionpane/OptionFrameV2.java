@@ -328,7 +328,7 @@ public class OptionFrameV2 extends JFrame {
         }
 
         this.repaint();
-        this.setDefaultCloseOperation(OptionFrame.ICONIFIED);
+        this.setDefaultCloseOperation(JFrame.ICONIFIED);
         this.setVisible(true);
     }
 
