@@ -169,7 +169,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
                     if (uByte == STOP_BYTE) {
                         if (checksum(wholePacket)) {
-                            decodePacket(wholePacket);
+                        	decodeBasicLogPacket(wholePacket);
                             startFound = false;
                         }
                         packetLength = 0;
@@ -209,7 +209,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
      * @param packet is a <code>short</code> array containing 1 full packet
      *
      */
-    private void decodePacket(short[] packet) {
+    private void decodeBasicLogPacket(short[] packet) {
         // int flags = (int)( packet[0] & 0xff); // used for parsing packets, need to find this info
         int payLoadId = (int) (((packet[1] & 0xff) * 256) + (packet[2] & 0xff));
         //int seq = (int) packet[3]; // unused
@@ -228,14 +228,16 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         while (x < packetLength - offset) {
             if (payLoadId == 401) {
                 if (x < size) {
-                    double d = 0;
-                    if (headers[x / 2].equalsIgnoreCase("TFCTot")) {
-                        d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
-                    } else {
-                        d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
+                	if((x/2) < headers.length){
+	                    double d = 0;
+	                    if (headers[x / 2].equalsIgnoreCase("TFCTot")) {
+	                        d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
+	                    } else {
+	                        d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
+	                    }
+                    	decodedLog.addValue(headers[x / 2], d); // unsigned shorts
                     }
-                    decodedLog.addValue(headers[x / 2], d); // unsigned shorts
-                    x = x + 2;
+                    x += 2;
                 } else {
                     x++;
                 }
