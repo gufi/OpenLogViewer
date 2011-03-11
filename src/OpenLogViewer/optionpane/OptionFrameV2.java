@@ -76,13 +76,14 @@ public class OptionFrameV2 extends JFrame {
 
         JScrollPane scroll = new JScrollPane(layeredPane);
 
-        infoPanel = initInfoPanel();
-        layeredPane.add(infoPanel);
+        //infoPanel = initInfoPanel();
+        //layeredPane.add(infoPanel);
 
         inactiveHeaders = initHeaderPanel();
         layeredPane.add(inactiveHeaders);
 
         this.add(scroll);
+        addActiveHeaderPanel();
 
     }
 
@@ -178,12 +179,14 @@ public class OptionFrameV2 extends JFrame {
             int col = activePanelList.size() % 4;
             JPanel activePanel = new JPanel();
             activePanelList.add(activePanel);
-            OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
+            if(OpenLogViewerApp.getInstance()!= null){
+                 OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
+            }
             activePanel.setLayout(null);
             activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
             activePanel.addContainerListener(addRemoveListener);
 
-            activePanel.setBounds(220 + (col * 120), 160 + 120 * row, 120, 120);
+            activePanel.setBounds((col * 120), 160 + 120 * row, 120, 120);
             activePanel.setBackground(Color.DARK_GRAY);
             JButton removeButton = new JButton("Remove");
             removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
@@ -218,7 +221,7 @@ public class OptionFrameV2 extends JFrame {
         for (int i = 0; i < activePanelList.size(); i++) {
             int row = i / 4;
             int col = i % 4;
-            activePanelList.get(i).setLocation(220 + (col * 120), 160 + 120 * row);
+            activePanelList.get(i).setLocation((col * 120), 160 + 120 * row);
         }
         if (!addDivisionButton.isEnabled()) {
             addDivisionButton.setEnabled(true);
@@ -341,7 +344,9 @@ public class OptionFrameV2 extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                setSelected(!selected);
+                if(e.getModifiers() == 16){
+                    setSelected(!selected);
+                }
             }
 
             @Override
@@ -405,6 +410,7 @@ public class OptionFrameV2 extends JFrame {
             selected = false;
             super.setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.white));
 
+
         }
 
         @Override
@@ -417,8 +423,21 @@ public class OptionFrameV2 extends JFrame {
 
         public void setRef(GenericDataElement GDE) {
             this.GDE = GDE;
-
+            this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue() +
+                                "</b><br>Min Value: <b>" + GDE.getMinValue() +
+                                "</b><br>Total Length: <b>" + GDE.size() + "</b> data points" +
+                                "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
         }
+        @Override
+        public String getToolTipText(MouseEvent e) {
+             this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue() +
+                                "</b><br>Min Value: <b>" + GDE.getMinValue() +
+                                "</b><br>Total Length: <b>" + GDE.size() + "</b> data points" +
+                                "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
+             System.out.println(" HA" +getToolTipText());
+             return getToolTipText();
+        }
+
 
         public GenericDataElement getGDE() {
             return GDE;
