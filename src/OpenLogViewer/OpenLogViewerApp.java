@@ -39,7 +39,6 @@ import Graphing.LayeredGraph;
 import OpenLogViewer.Properties.PropertiesPane;
 import OpenLogViewer.Properties.SingleProperty;
 import Utils.Utilities;
-import OpenLogViewer.optionpane.OptionFrame;
 import OpenLogViewer.optionpane.OptionFrameV2;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
