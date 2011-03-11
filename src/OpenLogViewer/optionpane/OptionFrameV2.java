@@ -65,13 +65,13 @@ public class OptionFrameV2 extends JFrame {
     public OptionFrameV2() {
 
         super("Graphing Option Pane");
-        this.setSize(800, 400);
+        this.setSize(900, 480);
         this.setPreferredSize(this.getSize());
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         thisRef = this;
         activePanelList = new ArrayList<JPanel>();
         layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(799, 600));
+        layeredPane.setPreferredSize(new Dimension(900, 420));
 
 
         JScrollPane scroll = new JScrollPane(layeredPane);
@@ -121,7 +121,7 @@ public class OptionFrameV2 extends JFrame {
         addDivisionButton.setBounds(0, 0, 120, 20);
         addDivisionButton.addActionListener(addDivisionListener);
         ih.add(addDivisionButton);
-        ih.setBounds(0, 0, 800, 160);
+        ih.setBounds(0, 0, 900, 180);
         return ih;
     }
     private ActionListener addDivisionListener = new ActionListener() {
@@ -186,7 +186,7 @@ public class OptionFrameV2 extends JFrame {
             activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
             activePanel.addContainerListener(addRemoveListener);
 
-            activePanel.setBounds((col * 120), 160 + 120 * row, 120, 120);
+            activePanel.setBounds((col * 120), 180 + 120 * row, 120, 120);
             activePanel.setBackground(Color.DARK_GRAY);
             JButton removeButton = new JButton("Remove");
             removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
@@ -221,7 +221,7 @@ public class OptionFrameV2 extends JFrame {
         for (int i = 0; i < activePanelList.size(); i++) {
             int row = i / 4;
             int col = i % 4;
-            activePanelList.get(i).setLocation((col * 120), 160 + 120 * row);
+            activePanelList.get(i).setLocation((col * 120), 180 + 120 * row);
         }
         if (!addDivisionButton.isEnabled()) {
             addDivisionButton.setEnabled(true);
