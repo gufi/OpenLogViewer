@@ -1,6 +1,24 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* OpenLogViewer
+ *
+ * Copyright 2011
+ *
+ * This file is part of the OpenLogViewer project.
+ *
+ * OpenLogViewer software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenLogViewer software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with any OpenLogViewer software.  If not, see http://www.gnu.org/licenses/
+ *
+ * I ask that if you make any changes to this file you fork the code on github.com!
+ *
  */
 package OpenLogViewer.optionpane;
 
@@ -21,6 +39,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import javax.swing.*;
 
@@ -30,18 +49,18 @@ import javax.swing.*;
  */
 public class OptionFrameV2 extends JFrame {
 
-    JFrame thisRef;
-    JPanel inactiveHeaders;
-    JPanel infoPanel;
-    JLabel headerLabel;
-    JLabel minLabel;
-    JLabel maxLabel;
-    JButton addDivisionButton;
-    JButton remDivisionButton;
-    JTextField minField;
-    JTextField maxField;
-    JLayeredPane layeredPane;
-    ArrayList<JPanel> activePanelList;
+    private JFrame thisRef;
+    private JPanel inactiveHeaders;
+    private JPanel infoPanel;
+    private JLabel headerLabel;
+    private JLabel minLabel;
+    private JLabel maxLabel;
+    private JButton addDivisionButton;
+    private JButton remDivisionButton;
+    private JTextField minField;
+    private JTextField maxField;
+    private JLayeredPane layeredPane;
+    private ArrayList<JPanel> activePanelList;
 
     public OptionFrameV2() {
 
@@ -129,8 +148,7 @@ public class OptionFrameV2 extends JFrame {
                     ((GCheckBox) e.getChild()).setSelected(true);
                     ((GCheckBox) e.getChild()).getGDE().setSplitNumber(
                             activePanelList.indexOf(
-                            e.getChild().getParent()
-                            )+1);
+                            e.getChild().getParent()) + 1);
                 }
                 //System.out.println("Added " + e.getComponent().getName());
             }
@@ -207,65 +225,8 @@ public class OptionFrameV2 extends JFrame {
         }
         this.repaint();
     }
-    MouseListener acceptRejectListener = new MouseListener() {
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-        }//not used
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-        }//not used
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-        }//not used
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            GCheckBox GCB = (GCheckBox) e.getSource();
-            GCB.setPreviousLocation(GCB.getLocation());
-            GCB.setPreviousPanel((JPanel) GCB.getParent());
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-            int x = 0;
-            int y = 20;
-            GCheckBox GCB = (GCheckBox) e.getSource();
-            if (GCB.isDragging()) {
-                if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
-                    GCB.setLocation(GCB.getInactiveLocation());
-                    GCB.setSelected(false);
-                } else { // moving to
-                    boolean placed = false;
-                    while (y < GCB.getParent().getHeight() && !placed) {
-                        if (GCB.getParent().getComponentAt(x, y) == GCB.getParent() || GCB.getParent().getComponentAt(x, y) == GCB) {
-                            GCB.setLocation(x, y);
-                            placed = true;
-                        }
-                        y = y + 20;
-                    }
-                    if (!placed) {
-                        if (GCB.getPreviousPanel() != GCB.getParent()) {
-                            GCB.getPreviousPanel().add(GCB);
-                        }
-                        if (GCB.getPreviousPanel() == GCB.getInactivePanel()) {
-                            GCB.setLocation(GCB.getInactiveLocation());
-                            GCB.setEnabled(false);
-                            GCB.setSelected(false);
-                        } else {
-                            GCB.setLocation(GCB.getPreviousLocation());
-                        }
-                        thisRef.repaint();
-                    }
-                }
-                GCB.setDragging(false);
-            }
-        }
-    };
-    MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
+    
+    private MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
 
         @Override
         public void mouseDragged(MouseEvent e) {
@@ -273,7 +234,7 @@ public class OptionFrameV2 extends JFrame {
             Component c = e.getComponent();
             GCheckBox GCB = (GCheckBox) c;
             GCB.setDragging(true);
-            if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 4 || e.getModifiers() == 18 || e.getModifiers() == 20)) {// 4 == right mouse button
+            if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) {// 4 == right mouse button
                 if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
                     Component cn = c.getParent().getParent().getComponentAt(layeredPane.getMousePosition());
                     if (cn instanceof JPanel) {
@@ -294,13 +255,25 @@ public class OptionFrameV2 extends JFrame {
         }
     };
 
-    public void updateFromLog(GenericLog gl) {
+    private boolean place(GCheckBox GCB) {
+        int x = 0;
+        int y = 20;
+        while (y < GCB.getParent().getHeight()) {
+            if (GCB.getParent().getComponentAt(x, y) == GCB.getParent() || GCB.getParent().getComponentAt(x, y) == GCB) {
+                GCB.setLocation(x, y);
+                return true;
+            }
+            y = y + 20;
+        }
+        return false;
+    }
 
+    public void updateFromLog(GenericLog gl) {
+        ArrayList<GCheckBox> tmpList = new ArrayList<GCheckBox>();
         Iterator i = gl.keySet().iterator();
         String head = "";
         GCheckBox toBeAdded = null;
-        int j = 0;
-        int leftSide = 0;
+        
         while (i.hasNext()) {
             head = (String) i.next();
             GenericDataElement GDE = gl.get(head);
@@ -309,22 +282,29 @@ public class OptionFrameV2 extends JFrame {
             toBeAdded.setName(head);
             toBeAdded.setText(head);
             toBeAdded.setRef(GDE);
-
-            toBeAdded.setBounds(leftSide, (20 + (20 * j)),
-                    (((20 + (head.length() * 8)) < 100) ? (32 + (head.length() * 7)) : 100)// this keeps the select boxes at a max of 120
-                    , 20);
             toBeAdded.setEnabled(false);//you are unable to activate a graph in the inacivelist
             toBeAdded.addMouseMotionListener(labelAdapter);
-            toBeAdded.addMouseListener(acceptRejectListener);
             if (checkForProperties(toBeAdded, GDE)) {
                 toBeAdded.setBackground(GDE.getColor());
             }
-            inactiveHeaders.add(toBeAdded);
-            j++;
+            tmpList.add(toBeAdded);
+            
+        }
+        Collections.sort(tmpList);
+        int j = 0;
+        int leftSide = 0;
+        for(int it = 0;it < tmpList.size();it++){
             if (20 + (20 * j) > inactiveHeaders.getHeight()) {
                 j = 0;
-                leftSide = toBeAdded.getX() + 100;
+                leftSide += 120;
             }
+            tmpList.get(it).setBounds(leftSide, (20 + (20 * j)),
+                    120//(((20 + (head.length() * 8)) < 120) ? (32 + (head.length() * 7)) : 120)// this keeps the select boxes at a max of 120
+                    , 20);
+            inactiveHeaders.add(tmpList.get(it));
+            
+                j++;
+            
         }
 
         this.repaint();
@@ -348,7 +328,7 @@ public class OptionFrameV2 extends JFrame {
         return false;
     }
 
-    private class GCheckBox extends JCheckBox implements Comparable {
+    private class GCheckBox extends JLabel implements Comparable {
 
         private GenericDataElement GDE;
         private Point previousLocation;
@@ -356,32 +336,75 @@ public class OptionFrameV2 extends JFrame {
         private JPanel previousPanel;
         private JPanel inactivePanel;
         private boolean dragging;
-        private ItemListener selectedListener = new ItemListener() {
+        private boolean selected;
+        private MouseListener selectedListener = new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                setSelected(!selected);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                GCheckBox GCB = (GCheckBox) e.getSource();
+                GCB.setPreviousLocation(GCB.getLocation());
+                GCB.setPreviousPanel((JPanel) GCB.getParent());
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GCheckBox GCB = (GCheckBox) e.getSource();
+                if (GCB.isDragging()) {
+                    if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
+                        GCB.setLocation(GCB.getInactiveLocation());
+                        GCB.setSelected(false);
+                        GCB.setEnabled(false);
+                    } else { // moving to
+
+                        if (!place(GCB)) {
+                            if (GCB.getPreviousPanel() != GCB.getParent()) { // if it moved
+                                GCB.getPreviousPanel().add(GCB);
+                                place(GCB);
+                            }
+                            if (GCB.getPreviousPanel() == GCB.getInactivePanel()) {
+                                GCB.setLocation(GCB.getInactiveLocation());
+                                GCB.setEnabled(false);
+                                GCB.setSelected(false);
+                            } else {
+                                place(GCB);
+                            }
+                            thisRef.repaint();
+                        }
+                    }
+                    GCB.setDragging(false);
+                }
+            }
+        };
+        private ItemListener enabledListener = new ItemListener() {
 
             @Override
             public void itemStateChanged(ItemEvent e) {
-                int state = e.getStateChange();
-                GCheckBox i = (GCheckBox) e.getSource();
-                OptionFrameV2 of = OpenLogViewerApp.getInstance().getOptionFrame();
-                if (state == ItemEvent.SELECTED) {
-                    i.setForeground(GDE.getColor());
-                    i.repaint();
-                    OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(i.getName());
-                } else if (state == ItemEvent.DESELECTED) {
-                    i.setForeground(null);
-                    if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(i.getName())) {
-                        OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
-                    }
-                }
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 
         public GCheckBox() {
             super();
-            addItemListener(selectedListener);
+            addMouseListener(selectedListener);
             super.setOpaque(false);
             inactivePanel = inactiveHeaders;
             dragging = false;
+            selected = false;
+            super.setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.white));
+
         }
 
         @Override
@@ -433,6 +456,28 @@ public class OptionFrameV2 extends JFrame {
             this.dragging = dragging;
         }
 
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+            addRemGraph();
+        }
+
+        private void addRemGraph() {
+            if (selected) {
+                this.setForeground(GDE.getColor());
+                this.repaint();
+                OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(this.getName());
+            } else {
+                this.setForeground(GDE.getColor().darker().darker());
+                if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(this.getName())) {
+                    OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+                }
+            }
+        }
+
         @Override
         public int compareTo(Object o) {
             if (o instanceof GCheckBox) {
@@ -443,6 +488,4 @@ public class OptionFrameV2 extends JFrame {
             }
         }
     }
-
-    
 }
