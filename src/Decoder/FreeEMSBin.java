@@ -49,8 +49,28 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     private Thread t;
     String[] headers = {
         "IAT", "CHT", "TPS", "EGO", "MAP", "AAP", "BRV", "MAT", "EGO2", "IAP", "MAF", "DMAP", "DTPS", "RPM", "DRPM", "DDRPM",
-        "LMain", "VEM", "Lambda", "AirFlo", "DensFu", "BasePW", "ETE", "TFCTot", "EffPW", "IDT", "RefPW", "SP1", "SP2", "SP3", "SP4", "SP5",
-        "IAT V", "CHT V", "TPS V", "EGO V", "MAP V", "AAP V", "BRV V", "MAT V", "EGO2 v", "IAP V", "MAF V", "ADC3", "ADC4", "ADC5", "ADC6", "ADC7"
+        "LMain", "VEM", "Lambda", "AirFlo", "DensFu", "BasePW", "ETE", "TFCTot", "EffPW", "IDT", "RefPW", 
+    	"Advance",
+    	"Dwell",
+    	"zsp19",
+    	"zsp18",
+    	"zsp17",
+    	"zsp16",
+    	"zsp15",
+    	"zsp14",
+    	"zsp13",
+    	"zsp12",
+    	"zsp11",
+    	"zsp10",
+    	"zsp9",
+    	"zsp8",
+    	"zsp7",
+    	"zsp6",
+    	"zsp5",
+    	"zsp4",
+    	"zsp3",
+    	"zsp2",
+    	"zsp1"
     }; //This needs to be converted to resourses or gathered externally at some point
     private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
 
@@ -84,30 +104,30 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         1.0, // Effective PW
         1.0, // IDT
         1.0, // RefPW
-        1.0, // SP1
-        1.0, // SP2
-        1.0, // SP3
-        1.0, // SP4
-        1.0, // SP5
+        1250.0, // Dwell
+        1024.0, // Advance
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
 
         //ADC ARRAY
 
-        204.8, // IAT V
-        204.8, // CHT V
-        204.8, // TPS V
-        204.8, // EGO V
-        204.8, // MAP V
-        204.8, // AAP V
-        204.8, // BRV V
-        204.8, // MAT V
-        204.8, // EGO2 V
-        204.8, // IAP V
-        204.8, // MAF V
-        204.8, // ADC3 V
-        204.8, // ADC4 V
-        204.8, // ADC5 V
-        204.8, // ADC6 V
-        204.8 // ADC7 V
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0  // SP?
     };
 
     // NO default constructor, a file or path to a file MUST be given

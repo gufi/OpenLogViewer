@@ -172,13 +172,16 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
                     x++;
                 }
 
+                // this code looks hacky as fuck
                 int to = 0;
                 if (GDE.size() - 1 < (d.width / zoom.getZoom()) - x + 2) {// get the whole array because its stupid short
                     to = (GDE.size() - 1);
                 } else { // get the first width-zoom-x
                     to = (d.width / zoom.getZoom()) - x + 2;
                 }
-                drawnData.addAll(GDE.subList(0, to));
+                if(to >= 0 && to < GDE.size()){
+                	drawnData.addAll(GDE.subList(0, to));
+                }
             } else if ((zoomFactor + lg.getCurrent() + 2) < GDE.size()) {
                 nullData = 0;
                 drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, zoomFactor + 2 + lg.getCurrent()));
