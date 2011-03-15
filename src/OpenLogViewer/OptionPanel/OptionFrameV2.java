@@ -223,6 +223,18 @@ public class OptionFrameV2 extends JFrame {
         if (!addDivisionButton.isEnabled()) {
             addDivisionButton.setEnabled(true);
         }
+        if(activePanelList.size() > 1) {
+            for(int i = 0; i < activePanelList.size(); i++){
+                JPanel active = activePanelList.get(i);
+                if(active.getComponentCount()> 1) {
+                for(int j = 0; j < active.getComponentCount(); j++ ){
+                    if(active.getComponent(j) instanceof GCheckBox){
+                        ((GCheckBox)active.getComponent(j)).getGDE().setSplitNumber(i+1);
+                    }
+                }
+                }
+            }
+        }
         this.repaint();
     }
     
@@ -280,7 +292,7 @@ public class OptionFrameV2 extends JFrame {
             inactiveHeaders.removeAll();
             inactiveHeaders.add(this.addDivisionButton);
         }
-        this.addActiveHeaderPanel();
+        this.addActiveHeaderPanel(); // will be based on highest number of 
 
         ArrayList<GCheckBox> tmpList = new ArrayList<GCheckBox>();
         Iterator i = gl.keySet().iterator();
