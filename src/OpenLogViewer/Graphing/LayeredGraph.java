@@ -20,10 +20,10 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package Graphing;
+package OpenLogViewer.Graphing;
 
-import GenericLog.GenericDataElement;
-import GenericLog.GenericLog;
+import OpenLogViewer.GenericLog.GenericDataElement;
+import OpenLogViewer.GenericLog.GenericLog;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

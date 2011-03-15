@@ -20,9 +20,9 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package Graphing;
+package OpenLogViewer.Graphing;
 
-import GenericLog.GenericLog;
+import OpenLogViewer.GenericLog.GenericLog;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

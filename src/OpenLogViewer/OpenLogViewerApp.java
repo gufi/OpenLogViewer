@@ -28,18 +28,18 @@
  */
 package OpenLogViewer;
 
-import OpenLogViewer.filefilter.FreeEMSFileFilter;
-import OpenLogViewer.filefilter.FreeEMSLAFileFilter;
-import OpenLogViewer.filefilter.CSVTypeFileFilter;
-import Decoder.CSVTypeLog;
-import Decoder.FreeEMSBin;
-import Decoder.FreeEMSByteLA;
-import GenericLog.GenericLog;
-import Graphing.LayeredGraph;
+import OpenLogViewer.FileFilters.FreeEMSFileFilter;
+import OpenLogViewer.FileFilters.FreeEMSLAFileFilter;
+import OpenLogViewer.FileFilters.CSVTypeFileFilter;
+import OpenLogViewer.Decoder.CSVTypeLog;
+import OpenLogViewer.Decoder.FreeEMSBin;
+import OpenLogViewer.Decoder.FreeEMSByteLA;
+import OpenLogViewer.GenericLog.GenericLog;
+import OpenLogViewer.Graphing.LayeredGraph;
 import OpenLogViewer.Properties.PropertiesPane;
 import OpenLogViewer.Properties.SingleProperty;
-import Utils.Utilities;
-import OpenLogViewer.optionpane.OptionFrameV2;
+import OpenLogViewer.Utils.Utilities;
+import OpenLogViewer.OptionPanel.OptionFrameV2;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

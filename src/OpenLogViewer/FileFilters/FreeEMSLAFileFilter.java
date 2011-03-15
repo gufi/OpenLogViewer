@@ -21,9 +21,9 @@
  *
  */
 
-package OpenLogViewer.filefilter;
+package OpenLogViewer.FileFilters;
 
-import Utils.Utilities;
+import OpenLogViewer.Utils.Utilities;
 import java.io.*;
 import javax.swing.filechooser.FileFilter;
 
@@ -31,14 +31,14 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Bryan
  */
-public class FreeEMSFileFilter extends FileFilter {
-    public FreeEMSFileFilter () {
+public class FreeEMSLAFileFilter extends FileFilter {
+    public FreeEMSLAFileFilter () {
         super();
     }
 
     @Override
     public String getDescription() {
-       return "FreeEMSBinary Logs";
+       return "FreeEMS LA Binary Logs";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class FreeEMSFileFilter extends FileFilter {
             return true;
         }
         String extension = Utilities.getExtension(f);
-        if(extension != null && extension.equals("bin")) return true;
+        if(extension != null && extension.equals("la")) return true;
 
         //if nothing is satisfied return false
         return false;

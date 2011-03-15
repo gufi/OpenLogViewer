@@ -20,9 +20,9 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package Graphing;
+package OpenLogViewer.Graphing;
 
-import GenericLog.GenericDataElement;
+import OpenLogViewer.GenericLog.GenericDataElement;
 import OpenLogViewer.OpenLogViewerApp;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -83,9 +83,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
 
     @Override
     public void paint(Graphics g) { // overridden paint because there will be no other painting other than this
-
-        if (!this.getParent().getSize().equals(this.getSize())) {
-        }
+        
         Dimension d = this.getSize();
         Graphics2D g2d = (Graphics2D) g;
         if (drawnData != null && drawnData.size() > 0) {

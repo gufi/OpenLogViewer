@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package OpenLogViewer.optionpane;
+package OpenLogViewer.OptionPanel;
 
 import javax.swing.DefaultComboBoxModel;
 

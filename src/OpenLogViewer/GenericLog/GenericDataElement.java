@@ -20,7 +20,7 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package GenericLog;
+package OpenLogViewer.GenericLog;
 
 import java.awt.Color;
 import java.awt.datatransfer.DataFlavor;

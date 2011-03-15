@@ -21,7 +21,7 @@
  *
  */
 
-package Decoder;
+package OpenLogViewer.Decoder;
 
 /**
  * Data storage for a generic FreeEMS packet.

@@ -21,9 +21,9 @@
  *
  */
 
-package Decoder;
+package OpenLogViewer.Decoder;
 
-import GenericLog.GenericLog;
+import OpenLogViewer.GenericLog.GenericLog;
 import java.io.File;
 import java.io.IOException;
 

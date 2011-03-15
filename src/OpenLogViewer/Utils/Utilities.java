@@ -21,7 +21,7 @@
  *
  */
 
-package Utils;
+package OpenLogViewer.Utils;
 
 import java.io.File;
 

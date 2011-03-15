@@ -20,9 +20,9 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package Decoder;
+package OpenLogViewer.Decoder;
 
-import GenericLog.GenericLog;
+import OpenLogViewer.GenericLog.GenericLog;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;

@@ -20,9 +20,9 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package Decoder;
+package OpenLogViewer.Decoder;
 
-import GenericLog.GenericLog;
+import OpenLogViewer.GenericLog.GenericLog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,7 +31,8 @@ import java.io.IOException;
  *
  * @author Bryan
  */
-public class FreeEMSByteLA implements Runnable { // implements runnable to make this class theadable
+public class FreeEMSBin implements Runnable { // implements runnable to make this class theadable
+//public class FreeEMSBin extends Thread {
 
     private final short ESCAPE_BYTE = 0xBB;// for unsigned byte
     private final short START_BYTE = 0xAA;// for unsigned byte
@@ -39,28 +40,95 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
     private final short ESCAPED_ESCAPE_BYTE = 0x44;// for unsigned byte
     private final short ESCAPED_START_BYTE = 0x55;// for unsigned byte
     private final short ESCAPED_STOP_BYTE = 0x33;// for unsigned byte
-    private final int CHECKSUM_VAL = 256;
     private short[] wholePacket;// for unsigned byte
     private File logFile;
     private FileInputStream logStream;
     private boolean startFound;
     private GenericLog decodedLog;
+    int packetLength;//track packet length
     private Thread t;
-
     String[] headers = {
-            "Line", "PTIT", "T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7"
-        }; //This needs to be converted to resourses or gathered externally at some point
-        private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
-            1.0, // PTIT
-            1.0, // T0
-            1.0, // T1
-            1.0, // T2
-            1.0, // T3
-            1.0, // T4
-            1.0, // T5
-            1.0, // T6
-            1.0  // T7
-        };
+        "IAT", "CHT", "TPS", "EGO", "MAP", "AAP", "BRV", "MAT", "EGO2", "IAP", "MAF", "DMAP", "DTPS", "RPM", "DRPM", "DDRPM",
+        "LMain", "VEM", "Lambda", "AirFlo", "DensFu", "BasePW", "ETE", "TFCTot", "EffPW", "IDT", "RefPW", 
+    	"Advance",
+    	"Dwell",
+    	"zsp19",
+    	"zsp18",
+    	"zsp17",
+    	"zsp16",
+    	"zsp15",
+    	"zsp14",
+    	"zsp13",
+    	"zsp12",
+    	"zsp11",
+    	"zsp10",
+    	"zsp9",
+    	"zsp8",
+    	"zsp7",
+    	"zsp6",
+    	"zsp5",
+    	"zsp4",
+    	"zsp3",
+    	"zsp2",
+    	"zsp1"
+    }; //This needs to be converted to resourses or gathered externally at some point
+    private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
+
+        // CORE VARS
+        100.0, // IAT
+        100.0, // CHT
+        640.0, // TPS
+        32768.0, // EGO %
+        100.0, // MAP
+        100.0, // AAP
+        1000.0, // Battery Voltage
+        100.0, // MAT
+        32768.0, // EGO2
+        100.0, // IAP
+        1.0, // MAF
+        1.0, // DMAP
+        1.0, //DTPS
+        2.0, //RPM
+        2.0, // Delta RPM
+        2.0, // Delta Delta RPM
+
+        // DERIVED VARS
+        1.0, // Load Main
+        512.0, // VEMain
+        32768.0, // Lambda
+        1.0, // Airflow
+        1.0, // Density and Fuel
+        1250.0, // Base PW
+        1.0, // ETE
+        1.0, // TFCTotal If math for this is incorrect its because i'm currently using a short instead of signed short to hold the value, special case var
+        1.0, // Effective PW
+        1.0, // IDT
+        1.0, // RefPW
+        1250.0, // Dwell
+        1024.0, // Advance
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+
+        //ADC ARRAY
+
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0  // SP?
+    };
 
     // NO default constructor, a file or path to a file MUST be given
     // Reason: File()'s constructors are ambiguous cannot give a null value
@@ -69,7 +137,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
      * @param String path
      *
      */
-    public FreeEMSByteLA(String path) {
+    public FreeEMSBin(String path) {
 
         this(new File(path));
 
@@ -80,16 +148,16 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
      * FreeEmsBin Constructor: <code>File</code> object of your Binary log
      * @param File f
      */
-    public FreeEMSByteLA(File f) {
+    public FreeEMSBin(File f) {
         logFile = f;
         startFound = false;
-        wholePacket = new short[3000];
+        wholePacket = new short[6000];
+        packetLength = 0;
         decodedLog = new GenericLog(headers);
 
-        t = new Thread(this, "FreeEMSByteLA Loading");
+        t = new Thread(this, "FreeEMSBin Loading");
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();
-
     }
 
     
@@ -99,6 +167,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
      * to the required method of this class such as decodePacket or checksum.
      */
     //public void decodeLog() {
+    @Override
     public void run() {
         try {
             // file setup
@@ -108,8 +177,6 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
             startFound = false;
             logStream = new FileInputStream(logFile);
             decodedLog.setLogStatus(0);
-            int packetLength = 0;
-            int packetCount = 0;
             while (logStream.read(readByte) != -1) {
                 uByte = (short) (readByte[0] & 0xff); // mask the byte in case something screwey happens
                 if (uByte == START_BYTE) {
@@ -121,9 +188,8 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
                 } else if (startFound) { // do NOTHING untill a start is found
 
                     if (uByte == STOP_BYTE) {
-                        if (checksum(wholePacket, packetLength)) {
-                        	packetCount++;
-                            decodePacket(wholePacket, packetLength, packetCount);
+                        if (checksum(wholePacket)) {
+                        	decodeBasicLogPacket(wholePacket);
                             startFound = false;
                         }
                         packetLength = 0;
@@ -158,75 +224,47 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
     }
 
     /**
-     * This method decodes a packet by splitting up the data into larger datatypes to keep the unsigned info <br>
-     * This method could probably use a litle work
+     * This method decodes a packet by splitting up the data into larger data types to keep the unsigned info <br>
+     * This method could probably use a little work
      * @param packet is a <code>short</code> array containing 1 full packet
      *
      */
-    private void decodePacket(short[] packet, int length, int count) {
-    	int flags = (int)packet[0];
+    private void decodeBasicLogPacket(short[] packet) {
+        // int flags = (int)( packet[0] & 0xff); // used for parsing packets, need to find this info
         int payLoadId = (int) (((packet[1] & 0xff) * 256) + (packet[2] & 0xff));
+        //int seq = (int) packet[3]; // unused
+        int size = 0; // unused if not a 401 payLoadId
 
+        int x = 0;
         int leadingBytes = 0;
         // set size according to payload
-        if (payLoadId == 407) {
-            leadingBytes = 3;
+        if (payLoadId == 401) {
+            size = (int) (((packet[3] & 0xff) * 256) + (packet[4] & 0xff));
+            leadingBytes = 5;
+        } else {
+            leadingBytes = 5; // size is not included for non 401 payload id's
         }
-        
-        //d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
-        //d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
-        int PTIT = (int)packet[3];
-        int T0 = 0;
-        int T1 = 0;
-        int T2 = 0;
-        int T3 = 0;
-        int T4 = 0;
-        int T5 = 0;
-        int T6 = 0;
-        int T7 = 0;
-        decodedLog.addValue("PTIT", PTIT);
-        
-        if((PTIT % 2) == 1){
-        	T0 = 1;
-        	PTIT -= 1;
+        int offset = packetLength - size;
+        while (x < packetLength - offset) {
+            if (payLoadId == 401) {
+                if (x < size) {
+                	if((x/2) < headers.length){
+	                    double d = 0;
+	                    if (headers[x / 2].equalsIgnoreCase("TFCTot")) {
+	                        d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
+	                    } else {
+	                        d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
+	                    }
+                    	decodedLog.addValue(headers[x / 2], d); // unsigned shorts
+                    }
+                    x += 2;
+                } else {
+                    x++;
+                }
+            } else {
+                x++; // rare cases where the packet gets ignored
+            }
         }
-        if((PTIT % 4) == 2){
-        	T1 = 1;
-        	PTIT -= 2;
-        }
-        if((PTIT % 8) == 4){
-        	T2 = 1;
-        	PTIT -= 4;
-        }
-        if((PTIT % 16) == 8){
-        	T3 = 1;
-        	PTIT -= 8;
-        }
-        if((PTIT % 32) == 16){
-        	T4 = 1;
-        	PTIT -= 16;
-        }
-        if((PTIT % 64) == 32){
-        	T5 = 1;
-        	PTIT -= 32;
-        }
-        if((PTIT % 128) == 64){
-        	T6 = 1;
-        	PTIT -= 64;
-        }
-        if(PTIT == 128){
-        	T7 = 1;
-        }
-
-        decodedLog.addValue("Line", count);
-        decodedLog.addValue("T0", T0);
-        decodedLog.addValue("T1", T1);
-        decodedLog.addValue("T2", T2);
-        decodedLog.addValue("T3", T3);
-        decodedLog.addValue("T4", T4);
-        decodedLog.addValue("T5", T5);
-        decodedLog.addValue("T6", T6);
-        decodedLog.addValue("T7", T7);
     }
 
     /**
@@ -235,15 +273,15 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
      * @param packet
      * @return true or false based on if the checksum passes
      */
-    private boolean checksum(short[] packet, int length) {
-    	if(length > 0){
-    		short includedSum = packet[length -1]; // sum is last byte
+    private boolean checksum(short[] packet) {
+    	if(packetLength > 0){
+    		short includedSum = packet[packetLength -1]; // sum is last byte
     		long veryBIGsum = 0;
-    		for(int x=0;x<length-1;x++){
+    		for(int x=0;x<packetLength-1;x++){
     			veryBIGsum += packet[x];
     		}
     		short calculatedSum = (short)(veryBIGsum % 256);
-    		return (calculatedSum == includedSum) ? true : false;
+    		return (calculatedSum == includedSum);
     	}else{
     		return false;
     	}
