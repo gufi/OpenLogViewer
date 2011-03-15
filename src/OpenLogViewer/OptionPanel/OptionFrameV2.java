@@ -76,9 +76,6 @@ public class OptionFrameV2 extends JFrame {
 
         JScrollPane scroll = new JScrollPane(layeredPane);
 
-        //infoPanel = initInfoPanel();
-        //layeredPane.add(infoPanel);
-
         inactiveHeaders = initHeaderPanel();
         layeredPane.add(inactiveHeaders);
 
@@ -272,6 +269,19 @@ public class OptionFrameV2 extends JFrame {
     }
 
     public void updateFromLog(GenericLog gl) {
+        
+        while(0 < activePanelList.size()){
+            activePanelList.get(0).removeAll();
+            layeredPane.remove(activePanelList.get(0));
+            activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point
+        }
+
+        if(this.inactiveHeaders.getComponentCount() > 1) {
+            inactiveHeaders.removeAll();
+            inactiveHeaders.add(this.addDivisionButton);
+        }
+        this.addActiveHeaderPanel();
+
         ArrayList<GCheckBox> tmpList = new ArrayList<GCheckBox>();
         Iterator i = gl.keySet().iterator();
         String head = "";
