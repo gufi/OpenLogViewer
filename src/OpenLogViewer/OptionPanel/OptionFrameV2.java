@@ -141,26 +141,25 @@ public class OptionFrameV2 extends JFrame {
         public void componentAdded(ContainerEvent e) {
 
             if (e.getChild() != null) {
-                if (e.getChild() instanceof GCheckBox) {
-                    ((GCheckBox) e.getChild()).setEnabled(true);
-                    ((GCheckBox) e.getChild()).setSelected(true);
-                    ((GCheckBox) e.getChild()).getGDE().setSplitNumber(
+                if (e.getChild() instanceof ActiveHeaderLabel) {
+                    ((ActiveHeaderLabel) e.getChild()).setEnabled(true);
+                    ((ActiveHeaderLabel) e.getChild()).setSelected(true);
+                    ((ActiveHeaderLabel) e.getChild()).getGDE().setSplitNumber(
                             activePanelList.indexOf(
                             e.getChild().getParent()) + 1);
                 }
-                //System.out.println("Added " + e.getComponent().getName());
             }
         }
 
         @Override
         public void componentRemoved(ContainerEvent e) {
             if (e.getChild() != null) {
-                if (e.getChild() instanceof GCheckBox) {
-                    ((GCheckBox) e.getChild()).setEnabled(false);
-                    ((GCheckBox) e.getChild()).setSelected(false);
+                if (e.getChild() instanceof ActiveHeaderLabel) {
+                    ((ActiveHeaderLabel) e.getChild()).setEnabled(false);
+                    ((ActiveHeaderLabel) e.getChild()).setSelected(false);
                 }
                 for (int i = 0; i < e.getContainer().getComponentCount(); i++) {
-                    if (e.getContainer().getComponent(i) instanceof GCheckBox) {
+                    if (e.getContainer().getComponent(i) instanceof ActiveHeaderLabel) {
                         e.getContainer().getComponent(i).setLocation(0, i * 20);
                     }
                 }
@@ -176,8 +175,8 @@ public class OptionFrameV2 extends JFrame {
             int col = activePanelList.size() % 4;
             JPanel activePanel = new JPanel();
             activePanelList.add(activePanel);
-            if(OpenLogViewerApp.getInstance()!= null){
-                 OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
+            if (OpenLogViewerApp.getInstance() != null) {
+                OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
             }
             activePanel.setLayout(null);
             activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
@@ -202,8 +201,8 @@ public class OptionFrameV2 extends JFrame {
         activePanelList.remove(panel);
         OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
         for (int i = 0; i < panel.getComponentCount();) {
-            if (panel.getComponent(i) instanceof GCheckBox) {
-                GCheckBox GCB = (GCheckBox) panel.getComponent(i);
+            if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
+                ActiveHeaderLabel GCB = (ActiveHeaderLabel) panel.getComponent(i);
                 GCB.getInactivePanel().add(GCB);
                 GCB.setLocation(GCB.getInactiveLocation());
                 GCB.setSelected(false);
@@ -223,28 +222,27 @@ public class OptionFrameV2 extends JFrame {
         if (!addDivisionButton.isEnabled()) {
             addDivisionButton.setEnabled(true);
         }
-        if(activePanelList.size() > 1) {
-            for(int i = 0; i < activePanelList.size(); i++){
+        ////////////////////////////////////////////////////////////////////Move this to events eventually,
+        if (activePanelList.size() > 1) {
+            for (int i = 0; i < activePanelList.size(); i++) {
                 JPanel active = activePanelList.get(i);
-                if(active.getComponentCount()> 1) {
-                for(int j = 0; j < active.getComponentCount(); j++ ){
-                    if(active.getComponent(j) instanceof GCheckBox){
-                        ((GCheckBox)active.getComponent(j)).getGDE().setSplitNumber(i+1);
+                if (active.getComponentCount() > 1) {
+                    for (int j = 0; j < active.getComponentCount(); j++) {
+                        if (active.getComponent(j) instanceof ActiveHeaderLabel) {
+                            ((ActiveHeaderLabel) active.getComponent(j)).getGDE().setSplitNumber(i + 1);
+                        }
                     }
-                }
                 }
             }
         }
         this.repaint();
     }
-    
     private MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            //System.out.println(e.getModifiers() + " " + e.getButton());
             Component c = e.getComponent();
-            GCheckBox GCB = (GCheckBox) c;
+            ActiveHeaderLabel GCB = (ActiveHeaderLabel) c;
             GCB.setDragging(true);
             if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) {// 4 == right mouse button
                 if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
@@ -267,7 +265,7 @@ public class OptionFrameV2 extends JFrame {
         }
     };
 
-    private boolean place(GCheckBox GCB) {
+    private boolean place(ActiveHeaderLabel GCB) {
         int x = 0;
         int y = 20;
         while (y < GCB.getParent().getHeight()) {
@@ -281,28 +279,29 @@ public class OptionFrameV2 extends JFrame {
     }
 
     public void updateFromLog(GenericLog gl) {
-        
-        while(0 < activePanelList.size()){
+
+        while (activePanelList.size() > 0) {
             activePanelList.get(0).removeAll();
             layeredPane.remove(activePanelList.get(0));
             activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point
         }
 
-        if(this.inactiveHeaders.getComponentCount() > 1) {
+        if (inactiveHeaders.getComponentCount() > 1) {
             inactiveHeaders.removeAll();
             inactiveHeaders.add(this.addDivisionButton);
         }
-        this.addActiveHeaderPanel(); // will be based on highest number of 
+        this.addActiveHeaderPanel(); // will be based on highest number of divisions found when properties are applied
+        
 
-        ArrayList<GCheckBox> tmpList = new ArrayList<GCheckBox>();
+        ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
         Iterator i = gl.keySet().iterator();
         String head = "";
-        GCheckBox toBeAdded = null;
-        
+        ActiveHeaderLabel toBeAdded = null;
+
         while (i.hasNext()) {
             head = (String) i.next();
             GenericDataElement GDE = gl.get(head);
-            toBeAdded = new GCheckBox();
+            toBeAdded = new ActiveHeaderLabel();
 
             toBeAdded.setName(head);
             toBeAdded.setText(head);
@@ -313,13 +312,13 @@ public class OptionFrameV2 extends JFrame {
                 toBeAdded.setBackground(GDE.getColor());
             }
             tmpList.add(toBeAdded);
-            
+
         }
         Collections.sort(tmpList);
         int j = 0;
         int leftSide = 0;
-        for(int it = 0;it < tmpList.size();it++){
-            if (20 + (20 * (j+1)) > inactiveHeaders.getHeight()) {
+        for (int it = 0; it < tmpList.size(); it++) {
+            if (20 + (20 * (j + 1)) > inactiveHeaders.getHeight()) {
                 j = 0;
                 leftSide += 120;
             }
@@ -327,9 +326,9 @@ public class OptionFrameV2 extends JFrame {
                     120//(((20 + (head.length() * 8)) < 120) ? (32 + (head.length() * 7)) : 120)// this keeps the select boxes at a max of 120
                     , 20);
             inactiveHeaders.add(tmpList.get(it));
-            
-                j++;
-            
+
+            j++;
+
         }
 
         this.repaint();
@@ -337,7 +336,7 @@ public class OptionFrameV2 extends JFrame {
         this.setVisible(true);
     }
 
-    private boolean checkForProperties(GCheckBox GCB, GenericDataElement GDE) {
+    private boolean checkForProperties(ActiveHeaderLabel GCB, GenericDataElement GDE) {
         for (int i = 0; i < OpenLogViewerApp.getInstance().getProperties().size(); i++) {
             if (OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())) {
                 GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
@@ -353,7 +352,7 @@ public class OptionFrameV2 extends JFrame {
         return false;
     }
 
-    private class GCheckBox extends JLabel implements Comparable {
+    private class ActiveHeaderLabel extends JLabel implements Comparable {
 
         private GenericDataElement GDE;
         private Point previousLocation;
@@ -366,7 +365,7 @@ public class OptionFrameV2 extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getModifiers() == 16){
+                if (e.getModifiers() == 16) {
                     setSelected(!selected);
                 }
             }
@@ -381,14 +380,14 @@ public class OptionFrameV2 extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                GCheckBox GCB = (GCheckBox) e.getSource();
+                ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
                 GCB.setPreviousLocation(GCB.getLocation());
                 GCB.setPreviousPanel((JPanel) GCB.getParent());
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                GCheckBox GCB = (GCheckBox) e.getSource();
+                ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
                 if (GCB.isDragging()) {
                     if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
                         GCB.setLocation(GCB.getInactiveLocation());
@@ -423,7 +422,7 @@ public class OptionFrameV2 extends JFrame {
             }
         };
 
-        public GCheckBox() {
+        public ActiveHeaderLabel() {
             super();
             addMouseListener(selectedListener);
             super.setOpaque(false);
@@ -447,20 +446,20 @@ public class OptionFrameV2 extends JFrame {
             this.GDE = GDE;
             // this line is here because if the tool tip is never set no mouse events
             // will ever be created for tool tips
-            this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue() +
-                                "</b><br>Min Value: <b>" + GDE.getMinValue() +
-                                "</b><br>Total Length: <b>" + GDE.size() + "</b> data points" +
-                                "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
-        }
-        @Override
-        public String getToolTipText(MouseEvent e) {
-             this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue() +
-                                "</b><br>Min Value: <b>" + GDE.getMinValue() +
-                                "</b><br>Total Length: <b>" + GDE.size() + "</b> data points" +
-                                "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
-             return getToolTipText();
+            this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue()
+                    + "</b><br>Min Value: <b>" + GDE.getMinValue()
+                    + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
+                    + "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
         }
 
+        @Override
+        public String getToolTipText(MouseEvent e) {
+            this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue()
+                    + "</b><br>Min Value: <b>" + GDE.getMinValue()
+                    + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
+                    + "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
+            return getToolTipText();
+        }
 
         public GenericDataElement getGDE() {
             return GDE;
@@ -522,8 +521,8 @@ public class OptionFrameV2 extends JFrame {
 
         @Override
         public int compareTo(Object o) {
-            if (o instanceof GCheckBox) {
-                GCheckBox GCB = (GCheckBox) o;
+            if (o instanceof ActiveHeaderLabel) {
+                ActiveHeaderLabel GCB = (ActiveHeaderLabel) o;
                 return this.GDE.compareTo(GCB.getGDE());
             } else {
                 return -1;
