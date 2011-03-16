@@ -103,7 +103,9 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
                     int b = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
                     if (i >= nullData * zoom.getZoom()) {
                         if (zoom.getZoom() > 5) {
-                            g2d.fillOval(i - 2, a - 2, 4, 4);
+                            if(a != b){
+                                g2d.fillOval(i - 2, a - 2, 4, 4);
+                            }
                         }
                         g2d.drawLine(i, a, i + zoom.getZoom(), b);
                     }
