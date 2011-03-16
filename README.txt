@@ -5,7 +5,7 @@ I would eventually love for the program to become mainstream in the Automotive D
 
 On 3/16/2011 the project was moved to Maven!
 
-To run the application using maven, run "mvn exec:exec" and wait.
+To run the application using maven, simply run "mvn" and wait.
 
 The first time you run maven, it downloads itself, hence the wait.
 
