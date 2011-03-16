@@ -104,7 +104,8 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
                     if (i >= nullData * zoom.getZoom()) {
                         if (zoom.getZoom() > 5) {
                             if(a != b){
-                                g2d.fillOval(i - 2, a - 2, 4, 4);
+                                g2d.fillOval(i -2, a-2, 4, 4);
+                                g2d.fillOval(i +zoom.getZoom()-2, b-2, 4, 4);
                             }
                         }
                         g2d.drawLine(i, a, i + zoom.getZoom(), b);
