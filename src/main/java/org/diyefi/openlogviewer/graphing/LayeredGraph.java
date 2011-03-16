@@ -20,15 +20,15 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer.graphing;
+package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericDataElement;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.genericlog.GenericDataElement;
+import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
  *

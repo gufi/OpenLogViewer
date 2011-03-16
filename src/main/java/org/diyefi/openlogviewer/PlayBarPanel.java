@@ -21,7 +21,7 @@
  *
  */
 
-package main.java.org.diyefi.openlogviewer;
+package org.diyefi.openlogviewer;
 
 import javax.swing.JPanel;
 
@@ -53,7 +53,7 @@ public class PlayBarPanel extends JPanel {
         this.setPreferredSize(new java.awt.Dimension(857, 40));
         this.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
         
-        zoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_+.png"))); // NOI18N
+        zoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_+.png"))); // NOI18N
         zoomInButton.setAlignmentY(0.0F);
         zoomInButton.setBorder(null);
         zoomInButton.setBorderPainted(false);
@@ -67,7 +67,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(zoomInButton);
 
-        zoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_-.png"))); // NOI18N
+        zoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_-.png"))); // NOI18N
         zoomOutButton.setAlignmentY(0.0F);
         zoomOutButton.setBorder(null);
         zoomOutButton.setBorderPainted(false);
@@ -81,7 +81,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(zoomOutButton);
 
-        reverseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_01.png"))); // NOI18N
+       reverseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_01.png"))); // NOI18N
         reverseButton.setAlignmentY(0.0F);
         reverseButton.setBorder(null);
         reverseButton.setBorderPainted(false);
@@ -95,7 +95,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(reverseButton);
 
-        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_02.png"))); // NOI18N
+        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_02.png"))); // NOI18N
         playButton.setAlignmentY(0.0F);
         playButton.setBorder(null);
         playButton.setBorderPainted(false);
@@ -109,7 +109,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(playButton);
 
-        pauseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_03.png"))); // NOI18N
+        pauseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_03.png"))); // NOI18N
         pauseButton.setAlignmentY(0.0F);
         pauseButton.setBorder(null);
         pauseButton.setBorderPainted(false);
@@ -123,7 +123,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(pauseButton);
 
-        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_04.png"))); // NOI18N
+        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_04.png"))); // NOI18N
         stopButton.setAlignmentY(0.0F);
         stopButton.setBorder(null);
         stopButton.setBorderPainted(false);
@@ -137,7 +137,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(stopButton);
 
-        fastForwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_05.png"))); // NOI18N
+        fastForwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_05.png"))); // NOI18N
         fastForwardButton.setAlignmentY(0.0F);
         fastForwardButton.setBorder(null);
         fastForwardButton.setBorderPainted(false);
@@ -151,7 +151,7 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(fastForwardButton);
 
-        ejectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/java/org/diyefi/openlogviewer/resources/Playbar_06.png"))); // NOI18N
+        ejectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_06.png"))); // NOI18N
         ejectButton.setAlignmentY(0.0F);
         ejectButton.setBorder(null);
         ejectButton.setBorderPainted(false);

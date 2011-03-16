@@ -26,7 +26,7 @@
  *
  * Created on Jan 26, 2011, 2:55:31 PM
  */
-package main.java.org.diyefi.openlogviewer;
+package org.diyefi.openlogviewer;
 
 
 import java.awt.Dimension;
@@ -37,18 +37,18 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import main.java.org.diyefi.openlogviewer.decoder.CSVTypeLog;
-import main.java.org.diyefi.openlogviewer.decoder.FreeEMSBin;
-import main.java.org.diyefi.openlogviewer.decoder.FreeEMSByteLA;
-import main.java.org.diyefi.openlogviewer.filefilters.CSVTypeFileFilter;
-import main.java.org.diyefi.openlogviewer.filefilters.FreeEMSFileFilter;
-import main.java.org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericLog;
-import main.java.org.diyefi.openlogviewer.graphing.LayeredGraph;
-import main.java.org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
-import main.java.org.diyefi.openlogviewer.propertypanel.PropertiesPane;
-import main.java.org.diyefi.openlogviewer.propertypanel.SingleProperty;
-import main.java.org.diyefi.openlogviewer.utils.Utilities;
+import org.diyefi.openlogviewer.decoder.CSVTypeLog;
+import org.diyefi.openlogviewer.decoder.FreeEMSBin;
+import org.diyefi.openlogviewer.decoder.FreeEMSByteLA;
+import org.diyefi.openlogviewer.filefilters.CSVTypeFileFilter;
+import org.diyefi.openlogviewer.filefilters.FreeEMSFileFilter;
+import org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
+import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.graphing.LayeredGraph;
+import org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
+import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
+import org.diyefi.openlogviewer.propertypanel.SingleProperty;
+import org.diyefi.openlogviewer.utils.Utilities;
 
 /**
  *

@@ -20,7 +20,7 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer.genericlog;
+package org.diyefi.openlogviewer.genericlog;
 
 import java.awt.Color;
 import java.awt.datatransfer.DataFlavor;

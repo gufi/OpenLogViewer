@@ -20,12 +20,12 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer.decoder;
+package org.diyefi.openlogviewer.decoder;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
  *

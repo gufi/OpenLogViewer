@@ -20,7 +20,7 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer.graphing;
+package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,7 +30,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
  *

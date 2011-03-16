@@ -21,7 +21,7 @@
  *
  */
 
-package main.java.org.diyefi.openlogviewer.utils;
+package org.diyefi.openlogviewer.utils;
 
 import java.io.File;
 

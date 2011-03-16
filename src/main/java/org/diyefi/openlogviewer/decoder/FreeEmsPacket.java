@@ -21,7 +21,7 @@
  *
  */
 
-package main.java.org.diyefi.openlogviewer.decoder;
+package org.diyefi.openlogviewer.decoder;
 
 /**
  * Data storage for a generic FreeEMS packet.

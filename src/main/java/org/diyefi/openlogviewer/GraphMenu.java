@@ -20,7 +20,7 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer;
+package org.diyefi.openlogviewer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -20,7 +20,7 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer.optionpanel;
+package org.diyefi.openlogviewer.optionpanel;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -39,9 +39,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import javax.swing.*;
-import main.java.org.diyefi.openlogviewer.OpenLogViewerApp;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericDataElement;
-import main.java.org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.genericlog.GenericDataElement;
+import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
  *

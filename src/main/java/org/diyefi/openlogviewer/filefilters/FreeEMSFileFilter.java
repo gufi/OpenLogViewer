@@ -21,11 +21,11 @@
  *
  */
 
-package main.java.org.diyefi.openlogviewer.filefilters;
+package org.diyefi.openlogviewer.filefilters;
 
 import java.io.*;
 import javax.swing.filechooser.FileFilter;
-import main.java.org.diyefi.openlogviewer.utils.Utilities;
+import org.diyefi.openlogviewer.utils.Utilities;
 
 /**
  *

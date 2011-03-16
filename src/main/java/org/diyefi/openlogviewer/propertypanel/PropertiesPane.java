@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.java.org.diyefi.openlogviewer.propertypanel;
+package org.diyefi.openlogviewer.propertypanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,7 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import main.java.org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewerApp;
 
 /**
  *

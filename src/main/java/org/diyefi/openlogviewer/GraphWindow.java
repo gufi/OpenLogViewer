@@ -21,7 +21,7 @@
  *
  */
 
-package main.java.org.diyefi.openlogviewer;
+package org.diyefi.openlogviewer;
 
 import javax.swing.JPanel;
 

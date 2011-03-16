@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package main.java.org.diyefi.openlogviewer.optionpanel;
+package org.diyefi.openlogviewer.optionpanel;
 
 import javax.swing.DefaultComboBoxModel;
 

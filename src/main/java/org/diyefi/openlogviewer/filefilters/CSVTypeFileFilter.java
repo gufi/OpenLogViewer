@@ -20,11 +20,11 @@
  * I ask that if you make any changes to this file you fork the code on github.com!
  *
  */
-package main.java.org.diyefi.openlogviewer.filefilters;
+package org.diyefi.openlogviewer.filefilters;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
-import main.java.org.diyefi.openlogviewer.utils.Utilities;
+import org.diyefi.openlogviewer.utils.Utilities;
 
 /**
  *
