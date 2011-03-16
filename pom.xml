@@ -4,7 +4,7 @@
 	<groupId>org.diyefi</groupId>
 	<artifactId>OpenLogViewer</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>OpenLogViewer</name>
 	<url>http://www.diyefi.org</url>
 	<dependencies>
@@ -20,6 +20,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+	            		<version>2.3.1</version>
 				<configuration>
 					<archive>
 						<manifest>
