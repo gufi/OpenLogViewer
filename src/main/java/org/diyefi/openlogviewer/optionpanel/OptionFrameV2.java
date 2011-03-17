@@ -42,6 +42,7 @@ import javax.swing.*;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 
 /**
  *
@@ -51,22 +52,19 @@ public class OptionFrameV2 extends JFrame {
 
     private JFrame thisRef;
     private JPanel inactiveHeaders;
-    private JPanel infoPanel;
-    private JLabel headerLabel;
-    private JLabel minLabel;
-    private JLabel maxLabel;
+    private ModifyGraphPane infoPanel;
     private JButton addDivisionButton;
     private JButton remDivisionButton;
-    private JTextField minField;
-    private JTextField maxField;
     private JLayeredPane layeredPane;
     private ArrayList<JPanel> activePanelList;
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public OptionFrameV2() {
 
         super("Graphing Option Pane");
         this.setSize(900, 480);
         this.setPreferredSize(this.getSize());
+
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         thisRef = this;
         activePanelList = new ArrayList<JPanel>();
@@ -78,35 +76,18 @@ public class OptionFrameV2 extends JFrame {
 
         inactiveHeaders = initHeaderPanel();
         layeredPane.add(inactiveHeaders);
+        infoPanel = new ModifyGraphPane();
+        this.add(infoPanel);
 
         this.add(scroll);
         addActiveHeaderPanel();
 
     }
 
-    private JPanel initInfoPanel() {
-        JPanel ip = new JPanel();
-        ip.setName("InfoPanel");
-        headerLabel = new JLabel("No Active Header");
-        minLabel = new JLabel("Min:");
-        maxLabel = new JLabel("Max:");
-        minField = new JTextField(10);
-        maxField = new JTextField(10);
+    private JInternalFrame initInfoPanel() {
+        JInternalFrame ip = new JInternalFrame();
 
-        headerLabel.setBounds(0, 0, 200, 20);
-        minLabel.setBounds(0, 20, 100, 20);
-        minField.setBounds(100, 20, 100, 20);
-        maxLabel.setBounds(0, 40, 100, 20);
-        maxField.setBounds(100, 40, 100, 20);
 
-        ip.setLayout(null);
-
-        ip.add(headerLabel);
-        ip.add(minLabel);
-        ip.add(minField);
-        ip.add(maxLabel);
-        ip.add(maxField);
-        ip.setBounds(0, 160, 200, 400);
         return ip;
     }
 
@@ -291,7 +272,7 @@ public class OptionFrameV2 extends JFrame {
             inactiveHeaders.add(this.addDivisionButton);
         }
         this.addActiveHeaderPanel(); // will be based on highest number of divisions found when properties are applied
-        
+
 
         ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
         Iterator i = gl.keySet().iterator();
@@ -352,6 +333,132 @@ public class OptionFrameV2 extends JFrame {
         return false;
     }
 
+    private class ModifyGraphPane extends JInternalFrame {
+
+        GenericDataElement GDE;
+        private JLabel minLabel;
+        private JLabel maxLabel;
+        private JTextField minField;
+        private JTextField maxField;
+        private JButton resetButton;
+        private JButton applyButton;
+        private JButton saveButton;
+        private JButton colorButton;
+        private ActionListener resetButtonListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (GDE != null) {
+                    GDE.reset();
+                }
+            }
+        };
+        private ActionListener applyButtonListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (GDE != null) {
+                    changeGDEValues();
+                }
+            }
+        };
+        private ActionListener saveButtonListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (GDE != null) {
+                    changeGDEValues();
+                    OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(new SingleProperty(GDE));
+                }
+            }
+        };
+        private ActionListener colorButtonListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(
+                        new JFrame(),
+                        "Choose Background Color",
+                        colorButton.getForeground());
+                if (c != null) {
+                    colorButton.setForeground(c);
+                }
+            }
+        };
+
+        public ModifyGraphPane() {
+            this.setName("InfoPanel");
+            //headerLabel = new JLabel("No Active Header");
+            minLabel = new JLabel("Min:");
+            maxLabel = new JLabel("Max:");
+            minField = new JTextField(10);
+            maxField = new JTextField(10);
+            resetButton = new JButton("Reset Min/Max");
+            resetButton.addActionListener(resetButtonListener);
+
+            applyButton = new JButton("Apply");
+            applyButton.addActionListener(applyButtonListener);
+
+            saveButton = new JButton("Save");
+            saveButton.addActionListener(saveButtonListener);
+
+            colorButton = new JButton("Color");
+            colorButton.addActionListener(colorButtonListener);
+
+
+            //X       Y       width   height
+            minLabel.setBounds(0, 0, 100, 20);
+            minField.setBounds(100, 0, 100, 20);
+            maxLabel.setBounds(0, 20, 100, 20);
+            maxField.setBounds(100, 20, 100, 20);
+            colorButton.setBounds(0, 40, 200, 20);
+            applyButton.setBounds(0, 60, 100, 20);
+            saveButton.setBounds(100, 60, 100, 20);
+            resetButton.setBounds(0, 80, 200, 20);
+
+            this.setLayout(null);
+
+            ///ip.add(headerLabel);
+            this.add(minLabel);
+            this.add(minField);
+            this.add(maxLabel);
+            this.add(maxField);
+            this.add(colorButton);
+            this.add(applyButton);
+            this.add(saveButton);
+            this.add(resetButton);
+            this.setBounds(500, 180, 210, 133);
+            this.setMaximizable(false);
+            this.setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+            this.setClosable(true);
+            this.setVisible(true);
+        }
+
+        public void setGDE(GenericDataElement gde) {
+            this.GDE = gde;
+            this.setTitle(GDE.getName());
+            minField.setText(GDE.getMinValue().toString());
+            maxField.setText(GDE.getMaxValue().toString());
+            colorButton.setForeground(GDE.getColor());
+        }
+
+        private void changeGDEValues() {
+            try {
+                GDE.setMaxValue(Double.parseDouble(maxField.getText()));
+            } catch (Exception ex) {
+                //TO-DO: do something with Auto field
+            }
+            try {
+                GDE.setMinValue(Double.parseDouble(minField.getText()));
+            } catch (Exception ex) {
+                //TO-DO: do something with Auto field
+            }
+            if (!GDE.getColor().equals(colorButton.getForeground())) {
+                GDE.setColor(colorButton.getForeground());
+            }
+        }
+    }
+
     private class ActiveHeaderLabel extends JLabel implements Comparable {
 
         private GenericDataElement GDE;
@@ -367,7 +474,14 @@ public class OptionFrameV2 extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 if (e.getModifiers() == 16) {
                     setSelected(!selected);
+                } else if (e.getModifiers() == 18) {
+                    infoPanel.setGDE(GDE);
+                    if (!infoPanel.isVisible()) {
+                        infoPanel.setVisible(true);
+
+                    }
                 }
+                // System.out.println(e.getModifiers());
             }
 
             @Override
@@ -446,19 +560,20 @@ public class OptionFrameV2 extends JFrame {
             this.GDE = GDE;
             // this line is here because if the tool tip is never set no mouse events
             // will ever be created for tool tips
-            this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue()
-                    + "</b><br>Min Value: <b>" + GDE.getMinValue()
-                    + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
-                    + "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
+            this.setToolTipText();
         }
 
         @Override
         public String getToolTipText(MouseEvent e) {
+            this.setToolTipText();
+            return getToolTipText();
+        }
+
+        public void setToolTipText() {
             this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue()
                     + "</b><br>Min Value: <b>" + GDE.getMinValue()
                     + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
-                    + "<br>To modify Min and Max values for scaling purposes Right click.(Not Currently Implented)</HTML>");
-            return getToolTipText();
+                    + "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
         }
 
         public GenericDataElement getGDE() {
@@ -502,7 +617,11 @@ public class OptionFrameV2 extends JFrame {
         }
 
         public void setSelected(boolean selected) {
-            this.selected = selected;
+            if (this.isEnabled()) {
+                this.selected = selected;
+            } else {
+                this.selected = false;
+            }
             addRemGraph();
         }
 

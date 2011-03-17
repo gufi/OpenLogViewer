@@ -5,6 +5,7 @@
 package org.diyefi.openlogviewer.propertypanel;
 
 import java.awt.Color;
+import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 
 /**
  *
@@ -25,6 +26,15 @@ public class SingleProperty implements Comparable {
         min = 0;
         max = 0;
         split = 1;
+        active = false;
+    }
+
+    public SingleProperty(GenericDataElement GDE) {
+        color = GDE.getColor();
+        header = GDE.getName();
+        min = GDE.getMinValue();
+        max = GDE.getMaxValue();
+        split = GDE.getSplitNumber();
         active = false;
     }
 

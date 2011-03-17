@@ -95,6 +95,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
             try {
                 chartNum = (Double) dat.next();
                 int a = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
+                Double prevNum = chartNum;
                 while (dat.hasNext()) {
 
 
@@ -103,7 +104,8 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
                     int b = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
                     if (i >= nullData * zoom.getZoom()) {
                         if (zoom.getZoom() > 5) {
-                            if(a != b){
+                            if(!prevNum.equals(chartNum)){ // works. but double draws the double dots when consecutive
+                                                            // data does not match EX: ((1)) (2) (3) 3 vs (1) (2) 2 2
                                 g2d.fillOval(i -2, a-2, 4, 4);
                                 g2d.fillOval(i +zoom.getZoom()-2, b-2, 4, 4);
                             }
@@ -111,6 +113,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
                         g2d.drawLine(i, a, i + zoom.getZoom(), b);
                     }
                     a = b;
+                    prevNum = chartNum;
                     i += zoom.getZoom();
                 }
             } catch (ConcurrentModificationException CME) {

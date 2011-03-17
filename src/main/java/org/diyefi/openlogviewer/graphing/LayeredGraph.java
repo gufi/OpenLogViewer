@@ -88,16 +88,27 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         if (p) {
             stop();
         }
-        GraphLayer graph = new GraphLayer();
-        graph.setZoom(zoom);
-        graph.setSize(this.getSize());
-        graph.setName(header);
-        this.add(graph);
-        this.addHierarchyBoundsListener(graph);// updates graph size automatically
-        genLog.get(header).addPropertyChangeListener("Split", graph);
-        graph.setData(genLog.get(header));
+        boolean found = false;
+        for (int i = 0; i < this.getComponentCount() && !found; i++) {
+            if (this.getComponent(i) instanceof GraphLayer) {
+                GraphLayer gl = (GraphLayer)this.getComponent(i);
+                if(gl.getName().equals(header)){
+                    found = true;
+                }
+            }
+        }
+        if (!found) {
+            GraphLayer graph = new GraphLayer();
+            graph.setZoom(zoom);
+            graph.setSize(this.getSize());
+            graph.setName(header);
+            this.add(graph);
+            this.addHierarchyBoundsListener(graph);// updates graph size automatically
+            genLog.get(header).addPropertyChangeListener("Split", graph);
+            graph.setData(genLog.get(header));
 
-        setCurrentMax();
+            setCurrentMax();
+        }
         if (p) {
             play();
         }
@@ -123,7 +134,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
             if (this.getComponent(i) instanceof GraphLayer) {
                 this.removeHierarchyBoundsListener((GraphLayer) getComponent(i));
                 this.remove(getComponent(i));
-                
+
             } else {
                 i++;
             }
@@ -274,9 +285,9 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     public void setTotalSplits(int totalSplits) {
         if (totalSplits > 0) {
             this.totalSplits = totalSplits;
-            for(int i = 0; i < this.getComponentCount(); i++){
-                if(this.getComponent(i) instanceof GraphLayer){
-                    GraphLayer gl = (GraphLayer)this.getComponent(i);
+            for (int i = 0; i < this.getComponentCount(); i++) {
+                if (this.getComponent(i) instanceof GraphLayer) {
+                    GraphLayer gl = (GraphLayer) this.getComponent(i);
                     gl.sizeGraph();
                 }
             }

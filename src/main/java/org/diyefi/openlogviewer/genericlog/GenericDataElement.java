@@ -140,7 +140,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
     public void reset() {
         newMinValue = minValue;
         newMaxValue = maxValue;
-        newColor = color;
+        //newColor = color;
     }
 
     public void addPropertyChangeListener(String property, PropertyChangeListener PCL) {
