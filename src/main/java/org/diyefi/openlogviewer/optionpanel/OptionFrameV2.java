@@ -336,6 +336,7 @@ public class OptionFrameV2 extends JFrame {
     private class ModifyGraphPane extends JInternalFrame {
 
         GenericDataElement GDE;
+        ActiveHeaderLabel AHL;
         private JLabel minLabel;
         private JLabel maxLabel;
         private JTextField minField;
@@ -350,6 +351,8 @@ public class OptionFrameV2 extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (GDE != null) {
                     GDE.reset();
+                    minField.setText(Double.toString(GDE.getMinValue()));
+                    maxField.setText(Double.toString(GDE.getMaxValue()));
                 }
             }
         };
@@ -431,11 +434,11 @@ public class OptionFrameV2 extends JFrame {
             this.setMaximizable(false);
             this.setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
             this.setClosable(true);
-            this.setVisible(true);
         }
 
-        public void setGDE(GenericDataElement gde) {
+        public void setGDE(GenericDataElement gde, ActiveHeaderLabel ahl) {
             this.GDE = gde;
+            this.AHL = ahl;
             this.setTitle(GDE.getName());
             minField.setText(GDE.getMinValue().toString());
             maxField.setText(GDE.getMaxValue().toString());
@@ -455,6 +458,7 @@ public class OptionFrameV2 extends JFrame {
             }
             if (!GDE.getColor().equals(colorButton.getForeground())) {
                 GDE.setColor(colorButton.getForeground());
+                AHL.setForeground(colorButton.getForeground());
             }
         }
     }
@@ -475,7 +479,7 @@ public class OptionFrameV2 extends JFrame {
                 if (e.getModifiers() == 16) {
                     setSelected(!selected);
                 } else if (e.getModifiers() == 18) {
-                    infoPanel.setGDE(GDE);
+                    infoPanel.setGDE(GDE,(ActiveHeaderLabel)e.getSource());
                     if (!infoPanel.isVisible()) {
                         infoPanel.setVisible(true);
 
@@ -570,8 +574,8 @@ public class OptionFrameV2 extends JFrame {
         }
 
         public void setToolTipText() {
-            this.setToolTipText("<HTML>Max Value: <b>" + GDE.getMaxValue()
-                    + "</b><br>Min Value: <b>" + GDE.getMinValue()
+            this.setToolTipText("<HTML>Min Value: <b>" + GDE.getMinValue()
+                    + "</b><br>Max Value: <b>" + GDE.getMaxValue()
                     + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
                     + "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
         }
