@@ -87,10 +87,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         100.0, // IAP
         1.0, // MAF
         1.0, // DMAP
-        1.0, //DTPS
-        2.0, //RPM
-        2.0, // Delta RPM
-        2.0, // Delta Delta RPM
+        1.0, // DTPS
+        2.0, // RPM
+        1.0, // Delta RPM
+        1.0, // Delta Delta RPM
 
         // DERIVED VARS
         1.0, // Load Main
@@ -106,12 +106,11 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         1.0, // RefPW
         1250.0, // Dwell
         1024.0, // Advance
+        
+        // Spares
         1.0, // SP?
         1.0, // SP?
         1.0, // SP?
-
-        //ADC ARRAY
-
         1.0, // SP?
         1.0, // SP?
         1.0, // SP?
