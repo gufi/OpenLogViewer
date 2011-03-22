@@ -58,6 +58,11 @@ public class OptionFrameV2 extends JFrame {
     private JLayeredPane layeredPane;
     private ArrayList<JPanel> activePanelList;
 
+    private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
+    private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
+    private static final int PANEL_WIDTH = 140;// panels are 120 px wide buttons and labels are also; default 120
+    private static final int PANEL_HEIGHT = 120;// panels are 120 px high;default 120
+
     @SuppressWarnings("LeakingThisInConstructor")
     public OptionFrameV2() {
 
@@ -96,7 +101,7 @@ public class OptionFrameV2 extends JFrame {
         ih.setLayout(null);
         ih.setName("Drop InactiveHeaderPanel");
         this.addDivisionButton = new JButton("Add Division");
-        addDivisionButton.setBounds(0, 0, 120, 20);
+        addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
         addDivisionButton.addActionListener(addDivisionListener);
         ih.add(addDivisionButton);
         ih.setBounds(0, 0, 900, 180);
@@ -141,7 +146,7 @@ public class OptionFrameV2 extends JFrame {
                 }
                 for (int i = 0; i < e.getContainer().getComponentCount(); i++) {
                     if (e.getContainer().getComponent(i) instanceof ActiveHeaderLabel) {
-                        e.getContainer().getComponent(i).setLocation(0, i * 20);
+                        e.getContainer().getComponent(i).setLocation(0, i * COMP_HEIGHT);
                     }
                 }
             }
@@ -163,11 +168,11 @@ public class OptionFrameV2 extends JFrame {
             activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
             activePanel.addContainerListener(addRemoveListener);
 
-            activePanel.setBounds((col * 120), 180 + 120 * row, 120, 120);
+            activePanel.setBounds((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row, PANEL_WIDTH, PANEL_HEIGHT);
             activePanel.setBackground(Color.DARK_GRAY);
             JButton removeButton = new JButton("Remove");
             removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
-            removeButton.setBounds(0, 0, 120, 20);
+            removeButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
             removeButton.addActionListener(remDivisionListener);
             activePanel.add(removeButton);
             layeredPane.add(activePanel);
@@ -198,7 +203,7 @@ public class OptionFrameV2 extends JFrame {
         for (int i = 0; i < activePanelList.size(); i++) {
             int row = i / 4;
             int col = i % 4;
-            activePanelList.get(i).setLocation((col * 120), 180 + 120 * row);
+            activePanelList.get(i).setLocation((col * PANEL_HEIGHT), inactiveHeaders.getHeight() + PANEL_WIDTH * row);
         }
         if (!addDivisionButton.isEnabled()) {
             addDivisionButton.setEnabled(true);
@@ -248,13 +253,13 @@ public class OptionFrameV2 extends JFrame {
 
     private boolean place(ActiveHeaderLabel GCB) {
         int x = 0;
-        int y = 20;
+        int y = COMP_HEIGHT;
         while (y < GCB.getParent().getHeight()) {
             if (GCB.getParent().getComponentAt(x, y) == GCB.getParent() || GCB.getParent().getComponentAt(x, y) == GCB) {
                 GCB.setLocation(x, y);
                 return true;
             }
-            y = y + 20;
+            y = y + COMP_HEIGHT;
         }
         return false;
     }
@@ -299,13 +304,13 @@ public class OptionFrameV2 extends JFrame {
         int j = 0;
         int leftSide = 0;
         for (int it = 0; it < tmpList.size(); it++) {
-            if (20 + (20 * (j + 1)) > inactiveHeaders.getHeight()) {
+            if (COMP_HEIGHT + (COMP_HEIGHT * (j + 1)) > inactiveHeaders.getHeight()) {
                 j = 0;
-                leftSide += 120;
+                leftSide += PANEL_WIDTH;
             }
-            tmpList.get(it).setBounds(leftSide, (20 + (20 * j)),
-                    120//(((20 + (head.length() * 8)) < 120) ? (32 + (head.length() * 7)) : 120)// this keeps the select boxes at a max of 120
-                    , 20);
+            tmpList.get(it).setBounds(leftSide, (COMP_HEIGHT + (COMP_HEIGHT * j)),
+                    PANEL_WIDTH//(((COMP_HEIGHT + (head.length() * 8)) < 120) ? (32 + (head.length() * 7)) : 120)// this keeps the select boxes at a max of 120
+                    , COMP_HEIGHT);
             inactiveHeaders.add(tmpList.get(it));
 
             j++;
@@ -319,7 +324,7 @@ public class OptionFrameV2 extends JFrame {
 
     private boolean checkForProperties(ActiveHeaderLabel GCB, GenericDataElement GDE) {
         for (int i = 0; i < OpenLogViewerApp.getInstance().getProperties().size(); i++) {
-            if (OpenLogViewerApp.getInstance().getProperties().get(i).equals(GDE.getName())) {
+            if (OpenLogViewerApp.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
                 GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
                 GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
                 GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
@@ -391,7 +396,6 @@ public class OptionFrameV2 extends JFrame {
 
         public ModifyGraphPane() {
             this.setName("InfoPanel");
-            //headerLabel = new JLabel("No Active Header");
             minLabel = new JLabel("Min:");
             maxLabel = new JLabel("Max:");
             minField = new JTextField(10);
@@ -410,14 +414,14 @@ public class OptionFrameV2 extends JFrame {
 
 
             //X       Y       width   height
-            minLabel.setBounds(0, 0, 100, 20);
-            minField.setBounds(100, 0, 100, 20);
-            maxLabel.setBounds(0, 20, 100, 20);
-            maxField.setBounds(100, 20, 100, 20);
-            colorButton.setBounds(0, 40, 200, 20);
-            applyButton.setBounds(0, 60, 100, 20);
-            saveButton.setBounds(100, 60, 100, 20);
-            resetButton.setBounds(0, 80, 200, 20);
+            minLabel.setBounds(0, 0, COMP_WIDTH/2, COMP_HEIGHT);
+            minField.setBounds(100, 0, COMP_WIDTH/2, COMP_HEIGHT);
+            maxLabel.setBounds(0, 20, COMP_WIDTH/2, COMP_HEIGHT);
+            maxField.setBounds(100, 20, COMP_WIDTH/2, COMP_HEIGHT);
+            colorButton.setBounds(0, 40, COMP_WIDTH, COMP_HEIGHT);
+            applyButton.setBounds(0, 60, COMP_WIDTH/2, COMP_HEIGHT);
+            saveButton.setBounds(100, 60, COMP_WIDTH/2, COMP_HEIGHT);
+            resetButton.setBounds(0, 80, COMP_WIDTH, COMP_HEIGHT);
 
             this.setLayout(null);
 
