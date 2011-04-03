@@ -39,8 +39,12 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 
 /**
+ *  GraphLayer is a JPanel that uses a transparent background.
+ * the graph is drawn to this panel and used in conjunction with a JLayeredPane
+ * to give the appearance of the graphs drawn together.
  *
- * @author Bryan
+ * this Layer listens for window resizes and property changes
+ * @author Bryan Harris
  */
 public class GraphLayer extends JPanel implements HierarchyBoundsListener,PropertyChangeListener {
 
@@ -56,7 +60,12 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
         drawnData = new LinkedList<Double>();
         this.nullData = 0;
     }
-
+    /**
+     * asks the parent LayeredGraph for the current position in the log.
+     * This will eventually be rewritten to a static way of getting Graphing
+     * data
+     * @return
+     */
     private int getCurrent() {
         LayeredGraph lg = (LayeredGraph) this.getParent();
         return lg.getCurrent();
@@ -131,6 +140,10 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
         return point;
     }
 
+    /**
+     * this is where the GDE is referenced and the graph gets initilazed for the first time
+     * @param GDE
+     */
     public void setData(GenericDataElement GDE) {
         this.GDE = GDE;
         sizeGraph();
@@ -140,7 +153,12 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
     public GenericDataElement getData() {
         return GDE;
     }
-
+    /**
+     * used for InfoLayer to get the data from the GraphLayers for data under the mouse
+     * needs to be rewritten.
+     * @param i
+     * @return Double representation of info at the mouse pointer
+     */
     public Double getMouseInfo(int i) {
         LayeredGraph lg = (LayeredGraph) this.getParent();
         int getIt = (i / zoom.getZoom()) + lg.getCurrent() - ((this.getSize().width / 2) / zoom.getZoom());
@@ -150,15 +168,24 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
             return 0.0;
         }
     }
-
+    /**
+     *
+     * @return GDE.getColor()
+     */
     public Color getColor() {
         return GDE.getColor();
     }
-
+    /**
+     * setter
+     * @param c
+     */
     public void setColor(Color c) {
         GDE.setColor(c);
     }
-
+    /**
+     * initilize the graph when the width of the graph parent changes or any time a major update happens
+     * such as changing current
+     */
     public void initGraph() {
         if (GDE != null) {
             LayeredGraph lg = OpenLogViewerApp.getInstance().getLayeredGraph();
@@ -196,7 +223,9 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
             }
         }
     }
-
+    /**
+     * maintains the size of the graph when applying divisions
+     */
     public void sizeGraph() {
         LayeredGraph lg = OpenLogViewerApp.getInstance().getLayeredGraph();
 //        Dimension d = lg.getSize();
@@ -212,7 +241,9 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
         this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
         initGraph();
     }
-
+    /**
+     * adds to the mini container for graphing data, drawnData.size == this panels width / zoom
+     */
     public void advanceGraph() {
 
         if (GDE != null) {
@@ -234,10 +265,17 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
         }
     }
 
+    /**
+     * Graph total size
+     * @return GDE.size()
+     */
     public int graphSize() {
         return GDE.size();
     }
-
+    /**
+     * sets the zoom of this graph
+     * @param z
+     */
     public void setZoom(LayeredGraph.Zoom z) {
         zoom = z;
     }

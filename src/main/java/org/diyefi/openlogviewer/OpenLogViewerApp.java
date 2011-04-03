@@ -106,6 +106,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         openFileMenuItem.setName("openlog");
         openFileMenuItem.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 openFileMenuItemMouseReleased(e);
             }
@@ -116,6 +117,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         quitFileMenuItem.setName("quit");
         quitFileMenuItem.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
@@ -185,6 +187,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     // Set cross-platform Java L&F (also called "Metal")

@@ -28,15 +28,39 @@ import java.io.IOException;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
- *
- * @author Bryan
+ *  Typical constructor for this class would look like this <br>
+ * <code>
+ *  public CSVTypeLog(File f) {<br>
+        this.setLogFile(f);<br>
+        this.setDecodedLog(new GenericLog());<br>
+        this.setT(new Thread(this, "CSV Type Log Loading"));<br>
+        this.getT().setPriority(Thread.MAX_PRIORITY);<br>
+        this.getT().start();<br>
+
+    }</code>
+ * @author Bryan Harris
+ * @version 0.1.3
  */
 public abstract class BaseDecoder implements Runnable {
 
+    /**
+     * logFile is the <code>File</code> object that points to the file you are
+     * attempting to open.
+     */
     private File logFile;
+    /**
+     * decodedLog is the outcome of parsing the log file, this will be injected into the program
+     * through property change listeners and this object will be come null when finished or fail.
+     */
     private GenericLog decodedLog;
+    /**
+     * this object is threaded so that the gui does not freeze while parsing
+     */
     private Thread t;
 
+    /**
+     * Overriden Run from the Runnable Interface to do the work for us in a threaded fashion.
+     */
     @Override
     public void run() {
         try {
@@ -48,29 +72,55 @@ public abstract class BaseDecoder implements Runnable {
             System.out.println("Error Loading Log: " +IOE.getMessage());
         }
     }
-
+    /**
+     * BaseDecoder.decodeLog() is an abstract method. Override this method write your parsing code within it, when creating an object that
+     * extends BaseDecoder the rest will be taken care of automatically
+     * @throws IOException
+     */
     abstract void decodeLog() throws IOException;
 
+    /**
+     * used for getting the decided log for injection to the main pieces of the program that will use it
+     * @return GenericLog
+     */
     public GenericLog getDecodedLog() {
         return decodedLog;
     }
-
+    /**
+     * sets the GenericLog
+     * @param decodedLog
+     */
     public void setDecodedLog(GenericLog decodedLog) {
         this.decodedLog = decodedLog;
     }
-
+    /**
+     * get the log File
+     * @return File
+     */
     public File getLogFile() {
         return logFile;
     }
-
+    /**
+     * set the log File
+     * @param logFile
+     */
     public void setLogFile(File logFile) {
         this.logFile = logFile;
     }
-
+    /**
+     * get the thread, use this if you would like to give the thread a name such as "TYPEOFLOG Thread"<br>
+     * can also be used to set the thread priority
+     * after initialization of all variables required by the extended class you <b>MUST</b> call:<br>
+     * this.getT().start();
+     * @return
+     */
     public Thread getT() {
         return t;
     }
-
+    /**
+     * set the Thread
+     * @param t
+     */
     public void setT(Thread t) {
         this.t = t;
     }

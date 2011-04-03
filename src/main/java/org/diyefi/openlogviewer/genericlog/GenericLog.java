@@ -110,7 +110,10 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
     public int getLogStatus() {
         return this.logLoaded;
     }
-
+    /**
+     * sets the names of the headers for the Comparable interface of GenericDataElement
+     * @param headers
+     */
     public void setHeaders(String[] headers) {
         for (int x = 0; x < headers.length; x++) {
             GenericDataElement GDE = new GenericDataElement();

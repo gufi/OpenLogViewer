@@ -34,21 +34,39 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  */
 public class CSVTypeLog extends BaseDecoder {
 
+    /**
+     * Provide a string path to the log you want to parse
+     * @param path
+     */
+
     public CSVTypeLog(String path) {
 
         this(new File(path));
 
     }
 
+    /**
+     * This constructor is called when a string path is provided
+     * @param f
+     */
+
     public CSVTypeLog(File f) {
         this.setLogFile(f);
         this.setDecodedLog(new GenericLog());
-        this.setT(new Thread(this, "CVS Type Log Loading"));
+        this.setT(new Thread(this, "CSV Type Log Loading"));
         this.getT().setPriority(Thread.MAX_PRIORITY);
         this.getT().start();
 
     }
 
+    /**
+     * Decodes a CSV type of text file,
+     * the first ten lines are parsed individually to detect the delimiter type
+     *
+     * accepted types of delimiters are TAB, comma, ; , : and \
+     * this decoder does not yet support markers, it will skip them
+     * @throws IOException
+     */
     @Override
     protected void decodeLog() throws IOException {
         Scanner scan = new Scanner(new FileReader(getLogFile()));
@@ -82,6 +100,12 @@ public class CSVTypeLog extends BaseDecoder {
 
     }
     int fieldCount = -1;
+
+    /**
+     * detects the delimiter and if it finds a suitable delimiter it will return it.
+     * @return delimiter in string format
+     * @throws IOException
+     */
 
     private String scanForDelimiter() throws IOException {
         String delim[] = {"\t", ",", ":", "/", "\\\\"};

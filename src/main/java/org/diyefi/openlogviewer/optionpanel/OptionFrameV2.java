@@ -46,7 +46,7 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 
 /**
  *
- * @author Bryan
+ * @author Bryan Harris
  */
 public class OptionFrameV2 extends JFrame {
 
