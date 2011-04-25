@@ -271,6 +271,8 @@ public class OptionFrameV2 extends JFrame {
             layeredPane.remove(activePanelList.get(0));
             activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point
         }
+        
+        addDivisionButton.setEnabled(true);
 
         if (inactiveHeaders.getComponentCount() > 1) {
             inactiveHeaders.removeAll();
