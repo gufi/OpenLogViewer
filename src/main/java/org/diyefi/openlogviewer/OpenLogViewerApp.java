@@ -237,9 +237,14 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
 
     public void openFile() {
         JFileChooser fileChooser = new JFileChooser();
-        String lastFingDir = getApplicationWideProperty("lastFingDir");
-        if(lastFingDir != null){
-        	fileChooser.setCurrentDirectory(new File(lastFingDir));
+        String lastFingFile = getApplicationWideProperty("lastFingFile");
+        if(lastFingFile != null){
+        	fileChooser.setSelectedFile(new File(lastFingFile));
+        }else{
+            String lastFingDir = getApplicationWideProperty("lastFingDir");
+            if(lastFingDir != null){
+            	fileChooser.setCurrentDirectory(new File(lastFingDir));
+            }
         }
         fileChooser.addChoosableFileFilter(new FreeEMSFileFilter());
         fileChooser.addChoosableFileFilter(new CSVTypeFileFilter());
@@ -272,7 +277,8 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
             }
             if (openFile != null) {
                 OpenLogViewerApp.getInstance().setTitle("OpenLogViewer - " + openFile.getName());
-                saveApplicationWideProperty("lastFingDir", openFile.getParent().toString());
+                saveApplicationWideProperty("lastFingDir", openFile.getParent());
+                saveApplicationWideProperty("lastFingFile", openFile.getPath());
                 saveApplicationWideProperty("chooserClass", fileChooser.getFileFilter().getClass().getCanonicalName());
                 System.gc();
             }
