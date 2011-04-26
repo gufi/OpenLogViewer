@@ -120,7 +120,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         1.0, // Effective PW
         1.0, // IDT
         1.0, // RefPW
-        1.0, // Advance
+        50.0, // Advance
         1250.0, // Dwell
         
         // Spares
