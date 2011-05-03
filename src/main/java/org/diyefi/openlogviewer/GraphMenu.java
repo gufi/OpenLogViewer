@@ -38,14 +38,6 @@ public class GraphMenu extends JMenu {
     private JMenuItem optionPaneItem;
     private JMenuItem graphMenuSplit;
 
-    public GraphMenu(String s, boolean b) {
-        super(s, b);
-    }
-
-    public GraphMenu(String s) {
-        super(s);
-    }
-
     public GraphMenu() {
         super();
         initMenu();
@@ -61,6 +53,7 @@ public class GraphMenu extends JMenu {
         optionPaneItem.setName("Option Pane");
         optionPaneItem.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (!OpenLogViewerApp.getInstance().getOptionFrame().isVisible()) {
                     OpenLogViewerApp.getInstance().getOptionFrame().setVisible(true);
@@ -72,6 +65,7 @@ public class GraphMenu extends JMenu {
         
         graphMenuSplit = new JMenuItem("Set Split View");
         graphMenuSplit.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e ) {
                 OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(Integer.parseInt(JOptionPane.showInputDialog(new JFrame(), "How many splits of the graphing view do you want")));
             }

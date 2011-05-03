@@ -46,7 +46,7 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 
 /**
  *
- * @author Bryan
+ * @author Bryan Harris
  */
 public class OptionFrameV2 extends JFrame {
 
@@ -67,14 +67,14 @@ public class OptionFrameV2 extends JFrame {
     public OptionFrameV2() {
 
         super("Graphing Option Pane");
-        this.setSize(900, 480);
+        this.setSize(1280, 480);
         this.setPreferredSize(this.getSize());
 
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         thisRef = this;
         activePanelList = new ArrayList<JPanel>();
         layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(900, 420));
+        layeredPane.setPreferredSize(new Dimension(1280, 420));
 
 
         JScrollPane scroll = new JScrollPane(layeredPane);
@@ -104,7 +104,7 @@ public class OptionFrameV2 extends JFrame {
         addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
         addDivisionButton.addActionListener(addDivisionListener);
         ih.add(addDivisionButton);
-        ih.setBounds(0, 0, 900, 180);
+        ih.setBounds(0, 0, 1280, 180);
         return ih;
     }
     private ActionListener addDivisionListener = new ActionListener() {
@@ -271,6 +271,8 @@ public class OptionFrameV2 extends JFrame {
             layeredPane.remove(activePanelList.get(0));
             activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point
         }
+        
+        addDivisionButton.setEnabled(true);
 
         if (inactiveHeaders.getComponentCount() > 1) {
             inactiveHeaders.removeAll();

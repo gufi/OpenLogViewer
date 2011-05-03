@@ -32,7 +32,7 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
  *
- * @author Bryan
+ * @author Bryan Harris
  */
 public class LayeredGraph extends JLayeredPane implements ActionListener {
 

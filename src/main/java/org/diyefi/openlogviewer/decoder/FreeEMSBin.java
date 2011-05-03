@@ -70,7 +70,23 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
     	"zsp4",
     	"zsp3",
     	"zsp2",
-    	"zsp1"
+    	"zsp1",
+    	"coreSA0",
+    	"coreSA1",
+    	"coreSA2",
+    	"coreSA3",
+    	"coreSA4",
+    	"coreSA5",
+    	"coreSA6",
+    	"coreSA7",
+    	"decFlgs0",
+    	"decFlgs1",
+    	"decFlgs2",
+    	"decFlgs3",
+    	"decFlgs4",
+    	"decFlgs5",
+    	"decFlgs6",
+    	"decFlgs7"
     }; //This needs to be converted to resourses or gathered externally at some point
     private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
 
@@ -104,10 +120,26 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         1.0, // Effective PW
         1.0, // IDT
         1.0, // RefPW
-        1.0, // Advance
+        50.0, // Advance
         1250.0, // Dwell
         
         // Spares
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
+        1.0, // SP?
         1.0, // SP?
         1.0, // SP?
         1.0, // SP?
@@ -253,6 +285,105 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	                        d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
 	                    } else {
 	                        d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
+	                        // Hack for bit flags
+	                        if(headers[x / 2].equalsIgnoreCase("zsp4")){
+		                        int coreSA0 = 0;
+		                        int coreSA1 = 0;
+		                        int coreSA2 = 0;
+		                        int coreSA3 = 0;
+		                        int coreSA4 = 0;
+		                        int coreSA5 = 0;
+		                        int coreSA6 = 0;
+		                        int coreSA7 = 0;
+		                        int decFlgs0 = 0;
+		                        int decFlgs1 = 0;
+		                        int decFlgs2 = 0;
+		                        int decFlgs3 = 0;
+		                        int decFlgs4 = 0;
+		                        int decFlgs5 = 0;
+		                        int decFlgs6 = 0;
+		                        int decFlgs7 = 0;
+	                            if((d % 2) == 1){
+	                            	coreSA0 = 1;
+	                            	d -= 1;
+	                            }
+	                            if((d % 4) == 2){
+	                            	coreSA1 = 1;
+	                            	d -= 2;
+	                            }
+	                            if((d % 8) == 4){
+	                            	coreSA2 = 1;
+	                            	d -= 4;
+	                            }
+	                            if((d % 16) == 8){
+	                            	coreSA3 = 1;
+	                            	d -= 8;
+	                            }
+	                            if((d % 32) == 16){
+	                            	coreSA4 = 1;
+	                            	d -= 16;
+	                            }
+	                            if((d % 64) == 32){
+	                            	coreSA5 = 1;
+	                            	d -= 32;
+	                            }
+	                            if((d % 128) == 64){
+	                            	coreSA6 = 1;
+	                            	d -= 64;
+	                            }
+	                            if((d % 256) == 128){
+	                            	coreSA7 = 1;
+	                            	d -= 128;
+	                            }
+	                            if((d % 512) == 256){
+	                            	coreSA0 = 1;
+	                            	d -= 256;
+	                            }
+	                            if((d % 1024) == 512){
+	                            	decFlgs1 = 1;
+	                            	d -= 512;
+	                            }
+	                            if((d % 2048) == 1024){
+	                            	decFlgs2 = 1;
+	                            	d -= 1024;
+	                            }
+	                            if((d % 4096) == 2048){
+	                            	decFlgs3 = 1;
+	                            	d -= 2048;
+	                            }
+	                            if((d % 8192) == 4096){
+	                            	decFlgs4 = 1;
+	                            	d -= 4096;
+	                            }
+	                            if((d % 16384) == 8192){
+	                            	decFlgs5 = 1;
+	                            	d -= 8192;
+	                            }
+	                            if((d % 32768) == 16384){
+	                            	decFlgs6 = 1;
+	                            	d -= 16384;
+	                            }
+	                            if(d == 32768){
+	                            	decFlgs7 = 1;
+	                            }
+
+	                        	decodedLog.addValue("coreSA0", coreSA0);
+	                        	decodedLog.addValue("coreSA1", coreSA1);
+	                        	decodedLog.addValue("coreSA2", coreSA2);
+	                        	decodedLog.addValue("coreSA3", coreSA3);
+	                        	decodedLog.addValue("coreSA4", coreSA4);
+	                        	decodedLog.addValue("coreSA5", coreSA5);
+	                        	decodedLog.addValue("coreSA6", coreSA6);
+	                        	decodedLog.addValue("coreSA7", coreSA7);
+	                        	decodedLog.addValue("decFlgs0", decFlgs0);
+	                        	decodedLog.addValue("decFlgs1", decFlgs1);
+	                        	decodedLog.addValue("decFlgs2", decFlgs2);
+	                        	decodedLog.addValue("decFlgs3", decFlgs3);
+	                        	decodedLog.addValue("decFlgs4", decFlgs4);
+	                        	decodedLog.addValue("decFlgs5", decFlgs5);
+	                        	decodedLog.addValue("decFlgs6", decFlgs6);
+	                        	decodedLog.addValue("decFlgs7", decFlgs7);
+	                        }
 	                    }
                     	decodedLog.addValue(headers[x / 2], d); // unsigned shorts
                     }

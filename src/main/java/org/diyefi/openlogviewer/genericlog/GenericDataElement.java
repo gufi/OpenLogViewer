@@ -34,21 +34,55 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- *
- * @author Bryan
+ * GenericDataElement is Comparable Serilaizable and Transferable and supports property change events
+ * it was built this way in order to be copy/pasteable later in the future
+ * when constructed this is the meat and potatoes of the program, the graphs and data
+ * displayed are pulled from these objects.
+ * @author Bryan Harris
  */
 public class GenericDataElement extends ArrayList<Double> implements Comparable, Serializable, Transferable {
-
+    /**
+     * default max value determined while loading up data
+     */
     private Double maxValue;
+    /**
+     * newMaxValue is the value returned at any time getMaxValue() is called.
+     * it can be modified to change the graphing display
+     */
     private Double newMaxValue;
+    /**
+     * default min value determined while loading up data
+     */
     private Double minValue;
+    /**
+     * newMinValue is the value returned at any time getMinValue() is called.
+     * it can be modified to change the graphing display
+     */
     private Double newMinValue;
+    /**
+     * default color created when building the GDE
+     */
     private Color color;
+    /**
+     * Color that can be modified
+     */
     private Color newColor;
+    /**
+     * GDE Header name
+     */
     private String name;
+    /**
+     * Division on the Graphing layer
+     */
     private int splitNumber;
     private PropertyChangeSupport PCS;
     private DataFlavor[] dataFlavor;
+
+    /**
+     * Constructor brings the GDE up to speed, defaulting with an available 50,000 datapoints
+     * in order to reduce the number of times the Array list has to copy its contents
+     * in order to increase size.
+     */
 
     public GenericDataElement() {
         super(50000);
@@ -64,6 +98,9 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
         addFlavors();
     }
 
+    /**
+     * Data type support for Transferable
+     */
     private void addFlavors() {
         dataFlavor = new DataFlavor[3];
         //try {
@@ -72,11 +109,12 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
                 "OLV GenericDataElement");
         dataFlavor[1] = DataFlavor.stringFlavor;
         dataFlavor[2] = DataFlavor.getTextPlainUnicodeFlavor();
-        //}catch (ClassNotFoundException CNFE) {
-        //    System.out.println(CNFE.getMessage());
-       // }
     }
-
+    /**
+     * overriden add(<T> t) of ArrayList to find min and max values before adding to the List
+     * @param d Double - Double.parseDouble(String) value to add to the array
+     * @return true on success, false if unable
+     */
     @Override
     public boolean add(Double d) {
         if (newMaxValue < d) {
@@ -90,43 +128,76 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
 
         return super.add(d);
     }
-
+    /**
+     * set header name, called during GenericLog constuction
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
-
+    /**
+     * getter
+     * @return name
+     */
     public String getName() {
         return name;
     }
-
+    /**
+     * getter
+     * @return newMaxValue
+     */
     public Double getMaxValue() {
         return newMaxValue;
     }
 
+    /**
+     * setter
+     * @param highValue
+     */
     public void setMaxValue(Double highValue) {
         this.newMaxValue = highValue;
     }
-
+    /**
+     * getter
+     * @return newMinValue
+     */
     public Double getMinValue() {
         return newMinValue;
     }
-
+    /**
+     * setter
+     * @param lowValue
+     */
     public void setMinValue(Double lowValue) {
         this.newMinValue = lowValue;
     }
 
+    /**
+     * getter
+     * @return newColor
+     */
     public Color getColor() {
         return newColor;
     }
-
+    /**
+     * setter
+     * @param c
+     */
     public void setColor(Color c) {
         newColor = c;
     }
-
+    /**
+     * getter
+     * @return splitNumber
+     */
     public int getSplitNumber() {
         return splitNumber;
     }
-
+    /**
+     * sets the splitNumber or division of the graph in the graphing screen
+     * if its the same a property change event is fired called "Split"
+     * @param splitNumber
+     */
     public void setSplitNumber(int splitNumber) {
         if(splitNumber < 1 ) {
             splitNumber = 1;
@@ -136,7 +207,9 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
         PCS.firePropertyChange("Split", old, this.splitNumber);
 
     }
-
+    /**
+     * this will set the min and max to the default min/max values
+     */
     public void reset() {
         newMinValue = minValue;
         newMaxValue = maxValue;
