@@ -403,7 +403,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
      * @param packet
      * @return true or false based on if the checksum passes
      */
-    protected boolean checksum(short[] packet) {
+    private boolean checksum(short[] packet) {
     	if(packetLength > 0){
     		short includedSum = packet[packetLength -1]; // sum is last byte
     		long veryBIGsum = 0;

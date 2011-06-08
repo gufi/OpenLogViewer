@@ -26,6 +26,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -42,15 +45,24 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     private int logStatus;
     private int xMouseCoord;
     private int yMouseCoord;
+    private int xMouseCoordDrag;
+    private int yMouseCoordDrag;
+    private int xLastDrag;
     boolean mouseOver;
     private Color vertBar = new Color(255, 255, 255, 100);
     private Color textBackground = new Color(0, 0, 0, 170);
+    private boolean dragging = false;
+    private Rectangle rect;
 
     public InfoLayer() {
         logStatus = GenericLog.LOG_NOT_LOADED;
         xMouseCoord = -100;
-        xMouseCoord = -100;
+        yMouseCoord = -100;
+        xMouseCoordDrag = -100;
+        yMouseCoordDrag = -100;
+        xLastDrag = 0;
         mouseOver = false;
+        rect = new Rectangle();
         this.setOpaque(false);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -87,7 +99,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             g.drawString("loading Log, Please wait...", 20, 20);
         } else if (logStatus == GenericLog.LOG_LOADED) {
             Dimension d = this.getSize();
-            LayeredGraph lp = (LayeredGraph) this.getParent();
+            LayeredGraph lg = (LayeredGraph) this.getParent();
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             if (mouseOver) {
@@ -97,15 +109,21 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height); // middle vertical divider,
 
-                for (int i = 0; i < lp.getComponentCount(); i++) {
-                    if (lp.getComponent(i) instanceof GraphLayer) {
-                        GraphLayer gl = (GraphLayer) lp.getComponent(i);
+                for (int i = 0; i < lg.getComponentCount(); i++) {
+                    if (lg.getComponent(i) instanceof GraphLayer) {
+                        GraphLayer gl = (GraphLayer) lg.getComponent(i);
                         g2d.setColor(textBackground);
                         g2d.fillRect(lineDraw, yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
                         g2d.setColor(gl.getColor());
                         g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), lineDraw + 2, yMouseCoord + 15 + (15 * i));
                     }
                 }
+            }
+            if (dragging && !lg.isPlaying()) {
+
+                g2d.setColor(vertBar);
+
+                g2d.fillRect(xMouseCoordDrag, 0, xLastDrag, getHeight());
             }
         }
     }
@@ -119,6 +137,11 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
         zoom = z;
     }
 
+    public void resetDragCoords() {
+        xMouseCoordDrag = -100;
+        xLastDrag = -100;
+    }
+
     //MOUSE MOTION LISTENER FUNCTIONALITY
     private void getMouseCoords(MouseEvent e) {
         xMouseCoord = e.getX();
@@ -127,7 +150,22 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
 
     @Override
     public void mouseDragged(MouseEvent e) {
+
+        LayeredGraph lg = (LayeredGraph) this.getParent();
+        if (e.getModifiers() == 18) {
+            if (!dragging) {
+                dragging = true;
+            }
+
+            xLastDrag = e.getX() - xMouseCoordDrag + 1;
+
+            if (lg.isPlaying()) {
+                lg.stop();
+            }
+
+        }
         mouseMoved(e);
+
     }
 
     @Override
@@ -139,21 +177,24 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
 //MOUSE LISTENER FUNCTIONALITY
     @Override
     public void mouseClicked(MouseEvent e) {
-        LayeredGraph lg = (LayeredGraph) this.getParent();
-
-        int move = (e.getX() / zoom.getZoom()) - (int) ((this.getSize().width / 2) / zoom.getZoom());
-        if (move + lg.getCurrent() < lg.getCurrentMax()) {
-            if (move + lg.getCurrent() < 0) {
-                lg.setCurrent(0);
+        if (!dragging) {
+            LayeredGraph lg = (LayeredGraph) this.getParent();
+            int move = (e.getX() / zoom.getZoom()) - (int) ((this.getSize().width / 2) / zoom.getZoom());
+            if (move + lg.getCurrent() < lg.getCurrentMax()) {
+                if (move + lg.getCurrent() < 0) {
+                    lg.setCurrent(0);
+                } else {
+                    lg.setCurrent(lg.getCurrent() + move);
+                }
+                lg.initGraph();
+                lg.repaint();
             } else {
-                lg.setCurrent(lg.getCurrent() + move);
+                lg.setCurrent(lg.getCurrentMax());
+                lg.initGraph();
+                lg.repaint();
             }
-            lg.initGraph();
-            lg.repaint();
-        } else {
-            lg.setCurrent(lg.getCurrentMax() - 1);
-            lg.initGraph();
-            lg.repaint();
+        } else if (dragging) {
+            dragging = false;
         }
     }
 
@@ -170,9 +211,15 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (e.getModifiers() == 18) {
+            xMouseCoordDrag = e.getX();
+
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
     }
+
+    
 }

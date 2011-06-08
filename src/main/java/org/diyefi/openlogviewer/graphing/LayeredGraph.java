@@ -25,6 +25,8 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
@@ -194,6 +196,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void zoomIn() {
+        infoLayer.resetDragCoords();
         if (zoom.getZoom() <= 50) {
             zoom.setZoom(zoom.getZoom() + 1);
         }
@@ -202,6 +205,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void zoomOut() {
+        infoLayer.resetDragCoords();
         if (zoom.getZoom() > 1) {
             zoom.setZoom(zoom.getZoom() - 1);
         }
@@ -216,6 +220,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         if (this.play) {
             pause();
         } else {
+            infoLayer.resetDragCoords();
             play = true;
             timer.start();
         }
@@ -225,6 +230,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
      * pauses the graphing playback
      */
     public void pause() {
+
         play = false;
         timer.stop();
     }
@@ -253,6 +259,10 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     public void stop() {
         timer.stop();
         play = false;
+    }
+
+    public boolean isPlaying() {
+        return this.play;
     }
 
     public void reset() {
@@ -306,4 +316,6 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
             zoom = z;
         }
     }
+
+    
 }

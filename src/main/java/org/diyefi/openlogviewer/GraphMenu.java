@@ -63,7 +63,7 @@ public class GraphMenu extends JMenu {
             }
         });
         
-        graphMenuSplit = new JMenuItem("Set Split View");
+       /* graphMenuSplit = new JMenuItem("Set Split View");
         graphMenuSplit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e ) {
@@ -72,7 +72,7 @@ public class GraphMenu extends JMenu {
         });
 
 
-        this.add(graphMenuSplit);
+        this.add(graphMenuSplit);*/
         this.add(optionPaneItem);
 
     }
