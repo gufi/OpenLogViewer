@@ -52,41 +52,41 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         "LMain", "VEM", "Lambda", "AirFlo", "DensFu", "BasePW", "ETE", "TFCTot", "EffPW", "IDT", "RefPW", 
     	"Advance",
     	"Dwell",
-    	"zsp19",
-    	"zsp18",
-    	"zsp17",
-    	"zsp16",
-    	"zsp15",
-    	"zsp14",
-    	"zsp13",
-    	"zsp12",
-    	"zsp11",
-    	"zsp10",
-    	"zsp9",
-    	"zsp8",
-    	"zsp7",
-    	"zsp6",
-    	"zsp5",
-    	"zsp4",
-    	"zsp3",
-    	"zsp2",
-    	"zsp1",
-    	"coreSA0",
+    	"tempClock",
+    	"AllFlags",
+    	"zsp17/calculationsPerformed",
+    	"zsp16/SyncCorrections",
+    	"zsp15/SyncLosses",
+    	"zsp14/secondaryTeethSeen",
+    	"zsp13/primaryTeethSeen",
+    	"zsp12/syncCaughtOnThisEvent",
+    	"zsp11/syncLostOnThisEvent",
+    	"zsp10/syncLostWithThisID",
+    	"zsp9/currentEvent",
+    	"zsp8/outputEventInputEventNumbers[1]",
+    	"zsp7/postReferenceEventDelays[1]",
+    	"zsp6/injectorMainPulseWidthsMath[1]",
+    	"zsp5/outputEventInputEventNumbers[0]",
+    	"zsp4/postReferenceEventDelays[0]",
+    	"zsp3/injectorMainPulseWidthsMath[0]",
+    	"zsp2/realTimeClockMillis",
+    	"zsp1/realTimeClockMain",
+    	"decFlgs0/COMBUSTION_SYNC",
+    	"decFlgs1/CRANK_SYNC",
+    	"decFlgs2/CAM_SYNC",
+    	"decFlgs3/LAST_TIMESTAMP_VALID",
+    	"decFlgs4/LAST_PERIOD_VALID",
+    	"decFlgs5",
+    	"decFlgs6",
+    	"decFlgs7",
+    	"coreSA0/FUEL_PUMP_PRIME",
     	"coreSA1",
     	"coreSA2",
     	"coreSA3",
     	"coreSA4",
     	"coreSA5",
     	"coreSA6",
-    	"coreSA7",
-    	"decFlgs0",
-    	"decFlgs1",
-    	"decFlgs2",
-    	"decFlgs3",
-    	"decFlgs4",
-    	"decFlgs5",
-    	"decFlgs6",
-    	"decFlgs7"
+    	"coreSA7"
     }; //This needs to be converted to resourses or gathered externally at some point
     private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
 
@@ -122,10 +122,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         1.0, // RefPW
         50.0, // Advance
         1250.0, // Dwell
-        
+        1.0, // tempClock
+        1.0, // AllFlags
+
         // Spares
-        1.0, // SP?
-        1.0, // SP?
         1.0, // SP?
         1.0, // SP?
         1.0, // SP?
@@ -169,10 +169,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
      *
      */
     public FreeEMSBin(String path) {
-
         this(new File(path));
-
-
     }
 
     /**
@@ -191,7 +188,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
         t.start();
     }
 
-    
+
 
     /**
      * DecodeLog will use the current <code>logFile</code> parse through it and when required pass the job <br>
@@ -286,15 +283,8 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	                    } else {
 	                        d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
 	                        // Hack for bit flags
-	                        if(headers[x / 2].equalsIgnoreCase("zsp4")){
-		                        int coreSA0 = 0;
-		                        int coreSA1 = 0;
-		                        int coreSA2 = 0;
-		                        int coreSA3 = 0;
-		                        int coreSA4 = 0;
-		                        int coreSA5 = 0;
-		                        int coreSA6 = 0;
-		                        int coreSA7 = 0;
+	                        if(headers[x / 2].equalsIgnoreCase("AllFlags")){
+	                        	// These may be in reverse byte order now. TODO
 		                        int decFlgs0 = 0;
 		                        int decFlgs1 = 0;
 		                        int decFlgs2 = 0;
@@ -303,36 +293,44 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		                        int decFlgs5 = 0;
 		                        int decFlgs6 = 0;
 		                        int decFlgs7 = 0;
+		                        int coreSA0 = 0;
+		                        int coreSA1 = 0;
+		                        int coreSA2 = 0;
+		                        int coreSA3 = 0;
+		                        int coreSA4 = 0;
+		                        int coreSA5 = 0;
+		                        int coreSA6 = 0;
+		                        int coreSA7 = 0;
 	                            if((d % 2) == 1){
-	                            	coreSA0 = 1;
+	                            	decFlgs0 = 1;
 	                            	d -= 1;
 	                            }
 	                            if((d % 4) == 2){
-	                            	coreSA1 = 1;
+	                            	decFlgs1 = 1;
 	                            	d -= 2;
 	                            }
 	                            if((d % 8) == 4){
-	                            	coreSA2 = 1;
+	                            	decFlgs2 = 1;
 	                            	d -= 4;
 	                            }
 	                            if((d % 16) == 8){
-	                            	coreSA3 = 1;
+	                            	decFlgs3 = 1;
 	                            	d -= 8;
 	                            }
 	                            if((d % 32) == 16){
-	                            	coreSA4 = 1;
+	                            	decFlgs4 = 1;
 	                            	d -= 16;
 	                            }
 	                            if((d % 64) == 32){
-	                            	coreSA5 = 1;
+	                            	decFlgs5 = 1;
 	                            	d -= 32;
 	                            }
 	                            if((d % 128) == 64){
-	                            	coreSA6 = 1;
+	                            	decFlgs6 = 1;
 	                            	d -= 64;
 	                            }
 	                            if((d % 256) == 128){
-	                            	coreSA7 = 1;
+	                            	decFlgs7 = 1;
 	                            	d -= 128;
 	                            }
 	                            if((d % 512) == 256){
@@ -340,34 +338,42 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	                            	d -= 256;
 	                            }
 	                            if((d % 1024) == 512){
-	                            	decFlgs1 = 1;
+	                            	coreSA1 = 1;
 	                            	d -= 512;
 	                            }
 	                            if((d % 2048) == 1024){
-	                            	decFlgs2 = 1;
+	                            	coreSA2 = 1;
 	                            	d -= 1024;
 	                            }
 	                            if((d % 4096) == 2048){
-	                            	decFlgs3 = 1;
+	                            	coreSA3 = 1;
 	                            	d -= 2048;
 	                            }
 	                            if((d % 8192) == 4096){
-	                            	decFlgs4 = 1;
+	                            	coreSA4 = 1;
 	                            	d -= 4096;
 	                            }
 	                            if((d % 16384) == 8192){
-	                            	decFlgs5 = 1;
+	                            	coreSA5 = 1;
 	                            	d -= 8192;
 	                            }
 	                            if((d % 32768) == 16384){
-	                            	decFlgs6 = 1;
+	                            	coreSA6 = 1;
 	                            	d -= 16384;
 	                            }
 	                            if(d == 32768){
-	                            	decFlgs7 = 1;
+	                            	coreSA7 = 1;
 	                            }
 
-	                        	decodedLog.addValue("coreSA0", coreSA0);
+	                        	decodedLog.addValue("decFlgs0/COMBUSTION_SYNC", decFlgs0);
+	                        	decodedLog.addValue("decFlgs1/CRANK_SYNC", decFlgs1);
+	                        	decodedLog.addValue("decFlgs2/CAM_SYNC", decFlgs2);
+	                        	decodedLog.addValue("decFlgs3/LAST_TIMESTAMP_VALID", decFlgs3);
+	                        	decodedLog.addValue("decFlgs4/LAST_PERIOD_VALID", decFlgs4);
+	                        	decodedLog.addValue("decFlgs5", decFlgs5);
+	                        	decodedLog.addValue("decFlgs6", decFlgs6);
+	                        	decodedLog.addValue("decFlgs7", decFlgs7);
+	                        	decodedLog.addValue("coreSA0/FUEL_PUMP_PRIME", coreSA0);
 	                        	decodedLog.addValue("coreSA1", coreSA1);
 	                        	decodedLog.addValue("coreSA2", coreSA2);
 	                        	decodedLog.addValue("coreSA3", coreSA3);
@@ -375,14 +381,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	                        	decodedLog.addValue("coreSA5", coreSA5);
 	                        	decodedLog.addValue("coreSA6", coreSA6);
 	                        	decodedLog.addValue("coreSA7", coreSA7);
-	                        	decodedLog.addValue("decFlgs0", decFlgs0);
-	                        	decodedLog.addValue("decFlgs1", decFlgs1);
-	                        	decodedLog.addValue("decFlgs2", decFlgs2);
-	                        	decodedLog.addValue("decFlgs3", decFlgs3);
-	                        	decodedLog.addValue("decFlgs4", decFlgs4);
-	                        	decodedLog.addValue("decFlgs5", decFlgs5);
-	                        	decodedLog.addValue("decFlgs6", decFlgs6);
-	                        	decodedLog.addValue("decFlgs7", decFlgs7);
 	                        }
 	                    }
                     	decodedLog.addValue(headers[x / 2], d); // unsigned shorts
