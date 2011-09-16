@@ -580,7 +580,8 @@ public class OptionFrameV2 extends JFrame {
         }
 
         public void setToolTipText() {
-            this.setToolTipText("<HTML>Min Value: <b>" + GDE.getMinValue()
+            this.setToolTipText("<HTML> Data Stream: </b>" + GDE.getName() 
+		    + "</b><br>Min Value: <b>" + GDE.getMinValue()
                     + "</b><br>Max Value: <b>" + GDE.getMaxValue()
                     + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
                     + "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
