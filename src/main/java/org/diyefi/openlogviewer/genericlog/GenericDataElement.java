@@ -31,10 +31,11 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
+
+import org.diyefi.openlogviewer.coloring.InitialLineColoring;
 
 /**
- * GenericDataElement is Comparable Serilaizable and Transferable and supports property change events
+ * GenericDataElement is Comparable Serializable and Transferable and supports property change events
  * it was built this way in order to be copy/pasteable later in the future
  * when constructed this is the meat and potatoes of the program, the graphs and data
  * displayed are pulled from these objects.
@@ -91,8 +92,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
         newMaxValue = maxValue;
         minValue = Double.MAX_VALUE;
         newMinValue = minValue;
-        Random r = new Random();
-        color = Color.getHSBColor(r.nextFloat(), 1.0F, 1.0F);
+        color = InitialLineColoring.INSTANCE.getBestAvailableColor();
         newColor = color;
         splitNumber = 1;
         addFlavors();
@@ -111,7 +111,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
         dataFlavor[2] = DataFlavor.getTextPlainUnicodeFlavor();
     }
     /**
-     * overriden add(<T> t) of ArrayList to find min and max values before adding to the List
+     * override add(<T> t) of ArrayList to find min and max values before adding to the List
      * @param d Double - Double.parseDouble(String) value to add to the array
      * @return true on success, false if unable
      */
@@ -129,7 +129,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
         return super.add(d);
     }
     /**
-     * set header name, called during GenericLog constuction
+     * set header name, called during GenericLog construction
      * @param name
      */
     public void setName(String name) {
@@ -268,6 +268,6 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
         return false;
     }
 
-    //Seralizable
+    //Serializable
 
 }
