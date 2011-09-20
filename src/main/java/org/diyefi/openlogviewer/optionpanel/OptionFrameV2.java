@@ -66,14 +66,14 @@ public class OptionFrameV2 extends JFrame {
     public OptionFrameV2() {
 
         super("Graphing Option Pane");
-        this.setSize(1280, 480);
+        this.setSize(1160, 460);
         this.setPreferredSize(this.getSize());
 
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         thisRef = this;
         activePanelList = new ArrayList<JPanel>();
         layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(1280, 420));
+        layeredPane.setPreferredSize(new Dimension(990, 400));
 
 
         JScrollPane scroll = new JScrollPane(layeredPane);
