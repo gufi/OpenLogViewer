@@ -46,14 +46,15 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
  * this Layer listens for window resizes and property changes
  * @author Bryan Harris
  */
-public class GraphLayer extends JPanel implements HierarchyBoundsListener,PropertyChangeListener {
+public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,PropertyChangeListener {
 
     private GenericDataElement GDE;
     private LinkedList<Double> drawnData;
-    private LayeredGraph.Zoom zoom;
+    private MultiGraphLayeredPane.Zoom zoom;
     private int nullData;
+    private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
 
-    public GraphLayer() {
+    public SingleGraphPanel() {
         this.setOpaque(false);
         this.setLayout(null);
         this.GDE = null;
@@ -67,7 +68,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
      * @return
      */
     private int getCurrent() {
-        LayeredGraph lg = (LayeredGraph) this.getParent();
+        MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
         return lg.getCurrent();
     }
 
@@ -98,19 +99,19 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
         Graphics2D g2d = (Graphics2D) g;
         if (drawnData != null && drawnData.size() > 0) {
             g2d.setColor(GDE.getColor());
-            Iterator dat = drawnData.iterator();
+            Iterator<Double> dat = drawnData.iterator();
             int i = 0;
             Double chartNum = 0.0;
             try {
                 chartNum = (Double) dat.next();
-                int a = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
+                int a = chartNumber(chartNum, (int)(d.height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
                 Double prevNum = chartNum;
                 while (dat.hasNext()) {
 
 
                     chartNum = (Double) dat.next();
 
-                    int b = chartNumber(chartNum, (int)(d.height*0.95), GDE.getMinValue(), GDE.getMaxValue());
+                    int b = chartNumber(chartNum, (int)(d.height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
                     if (i >= nullData * zoom.getZoom()) {
                         if (zoom.getZoom() > 5) {
                             if(!prevNum.equals(chartNum)){ // works. but double draws the double dots when consecutive
@@ -141,7 +142,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
     }
 
     /**
-     * this is where the GDE is referenced and the graph gets initilazed for the first time
+     * this is where the GDE is referenced and the graph gets initialized for the first time
      * @param GDE
      */
     public void setData(GenericDataElement GDE) {
@@ -160,7 +161,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
      * @return Double representation of info at the mouse pointer
      */
     public Double getMouseInfo(int i) {
-        LayeredGraph lg = (LayeredGraph) this.getParent();
+        MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
         int getIt = (i / zoom.getZoom()) + lg.getCurrent() - ((this.getSize().width / 2) / zoom.getZoom());
         if (getIt < GDE.size() && getIt >= 0) {
             return GDE.get(getIt);
@@ -183,12 +184,12 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
         GDE.setColor(c);
     }
     /**
-     * initilize the graph when the width of the graph parent changes or any time a major update happens
+     * initialize the graph when the width of the graph parent changes or any time a major update happens
      * such as changing current
      */
     public void initGraph() {
         if (GDE != null) {
-            LayeredGraph lg = OpenLogViewerApp.getInstance().getLayeredGraph();
+            MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
             int zoomFactor = ((d.width + zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
@@ -227,7 +228,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
      * maintains the size of the graph when applying divisions
      */
     public void sizeGraph() {
-        LayeredGraph lg = OpenLogViewerApp.getInstance().getLayeredGraph();
+        MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
 //        Dimension d = lg.getSize();
         int wherePixel = 0 ;
         if (lg.getTotalSplits() > 1) {
@@ -247,7 +248,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
     public void advanceGraph() {
 
         if (GDE != null) {
-            LayeredGraph lg = (LayeredGraph) this.getParent();
+            MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
             Dimension d = this.getSize();
             int zoomFactor = (d.width / 2) / zoom.getZoom();
 
@@ -276,7 +277,7 @@ public class GraphLayer extends JPanel implements HierarchyBoundsListener,Proper
      * sets the zoom of this graph
      * @param z
      */
-    public void setZoom(LayeredGraph.Zoom z) {
+    public void setZoom(MultiGraphLayeredPane.Zoom z) {
         zoom = z;
     }
 }

@@ -41,23 +41,26 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
     final public static int LOG_LOADED = 1;
     private String metaData;
     protected final PropertyChangeSupport PCS;
-    private int logLoaded;
+    private int logStatus;
     private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 
         public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
             if ((Integer) propertyChangeEvent.getNewValue() == 0) {
-                OpenLogViewerApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-                OpenLogViewerApp.getInstance().getLayeredGraph().setStatus(0);
+            	GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
+            	genLog.setLogStatus(GenericLog.LOG_LOADING);
+                OpenLogViewerApp.getInstance().setLog(genLog);
             } else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
-                OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog((GenericLog) propertyChangeEvent.getSource());
-                OpenLogViewerApp.getInstance().getLayeredGraph().setStatus(1);
+            	GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
+            	genLog.setLogStatus(GenericLog.LOG_LOADED);
+            	OpenLogViewerApp.getInstance().setLog(genLog);
+                OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog(genLog);
             }
         }
     };
 
     public GenericLog() {
         super();
-        logLoaded = -1;
+        logStatus = LOG_NOT_LOADED;
         PCS = new PropertyChangeSupport(this);
         addPropertyChangeListener("LogLoaded", autoLoad);
         metaData = "";
@@ -72,7 +75,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
     public GenericLog(String[] headers) {
         super();
 
-        logLoaded = -1;
+        logStatus = LOG_NOT_LOADED;
         PCS = new PropertyChangeSupport(this);
         addPropertyChangeListener("LogLoaded", autoLoad);
 
@@ -95,12 +98,12 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 
     /**
      * Set the state of the log
-     * @param logLoaded GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
+     * @param newLogStatus GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
      */
-    public void setLogStatus(int logLoaded) {
-        int isLogLoaded = this.logLoaded;
-        this.logLoaded = logLoaded;
-        PCS.firePropertyChange("LogLoaded", isLogLoaded, logLoaded);
+    public void setLogStatus(int newLogStatus) {
+        int oldLogStatus = this.logStatus;
+        this.logStatus = newLogStatus;
+        PCS.firePropertyChange("LogLoaded", oldLogStatus, newLogStatus);
     }
 
     /**
@@ -108,7 +111,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
      * @return -1 if log not loaded 0 if loading or 1 if log is loaded
      */
     public int getLogStatus() {
-        return this.logLoaded;
+        return this.logStatus;
     }
     /**
      * sets the names of the headers for the Comparable interface of GenericDataElement

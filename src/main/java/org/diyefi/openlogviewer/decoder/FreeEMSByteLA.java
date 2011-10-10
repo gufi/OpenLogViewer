@@ -107,7 +107,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 
             startFound = false;
             logStream = new FileInputStream(logFile);
-            decodedLog.setLogStatus(0);
+            decodedLog.setLogStatus(GenericLog.LOG_LOADING);
             int packetLength = 0;
             int packetCount = 0;
             while (logStream.read(readByte) != -1) {

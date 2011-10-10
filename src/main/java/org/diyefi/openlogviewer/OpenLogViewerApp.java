@@ -31,7 +31,6 @@ package org.diyefi.openlogviewer;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -53,7 +52,8 @@ import org.diyefi.openlogviewer.filefilters.CSVTypeFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
-import org.diyefi.openlogviewer.graphing.LayeredGraph;
+import org.diyefi.openlogviewer.graphing.EntireGraphingPanel;
+import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane;
 import org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
 import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
@@ -65,7 +65,7 @@ import org.diyefi.openlogviewer.utils.Utilities;
  */
 public class OpenLogViewerApp extends javax.swing.JFrame {
 
-    /** Creates new form OpenLogViewerApp */
+	/** Creates new form OpenLogViewerApp */
     public OpenLogViewerApp() {
         initComponents();
     }
@@ -76,7 +76,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         prefFrame.setProperties(properties);
         optionFrame = new OptionFrameV2();
         mainPanel = new javax.swing.JPanel();
-        layeredGraph = new LayeredGraph();
+        graphingPanel = new EntireGraphingPanel();
         playBar = new PlayBarPanel();
         graphMenu = new GraphMenu();
         mainMenuBar = new javax.swing.JMenuBar();
@@ -87,26 +87,20 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         propertiesOptionMenuItem = new javax.swing.JMenuItem();
 
 
-
         this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         this.setLayout(new java.awt.BorderLayout());
         this.setFocusable(true);
+
 
         ////////////////////////////////////////////////////////////
         ///setup mainpanel
         ///////////////////////////////////////////////////////////
-        this.add(mainPanel, java.awt.BorderLayout.CENTER);
         mainPanel.setName("Main Panel");
         mainPanel.setLayout(new java.awt.BorderLayout());
-
-        layeredGraph.setPreferredSize(new Dimension(600, 400));
-
-
-        mainPanel.add(layeredGraph, java.awt.BorderLayout.CENTER);
+        this.add(mainPanel, java.awt.BorderLayout.CENTER);
+        graphingPanel.setPreferredSize(new Dimension(600, 420));
+        mainPanel.add(graphingPanel, java.awt.BorderLayout.CENTER);
         mainPanel.add(playBar, java.awt.BorderLayout.SOUTH);
-
-
 
 
         //////////////////////////////////////////////////////////////////
@@ -181,7 +175,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     }
 
     public void setLog(GenericLog genericLog) {
-        layeredGraph.setLog(genericLog);
+    	graphingPanel.setLog(genericLog);
     }
 
     /**
@@ -219,8 +213,8 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         });
     }
 
-    public LayeredGraph getLayeredGraph() {
-        return layeredGraph;
+    public MultiGraphLayeredPane getMultiGraphLayeredPane() {
+        return graphingPanel.getMultiGraphLayeredPane();
     }
 
     public GraphMenu getGraphMenu() {
@@ -338,7 +332,6 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
 
     private File openAppWideProps(Properties AppWide) throws IOException {
         File AppWideFile;
-        String systemDelim = File.separator;
         AppWideFile = new File(System.getProperty("user.home"));
 
         if (!AppWideFile.exists() || !AppWideFile.canRead() || !AppWideFile.canWrite()) {
@@ -402,10 +395,11 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     private javax.swing.JMenuItem quitFileMenuItem;
     private javax.swing.JMenuItem propertiesOptionMenuItem;
     private javax.swing.JPanel mainPanel;
-    private LayeredGraph layeredGraph;
+    private EntireGraphingPanel graphingPanel;
     private PlayBarPanel playBar;
     private GraphMenu graphMenu;
     private OptionFrameV2 optionFrame;
     private PropertiesPane prefFrame;
     private ArrayList<SingleProperty> properties;
+	private static final long serialVersionUID = 7987394054547975563L;
 }

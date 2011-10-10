@@ -25,8 +25,6 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
@@ -36,19 +34,20 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  *
  * @author Bryan Harris
  */
-public class LayeredGraph extends JLayeredPane implements ActionListener {
-
-    private Timer timer;
+public class MultiGraphLayeredPane extends JLayeredPane implements ActionListener {
+	
+	private Timer timer;
     private GenericLog genLog;
     private int delay;
     private int current; // startpoint of where to start the graph ( data-wise )
     private boolean play; // true = play graph, false = pause graph
-    private InfoLayer infoLayer;
+    private InfoPanel infoPanel;
     int currentMax;
     private int totalSplits;
     Zoom zoom;
+    private static final long serialVersionUID = 1213851792900715691L;
 
-    public LayeredGraph() {
+    public MultiGraphLayeredPane() {
         super();
         play = false;
         delay = 10;
@@ -58,19 +57,20 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         timer = new Timer(delay, this);
         timer.setInitialDelay(0);
         totalSplits = 1;
-        infoLayer = new InfoLayer();
+        infoPanel = new InfoPanel();
+        infoPanel.setLog(genLog);
         zoom = new Zoom();
 
         init();
     }
 
     private void init() {
-        infoLayer.setSize(400, 600);
-        infoLayer.setZoom(zoom);
-        this.setLayer(infoLayer, 99);
+        infoPanel.setSize(400, 600);
+        infoPanel.setZoom(zoom);
+        this.setLayer(infoPanel, 99);
         this.setBackground(Color.BLACK);
         this.setOpaque(true);
-        this.add(infoLayer);
+        this.add(infoPanel);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -92,15 +92,15 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         }
         boolean found = false;
         for (int i = 0; i < this.getComponentCount() && !found; i++) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                GraphLayer gl = (GraphLayer)this.getComponent(i);
+            if (this.getComponent(i) instanceof SingleGraphPanel) {
+                SingleGraphPanel gl = (SingleGraphPanel)this.getComponent(i);
                 if(gl.getName().equals(header)){
                     found = true;
                 }
             }
         }
         if (!found) {
-            GraphLayer graph = new GraphLayer();
+            SingleGraphPanel graph = new SingleGraphPanel();
             graph.setZoom(zoom);
             graph.setSize(this.getSize());
             graph.setName(header);
@@ -119,8 +119,8 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     public boolean removeGraph(String header) {
         GenericDataElement temp = genLog.get(header);
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                GraphLayer t = (GraphLayer) this.getComponent(i);
+            if (this.getComponent(i) instanceof SingleGraphPanel) {
+                SingleGraphPanel t = (SingleGraphPanel) this.getComponent(i);
                 if (t.getData() == temp) {
                     this.remove(t);
                     this.removeHierarchyBoundsListener(t);
@@ -132,9 +132,9 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     private void removeAllGraphs() {
-        for (int i = 0; this.getComponentCount() > 1;) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                this.removeHierarchyBoundsListener((GraphLayer) getComponent(i));
+        for (int i = 0; this.getComponentCount() > 2;) {  //Leave InfoLayer and PositionLayer in component count
+            if (this.getComponent(i) instanceof SingleGraphPanel) {
+                this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(i));
                 this.remove(getComponent(i));
 
             } else {
@@ -144,21 +144,19 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         repaint();
     }
 
-    public void setLog(GenericLog genLog) {
+    public void setLog(GenericLog log) {
         play = false;
         current = 0;
         removeAllGraphs();
-        this.genLog = genLog;
-        if (genLog != null) {
-            infoLayer.setGraphStatus(GenericLog.LOG_LOADING);
-        }
-
+        genLog = log;
+        infoPanel.setLog(genLog);
+        repaint();
     }
 
     public void setCurrentMax() {
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (getComponent(i) instanceof GraphLayer) {
-                GraphLayer gl = (GraphLayer) getComponent(i);
+            if (getComponent(i) instanceof SingleGraphPanel) {
+                SingleGraphPanel gl = (SingleGraphPanel) getComponent(i);
                 currentMax = gl.graphSize();
                 break;
             }
@@ -172,6 +170,10 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     public int getCurrent() {
         return current;
     }
+    
+    public InfoPanel getInfoPanel(){
+    	return infoPanel;
+    }
 
     public void setCurrent(int c) {
         current = c;
@@ -179,8 +181,8 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
 
     public void initGraph() {
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                GraphLayer gl = (GraphLayer) this.getComponent(i);
+            if (this.getComponent(i) instanceof SingleGraphPanel) {
+                SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
                 gl.initGraph();
             }
         }
@@ -188,15 +190,15 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
 
     public void advanceGraph() {
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof GraphLayer) {
-                GraphLayer gl = (GraphLayer) this.getComponent(i);
+            if (this.getComponent(i) instanceof SingleGraphPanel) {
+                SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
                 gl.advanceGraph();
             }
         }
     }
 
     public void zoomIn() {
-        infoLayer.resetDragCoords();
+        infoPanel.resetDragCoords();
         if (zoom.getZoom() <= 50) {
             zoom.setZoom(zoom.getZoom() + 1);
         }
@@ -205,12 +207,16 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
     }
 
     public void zoomOut() {
-        infoLayer.resetDragCoords();
+        infoPanel.resetDragCoords();
         if (zoom.getZoom() > 1) {
             zoom.setZoom(zoom.getZoom() - 1);
         }
         this.initGraph();
         repaint();
+    }
+    
+    public Zoom getZoom(){
+    	return zoom;
     }
 
     /**
@@ -220,7 +226,7 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         if (this.play) {
             pause();
         } else {
-            infoLayer.resetDragCoords();
+            infoPanel.resetDragCoords();
             play = true;
             timer.start();
         }
@@ -274,14 +280,10 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         timer.setDelay(this.delay);
     }
 
-    public void setStatus(int status) {
-        infoLayer.setGraphStatus(status);
-    }
-
     public void setColor(String header, Color newColor) {
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof GraphLayer && this.getComponent(i).getName().equals(header)) {
-                GraphLayer gl = (GraphLayer) this.getComponent(i);
+            if (this.getComponent(i) instanceof SingleGraphPanel && this.getComponent(i).getName().equals(header)) {
+                SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
                 gl.setColor(newColor);
 
             }
@@ -296,8 +298,8 @@ public class LayeredGraph extends JLayeredPane implements ActionListener {
         if (totalSplits > 0) {
             this.totalSplits = totalSplits;
             for (int i = 0; i < this.getComponentCount(); i++) {
-                if (this.getComponent(i) instanceof GraphLayer) {
-                    GraphLayer gl = (GraphLayer) this.getComponent(i);
+                if (this.getComponent(i) instanceof SingleGraphPanel) {
+                    SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
                     gl.sizeGraph();
                 }
             }

@@ -204,7 +204,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
             startFound = false;
             logStream = new FileInputStream(logFile);
-            decodedLog.setLogStatus(0);
+            decodedLog.setLogStatus(GenericLog.LOG_LOADING);
             while (logStream.read(readByte) != -1) {
                 uByte = (short) (readByte[0] & 0xff); // mask the byte in case something screwey happens
                 if (uByte == START_BYTE) {

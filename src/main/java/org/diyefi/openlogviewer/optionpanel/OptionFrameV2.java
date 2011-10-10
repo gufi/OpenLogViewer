@@ -161,7 +161,7 @@ public class OptionFrameV2 extends JFrame {
             JPanel activePanel = new JPanel();
             activePanelList.add(activePanel);
             if (OpenLogViewerApp.getInstance() != null) {
-                OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
+                OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
             }
             activePanel.setLayout(null);
             activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
@@ -184,7 +184,7 @@ public class OptionFrameV2 extends JFrame {
     private void remActiveHeaderPanel(ActionEvent e) {
         JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
         activePanelList.remove(panel);
-        OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(activePanelList.size());
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
         for (int i = 0; i < panel.getComponentCount();) {
             if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
                 ActiveHeaderLabel GCB = (ActiveHeaderLabel) panel.getComponent(i);
@@ -640,11 +640,11 @@ public class OptionFrameV2 extends JFrame {
             if (selected) {
                 this.setForeground(GDE.getColor());
                 this.repaint();
-                OpenLogViewerApp.getInstance().getLayeredGraph().addGraph(this.getName());
+                OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().addGraph(this.getName());
             } else {
                 this.setForeground(GDE.getColor().darker().darker());
-                if (OpenLogViewerApp.getInstance().getLayeredGraph().removeGraph(this.getName())) {
-                    OpenLogViewerApp.getInstance().getLayeredGraph().repaint();
+                if (OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName())) {
+                    OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().repaint();
                 }
             }
         }

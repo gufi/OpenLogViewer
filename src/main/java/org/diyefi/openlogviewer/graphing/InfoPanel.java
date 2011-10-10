@@ -33,16 +33,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
+
+import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
  *
  * @author Bryan
  */
-public class InfoLayer extends JPanel implements MouseMotionListener, MouseListener {
+public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
 
-    private LayeredGraph.Zoom zoom;
-    private int logStatus;
+    private MultiGraphLayeredPane.Zoom zoom;
+    private GenericLog genLog;
     private int xMouseCoord;
     private int yMouseCoord;
     private int xMouseCoordDrag;
@@ -54,8 +56,8 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     private boolean dragging = false;
     private Rectangle rect;
 
-    public InfoLayer() {
-        logStatus = GenericLog.LOG_NOT_LOADED;
+    public InfoPanel() {
+    	genLog = new GenericLog();
         xMouseCoord = -100;
         yMouseCoord = -100;
         xMouseCoordDrag = -100;
@@ -91,15 +93,15 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
             this.setSize(this.getParent().getSize());
         }
         //if (this.getParent() instanceof LayeredGraph) {
-        if (logStatus == GenericLog.LOG_NOT_LOADED) {
+        if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
             g.setColor(Color.RED);
             g.drawString("No Log Loaded, Please select a log from the File menu.", 20, 20);
-        } else if (logStatus == GenericLog.LOG_LOADING) {
+        } else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
             g.setColor(Color.red);
             g.drawString("loading Log, Please wait...", 20, 20);
-        } else if (logStatus == GenericLog.LOG_LOADED) {
+        } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
             Dimension d = this.getSize();
-            LayeredGraph lg = (LayeredGraph) this.getParent();
+            MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             if (mouseOver) {
@@ -110,8 +112,8 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height); // middle vertical divider,
 
                 for (int i = 0; i < lg.getComponentCount(); i++) {
-                    if (lg.getComponent(i) instanceof GraphLayer) {
-                        GraphLayer gl = (GraphLayer) lg.getComponent(i);
+                    if (lg.getComponent(i) instanceof SingleGraphPanel) {
+                        SingleGraphPanel gl = (SingleGraphPanel) lg.getComponent(i);
                         g2d.setColor(textBackground);
                         g2d.fillRect(lineDraw, yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
                         g2d.setColor(gl.getColor());
@@ -128,12 +130,12 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
         }
     }
 
-    public void setGraphStatus(int logStatus) {
-        this.logStatus = logStatus;
+    public void setLog(GenericLog log) {
+        genLog = log;
         repaint();
     }
 
-    public void setZoom(LayeredGraph.Zoom z) {
+    public void setZoom(MultiGraphLayeredPane.Zoom z) {
         zoom = z;
     }
 
@@ -151,7 +153,7 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
     @Override
     public void mouseDragged(MouseEvent e) {
 
-        LayeredGraph lg = (LayeredGraph) this.getParent();
+        MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
         if (e.getModifiers() == 18) {
             if (!dragging) {
                 dragging = true;
@@ -177,9 +179,17 @@ public class InfoLayer extends JPanel implements MouseMotionListener, MouseListe
 //MOUSE LISTENER FUNCTIONALITY
     @Override
     public void mouseClicked(MouseEvent e) {
+    	mouseClicked(e.getX());
+    	MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+    	EntireGraphingPanel egp = (EntireGraphingPanel) lg.getParent();
+        GraphPositionPanel gpp = egp.getGraphPositionPanel();
+        gpp.mouseClicked(e.getX());
+    }
+    
+    public void mouseClicked(int xPosition){
+    	MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
         if (!dragging) {
-            LayeredGraph lg = (LayeredGraph) this.getParent();
-            int move = (e.getX() / zoom.getZoom()) - (int) ((this.getSize().width / 2) / zoom.getZoom());
+            int move = (xPosition / zoom.getZoom()) - ((this.getWidth() / 2) / zoom.getZoom());
             if (move + lg.getCurrent() < lg.getCurrentMax()) {
                 if (move + lg.getCurrent() < 0) {
                     lg.setCurrent(0);

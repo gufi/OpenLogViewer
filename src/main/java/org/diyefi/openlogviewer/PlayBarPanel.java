@@ -170,49 +170,49 @@ public class PlayBarPanel extends JPanel {
      * @param evt
      */
     private void zoomInButtonMouseReleased( java.awt.event.MouseEvent evt ){
-        OpenLogViewerApp.getInstance().getLayeredGraph().zoomIn();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().zoomIn();
     }
     /**
      * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
      * @param evt
      */
     private void zoomOutButtonMouseReleased( java.awt.event.MouseEvent evt ){
-        OpenLogViewerApp.getInstance().getLayeredGraph().zoomOut();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().zoomOut();
     }
     /**
      * modifys the state of the PlayableLog to begin playing
      * @param evt
      */
     private void playButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getLayeredGraph().play();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().play();
     }
     /**
      * Modifys the state of the PlayableLog to pause
      * @param evt
      */
     private void pauseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getLayeredGraph().pause();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().pause();
     }
     /**
      * Modifys the state of the PlayableLog to stop and reset to the beginning
      * @param evt
      */
     private void stopButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getLayeredGraph().stop();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().stop();
     }
     /**
      * Speeds up the play back speed of the PlayableLog
      * @param evt
      */
     private void fastForwardButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getLayeredGraph().fastForward();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().fastForward();
     }
     /**
      * Slows down the play back speed of the Playable Log
      * @param evt
      */
     private void reverseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getLayeredGraph().slowDown();
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().slowDown();
     }
     /**
      * Un-Implimented currently, future plans are to have this as an alternate to open a new log
@@ -221,7 +221,7 @@ public class PlayBarPanel extends JPanel {
     private void ejectButtonMouseReleased(java.awt.event.MouseEvent evt) {
         
          //OpenLogViewerApp.openFile();
-         OpenLogViewerApp.getInstance().getLayeredGraph().reset();
+         OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().reset();
     }
    // private FreeEMSBin fems;
     private javax.swing.JButton zoomInButton;
