@@ -30,7 +30,8 @@ import javax.swing.JPanel;
  * @author Bryan
  */
 public class PlayBarPanel extends JPanel {
-    /**
+
+	/**
      * Default JPanel constructor initializing the playbar buttons
      */
     public PlayBarPanel() {
@@ -232,4 +233,5 @@ public class PlayBarPanel extends JPanel {
     private javax.swing.JButton ejectButton;
     private javax.swing.JButton fastForwardButton;
     private javax.swing.JButton pauseButton;
+	private static final long serialVersionUID = 1294732662423188903L;
 }
