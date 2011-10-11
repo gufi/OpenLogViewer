@@ -133,11 +133,6 @@ public class GraphPositionPanel extends JPanel implements MouseMotionListener, M
     	setGraphPosition(graphPosition + amount);
     }
     
-    public void moveGraphPositionBar(MouseEvent e){
-    	int amount = e.getX() - (this.getWidth() / 2);
-    	moveGraphPositionBar(amount);
-    }
-    
     public void setGraphPosition(int pos){
     	graphPosition = pos;
     	repaint();

@@ -202,7 +202,7 @@ public class MultiGraphLayeredPane extends JLayeredPane implements ActionListene
 
     public void zoomIn() {
         infoPanel.resetDragCoords();
-        if (zoom.getZoom() <= 50) {
+        if (zoom.getZoom() < 50) {
             zoom.setZoom(zoom.getZoom() + 1);
         }
         this.initGraph();
