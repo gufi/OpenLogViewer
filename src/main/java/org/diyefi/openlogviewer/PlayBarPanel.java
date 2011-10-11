@@ -170,21 +170,21 @@ public class PlayBarPanel extends JPanel {
      * @param evt
      */
     private void zoomInButtonMouseReleased( java.awt.event.MouseEvent evt ){
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().zoomIn();
+    	OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
     }
     /**
      * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
      * @param evt
      */
     private void zoomOutButtonMouseReleased( java.awt.event.MouseEvent evt ){
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().zoomOut();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
     }
     /**
      * modifys the state of the PlayableLog to begin playing
      * @param evt
      */
     private void playButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().play();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
     }
     /**
      * Modifys the state of the PlayableLog to pause

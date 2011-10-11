@@ -22,16 +22,8 @@
  */
 package org.diyefi.openlogviewer.graphing;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.JLayeredPane;
-import javax.swing.Timer;
 import javax.swing.JPanel;
-import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane;
 
@@ -69,6 +61,21 @@ public class EntireGraphingPanel extends JPanel{
     
     public GraphPositionPanel getGraphPositionPanel(){
     	return graphPosition;
+    }
+    
+    public void zoomIn(){
+    	multiGraph.zoomIn();
+    	graphPosition.zoomIn();
+    }
+    
+    public void zoomOut(){
+    	multiGraph.zoomOut();
+    	graphPosition.zoomOut();
+    }
+    
+    public void play(){
+    	multiGraph.play();
+    	graphPosition.play();
     }
 
     private MultiGraphLayeredPane multiGraph;

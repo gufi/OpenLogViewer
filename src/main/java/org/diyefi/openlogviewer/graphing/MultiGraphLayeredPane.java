@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLayeredPane;
 import javax.swing.Timer;
+
+import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -79,6 +81,7 @@ public class MultiGraphLayeredPane extends JLayeredPane implements ActionListene
             current++;
             advanceGraph();
             repaint();
+            OpenLogViewerApp.getInstance().getGraphPositionPanel().moveGraphPositionBar(1);
         } else {
             stop();
         }

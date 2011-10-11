@@ -40,7 +40,7 @@ import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane.Zoom;
  *
  * @author Ben Fenner
  */
-public class GraphPositionPanel extends JPanel implements HierarchyBoundsListener, MouseMotionListener, MouseListener {
+public class GraphPositionPanel extends JPanel implements MouseMotionListener, MouseListener {
 
 	public GraphPositionPanel() {
 		super();
@@ -50,7 +50,6 @@ public class GraphPositionPanel extends JPanel implements HierarchyBoundsListene
 	private void init(){
         this.setOpaque(true);
         this.setLayout(null);
-        this.addHierarchyBoundsListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
         genLog = new GenericLog();
@@ -82,7 +81,6 @@ public class GraphPositionPanel extends JPanel implements HierarchyBoundsListene
     }
     
     private void paintPositionBar(Graphics2D g2d){
-    	//System.out.println(zoom.getZoom());
     	int center = this.getWidth() / 2;
         g2d.setColor(minorGraduationColor);
         for(int i = center; i > 0; i-=minorGraduationSpacing){
@@ -151,6 +149,18 @@ public class GraphPositionPanel extends JPanel implements HierarchyBoundsListene
     	setGraphPosition(0);
     }
     
+    public void zoomIn(){
+    	repaint();
+    }
+
+    public void zoomOut(){
+    	repaint();
+    }
+    
+    public void play(){
+    	repaint();
+    }
+    
     @Override
     public void mouseDragged(MouseEvent e) {
 
@@ -201,17 +211,6 @@ public class GraphPositionPanel extends JPanel implements HierarchyBoundsListene
 
     @Override
     public void mouseReleased(MouseEvent e) {
-    }
-    
-    @Override
-    public void ancestorMoved(HierarchyEvent e) {
-    }
-
-    @Override
-    public void ancestorResized(HierarchyEvent e) {
-        if (e.getID() == HierarchyEvent.ANCESTOR_RESIZED) {
-           //System.out.println("Ancestor resized!");
-        }
     }
 
     private MultiGraphLayeredPane.Zoom zoom;

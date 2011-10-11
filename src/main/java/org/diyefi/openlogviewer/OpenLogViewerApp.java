@@ -53,6 +53,7 @@ import org.diyefi.openlogviewer.filefilters.FreeEMSFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.graphing.EntireGraphingPanel;
+import org.diyefi.openlogviewer.graphing.GraphPositionPanel;
 import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane;
 import org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
 import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
@@ -213,8 +214,16 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         });
     }
 
+    public EntireGraphingPanel getEntireGraphingPanel(){
+    	return graphingPanel;
+    }
+
     public MultiGraphLayeredPane getMultiGraphLayeredPane() {
         return graphingPanel.getMultiGraphLayeredPane();
+    }
+    
+    public GraphPositionPanel getGraphPositionPanel() {
+        return graphingPanel.getGraphPositionPanel();
     }
 
     public GraphMenu getGraphMenu() {

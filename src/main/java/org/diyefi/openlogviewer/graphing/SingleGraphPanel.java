@@ -48,11 +48,13 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
  */
 public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,PropertyChangeListener {
 
-    private GenericDataElement GDE;
+	
+	private GenericDataElement GDE;
     private LinkedList<Double> drawnData;
     private MultiGraphLayeredPane.Zoom zoom;
     private int nullData;
     private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
+    private static final long serialVersionUID = -7808406950399781712L;
 
     public SingleGraphPanel() {
         this.setOpaque(false);
@@ -60,16 +62,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         this.GDE = null;
         drawnData = new LinkedList<Double>();
         this.nullData = 0;
-    }
-    /**
-     * asks the parent LayeredGraph for the current position in the log.
-     * This will eventually be rewritten to a static way of getting Graphing
-     * data
-     * @return
-     */
-    private int getCurrent() {
-        MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
-        return lg.getCurrent();
     }
 
     @Override
