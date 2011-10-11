@@ -26,9 +26,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -43,28 +40,25 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  */
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
 
-    private MultiGraphLayeredPane.Zoom zoom;
+	private MultiGraphLayeredPane.Zoom zoom;
     private GenericLog genLog;
     private int xMouseCoord;
     private int yMouseCoord;
     private int xMouseCoordDrag;
-    private int yMouseCoordDrag;
     private int xLastDrag;
     boolean mouseOver;
     private Color vertBar = new Color(255, 255, 255, 100);
     private Color textBackground = new Color(0, 0, 0, 170);
     private boolean dragging = false;
-    private Rectangle rect;
+    private static final long serialVersionUID = -6657156551430700622L;
 
     public InfoPanel() {
     	genLog = new GenericLog();
         xMouseCoord = -100;
         yMouseCoord = -100;
         xMouseCoordDrag = -100;
-        yMouseCoordDrag = -100;
         xLastDrag = 0;
         mouseOver = false;
-        rect = new Rectangle();
         this.setOpaque(false);
         addMouseListener(this);
         addMouseMotionListener(this);
