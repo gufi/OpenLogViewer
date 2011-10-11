@@ -192,28 +192,28 @@ public class PlayBarPanel extends JPanel {
      * @param evt
      */
     private void pauseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().pause();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
     }
     /**
      * Modifys the state of the PlayableLog to stop and reset to the beginning
      * @param evt
      */
     private void stopButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().stop();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel().stop();
     }
     /**
      * Speeds up the play back speed of the PlayableLog
      * @param evt
      */
     private void fastForwardButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().fastForward();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel().fastForward();
     }
     /**
      * Slows down the play back speed of the Playable Log
      * @param evt
      */
     private void reverseButtonMouseReleased( java.awt.event.MouseEvent evt) {
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().slowDown();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel().slowDown();
     }
     /**
      * Un-Implimented currently, future plans are to have this as an alternate to open a new log
@@ -222,7 +222,7 @@ public class PlayBarPanel extends JPanel {
     private void ejectButtonMouseReleased(java.awt.event.MouseEvent evt) {
         
          //OpenLogViewerApp.openFile();
-         OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().reset();
+         OpenLogViewerApp.getInstance().getEntireGraphingPanel().eject();
     }
    // private FreeEMSBin fems;
     private javax.swing.JButton zoomInButton;

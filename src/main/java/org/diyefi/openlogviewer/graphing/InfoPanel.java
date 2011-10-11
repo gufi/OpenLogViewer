@@ -29,47 +29,27 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 /**
- *
- * @author Bryan
+ * @author Bryan Harris and Ben Fenner
  */
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
-
-	private MultiGraphLayeredPane.Zoom zoom;
-    private GenericLog genLog;
-    private int xMouseCoord;
-    private int yMouseCoord;
-    private int xMouseCoordDrag;
-    private int xLastDrag;
-    boolean mouseOver;
-    private Color vertBar = new Color(255, 255, 255, 100);
-    private Color textBackground = new Color(0, 0, 0, 170);
-    private boolean dragging = false;
-    private static final long serialVersionUID = -6657156551430700622L;
 
     public InfoPanel() {
     	genLog = new GenericLog();
         xMouseCoord = -100;
         yMouseCoord = -100;
-        xMouseCoordDrag = -100;
-        xLastDrag = 0;
         mouseOver = false;
         this.setOpaque(false);
-        addMouseListener(this);
-        addMouseMotionListener(this);
     }
-    int FPScounter = 0;
-    int FPS = 0;
-    private long currentTime;
-    private long builtTime;
 
     @Override
-    public void paint(Graphics g) { // overriden paint because there will be no components in this pane
+    public void paint(Graphics g) { // override paint because there will be no components in this pane
         builtTime += System.currentTimeMillis() - currentTime;
         currentTime = System.currentTimeMillis();
         if (builtTime <= 1000) {
@@ -86,21 +66,20 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
         if (!this.getSize().equals(this.getParent().getSize())) {
             this.setSize(this.getParent().getSize());
         }
-        //if (this.getParent() instanceof LayeredGraph) {
         if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
             g.setColor(Color.RED);
-            g.drawString("No Log Loaded, Please select a log from the File menu.", 20, 20);
+            g.drawString("No log loaded, please select a log from the file menu.", 20, 20);
         } else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
             g.setColor(Color.red);
-            g.drawString("loading Log, Please wait...", 20, 20);
+            g.drawString("Loading log, please wait...", 20, 20);
         } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
             Dimension d = this.getSize();
-            MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
+            MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             if (mouseOver) {
-
-                int lineDraw = zoom.getZoom() + (xMouseCoord / zoom.getZoom()) * zoom.getZoom();
+            	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+                int lineDraw = zoom + (xMouseCoord / zoom) * zoom;
                 g2d.setColor(vertBar);
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height); // middle vertical divider,
@@ -115,12 +94,6 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
                     }
                 }
             }
-            if (dragging && !lg.isPlaying()) {
-
-                g2d.setColor(vertBar);
-
-                g2d.fillRect(xMouseCoordDrag, 0, xLastDrag, getHeight());
-            }
         }
     }
 
@@ -128,102 +101,53 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
         genLog = log;
         repaint();
     }
-
-    public void setZoom(MultiGraphLayeredPane.Zoom z) {
-        zoom = z;
-    }
-
-    public void resetDragCoords() {
-        xMouseCoordDrag = -100;
-        xLastDrag = -100;
-    }
-
-    //MOUSE MOTION LISTENER FUNCTIONALITY
-    private void getMouseCoords(MouseEvent e) {
-        xMouseCoord = e.getX();
-        yMouseCoord = e.getY();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-        MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
-        if (e.getModifiers() == 18) {
-            if (!dragging) {
-                dragging = true;
-            }
-
-            xLastDrag = e.getX() - xMouseCoordDrag + 1;
-
-            if (lg.isPlaying()) {
-                lg.stop();
-            }
-
-        }
-        mouseMoved(e);
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        getMouseCoords(e);
-        repaint(); // call repaint because otherwise we are at the whim of the speed of playback to update mouse info
-    }
-
-//MOUSE LISTENER FUNCTIONALITY
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    	mouseClicked(e.getX());
-    	MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-    	EntireGraphingPanel egp = (EntireGraphingPanel) lg.getParent();
-        GraphPositionPanel gpp = egp.getGraphPositionPanel();
-        gpp.mouseClicked(e.getX());
-    }
     
-    public void mouseClicked(int xPosition){
-    	MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-        if (!dragging) {
-            int move = (xPosition / zoom.getZoom()) - ((this.getWidth() / 2) / zoom.getZoom());
-            if (move + lg.getCurrent() < lg.getCurrentMax()) {
-                if (move + lg.getCurrent() < 0) {
-                    lg.setCurrent(0);
-                } else {
-                    lg.setCurrent(lg.getCurrent() + move);
-                }
-                lg.initGraph();
-                lg.repaint();
-            } else {
-                lg.setCurrent(lg.getCurrentMax());
-                lg.initGraph();
-                lg.repaint();
-            }
-        } else if (dragging) {
-            dragging = false;
-        }
-    }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        mouseOver = true;
-    }
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		mouseOver = true;
+	}
 
-    @Override
-    public void mouseExited(MouseEvent e) {
-        mouseOver = false;
-        repaint();
-    }
+	@Override
+	public void mouseExited(MouseEvent e) {
+		mouseOver = false;
+		repaint();
+	}
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (e.getModifiers() == 18) {
-            xMouseCoordDrag = e.getX();
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		xMouseCoord = e.getX();
+		yMouseCoord = e.getY();
+		repaint();
+	}
 
-        }
-    }
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
 
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+    int FPScounter = 0;
+    int FPS = 0;
+    private long currentTime;
+    private long builtTime;
+    private GenericLog genLog;
+    private Color vertBar = new Color(255, 255, 255, 100);
+    private Color textBackground = new Color(0, 0, 0, 170);
+    private int xMouseCoord;
+    private int yMouseCoord;
+    boolean mouseOver;
+    private static final long serialVersionUID = -6657156551430700622L;
     
 }

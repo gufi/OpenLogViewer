@@ -25,20 +25,16 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
-import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane.Zoom;
 
 /**
  *
  * @author Ben Fenner
  */
-public class GraphPositionPanel extends JPanel implements MouseMotionListener, MouseListener {
+public class GraphPositionPanel extends JPanel {
 
 	public GraphPositionPanel() {
 		super();
@@ -48,14 +44,11 @@ public class GraphPositionPanel extends JPanel implements MouseMotionListener, M
 	private void init(){
         this.setOpaque(true);
         this.setLayout(null);
-        addMouseListener(this);
-        addMouseMotionListener(this);
         genLog = new GenericLog();
         majorGraduationColor = Color.GRAY;
         minorGraduationColor = majorGraduationColor.darker();
         positionDataColor = majorGraduationColor;
         backgroundColor = Color.black;
-        resetGraphPosition();
         majorGraduationSpacing = 60;
         minorGraduationSpacing = majorGraduationSpacing / 2;
 	}
@@ -101,18 +94,19 @@ public class GraphPositionPanel extends JPanel implements MouseMotionListener, M
     
     private void paintPositionData(Graphics2D g2d){
     	int center = this.getWidth() / 2;
-    	int count = graphPosition;
+    	int count = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	g2d.setColor(positionDataColor);
     	for(int i = center; i > 0; i-=majorGraduationSpacing){
     		String positionDataString = Integer.toString(count);
     		g2d.drawString(positionDataString, i - 10, 18);
-    		count -= (majorGraduationSpacing / zoom.getZoom());
+    		count -= (majorGraduationSpacing / zoom);
         }
-    	count = graphPosition;
+    	count = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	for(int i = center; i < this.getWidth(); i+=majorGraduationSpacing){
     		String positionDataString = Integer.toString(count);
     		g2d.drawString(positionDataString, i - 10, 18);
-    		count += (majorGraduationSpacing / zoom.getZoom());
+    		count += (majorGraduationSpacing / zoom);
         }
     }
     
@@ -121,98 +115,19 @@ public class GraphPositionPanel extends JPanel implements MouseMotionListener, M
         repaint();
     }
 
-    public void setZoom(Zoom z) {
-        zoom = z;
-    }
+//    public void zoomIn(){
+//    	repaint();
+//    }
+//
+//    public void zoomOut(){
+//    	repaint();
+//    }
 
-    public void resetDragCoords() {
-
-    }
-
-    public void moveGraphPositionBar(int amount){
-    	setGraphPosition(graphPosition + amount);
-    }
-    
-    public void setGraphPosition(int pos){
-    	graphPosition = pos;
-    	repaint();
-    }
-    
-    public void resetGraphPosition(){
-    	setGraphPosition(0);
-    }
-    
-    public void zoomIn(){
-    	repaint();
-    }
-
-    public void zoomOut(){
-    	repaint();
-    }
-    
-    public void play(){
-    	repaint();
-    }
-    
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        //repaint();
-    }
-
-//MOUSE LISTENER FUNCTIONALITY
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    	mouseClicked(e.getX());
-    	MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-        InfoPanel ip = lg.getInfoPanel();
-        ip.mouseClicked(e.getX());
-    }
-    
-    public void mouseClicked(int xPosition){
-    	MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-        int move = (xPosition / zoom.getZoom()) - ((this.getWidth() / 2) / zoom.getZoom());
-        if (move + lg.getCurrent() < lg.getCurrentMax()) {
-            if (move + lg.getCurrent() < 0) {
-                resetGraphPosition();
-            } else {
-                moveGraphPositionBar(move);
-            }
-        } else {
-        	setGraphPosition(lg.getCurrentMax());
-        }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-       
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    private MultiGraphLayeredPane.Zoom zoom;
     private GenericLog genLog;
     private Color majorGraduationColor;
     private Color minorGraduationColor;
     private Color positionDataColor;
     private Color backgroundColor;
-    private int graphPosition;
     private int majorGraduationSpacing;
     private int minorGraduationSpacing;
 	private static final long serialVersionUID = -7808475370693818838L;

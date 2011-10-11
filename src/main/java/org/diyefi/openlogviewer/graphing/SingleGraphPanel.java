@@ -51,7 +51,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	
 	private GenericDataElement GDE;
     private LinkedList<Double> drawnData;
-    private MultiGraphLayeredPane.Zoom zoom;
     private int nullData;
     private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
     private static final long serialVersionUID = -7808406950399781712L;
@@ -98,25 +97,23 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
                 chartNum = (Double) dat.next();
                 int a = chartNumber(chartNum, (int)(d.height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
                 Double prevNum = chartNum;
+                int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
                 while (dat.hasNext()) {
-
-
                     chartNum = (Double) dat.next();
-
                     int b = chartNumber(chartNum, (int)(d.height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
-                    if (i >= nullData * zoom.getZoom()) {
-                        if (zoom.getZoom() > 5) {
+                    if (i >= nullData * zoom) {
+                        if (zoom > 5) {
                             if(!prevNum.equals(chartNum)){ // works. but double draws the double dots when consecutive
                                                             // data does not match EX: ((1)) (2) (3) 3 vs (1) (2) 2 2
-                                g2d.fillOval(i -2, a-2, 4, 4);
-                                g2d.fillOval(i +zoom.getZoom()-2, b-2, 4, 4);
+                                g2d.fillOval(i - 2, a - 2, 4, 4);
+                                g2d.fillOval(i + zoom - 2, b - 2, 4, 4);
                             }
                         }
-                        g2d.drawLine(i, a, i + zoom.getZoom(), b);
+                        g2d.drawLine(i, a, i + zoom, b);
                     }
                     a = b;
                     prevNum = chartNum;
-                    i += zoom.getZoom();
+                    i += zoom;
                 }
             } catch (ConcurrentModificationException CME) {
                 System.out.println(this.getClass().toString() + " " + CME.getMessage());
@@ -153,8 +150,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
      * @return Double representation of info at the mouse pointer
      */
     public Double getMouseInfo(int i) {
-        MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
-        int getIt = (i / zoom.getZoom()) + lg.getCurrent() - ((this.getSize().width / 2) / zoom.getZoom());
+    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+        int getIt = (i / zoom) + graphPosition - ((this.getSize().width / 2) / zoom);
         if (getIt < GDE.size() && getIt >= 0) {
             return GDE.get(getIt);
         } else {
@@ -181,16 +179,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
      */
     public void initGraph() {
         if (GDE != null) {
-            MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+            int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+            int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
             Dimension d = this.getSize();
             drawnData = new LinkedList<Double>();
-            int zoomFactor = ((d.width + zoom.getZoom()) / zoom.getZoom()) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
-            if ((double) d.width / 2 > zoom.getZoom() * (double) (zoomFactor)) {
+            int zoomFactor = ((d.width + zoom) / zoom) / 2; // add two datapoints to be drawn due to zoom clipping at the ends
+            if ((double) d.width / 2 > zoom * (double) (zoomFactor)) {
                 zoomFactor++;// without this certain zoom factors will cause data to be misdrawn on screen
             }
-            if (lg.getCurrent() <= zoomFactor) {
+            if (graphPosition <= zoomFactor) {
                 int x = 0;
-                int fill = (zoomFactor) - lg.getCurrent();
+                int fill = (zoomFactor) - graphPosition;
                 nullData = fill;
                 while (x < fill) {
                     drawnData.add(0.0);
@@ -199,20 +198,20 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
                 // this code looks hacky as fuck
                 int to = 0;
-                if (GDE.size() - 1 < (d.width / zoom.getZoom()) - x + 2) {// get the whole array because its stupid short
+                if (GDE.size() - 1 < (d.width / zoom) - x + 2) {// get the whole array because its stupid short
                     to = (GDE.size() - 1);
                 } else { // get the first width-zoom-x
-                    to = (d.width / zoom.getZoom()) - x + 2;
+                    to = (d.width / zoom) - x + 2;
                 }
                 if(to >= 0 && to < GDE.size()){
                 	drawnData.addAll(GDE.subList(0, to));
                 }
-            } else if ((zoomFactor + lg.getCurrent() + 2) < GDE.size()) {
+            } else if ((zoomFactor + graphPosition + 2) < GDE.size()) {
                 nullData = 0;
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, zoomFactor + 2 + lg.getCurrent()));
+                drawnData.addAll(GDE.subList(graphPosition - zoomFactor, zoomFactor + 2 + graphPosition));
             } else {
                 nullData = 0;
-                drawnData.addAll(GDE.subList(lg.getCurrent() - zoomFactor, GDE.size()));
+                drawnData.addAll(GDE.subList(graphPosition - zoomFactor, GDE.size()));
             }
         }
     }
@@ -237,26 +236,26 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     /**
      * adds to the mini container for graphing data, drawnData.size == this panels width / zoom
      */
-    public void advanceGraph() {
-
-        if (GDE != null) {
-            MultiGraphLayeredPane lg = (MultiGraphLayeredPane) this.getParent();
-            Dimension d = this.getSize();
-            int zoomFactor = (d.width / 2) / zoom.getZoom();
-
-            if ((lg.getCurrent() + zoomFactor) < GDE.size()) {
-                drawnData.add(GDE.get(lg.getCurrent() + zoomFactor));
-                if (nullData > 0) {
-                    nullData--;
-                }
-            }
-            if (drawnData.size() > zoomFactor + 1) {
-                drawnData.remove(0);
-            } else {
-                lg.stop();
-            }
-        }
-    }
+//    public void advanceGraph() {
+//
+//        if (GDE != null) {
+//        	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+//            Dimension d = this.getSize();
+//            int zoomFactor = (d.width / 2) / zoom.getZoom();
+//
+//            if ((graphPosition + zoomFactor) < GDE.size()) {
+//                drawnData.add(GDE.get(graphPosition + zoomFactor));
+//                if (nullData > 0) {
+//                    nullData--;
+//                }
+//            }
+//            if (drawnData.size() > zoomFactor + 1) {
+//                drawnData.remove(0);
+//            } else {
+//            	OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
+//            }
+//        }
+//    }
 
     /**
      * Graph total size
@@ -265,11 +264,5 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     public int graphSize() {
         return GDE.size();
     }
-    /**
-     * sets the zoom of this graph
-     * @param z
-     */
-    public void setZoom(MultiGraphLayeredPane.Zoom z) {
-        zoom = z;
-    }
+    
 }
