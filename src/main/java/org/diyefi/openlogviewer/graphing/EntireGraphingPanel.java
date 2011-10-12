@@ -270,7 +270,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
-		moveEntireGraphingPanel(e.getX());
 		if(notches < 0){
 			OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
 		} else {
