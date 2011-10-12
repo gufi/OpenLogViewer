@@ -66,6 +66,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         addMouseListener(multiGraph.getInfoPanel());
         addMouseMotionListener(multiGraph.getInfoPanel());
         dragging = false;
+        prevDragXCoord = -1; 
         zoom = 1;
     }
     
@@ -196,51 +197,61 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	return playing;
     }
     
+    private void moveEntireGraphingPanel(int newPosition){
+    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	int graphPositionMax = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionMax();
+        int move = (newPosition / zoom) - ((this.getWidth() / 2) / zoom);
+        if (move + graphPosition < graphPositionMax) {
+            if (move + graphPosition < 0) {
+            	OpenLogViewerApp.getInstance().getEntireGraphingPanel().resetGraphPosition();
+            } else {
+            	OpenLogViewerApp.getInstance().getEntireGraphingPanel().moveGraphPosition(move);
+            }
+        } else {
+        	OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPosition(graphPositionMax);
+        }
+        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().initGraphs();
+    }
+
+    private void stopDragging(){
+    	dragging = false;
+        prevDragXCoord = -1;
+    }
+    
   //MOUSE LISTENER FUNCTIONALITY
     @Override
     public void mouseClicked(MouseEvent e) {
-    	mouseClicked(e.getX());
-    }
-    
-    public void mouseClicked(int xPosition){
-    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-    	int graphPositionMax = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionMax();
-        if (!dragging) {
-            int move = (xPosition / zoom) - ((this.getWidth() / 2) / zoom);
-            if (move + graphPosition < graphPositionMax) {
-                if (move + graphPosition < 0) {
-                	OpenLogViewerApp.getInstance().getEntireGraphingPanel().resetGraphPosition();
-                } else {
-                	OpenLogViewerApp.getInstance().getEntireGraphingPanel().moveGraphPosition(move);
-                }
-            } else {
-            	OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPosition(graphPositionMax);
-            }
-            OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().initGraphs();
-        } else if (dragging) {
-            dragging = false;
+    	if (!dragging) {
+        	moveEntireGraphingPanel(e.getX());
+    	} else {
+    		stopDragging();
         }
     }
-    
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //mouseMoved(e);
+    	dragging = true;
+    	int center = this.getWidth() / 2;
+    	int xMouseCoord = e.getX();
+    	if(prevDragXCoord > 0){
+    		moveEntireGraphingPanel(center + (prevDragXCoord - xMouseCoord));
+    	}
+    	prevDragXCoord = xMouseCoord;
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        //repaint(); // call repaint because otherwise we are at the whim of the speed of playback to update mouse info
+
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        //repaint();
+
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        //repaint();
+
     }
 
     @Override
@@ -250,7 +261,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
     @Override
     public void mouseReleased(MouseEvent e) {
-    	
+    	stopDragging();
     }
     
     private MultiGraphLayeredPane multiGraph;
@@ -260,6 +271,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private boolean playing;
     private Timer timer;
     private boolean dragging;
+    private int prevDragXCoord;
     private int zoom;
     private static final long serialVersionUID = 6880240079754110792L;
 
