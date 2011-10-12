@@ -28,6 +28,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -40,7 +42,7 @@ import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane;
  *
  * @author Ben Fenner
  */
-public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener {
+public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener {
 
 	public EntireGraphingPanel() {
         super();
@@ -63,6 +65,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         timer.setInitialDelay(0);
         addMouseListener(this);
         addMouseMotionListener(this);
+        addMouseWheelListener(this);
         addMouseListener(multiGraph.getInfoPanel());
         addMouseMotionListener(multiGraph.getInfoPanel());
         dragging = false;
@@ -90,7 +93,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     
 
   public void zoomIn() {
-      if (zoom < 50) {
+      if (zoom < 500) {
           zoom++;
       }
       multiGraph.initGraphs();
@@ -263,6 +266,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     public void mouseReleased(MouseEvent e) {
     	stopDragging();
     }
+    
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		
+	}
     
     private MultiGraphLayeredPane multiGraph;
     private GraphPositionPanel graphPositionPanel;

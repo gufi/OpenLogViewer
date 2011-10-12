@@ -141,10 +141,14 @@ public class GraphPositionPanel extends JPanel {
     	if(OpenLogViewerApp.getInstance() != null){
     		zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	}
-    	if(zoom > 5){
+    	if(zoom > 20){
+    		majorGraduationSpacing = 2;
+    	} else if(zoom > 5){
     		majorGraduationSpacing = 10;
-    	} else{
+    	} else if(zoom > 2){
     		majorGraduationSpacing = 50;
+    	} else {
+    		majorGraduationSpacing = 100;
     	}
         minorGraduationSpacing = majorGraduationSpacing / 2;
     }
