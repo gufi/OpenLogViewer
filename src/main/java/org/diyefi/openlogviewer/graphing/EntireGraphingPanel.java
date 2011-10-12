@@ -72,8 +72,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     public void actionPerformed(ActionEvent e) {
         if (playing && graphPosition < graphPositionMax) {
         	moveGraphPosition(1);
+        	multiGraph.initGraphs();
         } else {
-            stop();
+            pause();
         }
 
     }
@@ -136,6 +137,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	playing = false;
     	timer.stop();
     	resetGraphPosition();
+    	multiGraph.initGraphs();
     }
     
     /**

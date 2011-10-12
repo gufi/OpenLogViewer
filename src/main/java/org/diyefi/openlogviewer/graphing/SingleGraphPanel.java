@@ -137,7 +137,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     public void setData(GenericDataElement GDE) {
         this.GDE = GDE;
         sizeGraph();
-        initGraph();
     }
 
     public GenericDataElement getData() {
