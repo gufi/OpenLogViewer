@@ -269,12 +269,17 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		int center = this.getWidth() / 2;
+		int zoomInMove = center + ((e.getX() - center) / (zoom));
+		int zoomOutMove = center - ((e.getX() - center) / (zoom));
 		int notches = e.getWheelRotation();
 		if(notches < 0){
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
-		} else {
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
-		}
+			zoomIn();
+			moveEntireGraphingPanel(zoomInMove);
+		} else if (zoom > 1){
+			zoomOut();
+			moveEntireGraphingPanel(zoomOutMove);
+		}	
 	}
     
     private MultiGraphLayeredPane multiGraph;
