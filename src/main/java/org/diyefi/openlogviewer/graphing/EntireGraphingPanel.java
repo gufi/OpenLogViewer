@@ -61,16 +61,18 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         resetGraphPosition();
         setGraphPositionMax();
         playing = false;
-        timer = new Timer(10, this);
-        timer.setInitialDelay(0);
+        playTimer = new Timer(10, this);
+        playTimer.setInitialDelay(0);
+        flingTimer = new Timer(10, this);
+        flingTimer.setInitialDelay(0);
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
         addMouseListener(multiGraph.getInfoPanel());
         addMouseMotionListener(multiGraph.getInfoPanel());
-        dragging = false;
+        stopDragging();
+        stopFlinging();
         draggingAccumulator = 0.0;
-        prevDragXCoord = -1; 
         zoom = 1;
     }
     
@@ -78,6 +80,18 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         if (playing && graphPosition < graphPositionMax) {
         	moveGraphPosition(1);
         	multiGraph.initGraphs();
+        } else if (flinging && graphPosition < graphPositionMax && graphPosition > 0){
+        	if(flingInertia == 0){
+        		stopFlinging();
+        	} else{ 
+	        	moveGraphPosition(flingInertia);
+	        	multiGraph.initGraphs();
+	        	if(flingInertia > 0){
+	        		flingInertia--;
+	        	} else {
+	        		flingInertia++;
+	        	}
+        	}
         } else {
             pause();
         }
@@ -114,22 +128,22 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
             pause();
         } else {
         	playing = true;
-            timer.start();
+            playTimer.start();
         }
     }
     
     public void pause(){
     	playing = false;
-    	timer.stop();
+    	playTimer.stop();
     }
     
     /**
      * increases speed of the graph by 1 ms until 0, at which speed cannot be advanced any further and will essentially update as fast as possible
      */
     public void fastForward() {
-    	int currentDelay = timer.getDelay();
+    	int currentDelay = playTimer.getDelay();
     	if(currentDelay > 0){
-    		timer.setDelay(currentDelay - 1);
+    		playTimer.setDelay(currentDelay - 1);
     	}
     }
     
@@ -140,7 +154,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     
     public void stop(){
     	playing = false;
-    	timer.stop();
+    	playTimer.stop();
     	resetGraphPosition();
     	multiGraph.initGraphs();
     }
@@ -149,8 +163,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
      * Slows the speed of playback by 1 ms
      */
     public void slowDown() {
-    	int currentDelay = timer.getDelay();
-    	timer.setDelay(currentDelay + 1);
+    	int currentDelay = playTimer.getDelay();
+    	playTimer.setDelay(currentDelay + 1);
+    }
+    
+    public void fling(){
+		flinging = true;
+		flingTimer.start();
     }
     
     public int getGraphPosition(){
@@ -233,6 +252,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         prevDragXCoord = -1;
     }
     
+    private void stopFlinging(){
+    	flinging = false;
+    	flingInertia = 0;
+    }
+    
   //MOUSE LISTENER FUNCTIONALITY
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -240,6 +264,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         	moveEntireGraphingPanel(e.getX());
     	} else {
     		stopDragging();
+    		stopFlinging();
         }
     }
 
@@ -251,6 +276,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	if(prevDragXCoord > 0 && prevDragXCoord != xMouseCoord){
     		moveEntireGraphingPanel(center + (prevDragXCoord - xMouseCoord));
     	}
+    	flingInertia = (prevDragXCoord - xMouseCoord) * 2;
     	prevDragXCoord = xMouseCoord;
     }
 
@@ -271,12 +297,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
     @Override
     public void mousePressed(MouseEvent e) {
-    
+    	stopDragging();
+    	stopFlinging();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
     	stopDragging();
+    	if(flingInertia != 0){
+    		fling();
+    	}
     }
     
 	@Override
@@ -299,10 +329,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private int graphPosition;
     private int graphPositionMax;
     private boolean playing;
-    private Timer timer;
+    private Timer playTimer;
+    private Timer flingTimer;
     private boolean dragging;
+    private boolean flinging;
     double draggingAccumulator;
     private int prevDragXCoord;
+    private int flingInertia;
     private int zoom;
     private static final long serialVersionUID = 6880240079754110792L;
 
