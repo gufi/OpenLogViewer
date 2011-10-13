@@ -69,6 +69,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         addMouseListener(multiGraph.getInfoPanel());
         addMouseMotionListener(multiGraph.getInfoPanel());
         dragging = false;
+        draggingAccumulator = 0.0;
         prevDragXCoord = -1; 
         zoom = 1;
     }
@@ -203,7 +204,18 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private void moveEntireGraphingPanel(int newPosition){
     	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int graphPositionMax = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionMax();
-        int move = (newPosition / zoom) - ((this.getWidth() / 2) / zoom);
+    	int center = this.getWidth() / 2;
+    	int move = (newPosition - center) / zoom;
+    	draggingAccumulator += (((double)newPosition - (double)center) / (double)zoom) - (double)move;
+    	int accumulated = 0;
+    	if(draggingAccumulator >= 1.0){
+    		accumulated = (int)draggingAccumulator;
+    		draggingAccumulator -= (double)accumulated;
+    	} else if(draggingAccumulator <= -1.0){
+    		accumulated = (int)draggingAccumulator;
+    		draggingAccumulator -= (double)accumulated;
+    	}
+    	move += accumulated;
         if (move + graphPosition < graphPositionMax) {
             if (move + graphPosition < 0) {
             	OpenLogViewerApp.getInstance().getEntireGraphingPanel().resetGraphPosition();
@@ -236,7 +248,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	dragging = true;
     	int center = this.getWidth() / 2;
     	int xMouseCoord = e.getX();
-    	if(prevDragXCoord > 0){
+    	if(prevDragXCoord > 0 && prevDragXCoord != xMouseCoord){
     		moveEntireGraphingPanel(center + (prevDragXCoord - xMouseCoord));
     	}
     	prevDragXCoord = xMouseCoord;
@@ -289,6 +301,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private boolean playing;
     private Timer timer;
     private boolean dragging;
+    double draggingAccumulator;
     private int prevDragXCoord;
     private int zoom;
     private static final long serialVersionUID = 6880240079754110792L;
