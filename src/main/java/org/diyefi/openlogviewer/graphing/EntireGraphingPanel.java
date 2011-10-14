@@ -86,8 +86,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         } else if (flinging && graphPosition < graphPositionMax && graphPosition > 0){
         	if(flingInertia == 0){
         		stopFlinging();
-        	} else{ 
-	        	moveGraphPosition(flingInertia / zoom);
+        	} else{
+        		int center = this.getWidth() / 2;
+        		moveEntireGraphingPanel(center + (flingInertia / zoom));
 	        	multiGraph.initGraphs();
 	        	if(flingInertia > 0){
 	        		flingInertia--;
@@ -219,6 +220,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	setGraphPosition(0);
     }
     
+    private void goToLastGraphPosition(){
+    	setGraphPosition(graphPositionMax);
+    }
+    
     public boolean isPlaying(){
     	return playing;
     }
@@ -333,8 +338,31 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		System.out.println("Event: " + e);
 		System.out.println("Code: " + e.getKeyCode());
 		switch (e.getKeyCode()) {
-			case KeyEvent.VK_SPACE: play();						break;
-			case KeyEvent.VK_HOME:  resetGraphPosition();       break;
+			case KeyEvent.VK_SPACE: 	play(); 					break;
+			case KeyEvent.VK_HOME:  	resetGraphPosition(); 		break;
+			case KeyEvent.VK_END:   	goToLastGraphPosition(); 	break;
+			case KeyEvent.VK_PAGE_UP:   {
+				moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
+			} 														break;
+			case KeyEvent.VK_PAGE_DOWN: {
+				moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+			} 														break;
+			case KeyEvent.VK_LEFT :   	{
+				int center = this.getWidth() / 2;
+				moveEntireGraphingPanel(center - (1 * zoom)); 	
+			}														break;
+			case KeyEvent.VK_KP_LEFT:   	{
+				int center = this.getWidth() / 2;
+				moveEntireGraphingPanel(center - (1 * zoom)); 	
+			}														break;
+			case KeyEvent.VK_RIGHT :   	{
+				int center = this.getWidth() / 2;
+				moveEntireGraphingPanel(center + (1 * zoom)); 	
+			}														break;
+			case KeyEvent.VK_KP_RIGHT:   	{
+				int center = this.getWidth() / 2;
+				moveEntireGraphingPanel(center + (1 * zoom)); 	
+			}														break;
 		}
 	}
 
