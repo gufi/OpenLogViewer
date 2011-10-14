@@ -155,7 +155,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
 
 
         //////////////////////////////////////////////////////////////////
-        //////////////Addto mainMenu
+        //////////////Add to mainMenu
         /////////////////////////////////////////////////////////////////
         mainMenuBar.setName("Main Menu");
         mainMenuBar.add(fileMenu);
@@ -167,7 +167,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         mainMenuBar.add(graphMenu);
 
         setJMenuBar(mainMenuBar);
-        this.addKeyListener(copyButton);
+        this.addKeyListener(graphingPanel);
         pack();
     }
 
@@ -369,31 +369,6 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         }
         return AppWideFile;
     }
-
-    private KeyListener copyButton = new KeyListener() {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if (e.getModifiers() == 2) {
-                if (e.getKeyCode() == 67) {
-                    System.out.println("Copy");
-                        
-                } else if (e.getKeyCode() == 90) {
-                    System.out.println("Zoom");
-                }
-            }
-            System.out.println(e.getModifiers() + " " + e.getKeyCode() + " " + e.getKeyModifiersText(e.getModifiers()));
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-            System.out.println(e.getModifiers() + " " + e.getKeyCode() + " " + e.getKeyModifiersText(e.getModifiers()));
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-        }
-    };
     
     // Variables declaration -
     public static OpenLogViewerApp mainAppRef;
