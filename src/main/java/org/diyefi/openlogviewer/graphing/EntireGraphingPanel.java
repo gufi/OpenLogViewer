@@ -25,6 +25,7 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -335,47 +336,92 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	//KEY LISTENER FUNCTIONALITY
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("Pressed!");
-		System.out.println("Event: " + e);
-		System.out.println("Code: " + e.getKeyCode());
 		switch (e.getKeyCode()) {
+			//Play key bindings
 			case KeyEvent.VK_SPACE: 	play(); 					break;
+			
+			//Home key bindings
 			case KeyEvent.VK_HOME:  	resetGraphPosition(); 		break;
+			
+			//End key bindings
 			case KeyEvent.VK_END:   	goToLastGraphPosition(); 	break;
+
+			//Scroll left key bindings
 			case KeyEvent.VK_PAGE_UP:   {
+				//Big scroll
 				moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
 			} 														break;
-			case KeyEvent.VK_PAGE_DOWN: {
-				moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
-			} 														break;
-			case KeyEvent.VK_LEFT :   	{
-				int center = this.getWidth() / 2;
-				moveEntireGraphingPanel(center - (1 * zoom)); 	
+			case KeyEvent.VK_LEFT:   	{
+				if(e.getModifiers() == InputEvent.CTRL_MASK){
+					//Big scroll
+					moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
+				} else {
+					int center = this.getWidth() / 2;
+					moveEntireGraphingPanel(center - (1 * zoom));
+				}
 			}														break;
 			case KeyEvent.VK_KP_LEFT:   	{
-				int center = this.getWidth() / 2;
-				moveEntireGraphingPanel(center - (1 * zoom)); 	
+				if(e.getModifiers() == InputEvent.CTRL_MASK){
+					//Big scroll
+					moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
+				} else {
+					int center = this.getWidth() / 2;
+					moveEntireGraphingPanel(center - (1 * zoom));
+				} 	
 			}														break;
-			case KeyEvent.VK_RIGHT :   	{
-				int center = this.getWidth() / 2;
-				moveEntireGraphingPanel(center + (1 * zoom)); 	
+			
+			//Scroll right key bindings
+			case KeyEvent.VK_PAGE_DOWN: {
+				//Big scroll
+				moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+			} 														break;
+			case KeyEvent.VK_RIGHT:   	{
+				if(e.getModifiers() == InputEvent.CTRL_MASK){
+					//Big scroll
+					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+				} else {
+					int center = this.getWidth() / 2;
+					moveEntireGraphingPanel(center + (1 * zoom));
+				}
 			}														break;
 			case KeyEvent.VK_KP_RIGHT:   	{
-				int center = this.getWidth() / 2;
-				moveEntireGraphingPanel(center + (1 * zoom)); 	
+				if(e.getModifiers() == InputEvent.CTRL_MASK){
+					//Big scroll
+					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+				} else {
+					int center = this.getWidth() / 2;
+					moveEntireGraphingPanel(center + (1 * zoom));
+				}
 			}														break;
+			
+			//Zoom in key bindings
+			case KeyEvent.VK_UP: 		zoomIn();					break;
+			case KeyEvent.VK_KP_UP: 	zoomIn();					break;
+			case KeyEvent.VK_ADD:   	{
+				if(e.getModifiers() == InputEvent.CTRL_MASK){
+					zoomIn();
+				}
+			}														break;
+			
+			//Zoom out key bindings
+			case KeyEvent.VK_DOWN: 		zoomOut();					break;
+			case KeyEvent.VK_KP_DOWN: 	zoomOut();					break;
+			case KeyEvent.VK_SUBTRACT:   	{
+				if(e.getModifiers() == InputEvent.CTRL_MASK){
+					zoomOut();
+				}
+			}														break;
+			
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		System.out.println("Released!");
 
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		System.out.println("Typed!");
 		
 	}
     
