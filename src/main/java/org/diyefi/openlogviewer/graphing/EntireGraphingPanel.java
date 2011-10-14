@@ -96,10 +96,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	        		flingInertia++;
 	        	}
         	}
-        } else {
-            pause();
         }
-
     }
     
     public MultiGraphLayeredPane getMultiGraphLayeredPane(){
@@ -138,6 +135,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
             pause();
         } else {
         	playing = true;
+        	stopDragging();
+    		stopFlinging();
             playTimer.start();
         }
     }
@@ -145,6 +144,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     public void pause(){
     	playing = false;
     	playTimer.stop();
+    	stopDragging();
+		stopFlinging();
     }
     
     /**

@@ -45,7 +45,7 @@ public class PlayBarPanel extends JPanel {
         super();
         zoomInButton = new JButton();
         zoomOutButton = new JButton();
-        reverseButton = new JButton();
+        slowDownButton = new JButton();
         playButton = new JButton();
         pauseButton = new JButton();
         stopButton = new JButton();
@@ -66,7 +66,8 @@ public class PlayBarPanel extends JPanel {
         zoomInButton.setBorder(null);
         zoomInButton.setBorderPainted(false);
         zoomInButton.setContentAreaFilled(false);
-        zoomInButton.setName("reverseButton"); // NOI18N
+        zoomInButton.setName("zoomInButton"); // NOI18N
+        zoomInButton.setRequestFocusEnabled(false);
         zoomInButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -80,7 +81,8 @@ public class PlayBarPanel extends JPanel {
         zoomOutButton.setBorder(null);
         zoomOutButton.setBorderPainted(false);
         zoomOutButton.setContentAreaFilled(false);
-        zoomOutButton.setName("reverseButton"); // NOI18N
+        zoomOutButton.setName("zoomOutButton"); // NOI18N
+        zoomOutButton.setRequestFocusEnabled(false);
         zoomOutButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -89,19 +91,20 @@ public class PlayBarPanel extends JPanel {
         });
         this.add(zoomOutButton);
 
-       reverseButton.setIcon(new ImageIcon(getClass().getResource("Playbar_01.png"))); // NOI18N
-        reverseButton.setAlignmentY(0.0F);
-        reverseButton.setBorder(null);
-        reverseButton.setBorderPainted(false);
-        reverseButton.setContentAreaFilled(false);
-        reverseButton.setName("reverseButton"); // NOI18N
-        reverseButton.addMouseListener(new MouseAdapter() {
+        slowDownButton.setIcon(new ImageIcon(getClass().getResource("Playbar_01.png"))); // NOI18N
+        slowDownButton.setAlignmentY(0.0F);
+        slowDownButton.setBorder(null);
+        slowDownButton.setBorderPainted(false);
+        slowDownButton.setContentAreaFilled(false);
+        slowDownButton.setName("slowDownButton"); // NOI18N
+        slowDownButton.setRequestFocusEnabled(false);
+        slowDownButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 reverseButtonMouseReleased(e);
             }
         });
-        this.add(reverseButton);
+        this.add(slowDownButton);
 
         playButton.setIcon(new ImageIcon(getClass().getResource("Playbar_02.png"))); // NOI18N
         playButton.setAlignmentY(0.0F);
@@ -109,6 +112,7 @@ public class PlayBarPanel extends JPanel {
         playButton.setBorderPainted(false);
         playButton.setContentAreaFilled(false);
         playButton.setName("playButton"); // NOI18N
+        playButton.setRequestFocusEnabled(false);
         playButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -123,6 +127,7 @@ public class PlayBarPanel extends JPanel {
         pauseButton.setBorderPainted(false);
         pauseButton.setContentAreaFilled(false);
         pauseButton.setName("pauseButton"); // NOI18N
+        pauseButton.setRequestFocusEnabled(false);
         pauseButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -137,6 +142,7 @@ public class PlayBarPanel extends JPanel {
         stopButton.setBorderPainted(false);
         stopButton.setContentAreaFilled(false);
         stopButton.setName("stopButton"); // NOI18N
+        stopButton.setRequestFocusEnabled(false);
         stopButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -151,6 +157,7 @@ public class PlayBarPanel extends JPanel {
         fastForwardButton.setBorderPainted(false);
         fastForwardButton.setContentAreaFilled(false);
         fastForwardButton.setName("fastForwardButton"); // NOI18N
+        fastForwardButton.setRequestFocusEnabled(false);
         fastForwardButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -165,6 +172,7 @@ public class PlayBarPanel extends JPanel {
         ejectButton.setBorderPainted(false);
         ejectButton.setContentAreaFilled(false);
         ejectButton.setName("ejectButton"); // NOI18N
+        ejectButton.setRequestFocusEnabled(false);
         ejectButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -193,6 +201,7 @@ public class PlayBarPanel extends JPanel {
      */
     private void playButtonMouseReleased(MouseEvent e) {
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
+        OpenLogViewerApp.getInstance().getEntireGraphingPanel();
     }
     /**
      * Modifys the state of the PlayableLog to pause
@@ -235,7 +244,7 @@ public class PlayBarPanel extends JPanel {
     private JButton zoomInButton;
     private JButton zoomOutButton;
     private JButton playButton;
-    private JButton reverseButton;
+    private JButton slowDownButton;
     private JButton stopButton;
     private JButton ejectButton;
     private JButton fastForwardButton;
