@@ -39,7 +39,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
     private final short ESCAPED_ESCAPE_BYTE = 0x44;// for unsigned byte
     private final short ESCAPED_START_BYTE = 0x55;// for unsigned byte
     private final short ESCAPED_STOP_BYTE = 0x33;// for unsigned byte
-    private final int CHECKSUM_VAL = 256;
+
     private short[] wholePacket;// for unsigned byte
     private File logFile;
     private FileInputStream logStream;
@@ -48,19 +48,8 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
     private Thread t;
 
     String[] headers = {
-            "Line", "PTIT", "T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7"
+            "PTIT", "T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7"
         }; //This needs to be converted to resourses or gathered externally at some point
-        private double[] conversionFactor = { // no value in this shall == 0, you cannot divide by 0 ( divide by 1 if you need raw value )
-            1.0, // PTIT
-            1.0, // T0
-            1.0, // T1
-            1.0, // T2
-            1.0, // T3
-            1.0, // T4
-            1.0, // T5
-            1.0, // T6
-            1.0  // T7
-        };
 
     // NO default constructor, a file or path to a file MUST be given
     // Reason: File()'s constructors are ambiguous cannot give a null value
@@ -109,7 +98,6 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
             logStream = new FileInputStream(logFile);
             decodedLog.setLogStatus(GenericLog.LOG_LOADING);
             int packetLength = 0;
-            int packetCount = 0;
             while (logStream.read(readByte) != -1) {
                 uByte = (short) (readByte[0] & 0xff); // mask the byte in case something screwey happens
                 if (uByte == START_BYTE) {
@@ -118,12 +106,11 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
                     } else {
                         //TO-DO: find something to put here
                     }
-                } else if (startFound) { // do NOTHING untill a start is found
+                } else if (startFound) { // do NOTHING until a start is found
 
                     if (uByte == STOP_BYTE) {
                         if (checksum(wholePacket, packetLength)) {
-                        	packetCount++;
-                            decodePacket(wholePacket, packetLength, packetCount);
+                            decodePacket(wholePacket, packetLength);
                             startFound = false;
                         }
                         packetLength = 0;
@@ -163,18 +150,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
      * @param packet is a <code>short</code> array containing 1 full packet
      *
      */
-    private void decodePacket(short[] packet, int length, int count) {
-    	int flags = (int)packet[0];
-        int payLoadId = (int) (((packet[1] & 0xff) * 256) + (packet[2] & 0xff));
-
-        int leadingBytes = 0;
-        // set size according to payload
-        if (payLoadId == 407) {
-            leadingBytes = 3;
-        }
-        
-        //d = ((short) (packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// special case signed short
-        //d = (int) ((packet[x + leadingBytes] * 256) + packet[x + leadingBytes + 1]) / conversionFactor[x / 2];// unsigned shorts
+    private void decodePacket(short[] packet, int length) {
         int PTIT = (int)packet[3];
         int T0 = 0;
         int T1 = 0;
@@ -218,7 +194,6 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
         	T7 = 1;
         }
 
-        decodedLog.addValue("Line", count);
         decodedLog.addValue("T0", T0);
         decodedLog.addValue("T1", T1);
         decodedLog.addValue("T2", T2);

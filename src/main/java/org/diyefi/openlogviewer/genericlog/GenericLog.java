@@ -34,17 +34,25 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
  *
  * @author Bryan
  */
+@SuppressWarnings("serial")
 public class GenericLog extends HashMap<String, GenericDataElement> {
 
-    final public static int LOG_NOT_LOADED = -1;
-    final public static int LOG_LOADING = 0;
-    final public static int LOG_LOADED = 1;
-    private String metaData;
-    protected final PropertyChangeSupport PCS;
-    private int logStatus;
-    private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
+	// Stuff for showing a line count in all files loaded, if we ever do exports, either don't include this, and/or check for it before doing this
+	private final String lineKey = "OLV Line Count";
+	private String firstKey;
+	private int lineCount = 0;
+	private GenericDataElement lineCountElement;
 
-        public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
+	final public static int LOG_NOT_LOADED = -1;
+	final public static int LOG_LOADING = 0;
+	final public static int LOG_LOADED = 1;
+
+	private String metaData;
+	protected final PropertyChangeSupport PCS;
+	private int logStatus;
+
+	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
+		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
             if ((Integer) propertyChangeEvent.getNewValue() == 0) {
             	GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
             	genLog.setLogStatus(GenericLog.LOG_LOADING);
@@ -81,8 +89,15 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 
         metaData = "";
 
-        this.setHeaders(headers);
-
+        // A bit dirty, but not too bad.
+        String[] internalHeaders = new String[headers.length + 1];
+        for(int i=0;i<headers.length;i++){
+        	internalHeaders[i] = headers[i];
+        }
+        internalHeaders[headers.length] = lineKey;
+        this.setHeaders(internalHeaders);
+        lineCountElement = this.get(lineKey);
+        firstKey = headers[0];
     }
 
     /**
@@ -92,7 +107,11 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
      * @return true or false if it was successfully added
      */
     public boolean addValue(String key, double value) {
-        GenericDataElement logElement = (GenericDataElement) this.get(key);
+        GenericDataElement logElement = this.get(key);
+        if(key.equals(firstKey)){
+        	lineCount++;
+        	lineCountElement.add((double)lineCount);
+        }
         return logElement.add(value);
     }
 

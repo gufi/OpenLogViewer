@@ -86,7 +86,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable,
      */
 
     public GenericDataElement() {
-        super(50000);
+        super(50000); // TODO remove MAGIC
         PCS = new PropertyChangeSupport(this);
         maxValue = Double.MIN_VALUE;
         newMaxValue = maxValue;
