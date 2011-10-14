@@ -23,6 +23,13 @@
 
 package org.diyefi.openlogviewer;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
@@ -36,14 +43,14 @@ public class PlayBarPanel extends JPanel {
      */
     public PlayBarPanel() {
         super();
-        zoomInButton = new javax.swing.JButton();
-        zoomOutButton = new javax.swing.JButton();
-        reverseButton = new javax.swing.JButton();
-        playButton = new javax.swing.JButton();
-        pauseButton = new javax.swing.JButton();
-        stopButton = new javax.swing.JButton();
-        fastForwardButton = new javax.swing.JButton();
-        ejectButton = new javax.swing.JButton();
+        zoomInButton = new JButton();
+        zoomOutButton = new JButton();
+        reverseButton = new JButton();
+        playButton = new JButton();
+        pauseButton = new JButton();
+        stopButton = new JButton();
+        fastForwardButton = new JButton();
+        ejectButton = new JButton();
         initComponents();
     }
     /**
@@ -51,117 +58,117 @@ public class PlayBarPanel extends JPanel {
      */
     private void initComponents() {
         this.setName("this"); // NOI18N
-        this.setPreferredSize(new java.awt.Dimension(857, 40));
-        this.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 0, 0));
+        this.setPreferredSize(new Dimension(857, 40));
+        this.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         
-        zoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_+.png"))); // NOI18N
+        zoomInButton.setIcon(new ImageIcon(getClass().getResource("Playbar_+.png"))); // NOI18N
         zoomInButton.setAlignmentY(0.0F);
         zoomInButton.setBorder(null);
         zoomInButton.setBorderPainted(false);
         zoomInButton.setContentAreaFilled(false);
         zoomInButton.setName("reverseButton"); // NOI18N
-        zoomInButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        zoomInButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                zoomInButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                zoomInButtonMouseReleased(e);
             }
         });
         this.add(zoomInButton);
 
-        zoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_-.png"))); // NOI18N
+        zoomOutButton.setIcon(new ImageIcon(getClass().getResource("Playbar_-.png"))); // NOI18N
         zoomOutButton.setAlignmentY(0.0F);
         zoomOutButton.setBorder(null);
         zoomOutButton.setBorderPainted(false);
         zoomOutButton.setContentAreaFilled(false);
         zoomOutButton.setName("reverseButton"); // NOI18N
-        zoomOutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        zoomOutButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                zoomOutButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                zoomOutButtonMouseReleased(e);
             }
         });
         this.add(zoomOutButton);
 
-       reverseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_01.png"))); // NOI18N
+       reverseButton.setIcon(new ImageIcon(getClass().getResource("Playbar_01.png"))); // NOI18N
         reverseButton.setAlignmentY(0.0F);
         reverseButton.setBorder(null);
         reverseButton.setBorderPainted(false);
         reverseButton.setContentAreaFilled(false);
         reverseButton.setName("reverseButton"); // NOI18N
-        reverseButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        reverseButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                reverseButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                reverseButtonMouseReleased(e);
             }
         });
         this.add(reverseButton);
 
-        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_02.png"))); // NOI18N
+        playButton.setIcon(new ImageIcon(getClass().getResource("Playbar_02.png"))); // NOI18N
         playButton.setAlignmentY(0.0F);
         playButton.setBorder(null);
         playButton.setBorderPainted(false);
         playButton.setContentAreaFilled(false);
         playButton.setName("playButton"); // NOI18N
-        playButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        playButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                playButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                playButtonMouseReleased(e);
             }
         });
         this.add(playButton);
 
-        pauseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_03.png"))); // NOI18N
+        pauseButton.setIcon(new ImageIcon(getClass().getResource("Playbar_03.png"))); // NOI18N
         pauseButton.setAlignmentY(0.0F);
         pauseButton.setBorder(null);
         pauseButton.setBorderPainted(false);
         pauseButton.setContentAreaFilled(false);
         pauseButton.setName("pauseButton"); // NOI18N
-        pauseButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        pauseButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                pauseButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                pauseButtonMouseReleased(e);
             }
         });
         this.add(pauseButton);
 
-        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_04.png"))); // NOI18N
+        stopButton.setIcon(new ImageIcon(getClass().getResource("Playbar_04.png"))); // NOI18N
         stopButton.setAlignmentY(0.0F);
         stopButton.setBorder(null);
         stopButton.setBorderPainted(false);
         stopButton.setContentAreaFilled(false);
         stopButton.setName("stopButton"); // NOI18N
-        stopButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        stopButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                stopButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                stopButtonMouseReleased(e);
             }
         });
         this.add(stopButton);
 
-        fastForwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_05.png"))); // NOI18N
+        fastForwardButton.setIcon(new ImageIcon(getClass().getResource("Playbar_05.png"))); // NOI18N
         fastForwardButton.setAlignmentY(0.0F);
         fastForwardButton.setBorder(null);
         fastForwardButton.setBorderPainted(false);
         fastForwardButton.setContentAreaFilled(false);
         fastForwardButton.setName("fastForwardButton"); // NOI18N
-        fastForwardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        fastForwardButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fastForwardButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                fastForwardButtonMouseReleased(e);
             }
         });
         this.add(fastForwardButton);
 
-        ejectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("Playbar_06.png"))); // NOI18N
+        ejectButton.setIcon(new ImageIcon(getClass().getResource("Playbar_06.png"))); // NOI18N
         ejectButton.setAlignmentY(0.0F);
         ejectButton.setBorder(null);
         ejectButton.setBorderPainted(false);
         ejectButton.setContentAreaFilled(false);
         ejectButton.setName("ejectButton"); // NOI18N
-        ejectButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        ejectButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                ejectButtonMouseReleased(evt);
+            public void mouseReleased(MouseEvent e) {
+                ejectButtonMouseReleased(e);
             }
         });
         this.add(ejectButton);
@@ -170,68 +177,68 @@ public class PlayBarPanel extends JPanel {
      * modifys the state of the PlayableLog zoom in 1 pixel up to 10 pixels
      * @param evt
      */
-    private void zoomInButtonMouseReleased( java.awt.event.MouseEvent evt ){
+    private void zoomInButtonMouseReleased(MouseEvent e){
     	OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
     }
     /**
      * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
      * @param evt
      */
-    private void zoomOutButtonMouseReleased( java.awt.event.MouseEvent evt ){
+    private void zoomOutButtonMouseReleased(MouseEvent e){
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
     }
     /**
      * modifys the state of the PlayableLog to begin playing
      * @param evt
      */
-    private void playButtonMouseReleased( java.awt.event.MouseEvent evt) {
+    private void playButtonMouseReleased(MouseEvent e) {
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
     }
     /**
      * Modifys the state of the PlayableLog to pause
      * @param evt
      */
-    private void pauseButtonMouseReleased( java.awt.event.MouseEvent evt) {
+    private void pauseButtonMouseReleased(MouseEvent e) {
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
     }
     /**
      * Modifys the state of the PlayableLog to stop and reset to the beginning
      * @param evt
      */
-    private void stopButtonMouseReleased( java.awt.event.MouseEvent evt) {
+    private void stopButtonMouseReleased(MouseEvent e) {
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().stop();
     }
     /**
      * Speeds up the play back speed of the PlayableLog
      * @param evt
      */
-    private void fastForwardButtonMouseReleased( java.awt.event.MouseEvent evt) {
+    private void fastForwardButtonMouseReleased(MouseEvent e) {
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().fastForward();
     }
     /**
      * Slows down the play back speed of the Playable Log
      * @param evt
      */
-    private void reverseButtonMouseReleased( java.awt.event.MouseEvent evt) {
+    private void reverseButtonMouseReleased(MouseEvent e) {
         OpenLogViewerApp.getInstance().getEntireGraphingPanel().slowDown();
     }
     /**
      * Un-Implimented currently, future plans are to have this as an alternate to open a new log
      * @param evt
      */
-    private void ejectButtonMouseReleased(java.awt.event.MouseEvent evt) {
+    private void ejectButtonMouseReleased(MouseEvent e) {
         
          //OpenLogViewerApp.openFile();
          OpenLogViewerApp.getInstance().getEntireGraphingPanel().eject();
     }
    // private FreeEMSBin fems;
-    private javax.swing.JButton zoomInButton;
-    private javax.swing.JButton zoomOutButton;
-    private javax.swing.JButton playButton;
-    private javax.swing.JButton reverseButton;
-    private javax.swing.JButton stopButton;
-    private javax.swing.JButton ejectButton;
-    private javax.swing.JButton fastForwardButton;
-    private javax.swing.JButton pauseButton;
+    private JButton zoomInButton;
+    private JButton zoomOutButton;
+    private JButton playButton;
+    private JButton reverseButton;
+    private JButton stopButton;
+    private JButton ejectButton;
+    private JButton fastForwardButton;
+    private JButton pauseButton;
 	private static final long serialVersionUID = 1294732662423188903L;
 }
