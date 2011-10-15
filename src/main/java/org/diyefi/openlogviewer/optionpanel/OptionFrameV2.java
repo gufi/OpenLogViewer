@@ -58,6 +58,8 @@ public class OptionFrameV2 extends JFrame {
     
     private JLayeredPane layeredPane;
     private ArrayList<JPanel> activePanelList;
+
+    private static final int WIDTH_OF_BOXES = 6;
     private static final int HEIGHT_IN_FIELDS = 12;
     private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
     private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
@@ -150,8 +152,8 @@ public class OptionFrameV2 extends JFrame {
 
         if (activePanelList.size() < 12) {
 
-            int row = activePanelList.size() / 4;
-            int col = activePanelList.size() % 4;
+            int row = activePanelList.size() / WIDTH_OF_BOXES;
+            int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviorus at once...
             JPanel activePanel = new JPanel();
             activePanelList.add(activePanel);
             if (OpenLogViewerApp.getInstance() != null) {
@@ -194,8 +196,8 @@ public class OptionFrameV2 extends JFrame {
 
         panel.getParent().remove(panel);
         for (int i = 0; i < activePanelList.size(); i++) {
-            int row = i / 4;
-            int col = i % 4;
+            int row = i / WIDTH_OF_BOXES;
+            int col = i % WIDTH_OF_BOXES;
             activePanelList.get(i).setLocation((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row);
         }
         if (!addDivisionButton.isEnabled()) {
