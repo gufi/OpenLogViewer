@@ -146,7 +146,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		new LogField("syncCaughtOnThisEvent",    types.UINT8), // Where in the input pattern that things started making sense
 		new LogField("syncResetCalls",           types.UINT8), // Sum of losses, corrections and state clears
 		new LogField("primaryTeethSeen",         types.UINT8), // Free running counters for number of input events, useful at lower RPM
-		new LogField("secondaryTeethSeen",       types.UINT8), // @copydoc primaryTeethSeen
+		new LogField("secondaryTeethSeen",       types.UINT8), // Free running counters for number of input events, useful at lower RPM
 		new LogField("serialOverrunErrors",      types.UINT8), // Incremented when an overrun occurs due to high interrupt load, not a fault, just a fact of life at high RPM
 		new LogField("serialHardwareErrors",     types.UINT8), // Sum of noise, parity, and framing errors
 		new LogField("serialAndCommsCodeErrors", types.UINT8), // Sum of checksum, escape mismatches, starts inside, and over/under length
