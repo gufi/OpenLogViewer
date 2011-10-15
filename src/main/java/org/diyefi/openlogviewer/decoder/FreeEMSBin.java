@@ -396,7 +396,6 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			throw new IllegalArgumentException("Basic units of computer sciene apply, embedded flags are never " + numberOfFlags + " wide!"); // Unless they are 64, but shhhh...
 		}
 
-		System.out.println(System.getProperty("line.separator") + "Processing flag values for value: " + valueOfFlags + System.getProperty("line.separator"));
 		int[] flagValues = new int[numberOfFlags];
 		int comparison = 1;
 		for(int i=0;i<numberOfFlags;i++){

@@ -48,6 +48,7 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
  *
  * @author Bryan Harris
  */
+@SuppressWarnings("serial")
 public class OptionFrameV2 extends JFrame {
 
     private JFrame thisRef;
@@ -57,12 +58,12 @@ public class OptionFrameV2 extends JFrame {
     
     private JLayeredPane layeredPane;
     private ArrayList<JPanel> activePanelList;
+    private static final int HEIGHT_IN_FIELDS = 12;
     private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
     private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
     private static final int PANEL_WIDTH = 140;// panels are 120 px wide buttons and labels are also; default 120
     private static final int PANEL_HEIGHT = 120;// panels are 120 px high;default 120
 
-    @SuppressWarnings("LeakingThisInConstructor")
     public OptionFrameV2() {
 
         super("Graphing Option Pane");
@@ -88,13 +89,6 @@ public class OptionFrameV2 extends JFrame {
 
     }
 
-    private JInternalFrame initInfoPanel() {
-        JInternalFrame ip = new JInternalFrame();
-
-
-        return ip;
-    }
-
     private JPanel initHeaderPanel() {
         JPanel ih = new JPanel();
         ih.setLayout(null);
@@ -103,7 +97,7 @@ public class OptionFrameV2 extends JFrame {
         addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
         addDivisionButton.addActionListener(addDivisionListener);
         ih.add(addDivisionButton);
-        ih.setBounds(0, 0, 1280, 180);
+        ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + 1))); // Plus one is for the button...
         return ih;
     }
     private ActionListener addDivisionListener = new ActionListener() {
@@ -154,7 +148,7 @@ public class OptionFrameV2 extends JFrame {
 
     private void addActiveHeaderPanel() {
 
-        if (activePanelList.size() < 8) {
+        if (activePanelList.size() < 12) {
 
             int row = activePanelList.size() / 4;
             int col = activePanelList.size() % 4;
@@ -175,7 +169,7 @@ public class OptionFrameV2 extends JFrame {
             removeButton.addActionListener(remDivisionListener);
             activePanel.add(removeButton);
             layeredPane.add(activePanel);
-            if (activePanelList.size() == 8) {
+            if (activePanelList.size() == 12) {
                 addDivisionButton.setEnabled(false);
             } 
         }
@@ -310,9 +304,7 @@ public class OptionFrameV2 extends JFrame {
                 j = 0;
                 leftSide += PANEL_WIDTH;
             }
-            tmpList.get(it).setBounds(leftSide, (COMP_HEIGHT + (COMP_HEIGHT * j)),
-                    PANEL_WIDTH//(((COMP_HEIGHT + (head.length() * 8)) < 120) ? (32 + (head.length() * 7)) : 120)// this keeps the select boxes at a max of 120
-                    , COMP_HEIGHT);
+            tmpList.get(it).setBounds(leftSide, (COMP_HEIGHT + (COMP_HEIGHT * j)), PANEL_WIDTH, COMP_HEIGHT);
             inactiveHeaders.add(tmpList.get(it));
 
             j++;
