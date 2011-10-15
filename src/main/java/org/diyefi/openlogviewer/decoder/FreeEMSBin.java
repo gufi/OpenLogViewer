@@ -144,7 +144,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		new LogField("syncLostWithThisID",       types.UINT8), // A unique identifier for the reason behind a loss of sync
 		new LogField("syncLostOnThisEvent",      types.UINT8), // Where in the input pattern it all went very badly wrong
 		new LogField("syncCaughtOnThisEvent",    types.UINT8), // Where in the input pattern that things started making sense
-		new LogField("decoderSyncResetCalls",    types.UINT8), // Sum of losses, corrections and state clears
+		new LogField("syncResetCalls",           types.UINT8), // Sum of losses, corrections and state clears
 		new LogField("primaryTeethSeen",         types.UINT8), // Free running counters for number of input events, useful at lower RPM
 		new LogField("secondaryTeethSeen",       types.UINT8), // @copydoc primaryTeethSeen
 		new LogField("serialOverrunErrors",      types.UINT8), // Incremented when an overrun occurs due to high interrupt load, not a fault, just a fact of life at high RPM
