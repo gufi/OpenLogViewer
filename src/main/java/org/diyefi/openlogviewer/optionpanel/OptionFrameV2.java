@@ -59,24 +59,37 @@ public class OptionFrameV2 extends JFrame {
     private JLayeredPane layeredPane;
     private ArrayList<JPanel> activePanelList;
 
-    private static final int WIDTH_OF_BOXES = 6;
+    private static final int WIDTH_OF_BOXES = 6; 
+    private static final int HEIGHT_OF_BOXES = 2;
+    private static final int MAX_NUMBER_OF_BOXES = WIDTH_OF_BOXES * HEIGHT_OF_BOXES;
+
+    private static final int NUMBER_OF_COLS_OF_FREEEMS_FIELDS = 7; // Clearly a hack, but just to clarify and parameterise the existing math...
     private static final int HEIGHT_IN_FIELDS = 12;
+    private static final int NUMBER_OF_ADD_BUTTONS = 1;
+    
+    private static final int WTF = 4; // Don't ask me...
+    private static final int WTF2 = 3; // No fucking idea AT ALL...
     private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
     private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
     private static final int PANEL_WIDTH = 140;// panels are 120 px wide buttons and labels are also; default 120
     private static final int PANEL_HEIGHT = 120;// panels are 120 px high;default 120
+    private static final int SCROLL_BAR_SIZE = 16; // Measured
+
+    // Both are wrong for scroll bars... probably need an event to handle that?
+    private static final int WIDTH_OF_WINDOW = (NUMBER_OF_COLS_OF_FREEEMS_FIELDS * PANEL_WIDTH);
+    private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
 
     public OptionFrameV2() {
 
         super("Graphing Option Pane");
-        this.setSize(1160, 460);
+        this.setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
         this.setPreferredSize(this.getSize());
 
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         thisRef = this;
         activePanelList = new ArrayList<JPanel>();
         layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(990, 400));
+        layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
 
 
         JScrollPane scroll = new JScrollPane(layeredPane);
@@ -99,7 +112,7 @@ public class OptionFrameV2 extends JFrame {
         addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
         addDivisionButton.addActionListener(addDivisionListener);
         ih.add(addDivisionButton);
-        ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + 1))); // Plus one is for the button...
+        ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
         return ih;
     }
     private ActionListener addDivisionListener = new ActionListener() {
@@ -150,7 +163,7 @@ public class OptionFrameV2 extends JFrame {
 
     private void addActiveHeaderPanel() {
 
-        if (activePanelList.size() < 12) {
+        if (activePanelList.size() < MAX_NUMBER_OF_BOXES) {
 
             int row = activePanelList.size() / WIDTH_OF_BOXES;
             int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviorus at once...
@@ -171,7 +184,7 @@ public class OptionFrameV2 extends JFrame {
             removeButton.addActionListener(remDivisionListener);
             activePanel.add(removeButton);
             layeredPane.add(activePanel);
-            if (activePanelList.size() == 12) {
+            if (activePanelList.size() == MAX_NUMBER_OF_BOXES) {
                 addDivisionButton.setEnabled(false);
             } 
         }
