@@ -316,7 +316,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	stopDragging();
     	long now = System.currentTimeMillis();
     	if(now - thePast > 50){
-    		flingInertia = 0;  //if over 50 milliseconds since dragging then don't fling
+    		stopFlinging();  //if over 50 milliseconds since dragging then don't fling
     	}
     	if(flingInertia != 0){
     		fling();
