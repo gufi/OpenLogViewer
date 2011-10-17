@@ -71,11 +71,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
-        //addKeyListener(this);
         addMouseListener(multiGraph.getInfoPanel());
         addMouseMotionListener(multiGraph.getInfoPanel());
         stopDragging();
         stopFlinging();
+        thePast = System.currentTimeMillis();
         draggingAccumulator = 0.0;
         zoom = 1;
     }
@@ -284,8 +284,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	int xMouseCoord = e.getX();
     	if(prevDragXCoord > 0 && prevDragXCoord != xMouseCoord){
     		moveEntireGraphingPanel(center + (prevDragXCoord - xMouseCoord));
+    		flingInertia = ((prevDragXCoord - xMouseCoord) * 2);
+        	thePast = System.currentTimeMillis();
     	}
-    	flingInertia = ((prevDragXCoord - xMouseCoord) * 2);
     	prevDragXCoord = xMouseCoord;
     }
 
@@ -313,6 +314,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     @Override
     public void mouseReleased(MouseEvent e) {
     	stopDragging();
+    	long now = System.currentTimeMillis();
+    	if(now - thePast > 50){
+    		flingInertia = 0;  //if over 50 milliseconds since dragging then don't fling
+    	}
     	if(flingInertia != 0){
     		fling();
     	}
@@ -434,6 +439,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private Timer flingTimer;
     private boolean dragging;
     private boolean flinging;
+    private long thePast;
     double draggingAccumulator;
     private int prevDragXCoord;
     private int flingInertia;
