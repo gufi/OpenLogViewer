@@ -77,9 +77,9 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			"DF-CamSync",
 			"DF-LAST_TIMESTAMP_VALID",
 			"DF-LAST_PERIOD_VALID",
-			"DF-unused5",
-			"DF-unused6",
-			"DF-unused7"
+			"DF-LAST_MATCH_VALID",
+			"DF-Spare-6",
+			"DF-Spare-7"
 		};
 	
 	String[] flaggableFlagsNames = {
