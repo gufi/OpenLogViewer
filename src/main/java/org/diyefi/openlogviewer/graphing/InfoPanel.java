@@ -80,7 +80,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
             if (mouseOver) {
             	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
             	int halfZoom = zoom / 2;
-                int lineDraw = (((xMouseCoord - halfZoom) / zoom) * zoom) + zoom;  //divide by zoom them multiply by zoom effectively drops the remainder from the mouse coords
+                int lineDraw = (((xMouseCoord - halfZoom) / zoom) * zoom) + zoom;  //divide by zoom then multiply by zoom effectively drops the remainder from the mouse coords
                 g2d.setColor(vertBar);
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line 
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height);  //mouse cursor line
