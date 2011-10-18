@@ -30,15 +30,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import javax.swing.*;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JLayeredPane;
+import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import javax.swing.JInternalFrame;
+import javax.swing.JTextField;
+import javax.swing.JColorChooser;
+import javax.swing.BorderFactory;
+
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
@@ -166,7 +176,7 @@ public class OptionFrameV2 extends JFrame {
         if (activePanelList.size() < MAX_NUMBER_OF_BOXES) {
 
             int row = activePanelList.size() / WIDTH_OF_BOXES;
-            int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviorus at once...
+            int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviors at once...
             JPanel activePanel = new JPanel();
             activePanelList.add(activePanel);
             if (OpenLogViewerApp.getInstance() != null) {
@@ -273,7 +283,7 @@ public class OptionFrameV2 extends JFrame {
         return false;
     }
 
-    public void updateFromLog(GenericLog gl) {
+	public void updateFromLog(GenericLog gl) {
 
         while (activePanelList.size() > 0) {
             activePanelList.get(0).removeAll();
@@ -291,7 +301,7 @@ public class OptionFrameV2 extends JFrame {
 
 
         ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
-        Iterator i = gl.keySet().iterator();
+        Iterator<String> i = gl.keySet().iterator();
         String head = "";
         ActiveHeaderLabel toBeAdded = null;
 
@@ -476,10 +486,9 @@ public class OptionFrameV2 extends JFrame {
         }
     }
 
-    private class ActiveHeaderLabel extends JLabel implements Comparable {
+    private class ActiveHeaderLabel extends JLabel implements Comparable<Object> {
 
         private GenericDataElement GDE;
-        private Point previousLocation;
         private Point inactiveLocation;
         private JPanel previousPanel;
         private JPanel inactivePanel;
@@ -512,7 +521,6 @@ public class OptionFrameV2 extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
-                GCB.setPreviousLocation(GCB.getLocation());
                 GCB.setPreviousPanel((JPanel) GCB.getParent());
             }
 
@@ -543,13 +551,6 @@ public class OptionFrameV2 extends JFrame {
                     }
                     GCB.setDragging(false);
                 }
-            }
-        };
-        private ItemListener enabledListener = new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 
@@ -598,14 +599,6 @@ public class OptionFrameV2 extends JFrame {
             return GDE;
         }
 
-        public Point getPreviousLocation() {
-            return previousLocation;
-        }
-
-        public void setPreviousLocation(Point previousLocation) {
-            this.previousLocation = previousLocation;
-        }
-
         public JPanel getPreviousPanel() {
             return previousPanel;
         }
@@ -628,10 +621,6 @@ public class OptionFrameV2 extends JFrame {
 
         public void setDragging(boolean dragging) {
             this.dragging = dragging;
-        }
-
-        public boolean isSelected() {
-            return selected;
         }
 
         public void setSelected(boolean selected) {
