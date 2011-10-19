@@ -30,7 +30,6 @@ import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import javax.swing.JPanel;
@@ -49,8 +48,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 
 	private GenericDataElement GDE;
-    private LinkedList<Double> dataPointsToDisplay;
-    private int nullData;
+    private LinkedList<Double> leftDataPointsToDisplay;
+    private LinkedList<Double> rightDataPointsToDisplay;
     private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
     private static final long serialVersionUID = -7808406950399781712L;
 
@@ -58,8 +57,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         this.setOpaque(false);
         this.setLayout(null);
         this.GDE = null;
-        dataPointsToDisplay = new LinkedList<Double>();
-        this.nullData = 0;
+        leftDataPointsToDisplay = new LinkedList<Double>();
+        rightDataPointsToDisplay = new LinkedList<Double>();
     }
 
     @Override
@@ -85,48 +84,72 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     @Override
     public void paint(Graphics g) { // overridden paint because there will be no other painting other than this
     	initGraph();
-        int height = this.getHeight();
-        Graphics2D g2d = (Graphics2D) g;
-        if (dataPointsToDisplay != null && dataPointsToDisplay.size() > 0) {
+        if (hasDataPointToDisplay()) {
+        	// Paint left data points.
+        	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+        	int height = this.getHeight();
+        	int screenPositionXCoord = this.getWidth() / 2;
+        	Iterator<Double> it = leftDataPointsToDisplay.iterator();
+        	Double traceData = (Double) it.next();
+        	Double prevTraceData = traceData;
+        	int screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
+        	int prevScreenPositionYCoord = getScreenPositionYCoord(prevTraceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
+            Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(GDE.getColor());
-            Iterator<Double> dat = dataPointsToDisplay.iterator();
-            int i = 0;
-            Double chartNum = 0.0;
-            try {
-                chartNum = (Double) dat.next();
-                int a = chartNumber(chartNum, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
-                Double prevNum = chartNum;
-                int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-                while (dat.hasNext()) {
-                    chartNum = (Double) dat.next();
-                    int b = chartNumber(chartNum, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
-                    if (i >= nullData * zoom) {
-                        if (zoom > 5) {
-                            if(!prevNum.equals(chartNum)){ // works. but double draws the double dots when consecutive
-                                                            // data does not match EX: ((1)) (2) (3) 3 vs (1) (2) 2 2
-                                g2d.fillOval(i - 2, a - 2, 4, 4);
-                                g2d.fillOval(i + zoom - 2, b - 2, 4, 4);
-                            }
-                        }
-                        g2d.drawLine(i, a, i + zoom, b);
+            boolean firstDataPoint = true;
+            while(it.hasNext()) {
+            	screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
+                if (zoom > 5) {
+                    if(!prevTraceData.equals(traceData)){
+                        g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
                     }
-                    a = b;
-                    prevNum = chartNum;
-                    i += zoom;
                 }
-            } catch (ConcurrentModificationException CME) {
-                System.out.println(this.getClass().toString() + " " + CME.getMessage());
+                if(!firstDataPoint){
+                	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+                }
+                prevTraceData = traceData;
+                prevScreenPositionYCoord = screenPositionYCoord;
+                screenPositionXCoord -= zoom;
+                traceData = it.next();
+                firstDataPoint = false;
+            }
+         	// Paint right data points.
+            screenPositionXCoord = this.getWidth() / 2;
+            it = rightDataPointsToDisplay.iterator();
+            firstDataPoint = true;
+            while(it.hasNext()) {
+            	traceData = (Double) it.next();
+            	screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
+                if (zoom > 5) {
+                    if(!prevTraceData.equals(traceData)){
+                        g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+                    }
+                }
+                if(!firstDataPoint){
+                	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
+                }
+                prevTraceData = traceData;
+                prevScreenPositionYCoord = screenPositionYCoord;
+                screenPositionXCoord += zoom;
+                firstDataPoint = false;
             }
         }
     }
 
-    private int chartNumber(Double elemData, int height, double minValue, double maxValue) {
-
+    private int getScreenPositionYCoord(Double traceData, int height, double minValue, double maxValue) {
         int point = 0;
         if (maxValue != minValue) {
-            point = (int) (height - (height * ((elemData - minValue) / (maxValue - minValue))));
+            point = (int) (height - (height * ((traceData - minValue) / (maxValue - minValue))));
         }
         return point;
+    }
+
+    private boolean hasDataPointToDisplay(){
+    	boolean result = false;
+    	if(leftDataPointsToDisplay != null && leftDataPointsToDisplay.size() > 0){
+    		result = true;
+    	}
+    	return result;
     }
 
     /**
@@ -177,21 +200,23 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
      */
     public void initGraph() {
         if (GDE != null) {
-        	nullData = 0;
-        	dataPointsToDisplay = new LinkedList<Double>();
+        	leftDataPointsToDisplay = new LinkedList<Double>();
+        	rightDataPointsToDisplay = new LinkedList<Double>();
         	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
         	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
         	int numPointsThatFitInDisplay = this.getWidth() / zoom;
-        	numPointsThatFitInDisplay += 2;  //Add two points for off-screen data points
+        	numPointsThatFitInDisplay += 6; //Add six data points for off-screen (not just two, because of zoom stupidity)
         	int halfNumPoints = numPointsThatFitInDisplay / 2;
         	int leftGraphPosition = graphPosition - halfNumPoints;
         	int rightGraphPosition = graphPosition + halfNumPoints;
-        	for(int i = leftGraphPosition; i < rightGraphPosition; i++){
-        		if(i < 0){
-        			dataPointsToDisplay.add(0.0);
-        			nullData++;
-        		} else if (i < GDE.size()){
-        			dataPointsToDisplay.add(GDE.get(i));
+        	for(int i = graphPosition; i > leftGraphPosition; i--){
+        		if(i >= 0 && i < GDE.size()){
+        			leftDataPointsToDisplay.add(GDE.get(i));
+        		}
+        	}
+        	for(int i = graphPosition; i < rightGraphPosition; i++){
+        		if (i >= 0 && i < GDE.size()){
+        			rightDataPointsToDisplay.add(GDE.get(i));
         		}
         	}
         }
@@ -213,29 +238,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
         initGraph();
     }
-    /**
-     * adds to the mini container for graphing data, drawnData.size == this panels width / zoom
-     */
-//    public void advanceGraph() {
-//
-//        if (GDE != null) {
-//        	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-//            Dimension d = this.getSize();
-//            int zoomFactor = (d.width / 2) / zoom.getZoom();
-//
-//            if ((graphPosition + zoomFactor) < GDE.size()) {
-//                drawnData.add(GDE.get(graphPosition + zoomFactor));
-//                if (nullData > 0) {
-//                    nullData--;
-//                }
-//            }
-//            if (drawnData.size() > zoomFactor + 1) {
-//                drawnData.remove(0);
-//            } else {
-//            	OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
-//            }
-//        }
-//    }
 
     /**
      * Graph total size

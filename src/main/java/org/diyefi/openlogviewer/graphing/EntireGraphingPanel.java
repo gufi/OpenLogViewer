@@ -205,7 +205,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         for (int i = 0; i < multiGraph.getComponentCount() && !found; i++) {
             if (multiGraph.getComponent(i) instanceof SingleGraphPanel) {
                 SingleGraphPanel gl = (SingleGraphPanel) multiGraph.getComponent(i);
-                graphPositionMax = gl.graphSize();
+                graphPositionMax = gl.graphSize() - 1;
                 found = true;
             }
         }
