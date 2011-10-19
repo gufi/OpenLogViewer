@@ -82,7 +82,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
             	int halfZoom = zoom / 2;
                 int lineDraw = (((xMouseCoord - halfZoom) / zoom) * zoom) + zoom;  //divide by zoom then multiply by zoom effectively drops the remainder from the mouse coords
                 g2d.setColor(vertBar);
-                g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line 
+                g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height);  //mouse cursor line
 
                 for (int i = 0; i < lg.getComponentCount(); i++) {
@@ -102,7 +102,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
         genLog = log;
         repaint();
     }
-    
+
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -125,7 +125,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 	}
-	
+
 	@Override
 	public void mousePressed(MouseEvent e) {
 	}
@@ -150,5 +150,5 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
     private int yMouseCoord;
     boolean mouseOver;
     private static final long serialVersionUID = -6657156551430700622L;
-    
+
 }

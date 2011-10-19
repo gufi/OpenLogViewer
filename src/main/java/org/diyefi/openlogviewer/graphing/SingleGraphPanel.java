@@ -24,7 +24,6 @@ package org.diyefi.openlogviewer.graphing;
 
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.HierarchyBoundsListener;
@@ -48,7 +47,7 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
  */
 public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,PropertyChangeListener {
 
-	
+
 	private GenericDataElement GDE;
     private LinkedList<Double> dataPointsToDisplay;
     private int nullData;
@@ -85,7 +84,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
     @Override
     public void paint(Graphics g) { // overridden paint because there will be no other painting other than this
-        
+    	initGraph();
         int height = this.getHeight();
         Graphics2D g2d = (Graphics2D) g;
         if (dataPointsToDisplay != null && dataPointsToDisplay.size() > 0) {
@@ -190,7 +189,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         	for(int i = leftGraphPosition; i < rightGraphPosition; i++){
         		if(i < 0){
         			dataPointsToDisplay.add(0.0);
-        			nullData++;        			
+        			nullData++;
         		} else if (i < GDE.size()){
         			dataPointsToDisplay.add(GDE.get(i));
         		}
@@ -202,7 +201,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
      */
     public void sizeGraph() {
         MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-//        Dimension d = lg.getSize();
         int wherePixel = 0 ;
         if (lg.getTotalSplits() > 1) {
             if (GDE.getSplitNumber() <= lg.getTotalSplits()) {
@@ -246,5 +244,5 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     public int graphSize() {
         return GDE.size();
     }
-    
+
 }

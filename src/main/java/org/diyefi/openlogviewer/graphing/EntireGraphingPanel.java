@@ -79,18 +79,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         draggingAccumulator = 0.0;
         zoom = 1;
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         if (playing && graphPosition < graphPositionMax) {
         	moveGraphPosition(1);
-        	multiGraph.initGraphs();
         } else if (flinging && graphPosition < graphPositionMax && graphPosition > 0){
         	if(flingInertia == 0){
         		stopFlinging();
         	} else{
         		int center = this.getWidth() / 2;
         		moveEntireGraphingPanel(center + (flingInertia / zoom));
-	        	multiGraph.initGraphs();
 	        	if(flingInertia > 0){
 	        		flingInertia--;
 	        	} else {
@@ -99,15 +97,15 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         	}
         }
     }
-    
+
     public MultiGraphLayeredPane getMultiGraphLayeredPane(){
     	return multiGraph;
     }
-    
+
     public GraphPositionPanel getGraphPositionPanel(){
     	return graphPositionPanel;
     }
-    
+
     public void setLog(GenericLog genLog) {
     	playing = false;
     	resetGraphPosition();
@@ -119,7 +117,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	if (zoom < 500) {
     		zoom++;
     	}
-    	multiGraph.initGraphs();
     	repaint();
     }
 
@@ -127,7 +124,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		if (zoom > 1) {
 			zoom--;
 		}
-		multiGraph.initGraphs();
 		repaint();
 	}
 
@@ -141,14 +137,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
             playTimer.start();
         }
     }
-    
+
     public void pause(){
     	playing = false;
     	playTimer.stop();
     	stopDragging();
 		stopFlinging();
     }
-    
+
     /**
      * increases speed of the graph by 1 ms until 0, at which speed cannot be advanced any further and will essentially update as fast as possible
      */
@@ -158,19 +154,17 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     		playTimer.setDelay(currentDelay - 1);
     	}
     }
-    
+
     public void eject() {
         resetGraphPosition();
-        multiGraph.initGraphs();
     }
-    
+
     public void stop(){
     	playing = false;
     	playTimer.stop();
     	resetGraphPosition();
-    	multiGraph.initGraphs();
     }
-    
+
     /**
      * Slows the speed of playback by 1 ms
      */
@@ -178,35 +172,34 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	int currentDelay = playTimer.getDelay();
     	playTimer.setDelay(currentDelay + 1);
     }
-    
+
     public void fling(){
 		flinging = true;
 		flingTimer.start();
     }
-    
+
     public int getGraphPosition(){
     	return graphPosition;
     }
-    
+
     public int getGraphPositionMax(){
     	return graphPositionMax;
     }
-    
+
     public int getZoom(){
     	return zoom;
     }
-    
+
     private void moveGraphPosition(int amount){
     	int newPos = graphPosition + amount;
     	setGraphPosition(newPos);
     }
-    
+
     public void setGraphPosition(int newPos){
     	graphPosition = newPos;
-    	multiGraph.initGraphs();
     	repaint();
     }
-    
+
     public void setGraphPositionMax(){
     	boolean found = false;
         for (int i = 0; i < multiGraph.getComponentCount() && !found; i++) {
@@ -217,19 +210,19 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
             }
         }
     }
-    
+
     private void resetGraphPosition(){
     	setGraphPosition(0);
     }
-    
+
     private void goToLastGraphPosition(){
     	setGraphPosition(graphPositionMax);
     }
-    
+
     public boolean isPlaying(){
     	return playing;
     }
-    
+
     private void moveEntireGraphingPanel(int newPosition){
     	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int graphPositionMax = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionMax();
@@ -260,12 +253,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	dragging = false;
         prevDragXCoord = -1;
     }
-    
+
     private void stopFlinging(){
     	flinging = false;
     	flingInertia = 0;
     }
-    
+
   //MOUSE LISTENER FUNCTIONALITY
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -322,7 +315,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     		fling();
     	}
     }
-    
+
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int center = this.getWidth() / 2;
@@ -335,19 +328,19 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		} else if (zoom > 1){
 			zoomOut();
 			moveEntireGraphingPanel(zoomOutMove);
-		}	
+		}
 	}
-	
+
 	//KEY LISTENER FUNCTIONALITY
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			//Play key bindings
 			case KeyEvent.VK_SPACE: 	play(); 					break;
-			
+
 			//Home key bindings
 			case KeyEvent.VK_HOME:  	resetGraphPosition(); 		break;
-			
+
 			//End key bindings
 			case KeyEvent.VK_END:   	goToLastGraphPosition(); 	break;
 
@@ -372,9 +365,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				} else {
 					int center = this.getWidth() / 2;
 					moveEntireGraphingPanel(center - (1 * zoom));
-				} 	
+				}
 			}														break;
-			
+
 			//Scroll right key bindings
 			case KeyEvent.VK_PAGE_DOWN: {
 				//Big scroll
@@ -398,7 +391,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					moveEntireGraphingPanel(center + (1 * zoom));
 				}
 			}														break;
-			
+
 			//Zoom in key bindings
 			case KeyEvent.VK_UP: 		zoomIn();					break;
 			case KeyEvent.VK_KP_UP: 	zoomIn();					break;
@@ -407,7 +400,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					zoomIn();
 				}
 			}														break;
-			
+
 			//Zoom out key bindings
 			case KeyEvent.VK_DOWN: 		zoomOut();					break;
 			case KeyEvent.VK_KP_DOWN: 	zoomOut();					break;
@@ -416,7 +409,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					zoomOut();
 				}
 			}														break;
-			
+
 		}
 	}
 
@@ -427,9 +420,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+
 	}
-    
+
     private MultiGraphLayeredPane multiGraph;
     private GraphPositionPanel graphPositionPanel;
     private int graphPosition;

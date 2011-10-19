@@ -34,7 +34,7 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  * @author Bryan Harris and Ben Fenner
  */
 public class MultiGraphLayeredPane extends JLayeredPane {
-	
+
     private GenericLog genLog;
     private InfoPanel infoPanel;
     private int totalSplits;
@@ -123,16 +123,6 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 
     public InfoPanel getInfoPanel(){
     	return infoPanel;
-    }
-
-    public void initGraphs() {
-        for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof SingleGraphPanel) {
-                SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
-                gl.initGraph();
-            }
-        }
-        repaint();
     }
 
     public void setColor(String header, Color newColor) {
