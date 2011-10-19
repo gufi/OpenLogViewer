@@ -79,8 +79,9 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             if (mouseOver) {
             	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-            	int halfZoom = zoom / 2;
-                int lineDraw = (((xMouseCoord - halfZoom) / zoom) * zoom) + zoom;  //divide by zoom then multiply by zoom effectively drops the remainder from the mouse coords
+            	int center = this.getWidth() / 2;
+            	// Divide by zoom then multiply by zoom effectively drops the remainder from the mouse coords then the remainder is added back as an offset
+                int lineDraw = (((xMouseCoord ) / zoom) * zoom) + (center % zoom);
                 g2d.setColor(vertBar);
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
                 g2d.drawLine(lineDraw, 0, lineDraw, d.height);  //mouse cursor line
