@@ -40,7 +40,7 @@ public class GraphPositionPanel extends JPanel {
 		super();
         init();
     }
-	
+
 	private void init(){
         this.setOpaque(true);
         this.setLayout(null);
@@ -48,7 +48,7 @@ public class GraphPositionPanel extends JPanel {
         majorGraduationColor = Color.GRAY;
         minorGraduationColor = majorGraduationColor.darker();
         positionDataColor = majorGraduationColor;
-        backgroundColor = Color.black;
+        backgroundColor = Color.BLACK;
         setGraduationSpacing();
 	}
 
@@ -70,12 +70,13 @@ public class GraphPositionPanel extends JPanel {
         	paintPositionData(g2d);
         }
     }
-    
+
     private void paintPositionBar(Graphics2D g2d){
     	int center = this.getWidth() / 2;
-    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-    	int count = graphPosition * zoom;
+    	double count = graphPosition * zoom;
+    	count = Math.round(count);
     	g2d.setColor(minorGraduationColor);
     	for(int i = center; i > 0; i--){  //paint left of center
         	if(count % (minorGraduationSpacing * zoom) == 0){
@@ -84,6 +85,7 @@ public class GraphPositionPanel extends JPanel {
         	count--;
         }
         count = graphPosition * zoom;
+        count = Math.round(count);
         for(int i = center; i < this.getWidth(); i++){  //paint right of center
         	if(count % (minorGraduationSpacing * zoom) == 0){
         		g2d.drawLine(i, 0, i, 2);
@@ -92,6 +94,7 @@ public class GraphPositionPanel extends JPanel {
         }
         g2d.setColor(majorGraduationColor);
         count = graphPosition * zoom;
+        count = Math.round(count);
         for(int i = center; i > 0; i--){  //paint left of center
         	if(count % (majorGraduationSpacing * zoom) == 0){
         		g2d.drawLine(i, 0, i, 6);
@@ -99,6 +102,7 @@ public class GraphPositionPanel extends JPanel {
         	count--;
         }
         count = graphPosition * zoom;
+        count = Math.round(count);
         for(int i = center; i < this.getWidth(); i++){  //paint right of center
         	if(count % (majorGraduationSpacing * zoom) == 0){
         		g2d.drawLine(i, 0, i, 6);
@@ -107,35 +111,37 @@ public class GraphPositionPanel extends JPanel {
         }
         g2d.drawLine(0, 0, this.getWidth(), 0);
     }
-    
+
     private void paintPositionData(Graphics2D g2d){
     	int center = this.getWidth() / 2;
-    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-    	int count = graphPosition * zoom;
+    	double count = graphPosition * zoom;
+    	count = Math.round(count);
     	g2d.setColor(positionDataColor);
     	for(int i = center; i > 0; i--){  //paint left of center
         	if(count % (majorGraduationSpacing * zoom) == 0){
-        		String positionDataString = Integer.toString(count / zoom);
+        		String positionDataString = Integer.toString((int)(count / zoom));
         		g2d.drawString(positionDataString, i - 10, 18);
         	}
         	count--;
         }
         count = graphPosition * zoom;
+        count = Math.round(count);
         for(int i = center; i < this.getWidth(); i++){  //paint right of center
         	if(count % (majorGraduationSpacing * zoom) == 0){
-        		String positionDataString = Integer.toString(count / zoom);
+        		String positionDataString = Integer.toString((int)(count / zoom));
         		g2d.drawString(positionDataString, i - 10, 18);
         	}
         	count++;
         }
     }
-    
+
     public void setLog(GenericLog log) {
        genLog = log;
         repaint();
     }
-    
+
     private void setGraduationSpacing(){
     	int zoom = 1;
     	if(OpenLogViewerApp.getInstance() != null){
@@ -161,5 +167,5 @@ public class GraphPositionPanel extends JPanel {
     private int majorGraduationSpacing;
     private int minorGraduationSpacing;
 	private static final long serialVersionUID = -7808475370693818838L;
-    
+
 }

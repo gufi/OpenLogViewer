@@ -76,7 +76,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         stopDragging();
         stopFlinging();
         thePast = System.currentTimeMillis();
-        draggingAccumulator = 0.0;
         zoom = 1;
     }
 
@@ -88,7 +87,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         		stopFlinging();
         	} else{
         		int center = this.getWidth() / 2;
-        		moveEntireGraphingPanel(center + (flingInertia / zoom));
+        		moveEntireGraphingPanel(center + flingInertia);
 	        	if(flingInertia > 0){
 	        		flingInertia--;
 	        	} else {
@@ -178,7 +177,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		flingTimer.start();
     }
 
-    public int getGraphPosition(){
+    public double getGraphPosition(){
     	return graphPosition;
     }
 
@@ -190,12 +189,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	return zoom;
     }
 
-    private void moveGraphPosition(int amount){
-    	int newPos = graphPosition + amount;
+    private void moveGraphPosition(double amount){
+    	double newPos = graphPosition + amount;
     	setGraphPosition(newPos);
     }
 
-    public void setGraphPosition(int newPos){
+    public void setGraphPosition(double newPos){
     	graphPosition = newPos;
     	repaint();
     }
@@ -223,21 +222,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	return playing;
     }
 
-    private void moveEntireGraphingPanel(int newPosition){
-    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    private void moveEntireGraphingPanel(double newPosition){
+    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int graphPositionMax = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionMax();
-    	int center = this.getWidth() / 2;
-    	int move = (newPosition - center) / zoom;
-    	draggingAccumulator += (((double)newPosition - (double)center) / (double)zoom) - (double)move;
-    	int accumulated = 0;
-    	if(draggingAccumulator >= 1.0){
-    		accumulated = (int)draggingAccumulator;
-    		draggingAccumulator -= (double)accumulated;
-    	} else if(draggingAccumulator <= -1.0){
-    		accumulated = (int)draggingAccumulator;
-    		draggingAccumulator -= (double)accumulated;
-    	}
-    	move += accumulated;
+    	double center = this.getWidth() / 2;
+    	double move = (newPosition - center) / zoom;
         if (move + graphPosition < graphPositionMax) {
             if (move + graphPosition < 0) {
             	OpenLogViewerApp.getInstance().getEntireGraphingPanel().resetGraphPosition();
@@ -425,7 +414,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
     private MultiGraphLayeredPane multiGraph;
     private GraphPositionPanel graphPositionPanel;
-    private int graphPosition;
+    private double graphPosition;
     private int graphPositionMax;
     private boolean playing;
     private Timer playTimer;
@@ -433,7 +422,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private boolean dragging;
     private boolean flinging;
     private long thePast;
-    double draggingAccumulator;
     private int prevDragXCoord;
     private int flingInertia;
     private int zoom;

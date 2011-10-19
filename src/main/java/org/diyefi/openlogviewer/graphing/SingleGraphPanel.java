@@ -87,8 +87,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         if (hasDataPointToDisplay()) {
         	// Paint left data points.
         	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+        	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+        	double offset = (graphPosition % 1) * zoom;
         	int height = this.getHeight();
-        	int screenPositionXCoord = this.getWidth() / 2;
+        	int screenPositionXCoord = (this.getWidth() / 2) - (int)offset;
         	Iterator<Double> it = leftDataPointsToDisplay.iterator();
         	Double traceData = (Double) it.next();
         	Double prevTraceData = traceData;
@@ -114,7 +116,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
                 firstDataPoint = false;
             }
          	// Paint right data points.
-            screenPositionXCoord = this.getWidth() / 2;
+            screenPositionXCoord = (this.getWidth() / 2) - (int)offset;
             it = rightDataPointsToDisplay.iterator();
             firstDataPoint = true;
             while(it.hasNext()) {
@@ -171,7 +173,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
      * @return Double representation of info at the mouse pointer
      */
     public Double getMouseInfo(int i) {
-    	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	int graphPosition = (int)OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
         int getIt = (i / zoom) + graphPosition - ((this.getSize().width / 2) / zoom);
         if (getIt < GDE.size() && getIt >= 0) {
@@ -202,7 +204,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         if (GDE != null) {
         	leftDataPointsToDisplay = new LinkedList<Double>();
         	rightDataPointsToDisplay = new LinkedList<Double>();
-        	int graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+        	int graphPosition = (int)OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
         	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
         	int numPointsThatFitInDisplay = this.getWidth() / zoom;
         	numPointsThatFitInDisplay += 6; //Add six data points for off-screen (not just two, because of zoom stupidity)
