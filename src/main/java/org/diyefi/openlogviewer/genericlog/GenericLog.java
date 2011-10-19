@@ -109,8 +109,8 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
     public boolean addValue(String key, double value) {
         GenericDataElement logElement = this.get(key);
         if(key.equals(firstKey)){
-        	lineCount++;
         	lineCountElement.add((double)lineCount);
+        	lineCount++;
         }
         return logElement.add(value);
     }
