@@ -167,6 +167,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
             screenPositionXCoord += zoom;
             firstDataPoint = false;
         }
+      //Always draw one last fat data point at the end. This is usually off screen but can also be the end of the graph.
+        screenPositionXCoord -= zoom;
+        if (zoom > 5) {
+        	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+        }
     }
 
     private int getScreenPositionYCoord(Double traceData, int height, double minValue, double maxValue) {
