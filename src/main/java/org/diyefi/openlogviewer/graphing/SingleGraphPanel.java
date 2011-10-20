@@ -32,6 +32,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import javax.swing.JPanel;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
@@ -99,18 +100,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
         g2d.setColor(GDE.getColor());
     	int screenPositionXCoord = (this.getWidth() / 2) - (int)offset;
     	Iterator<Double> it = leftDataPointsToDisplay.iterator();
-    	Double traceData = null;
+    	Double traceData = it.next();
     	Double prevTraceData = null;
     	boolean atGraphEnd = true;
     	if(rightDataPointsToDisplay.size() > 1){
-    		prevTraceData = rightDataPointsToDisplay.get(1);
     		atGraphEnd = false;
     	}
     	int screenPositionYCoord = -1;
     	int prevScreenPositionYCoord = -1;
         boolean firstDataPoint = true;
-        while(it.hasNext()) {
-        	traceData = it.next();
+        while(it.hasNext()){
+        	prevTraceData = it.next();
         	screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
             if (zoom > 5) {
                 if((atGraphEnd && firstDataPoint) || !prevTraceData.equals(traceData)){  //Relies on condition short-circuiting to avoid Null Pointer error
@@ -120,13 +120,22 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
             if(!firstDataPoint){
             	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
             }
-            prevTraceData = traceData;
+            traceData = prevTraceData;
             prevScreenPositionYCoord = screenPositionYCoord;
             screenPositionXCoord -= zoom;
             firstDataPoint = false;
         }
-        //Always draw one last fat data point at the end. This is usually off screen but can also be the beginning of the graph.
-        screenPositionXCoord += zoom;
+        //Draw one more data point to get the last one in the iterator done
+        screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
+        if (zoom > 5) {
+            if((atGraphEnd && firstDataPoint) || prevTraceData == null || !prevTraceData.equals(traceData)){  //Relies on condition short-circuiting to avoid Null Pointer error
+                g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+            }
+        }
+        if(!firstDataPoint){
+        	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+        }
+        //Always draw one last data point at the end. This is usually off screen but can also be the beginning of the graph.
         if (zoom > 5) {
         	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
         }
@@ -167,7 +176,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
             screenPositionXCoord += zoom;
             firstDataPoint = false;
         }
-      //Always draw one last fat data point at the end. This is usually off screen but can also be the end of the graph.
+        //Always draw one last data point at the end. This is usually off screen but can also be the end of the graph.
         screenPositionXCoord -= zoom;
         if (zoom > 5) {
         	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
