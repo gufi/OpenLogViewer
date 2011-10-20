@@ -25,6 +25,7 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
 import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewerApp;
@@ -50,6 +51,7 @@ public class GraphPositionPanel extends JPanel {
         positionDataColor = majorGraduationColor;
         backgroundColor = Color.BLACK;
         setGraduationSpacing();
+        validSnappingPositions = new boolean[this.getWidth()];
 	}
 
     @Override
@@ -68,6 +70,7 @@ public class GraphPositionPanel extends JPanel {
         } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
         	paintPositionBar(g2d);
         	paintPositionData(g2d);
+        	setupMouseCursorLineSnappingPositions();
         }
     }
 
@@ -137,6 +140,31 @@ public class GraphPositionPanel extends JPanel {
         }
     }
 
+    private void setupMouseCursorLineSnappingPositions(){
+    	int center = this.getWidth() / 2;
+    	validSnappingPositions = new boolean[this.getWidth()];
+    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+    	double count = graphPosition * zoom;
+    	count = Math.round(count);
+    	//Fill array with valid snapping points that are left of center
+    	for(int i = center; i > 0; i--){
+        	if(count % zoom == 0){
+        		validSnappingPositions[i] = true;
+        	}
+        	count--;
+        }
+    	count = graphPosition * zoom;
+        count = Math.round(count);
+        //Fill array with valid snapping points that are right of center
+        for(int i = center; i < this.getWidth(); i++){
+        	if(count % zoom == 0){
+        		validSnappingPositions[i] = true;
+        	}
+        	count++;
+        }
+    }
+
     public void setLog(GenericLog log) {
        genLog = log;
         repaint();
@@ -159,6 +187,31 @@ public class GraphPositionPanel extends JPanel {
         minorGraduationSpacing = majorGraduationSpacing / 2;
     }
 
+    public int getBestSnappingPosition(int xMouseCoord){
+    	int bestPosition = 0;
+    	if(validSnappingPositions[xMouseCoord]){
+    		bestPosition = xMouseCoord;
+    	} else {
+    		boolean found = false;
+    		int startPosition = xMouseCoord;
+	    	for(int distance = 1; !found; distance++){
+	    		int next = startPosition + distance;
+	    		int prev = startPosition - distance;
+	    		if(next > validSnappingPositions.length - 1 || prev < 0){
+	    			bestPosition = xMouseCoord;
+	    			found = true;
+	    		} else if(validSnappingPositions[next]){
+	    			bestPosition = next;
+	    			found = true;
+	    		} else if(validSnappingPositions[prev]){
+	    			bestPosition = prev;
+	    			found = true;
+	    		}
+	    	}
+    	}
+    	return bestPosition;
+    }
+
     private GenericLog genLog;
     private Color majorGraduationColor;
     private Color minorGraduationColor;
@@ -166,6 +219,7 @@ public class GraphPositionPanel extends JPanel {
     private Color backgroundColor;
     private int majorGraduationSpacing;
     private int minorGraduationSpacing;
+    private boolean[] validSnappingPositions;
 	private static final long serialVersionUID = -7808475370693818838L;
 
 }
