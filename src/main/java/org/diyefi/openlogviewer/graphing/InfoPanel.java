@@ -74,6 +74,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
             g.drawString("Loading log, please wait...", 20, 20);
         } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
             Dimension d = this.getSize();
+            int center = d.width / 2;
             MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
@@ -86,9 +87,10 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
                     if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
                         SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
                         g2d.setColor(textBackground);
-                        g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), singleGraph.getMouseInfo(snappedDataPosition).toString().length() * 8, 15);
+                        String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition - center).toString();
+                        g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
                         g2d.setColor(singleGraph.getColor());
-                        g2d.drawString(singleGraph.getMouseInfo(snappedDataPosition).toString(), snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
+                        g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
                     }
                 }
             }

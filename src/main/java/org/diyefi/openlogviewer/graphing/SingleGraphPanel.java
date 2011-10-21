@@ -288,14 +288,18 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
      * @param i
      * @return Double representation of info at the mouse pointer
      */
-    public Double getMouseInfo(int i) {
-    	int graphPosition = (int)OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+    public Double getMouseInfo(int cursorDistanceFromCenter) {
+    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-        int getIt = (i / zoom) + graphPosition - ((this.getSize().width / 2) / zoom);
-        if (getIt < GDE.size() && getIt >= 0) {
-            return GDE.get(getIt);
+    	double offset = (graphPosition % 1) * zoom;
+    	cursorDistanceFromCenter += (int)offset;
+    	double numSnapsFromCenter = ((double)cursorDistanceFromCenter / (double)zoom);
+    	numSnapsFromCenter = Math.round(numSnapsFromCenter);
+    	int cursorPosition = (int)graphPosition + (int)numSnapsFromCenter;
+        if (cursorPosition >= 0 && cursorPosition < GDE.size()) {
+            return GDE.get(cursorPosition);
         } else {
-            return 0.0;
+            return -1.0;
         }
     }
     /**
