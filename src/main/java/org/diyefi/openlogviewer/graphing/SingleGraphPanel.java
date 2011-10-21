@@ -30,8 +30,8 @@ import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 import javax.swing.JPanel;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
@@ -92,99 +92,170 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     }
 
     private void paintLeftDataPoints(Graphics g){
+    	// Setup graphics stuff
+    	Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(GDE.getColor());
+
+        // Setup current, previous and next graph trace data points
+    	boolean atGraphBeginning = false;
+        boolean firstDataPoint = true;
+    	ListIterator<Double> it = (ListIterator<Double>) leftDataPointsToDisplay.iterator();
+    	Double traceData = it.next();
+    	Double leftOfTraceData = null;
+    	Double rightOfTraceData = null;
+    	if(it.hasPrevious()){
+    		rightOfTraceData = it.previous();
+    		it.next();
+    	} else {
+    		if(rightDataPointsToDisplay.size() > 1){
+    			rightOfTraceData = rightDataPointsToDisplay.get(1);
+    		} else {
+    			// At graph end
+    		}
+    	}
+    	if(it.hasNext()){
+    		leftOfTraceData = it.next();
+    		it.previous();
+    	} else {
+    		atGraphBeginning = true;
+    	}
+
+    	// Setup data point screen location stuff
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	double offset = (graphPosition % 1) * zoom;
-    	int height = this.getHeight();
-    	Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(GDE.getColor());
     	int screenPositionXCoord = (this.getWidth() / 2) - (int)offset;
-    	Iterator<Double> it = leftDataPointsToDisplay.iterator();
-    	Double traceData = it.next();
-    	Double prevTraceData = null;
-    	boolean atGraphEnd = true;
-    	if(rightDataPointsToDisplay.size() > 1){
-    		atGraphEnd = false;
-    	}
-    	int screenPositionYCoord = -1;
+    	int screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
     	int prevScreenPositionYCoord = -1;
-        boolean firstDataPoint = true;
-        while(it.hasNext()){
-        	prevTraceData = it.next();
-        	screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
-            if (zoom > 5) {
-                if((atGraphEnd && firstDataPoint) || !prevTraceData.equals(traceData)){  //Relies on condition short-circuiting to avoid Null Pointer error
-                    g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
-                }
+
+    	// Draw data points and trace lines
+    	while(it.hasNext()){
+
+    		// Draw data point
+            if(zoom > 5 && (!traceData.equals(leftOfTraceData) || !traceData.equals(rightOfTraceData))){
+                g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
             }
+
+        	// Draw graph trace line
             if(!firstDataPoint){
             	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
             }
-            traceData = prevTraceData;
+
+            // Move to next trace data in the list
+            rightOfTraceData = traceData;
+            traceData = it.next();
+        	if(it.hasNext()){
+        		leftOfTraceData = it.next();
+        		it.previous();
+        	} else {
+        		atGraphBeginning = true;
+        	}
+
+        	// Reconfigure data point screen location stuff
             prevScreenPositionYCoord = screenPositionYCoord;
+            screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
             screenPositionXCoord -= zoom;
             firstDataPoint = false;
-        }
-        //Draw one more data point to get the last one in the iterator done
-        screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
-        if (zoom > 5) {
-            if((atGraphEnd && firstDataPoint) || prevTraceData == null || !prevTraceData.equals(traceData)){  //Relies on condition short-circuiting to avoid Null Pointer error
-                g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+    	}
+
+    	// Always draw one last data point and trace line at the end of the list. This is usually off screen but can also be the beginning of the graph.
+    	if(atGraphBeginning){
+    		screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
+    		// Draw data point
+    		if (zoom > 5) {
+            	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
             }
-        }
-        if(!firstDataPoint){
-        	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
-        }
-        //Always draw one last data point at the end. This is usually off screen but can also be the beginning of the graph.
-        if (zoom > 5) {
-        	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
-        }
+        	// Draw graph trace line
+            if(!firstDataPoint){
+            	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+            }
+    	}
     }
 
     private void paintRightDataPoints(Graphics g){
+    	// Setup graphics stuff
+    	Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(GDE.getColor());
+
+        // Setup current, previous and next graph trace data points
+    	boolean atGraphEnd = false;
+        boolean firstDataPoint = true;
+    	ListIterator<Double> it = (ListIterator<Double>) rightDataPointsToDisplay.iterator();
+    	Double traceData = it.next();
+    	Double leftOfTraceData = null;
+    	Double rightOfTraceData = null;
+    	if(it.hasPrevious()){
+    		leftOfTraceData = it.previous();
+    		it.next();
+    	} else {
+    		if(leftDataPointsToDisplay.size() > 1){
+    			leftOfTraceData = leftDataPointsToDisplay.get(1);
+    		} else {
+    			// At graph beginning
+    		}
+    	}
+    	if(it.hasNext()){
+    		rightOfTraceData = it.next();
+    		it.previous();
+    	} else {
+    		atGraphEnd = true;
+    	}
+
+    	// Setup data point screen location stuff
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	double offset = (graphPosition % 1) * zoom;
-    	int height = this.getHeight();
-    	Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(GDE.getColor());
     	int screenPositionXCoord = (this.getWidth() / 2) - (int)offset;
-    	Iterator<Double> it = rightDataPointsToDisplay.iterator();
-    	Double traceData = null;
-    	Double prevTraceData = null;
-    	boolean atGraphBeginning = true;
-    	if(leftDataPointsToDisplay.size() > 1){
-    		prevTraceData = leftDataPointsToDisplay.get(1);
-    		atGraphBeginning = false;
-    	}
-    	int screenPositionYCoord = -1;
+    	int screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
     	int prevScreenPositionYCoord = -1;
-        boolean firstDataPoint = true;
-        while(it.hasNext()) {
-        	traceData = (Double) it.next();
-        	screenPositionYCoord = getScreenPositionYCoord(traceData, (int)(height*GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE), GDE.getMinValue(), GDE.getMaxValue());
-            if (zoom > 5) {
-                if((atGraphBeginning && firstDataPoint) || !prevTraceData.equals(traceData)){  //Relies on condition short-circuiting to avoid Null Pointer error
-                    g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
-                }
+
+    	// Draw data points and trace lines
+    	while(it.hasNext()){
+
+    		// Draw data point
+            if(zoom > 5 && (!traceData.equals(leftOfTraceData) || !traceData.equals(rightOfTraceData))){
+                g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
             }
+
+        	// Draw graph trace line
             if(!firstDataPoint){
             	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
             }
-            prevTraceData = traceData;
+
+            // Move to next trace data in the list
+            leftOfTraceData = traceData;
+            traceData = it.next();
+        	if(it.hasNext()){
+        		rightOfTraceData = it.next();
+        		it.previous();
+        	} else {
+        		atGraphEnd = true;
+        	}
+
+        	// Reconfigure data point screen location stuff
             prevScreenPositionYCoord = screenPositionYCoord;
+            screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
             screenPositionXCoord += zoom;
             firstDataPoint = false;
-        }
-        //Always draw one last data point at the end. This is usually off screen but can also be the end of the graph.
-        screenPositionXCoord -= zoom;
-        if (zoom > 5) {
-        	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
-        }
+    	}
+
+    	// Draw one last data point (if needed) and trace line (always) at the end of the list. This is usually off screen but can also be the end of the graph.
+    	if(atGraphEnd){
+    		screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
+    		// Draw data point
+    		if (zoom > 5 && !traceData.equals(leftOfTraceData)) {
+            	g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+            }
+        	// Draw graph trace line
+            if(!firstDataPoint){
+            	g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
+            }
+    	}
     }
 
-    private int getScreenPositionYCoord(Double traceData, int height, double minValue, double maxValue) {
+    private int getScreenPositionYCoord(Double traceData, double minValue, double maxValue) {
         int point = 0;
+        int height = (int)(this.getHeight() * GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE);
         if (maxValue != minValue) {
             point = (int) (height - (height * ((traceData - minValue) / (maxValue - minValue))));
         }
