@@ -74,21 +74,21 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
             g.drawString("Loading log, please wait...", 20, 20);
         } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
             Dimension d = this.getSize();
-            MultiGraphLayeredPane lg = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+            MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
             if (mouseOver) {
-            	int lineDraw = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel().getBestSnappingPosition(xMouseCoord);
+            	int snappedDataPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel().getBestSnappingPosition(xMouseCoord);
                 g2d.setColor(vertBar);
                 g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
-                g2d.drawLine(lineDraw, 0, lineDraw, d.height);  //mouse cursor line
-                for (int i = 0; i < lg.getComponentCount(); i++) {
-                    if (lg.getComponent(i) instanceof SingleGraphPanel) {
-                        SingleGraphPanel gl = (SingleGraphPanel) lg.getComponent(i);
+                g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
+                for (int i = 0; i < multigGraph.getComponentCount(); i++) {
+                    if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
+                        SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
                         g2d.setColor(textBackground);
-                        g2d.fillRect(lineDraw, yMouseCoord + 2 + (15 * i), gl.getMouseInfo(xMouseCoord).toString().length() * 8, 15);
-                        g2d.setColor(gl.getColor());
-                        g2d.drawString(gl.getMouseInfo(xMouseCoord).toString(), lineDraw + 2, yMouseCoord + 15 + (15 * i));
+                        g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), singleGraph.getMouseInfo(snappedDataPosition).toString().length() * 8, 15);
+                        g2d.setColor(singleGraph.getColor());
+                        g2d.drawString(singleGraph.getMouseInfo(snappedDataPosition).toString(), snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
                     }
                 }
             }
