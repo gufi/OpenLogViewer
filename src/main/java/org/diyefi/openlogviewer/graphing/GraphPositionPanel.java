@@ -47,7 +47,6 @@ public class GraphPositionPanel extends JPanel {
         this.setLayout(null);
         genLog = new GenericLog();
         majorGraduationColor = Color.GRAY;
-        minorGraduationColor = majorGraduationColor.darker();
         positionDataColor = majorGraduationColor;
         backgroundColor = Color.BLACK;
         setGraduationSpacing();
@@ -80,24 +79,7 @@ public class GraphPositionPanel extends JPanel {
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	double count = graphPosition * zoom;
     	count = Math.round(count);
-    	g2d.setColor(minorGraduationColor);
-    	for(int i = center; i > 0; i--){  //paint left of center
-        	if(count % (minorGraduationSpacing * zoom) == 0){
-        		g2d.drawLine(i, 0, i, 2);
-        	}
-        	count--;
-        }
-        count = graphPosition * zoom;
-        count = Math.round(count);
-        for(int i = center; i < this.getWidth(); i++){  //paint right of center
-        	if(count % (minorGraduationSpacing * zoom) == 0){
-        		g2d.drawLine(i, 0, i, 2);
-        	}
-        	count++;
-        }
         g2d.setColor(majorGraduationColor);
-        count = graphPosition * zoom;
-        count = Math.round(count);
         for(int i = center; i > 0; i--){  //paint left of center
         	if(count % (majorGraduationSpacing * zoom) == 0){
         		g2d.drawLine(i, 0, i, 6);
@@ -175,16 +157,23 @@ public class GraphPositionPanel extends JPanel {
     	if(OpenLogViewerApp.getInstance() != null){
     		zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	}
-    	if(zoom > 20){
+    	if(zoom > 64){
+    		majorGraduationSpacing = 1;
+    	} else if(zoom > 32){
     		majorGraduationSpacing = 2;
-    	} else if(zoom > 5){
+    	} else if(zoom > 16){
+    		majorGraduationSpacing = 5;
+    	} else if(zoom > 8){
     		majorGraduationSpacing = 10;
+    	} else if(zoom > 4){
+    		majorGraduationSpacing = 20;
     	} else if(zoom > 2){
+    		majorGraduationSpacing = 25;
+    	} else if(zoom > 1){
     		majorGraduationSpacing = 50;
     	} else {
     		majorGraduationSpacing = 100;
     	}
-        minorGraduationSpacing = majorGraduationSpacing / 2;
     }
 
     public int getBestSnappingPosition(int xMouseCoord){
@@ -214,11 +203,9 @@ public class GraphPositionPanel extends JPanel {
 
     private GenericLog genLog;
     private Color majorGraduationColor;
-    private Color minorGraduationColor;
     private Color positionDataColor;
     private Color backgroundColor;
     private int majorGraduationSpacing;
-    private int minorGraduationSpacing;
     private boolean[] validSnappingPositions;
 	private static final long serialVersionUID = -7808475370693818838L;
 
