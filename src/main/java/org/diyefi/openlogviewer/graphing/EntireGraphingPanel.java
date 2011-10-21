@@ -64,6 +64,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
         resetGraphPosition();
         setGraphPositionMax();
         playing = false;
+        wasPlaying = false;
         playTimer = new Timer(10, this);
         playTimer.setInitialDelay(0);
         flingTimer = new Timer(10, this);
@@ -160,6 +161,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
     public void stop(){
     	playing = false;
+    	wasPlaying = false;
     	playTimer.stop();
     	resetGraphPosition();
     }
@@ -289,6 +291,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
     @Override
     public void mousePressed(MouseEvent e) {
+    	wasPlaying = playing;
+    	if(playing){
+    		pause();
+    	}
     	stopDragging();
     	stopFlinging();
     }
@@ -302,6 +308,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     	}
     	if(flingInertia != 0){
     		fling();
+    	}
+    	if(wasPlaying){
+    		play();
     	}
     }
 
@@ -417,6 +426,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
     private double graphPosition;
     private int graphPositionMax;
     private boolean playing;
+    private boolean wasPlaying;
     private Timer playTimer;
     private Timer flingTimer;
     private boolean dragging;
