@@ -35,8 +35,6 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 /**
  * This function takes a binary log file, plucks FreeEMS packets out of it,
  * filters for standard packets and parses them into fields with appropriate scaling.
- * 
- * @todo 
  */
 public class FreeEMSBin implements Runnable { // implements runnable to make this class theadable
 
@@ -81,7 +79,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			"DF-Spare-6",
 			"DF-Spare-7"
 		};
-	
+
 	String[] flaggableFlagsNames = {
 			"FF-callsToUISRs",               // to ensure we aren't accidentally triggering unused ISRs.
 			"FF-lowVoltageConditions",       // low voltage conditions.
@@ -167,7 +165,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	// Reason: File()'s constructors are ambiguous cannot give a null value
 	/**
 	 * FreeEmsBin Constructor: <code>String</code> path to your binary log
-	 * @param String path
+	 * @param path The file system path of the log file.
 	 *
 	 */
 	public FreeEMSBin(String path) {
@@ -176,14 +174,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
 	/**
 	 * FreeEmsBin Constructor: <code>File</code> object of your Binary log
-	 * @param File f
+	 * @param f The file reference to the log file.
 	 */
 	public FreeEMSBin(File f) {
 		logFile = f;
 		startFound = false;
 		packetBuffer = new short[6000];
 		packetLength = 0;
-		
+
 		// Eventually pull this in from files and config etc instead of default, if it makes sense to.
 		String[] headers = new String[fields.length * 32]; // Hack to make it plenty big, trim afterwards...
 		int headersPosition = 0;
@@ -303,14 +301,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		} catch (IOException IOE) {
 			System.out.println(IOE.getMessage());
 			// TODO Add code to handle or warn of the error
-		} 
+		}
 	}
 
 	/**
 	 * This method decodes a packet by splitting up the data into larger data types to keep the unsigned info <br>
 	 * This method could probably use a little work
 	 * @param packet is a <code>short</code> array containing 1 full packet
-	 *
+	 * @param payloadIDToParse The ID of the payload type to expect and accept.
 	 */
 	private boolean decodeBasicLogPacket(short[] packet, int payloadIDToParse) {
 		final int HEADER_HAS_LENGTH_INDEX   = 0;
@@ -449,7 +447,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
 	/**
 	 * Transforms an unsigned char into a format suitable for Java, a short.
-	 * 
+	 *
 	 * @param uInt8 the raw signed byte representation of our raw unsigned char
 	 * @return the value of the unsigned byte stored in a short
 	 */

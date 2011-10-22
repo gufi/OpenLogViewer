@@ -107,24 +107,23 @@ public abstract class BaseDecoder implements Runnable {
     public void setLogFile(File logFile) {
         this.logFile = logFile;
     }
-    /**
-     * get the thread, use this if you would like to give the thread a name such as "TYPEOFLOG Thread"<br>
-     * can also be used to set the thread priority
-     * after initialization of all variables required by the extended class you <b>MUST</b> call:<br>
-     * this.getT().start();
-     * @return
-     */
-    public Thread getT() {
-        return t;
-    }
-    /**
-     * set the Thread
-     * @param t
-     */
-    public void setT(Thread t) {
-        this.t = t;
-    }
 
+	/**
+	 * get the thread, use this if you would like to give the thread a name such as "TYPEOFLOG Thread"<br>
+	 * can also be used to set the thread priority
+	 * after initialization of all variables required by the extended class you <b>MUST</b> call:<br>
+	 * this.getT().start();
+	 * @return the thread that this decoder is running in.
+	 */
+	public Thread getT() {
+		return t;
+	}
 
-
+	/**
+	 * set the Thread
+	 * @param t
+	 */
+	public void setT(Thread t) {
+		this.t = t;
+	}
 }

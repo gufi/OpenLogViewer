@@ -64,7 +64,22 @@ import org.diyefi.openlogviewer.utils.Utilities;
  *
  * @author Bryan
  */
-public class OpenLogViewerApp extends javax.swing.JFrame {
+public final class OpenLogViewerApp extends javax.swing.JFrame {
+    public static OpenLogViewerApp mainAppRef;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenuBar mainMenuBar;
+    private javax.swing.JMenuItem openFileMenuItem;
+    private javax.swing.JMenuItem quitFileMenuItem;
+    private javax.swing.JMenuItem propertiesOptionMenuItem;
+    private javax.swing.JPanel mainPanel;
+    private EntireGraphingPanel graphingPanel;
+    private PlayBarPanel playBar;
+    private GraphMenu graphMenu;
+    private OptionFrameV2 optionFrame;
+    private PropertiesPane prefFrame;
+    private ArrayList<SingleProperty> properties;
+	private static final long serialVersionUID = 7987394054547975563L;
 
 	/** Creates new form OpenLogViewerApp */
     public OpenLogViewerApp() {
@@ -221,7 +236,7 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
     public MultiGraphLayeredPane getMultiGraphLayeredPane() {
         return graphingPanel.getMultiGraphLayeredPane();
     }
-    
+
     public GraphPositionPanel getGraphPositionPanel() {
         return graphingPanel.getGraphPositionPanel();
     }
@@ -369,21 +384,4 @@ public class OpenLogViewerApp extends javax.swing.JFrame {
         }
         return AppWideFile;
     }
-    
-    // Variables declaration -
-    public static OpenLogViewerApp mainAppRef;
-    private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu editMenu;
-    private javax.swing.JMenuBar mainMenuBar;
-    private javax.swing.JMenuItem openFileMenuItem;
-    private javax.swing.JMenuItem quitFileMenuItem;
-    private javax.swing.JMenuItem propertiesOptionMenuItem;
-    private javax.swing.JPanel mainPanel;
-    private EntireGraphingPanel graphingPanel;
-    private PlayBarPanel playBar;
-    private GraphMenu graphMenu;
-    private OptionFrameV2 optionFrame;
-    private PropertiesPane prefFrame;
-    private ArrayList<SingleProperty> properties;
-	private static final long serialVersionUID = 7987394054547975563L;
 }

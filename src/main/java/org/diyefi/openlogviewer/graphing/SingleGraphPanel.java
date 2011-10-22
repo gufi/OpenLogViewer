@@ -205,7 +205,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
     	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
     	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
     	double offset = (graphPosition % 1) * zoom;
-    	int screenPositionXCoord = (this.getWidth() / 2) - (int)offset;
+    	int screenPositionXCoord = (this.getWidth() / 2) - (int) offset;
     	int screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
     	int prevScreenPositionYCoord = -1;
 
