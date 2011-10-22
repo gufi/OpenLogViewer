@@ -28,28 +28,30 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 /**
- *
- * @author Bryan
+ * TODO merge into bin filter and accept all possiblilities for FreeEMS bin logs
  */
 public class FreeEMSLAFileFilter extends FileFilter {
-    public FreeEMSLAFileFilter () {
-        super();
-    }
+	public FreeEMSLAFileFilter () {
+		super();
+	}
 
-    @Override
-    public String getDescription() {
-       return "FreeEMS LA Binary Logs";
-    }
+	@Override
+	public String getDescription() {
+		return "FreeEMS LA Binary Logs";
+	}
 
-    @Override
-    public boolean accept(File f) {
-        if(f.isDirectory()) {
-            return true;
-        }
-        String extension = Utilities.getExtension(f);
-        if(extension != null && extension.equals("la")) return true;
+	@Override
+	public boolean accept(File f) {
+		if(f.isDirectory()) {
+			return true;
+		}
 
-        //if nothing is satisfied return false
-        return false;
-    }
+		String extension = Utilities.getExtension(f);
+
+		if(extension != null && extension.equals("la")){
+			return true;
+		}
+
+		return false;
+	}
 }

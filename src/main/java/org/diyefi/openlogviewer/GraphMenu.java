@@ -24,63 +24,45 @@ package org.diyefi.openlogviewer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
-/**
- *
- * @author Bryan
- */
 public class GraphMenu extends JMenu {
+	private static final long serialVersionUID = 894830948284092834L;
 
-    private JMenuItem optionPaneItem;
-    private JMenuItem graphMenuSplit;
+	private JMenuItem optionPaneItem;
 
-    public GraphMenu() {
-        super();
-        initMenu();
-    }
+	public GraphMenu() {
+		super();
+		initMenu();
+	}
 
-    private void initMenu() {
-        this.setText("Graphing");
-        this.setName("Graphing Menu");
+	private void initMenu() {
+		this.setText("Graphing");
+		this.setName("Graphing Menu");
 
+		optionPaneItem = new JMenuItem();
+		optionPaneItem.setText("Option Pane");
+		optionPaneItem.setName("Option Pane");
+		optionPaneItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!OpenLogViewerApp.getInstance().getOptionFrame().isVisible()) {
+					OpenLogViewerApp.getInstance().getOptionFrame().setVisible(true);
+				}
+				OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(true);
+				OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(false);
+			}
+		});
 
-        optionPaneItem = new JMenuItem();
-        optionPaneItem.setText("Option Pane");
-        optionPaneItem.setName("Option Pane");
-        optionPaneItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!OpenLogViewerApp.getInstance().getOptionFrame().isVisible()) {
-                    OpenLogViewerApp.getInstance().getOptionFrame().setVisible(true);
-                }
-                OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(true);
-                OpenLogViewerApp.getInstance().getOptionFrame().setAlwaysOnTop(false);
-            }
-        });
-        
-       /* graphMenuSplit = new JMenuItem("Set Split View");
-        graphMenuSplit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e ) {
-                OpenLogViewerApp.getInstance().getLayeredGraph().setTotalSplits(Integer.parseInt(JOptionPane.showInputDialog(new JFrame(), "How many splits of the graphing view do you want")));
-            }
-        });
-
-
-        this.add(graphMenuSplit);*/
-        this.add(optionPaneItem);
-
-    }
+		this.add(optionPaneItem);
+	}
 }
-/**
- * 2/5/2011 meal for the night DO NOT EDIT MENU!
+
+/* 22 October 2011 Left Gufi's menu in place for future dev's enjoyment.
+ *
+ * 5 February 2011 meal for the night DO NOT EDIT MENU!
  * Sesame chicken alacarte
- * chicken lomein alacarte
+ * chicken lo mein alacarte
  * orange chicken x2
- * 
  */

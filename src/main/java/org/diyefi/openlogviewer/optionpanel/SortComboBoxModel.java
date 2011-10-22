@@ -25,37 +25,27 @@ package org.diyefi.openlogviewer.optionpanel;
 
 import javax.swing.DefaultComboBoxModel;
 
-/**
- *
- * @author Bryan Harris
- */
 public class SortComboBoxModel extends DefaultComboBoxModel{
-	
-	public SortComboBoxModel()
-	{
+	private static final long serialVersionUID = 1L;
+
+	public SortComboBoxModel() {
 		super();
 	}
 
-
 	@Override
-	public void addElement(Object element)
-	{
+	public void addElement(Object element) {
 		insertElementAt(element, 0);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void insertElementAt(Object element, int index)
-	{
+	public void insertElementAt(Object element, int index) {
 		int size = getSize();
-		for (index = 0; index < size; index++)
-		{
+		for (index = 0; index < size; index++) {
 				Comparable c = (Comparable)getElementAt( index );
 				if (c.compareTo(element) > 0)
 					break;
 		}
 		super.insertElementAt(element, index);
 	}
-
-
 }

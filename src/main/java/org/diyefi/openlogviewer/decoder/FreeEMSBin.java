@@ -312,13 +312,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 */
 	private boolean decodeBasicLogPacket(short[] packet, int payloadIDToParse) {
 		final int HEADER_HAS_LENGTH_INDEX   = 0;
-		final int HEADER_IS_NACK_INDEX      = 1;
+//		final int HEADER_IS_NACK_INDEX      = 1;
 		final int HEADER_HAS_SEQUENCE_INDEX = 2;
-		final int HEADER_RESERVED_E_INDEX   = 3;
-		final int HEADER_RESERVED_D_INDEX   = 4;
-		final int HEADER_RESERVED_C_INDEX   = 5;
-		final int HEADER_RESERVED_B_INDEX   = 6;
-		final int HEADER_RESERVED_A_INDEX   = 7;
+//		final int HEADER_RESERVED_E_INDEX   = 3;
+//		final int HEADER_RESERVED_D_INDEX   = 4;
+//		final int HEADER_RESERVED_C_INDEX   = 5;
+//		final int HEADER_RESERVED_B_INDEX   = 6;
+//		final int HEADER_RESERVED_A_INDEX   = 7;
+// TODO use a class to hold a packet in and provide getters for each of the above
 
 		// Increment post use
 		int position = 0;

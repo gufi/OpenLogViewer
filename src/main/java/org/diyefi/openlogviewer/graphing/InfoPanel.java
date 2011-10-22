@@ -35,73 +35,80 @@ import javax.swing.JPanel;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
-/**
- * @author Bryan Harris and Ben Fenner
- */
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
+	private int FPScounter = 0;
+	private int FPS = 0;
+	private long currentTime;
+	private long builtTime;
+	private GenericLog genLog;
+	private Color vertBar = new Color(255, 255, 255, 100);
+	private Color textBackground = new Color(0, 0, 0, 170);
+	private int xMouseCoord;
+	private int yMouseCoord;
+	boolean mouseOver;
+	private static final long serialVersionUID = -6657156551430700622L;
 
-    public InfoPanel() {
-    	genLog = new GenericLog();
-        xMouseCoord = -100;
-        yMouseCoord = -100;
-        mouseOver = false;
-        this.setOpaque(false);
-    }
+	public InfoPanel() {
+		genLog = new GenericLog();
+		xMouseCoord = -100;
+		yMouseCoord = -100;
+		mouseOver = false;
+		this.setOpaque(false);
+	}
 
-    @Override
-    public void paint(Graphics g) { // override paint because there will be no components in this pane
-        builtTime += System.currentTimeMillis() - currentTime;
-        currentTime = System.currentTimeMillis();
-        if (builtTime <= 1000) {
-            FPScounter++;
-        } else {
-            FPS = FPScounter;
-            if (FPScounter != 0) {
-                FPS += (1000 % FPScounter) * 0.001;
-            }
-            FPScounter = 0;
-            builtTime = 0;
-        }
+	@Override
+	public void paint(Graphics g) { // override paint because there will be no components in this pane
+		builtTime += System.currentTimeMillis() - currentTime;
+		currentTime = System.currentTimeMillis();
+		if (builtTime <= 1000) {
+			FPScounter++;
+		} else {
+			FPS = FPScounter;
+			if (FPScounter != 0) {
+				FPS += (1000 % FPScounter) * 0.001;
+			}
+			FPScounter = 0;
+			builtTime = 0;
+		}
 
-        if (!this.getSize().equals(this.getParent().getSize())) {
-            this.setSize(this.getParent().getSize());
-        }
-        if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
-            g.setColor(Color.RED);
-            g.drawString("No log loaded, please select a log from the file menu.", 20, 20);
-        } else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
-            g.setColor(Color.red);
-            g.drawString("Loading log, please wait...", 20, 20);
-        } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-            Dimension d = this.getSize();
-            int center = d.width / 2;
-            MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
-            if (mouseOver) {
-            	int snappedDataPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel().getBestSnappingPosition(xMouseCoord);
-                g2d.setColor(vertBar);
-                g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
-                g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
-                for (int i = 0; i < multigGraph.getComponentCount(); i++) {
-                    if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
-                        SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
-                        g2d.setColor(textBackground);
-                        String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition - center).toString();
-                        g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
-                        g2d.setColor(singleGraph.getColor());
-                        g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
-                    }
-                }
-            }
-        }
-    }
+		if (!this.getSize().equals(this.getParent().getSize())) {
+			this.setSize(this.getParent().getSize());
+		}
+		if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
+			g.setColor(Color.RED);
+			g.drawString("No log loaded, please select a log from the file menu.", 20, 20);
+		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
+			g.setColor(Color.red);
+			g.drawString("Loading log, please wait...", 20, 20);
+		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+			Dimension d = this.getSize();
+			int center = d.width / 2;
+			MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
+			if (mouseOver) {
+				int snappedDataPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel().getBestSnappingPosition(xMouseCoord);
+				g2d.setColor(vertBar);
+				g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
+				g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
+				for (int i = 0; i < multigGraph.getComponentCount(); i++) {
+					if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
+						SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
+						g2d.setColor(textBackground);
+						String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition - center).toString();
+						g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
+						g2d.setColor(singleGraph.getColor());
+						g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
+					}
+				}
+			}
+		}
+	}
 
-    public void setLog(GenericLog log) {
-        genLog = log;
-        repaint();
-    }
-
+	public void setLog(GenericLog log) {
+		genLog = log;
+		repaint();
+	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
@@ -137,17 +144,4 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	public void mouseDragged(MouseEvent e) {
 
 	}
-
-    int FPScounter = 0;
-    int FPS = 0;
-    private long currentTime;
-    private long builtTime;
-    private GenericLog genLog;
-    private Color vertBar = new Color(255, 255, 255, 100);
-    private Color textBackground = new Color(0, 0, 0, 170);
-    private int xMouseCoord;
-    private int yMouseCoord;
-    boolean mouseOver;
-    private static final long serialVersionUID = -6657156551430700622L;
-
 }

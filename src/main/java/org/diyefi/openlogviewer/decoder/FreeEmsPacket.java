@@ -31,27 +31,27 @@ package org.diyefi.openlogviewer.decoder;
 public class FreeEmsPacket {
 
 	// Flags from header flags byte
-    private boolean hasLength;
-    private boolean isNack;
-    private boolean hasSequence;
-    private boolean reserved3;
-    private boolean reserved4;
-    private boolean reserved5;
-    private boolean reserved6;
-    private boolean reserved7;
+	private boolean hasLength;
+	private boolean isNack;
+	private boolean hasSequence;
+	private boolean reserved3;
+	private boolean reserved4;
+	private boolean reserved5;
+	private boolean reserved6;
+	private boolean reserved7;
 
-    // Fields from header
-    private short length; // original packet length, which by now, is correct - always valid, regardless of flag
-    private short sequence;
-    private short payloadId;
+	// Fields from header
+	private short length; // original packet length, which by now, is correct - always valid, regardless of flag
+	private short sequence;
+	private short payloadId;
 
-    // Data from payload
-    private short errorId; // only populated if isNack is true;
-    private short payload[];
-    
-    // Checksum from footer
-    private short checksum; // included and calculated were the same, or this object would not have been created    
-    
+	// Data from payload
+	private short errorId; // only populated if isNack is true;
+	private short payload[];
+
+	// Checksum from footer
+	private short checksum; // included and calculated were the same, or this object would not have been created
+
 	public FreeEmsPacket(short rawPacket[]) {
 		throw new RuntimeException("Not implemented!");
 	}
@@ -123,5 +123,4 @@ public class FreeEmsPacket {
 	public short getChecksum() {
 		return checksum;
 	}
-
 }

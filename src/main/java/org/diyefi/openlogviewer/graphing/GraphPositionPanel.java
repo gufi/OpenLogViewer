@@ -31,182 +31,179 @@ import javax.swing.JPanel;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
-/**
- *
- * @author Ben Fenner
- */
 public class GraphPositionPanel extends JPanel {
+	private GenericLog genLog;
+	private Color majorGraduationColor;
+	private Color positionDataColor;
+	private Color backgroundColor;
+	private int majorGraduationSpacing;
+	private boolean[] validSnappingPositions;
+	private static final long serialVersionUID = -7808475370693818838L;
 
 	public GraphPositionPanel() {
 		super();
-        init();
-    }
-
-	private void init(){
-        this.setOpaque(true);
-        this.setLayout(null);
-        genLog = new GenericLog();
-        majorGraduationColor = Color.GRAY;
-        positionDataColor = majorGraduationColor;
-        backgroundColor = Color.BLACK;
-        setGraduationSpacing();
-        validSnappingPositions = new boolean[this.getWidth()];
+		init();
 	}
 
-    @Override
-    public void paint(Graphics g) { // override paint because there will be no components in this pane
-    	if (!this.getSize().equals(this.getParent().getSize())) {
-            this.setSize(this.getParent().getSize());
-        }
-    	setGraduationSpacing();
-    	Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(backgroundColor);
-        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-        if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
-        	paintPositionBar(g2d);
-        } else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
-        	paintPositionBar(g2d);
-        } else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-        	paintPositionBar(g2d);
-        	paintPositionData(g2d);
-        	setupMouseCursorLineSnappingPositions();
-        }
-    }
+	private void init(){
+		this.setOpaque(true);
+		this.setLayout(null);
+		genLog = new GenericLog();
+		majorGraduationColor = Color.GRAY;
+		positionDataColor = majorGraduationColor;
+		backgroundColor = Color.BLACK;
+		setGraduationSpacing();
+		validSnappingPositions = new boolean[this.getWidth()];
+	}
 
-    private void paintPositionBar(Graphics2D g2d){
-    	int center = this.getWidth() / 2;
-    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-    	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-    	double count = graphPosition * zoom;
-    	count = Math.round(count);
-        g2d.setColor(majorGraduationColor);
-        for(int i = center; i > 0; i--){  //paint left of center
-        	if(count % (majorGraduationSpacing * zoom) == 0){
-        		g2d.drawLine(i, 0, i, 6);
-        	}
-        	count--;
-        }
-        count = graphPosition * zoom;
-        count = Math.round(count);
-        for(int i = center; i < this.getWidth(); i++){  //paint right of center
-        	if(count % (majorGraduationSpacing * zoom) == 0){
-        		g2d.drawLine(i, 0, i, 6);
-        	}
-        	count++;
-        }
-        g2d.drawLine(0, 0, this.getWidth(), 0);
-    }
+	@Override
+	public void paint(Graphics g) { // override paint because there will be no components in this pane
+		if (!this.getSize().equals(this.getParent().getSize())) {
+			this.setSize(this.getParent().getSize());
+		}
 
-    private void paintPositionData(Graphics2D g2d){
-    	int center = this.getWidth() / 2;
-    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-    	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-    	double count = graphPosition * zoom;
-    	count = Math.round(count);
-    	g2d.setColor(positionDataColor);
-    	for(int i = center; i > 0; i--){  //paint left of center
-        	if(count % (majorGraduationSpacing * zoom) == 0){
-        		String positionDataString = Integer.toString((int)(count / zoom));
-        		g2d.drawString(positionDataString, i - 10, 18);
-        	}
-        	count--;
-        }
-        count = graphPosition * zoom;
-        count = Math.round(count);
-        for(int i = center; i < this.getWidth(); i++){  //paint right of center
-        	if(count % (majorGraduationSpacing * zoom) == 0){
-        		String positionDataString = Integer.toString((int)(count / zoom));
-        		g2d.drawString(positionDataString, i - 10, 18);
-        	}
-        	count++;
-        }
-    }
+		setGraduationSpacing();
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(backgroundColor);
+		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-    private void setupMouseCursorLineSnappingPositions(){
-    	int center = this.getWidth() / 2;
-    	validSnappingPositions = new boolean[this.getWidth()];
-    	double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-    	int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-    	double count = graphPosition * zoom;
-    	count = Math.round(count);
-    	//Fill array with valid snapping points that are left of center
-    	for(int i = center; i > 0; i--){
-        	if(count % zoom == 0){
-        		validSnappingPositions[i] = true;
-        	}
-        	count--;
-        }
-    	count = graphPosition * zoom;
-        count = Math.round(count);
-        //Fill array with valid snapping points that are right of center
-        for(int i = center; i < this.getWidth(); i++){
-        	if(count % zoom == 0){
-        		validSnappingPositions[i] = true;
-        	}
-        	count++;
-        }
-    }
+		if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
+			paintPositionBar(g2d);
+		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
+			paintPositionBar(g2d);
+		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+			paintPositionBar(g2d);
+			paintPositionData(g2d);
+			setupMouseCursorLineSnappingPositions();
+		}
+	}
 
-    public void setLog(GenericLog log) {
-       genLog = log;
-        repaint();
-    }
+	private void paintPositionBar(Graphics2D g2d){
+		int center = this.getWidth() / 2;
+		double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		g2d.setColor(majorGraduationColor);
 
-    private void setGraduationSpacing(){
-    	int zoom = 1;
-    	if(OpenLogViewerApp.getInstance() != null){
-    		zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-    	}
-    	if(zoom > 64){
-    		majorGraduationSpacing = 1;
-    	} else if(zoom > 32){
-    		majorGraduationSpacing = 2;
-    	} else if(zoom > 16){
-    		majorGraduationSpacing = 5;
-    	} else if(zoom > 8){
-    		majorGraduationSpacing = 10;
-    	} else if(zoom > 4){
-    		majorGraduationSpacing = 20;
-    	} else if(zoom > 2){
-    		majorGraduationSpacing = 25;
-    	} else if(zoom > 1){
-    		majorGraduationSpacing = 50;
-    	} else {
-    		majorGraduationSpacing = 100;
-    	}
-    }
+		double count = Math.round(graphPosition * zoom);
+		for(int i = center; i > 0; i--){  //paint left of center
+			if(count % (majorGraduationSpacing * zoom) == 0){
+				g2d.drawLine(i, 0, i, 6);
+			}
+			count--;
+		}
 
-    public int getBestSnappingPosition(int xMouseCoord){
-    	int bestPosition = 0;
-    	if(validSnappingPositions[xMouseCoord]){
-    		bestPosition = xMouseCoord;
-    	} else {
-    		boolean found = false;
-    		int startPosition = xMouseCoord;
-	    	for(int distance = 1; !found; distance++){
-	    		int next = startPosition + distance;
-	    		int prev = startPosition - distance;
-	    		if(next > validSnappingPositions.length - 1 || prev < 0){
-	    			bestPosition = xMouseCoord;
-	    			found = true;
-	    		} else if(validSnappingPositions[next]){
-	    			bestPosition = next;
-	    			found = true;
-	    		} else if(validSnappingPositions[prev]){
-	    			bestPosition = prev;
-	    			found = true;
-	    		}
-	    	}
-    	}
-    	return bestPosition;
-    }
+		count = Math.round(graphPosition * zoom);
+		for(int i = center; i < this.getWidth(); i++){ // Paint right of center
+			if(count % (majorGraduationSpacing * zoom) == 0){
+				g2d.drawLine(i, 0, i, 6);
+			}
+			count++;
+		}
 
-    private GenericLog genLog;
-    private Color majorGraduationColor;
-    private Color positionDataColor;
-    private Color backgroundColor;
-    private int majorGraduationSpacing;
-    private boolean[] validSnappingPositions;
-	private static final long serialVersionUID = -7808475370693818838L;
+		g2d.drawLine(0, 0, this.getWidth(), 0);
+	}
 
+	private void paintPositionData(Graphics2D g2d){
+		int center = this.getWidth() / 2;
+		double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		g2d.setColor(positionDataColor);
+
+		double count = Math.round(graphPosition * zoom);
+		for(int i = center; i > 0; i--){ // paint left of center
+			if(count % (majorGraduationSpacing * zoom) == 0){
+				String positionDataString = Integer.toString((int)(count / zoom));
+				g2d.drawString(positionDataString, i - 10, 18);
+			}
+			count--;
+		}
+
+		count = Math.round(graphPosition * zoom);
+		for(int i = center; i < this.getWidth(); i++){ // Paint right of center
+			if(count % (majorGraduationSpacing * zoom) == 0){
+				String positionDataString = Integer.toString((int)(count / zoom));
+				g2d.drawString(positionDataString, i - 10, 18);
+			}
+			count++;
+		}
+	}
+
+	private void setupMouseCursorLineSnappingPositions(){
+		int center = this.getWidth() / 2;
+		validSnappingPositions = new boolean[this.getWidth()];
+		double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+
+		double count = Math.round(graphPosition * zoom);
+		// Fill array with valid snapping points that are left of center
+		for(int i = center; i > 0; i--){
+			if(count % zoom == 0){
+				validSnappingPositions[i] = true;
+			}
+			count--;
+		}
+
+		count = Math.round(graphPosition * zoom);
+		// Fill array with valid snapping points that are right of center
+		for(int i = center; i < this.getWidth(); i++){
+			if(count % zoom == 0){
+				validSnappingPositions[i] = true;
+			}
+			count++;
+		}
+	}
+
+	public void setLog(GenericLog log) {
+		genLog = log;
+		repaint();
+	}
+
+	private void setGraduationSpacing(){
+		int zoom = 1;
+		if(OpenLogViewerApp.getInstance() != null){
+			zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		}
+		if(zoom > 64){
+			majorGraduationSpacing = 1;
+		} else if(zoom > 32){
+			majorGraduationSpacing = 2;
+		} else if(zoom > 16){
+			majorGraduationSpacing = 5;
+		} else if(zoom > 8){
+			majorGraduationSpacing = 10;
+		} else if(zoom > 4){
+			majorGraduationSpacing = 20;
+		} else if(zoom > 2){
+			majorGraduationSpacing = 25; // Hmmmmmmm :-)
+		} else if(zoom > 1){
+			majorGraduationSpacing = 50;
+		} else {
+			majorGraduationSpacing = 100;
+		}
+	}
+
+	public int getBestSnappingPosition(int xMouseCoord){
+		int bestPosition = 0;
+		if(validSnappingPositions[xMouseCoord]){
+			bestPosition = xMouseCoord;
+		} else {
+			boolean found = false;
+			int startPosition = xMouseCoord;
+			for(int distance = 1; !found; distance++){
+				int next = startPosition + distance;
+				int prev = startPosition - distance;
+				if(next > validSnappingPositions.length - 1 || prev < 0){
+					bestPosition = xMouseCoord;
+					found = true;
+				} else if(validSnappingPositions[next]){
+					bestPosition = next;
+					found = true;
+				} else if(validSnappingPositions[prev]){
+					bestPosition = prev;
+					found = true;
+				}
+			}
+		}
+		return bestPosition;
+	}
 }

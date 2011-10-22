@@ -1,19 +1,12 @@
 /**
- * 
+ *
  */
 package org.diyefi.openlogviewer.decoder;
 
 import junit.framework.TestCase;
 
-/**
- * @author fred
- *
- */
 public class FreeEMSBinaryTest extends TestCase {
 
-	/**
-	 * @param name
-	 */
 	public FreeEMSBinaryTest(String name) {
 		super(name);
 	}
@@ -31,17 +24,16 @@ public class FreeEMSBinaryTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void testChecksum(){
 		assertEquals(true, true);
 	}
-	
+
 	public void testFail(){
 		assertTrue(true);
 	}
-	
+
 	public void testPass(){
 		assertTrue(true);
 	}
-
 }

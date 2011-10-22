@@ -28,102 +28,89 @@ import java.io.IOException;
 import java.util.Scanner;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
-/**
- *
- * @author Bryan
- */
 public class CSVTypeLog extends BaseDecoder {
+	int fieldCount = -1;
 
-    /**
-     * Provide a string path to the log you want to parse
-     * @param path
-     */
+	/**
+	 * This constructor is called when a string path is provided
+	 * @param f
+	 */
+	public CSVTypeLog(File f) {
+		this.setLogFile(f);
+		this.setDecodedLog(new GenericLog());
+		this.setT(new Thread(this, "CSV Type Log Loading"));
+		this.getT().setPriority(Thread.MAX_PRIORITY);
+		this.getT().start();
+	}
 
-    public CSVTypeLog(String path) {
+	/**
+	 * Decodes a CSV type of text file,
+	 * the first ten lines are parsed individually to detect the delimiter type
+	 *
+	 * accepted types of delimiters are TAB, comma, ; , : and \
+	 * this decoder does not yet support markers, it will skip them
+	 *
+	 * @throws IOException
+	 */
+	@Override
+	protected void decodeLog() throws IOException {
+		Scanner scan = new Scanner(new FileReader(getLogFile()));
 
-        this(new File(path));
+		String line = "";
+		String delimiter = "";
+		String[] splitLine = new String[1];
+		String[] headers = new String[1];
+		delimiter = scanForDelimiter();
 
-    }
+		boolean headerSet = false;
+		while (scan.hasNextLine() && !headerSet) {
+			line = scan.nextLine();
+			splitLine = line.split(delimiter);
 
-    /**
-     * This constructor is called when a string path is provided
-     * @param f
-     */
+			if (splitLine.length == fieldCount) {
+				headers = splitLine;
+				this.getDecodedLog().setHeaders(splitLine);
+				headerSet = true;
+			}
+		}
 
-    public CSVTypeLog(File f) {
-        this.setLogFile(f);
-        this.setDecodedLog(new GenericLog());
-        this.setT(new Thread(this, "CSV Type Log Loading"));
-        this.getT().setPriority(Thread.MAX_PRIORITY);
-        this.getT().start();
+		while (scan.hasNextLine()) {
+			line = scan.nextLine();
+			splitLine = line.split(delimiter);
 
-    }
+			if (splitLine.length == fieldCount) {
+				for (int x = 0; x < splitLine.length; x++) {
+					this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
+				}
+			}
+		}
 
-    /**
-     * Decodes a CSV type of text file,
-     * the first ten lines are parsed individually to detect the delimiter type
-     *
-     * accepted types of delimiters are TAB, comma, ; , : and \
-     * this decoder does not yet support markers, it will skip them
-     * @throws IOException
-     */
-    @Override
-    protected void decodeLog() throws IOException {
-        Scanner scan = new Scanner(new FileReader(getLogFile()));
+	}
 
-        String line = "";
-        String delimiter = "";
-        String[] splitLine = new String[1];
-        String[] headers = new String[1];
-        delimiter = scanForDelimiter();
+	/**
+	 * detects the delimiter and if it finds a suitable delimiter it will return it.
+	 * @return delimiter in string format
+	 * @throws IOException
+	 */
+	private String scanForDelimiter() throws IOException {
+		String delim[] = {"\t", ",", ":", "/", "\\\\"};
+		Scanner scan = new Scanner(new FileReader(getLogFile()));
+		String delimiterFind = "";
+		String[] split = new String[1];
+		int delimNum = -1;
 
-        boolean headerSet = false;
-        while (scan.hasNextLine() && !headerSet) {
-            line = scan.nextLine();
-            splitLine = line.split(delimiter);
-            if (splitLine.length == fieldCount) {
-                headers = splitLine;
-                this.getDecodedLog().setHeaders(splitLine);
-                headerSet = true;
-            }
-        }
-        while (scan.hasNextLine()) {
-            line = scan.nextLine();
+		for (int i = 0; i < 10 && scan.hasNext(); i++) {
+			delimiterFind = scan.nextLine();
+			for (int j = 0; j < delim.length; j++) {
+				split = delimiterFind.split(delim[j]);
+				if (split.length > fieldCount) {
+					fieldCount = split.length;
+					delimNum = j;
+				}
+			}
+		}
 
-            splitLine = line.split(delimiter);
-            if (splitLine.length == fieldCount) {
-                for (int x = 0; x < splitLine.length; x++) {
-                    this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
-                }
-            }
-        }
-
-    }
-    int fieldCount = -1;
-
-    /**
-     * detects the delimiter and if it finds a suitable delimiter it will return it.
-     * @return delimiter in string format
-     * @throws IOException
-     */
-
-    private String scanForDelimiter() throws IOException {
-        String delim[] = {"\t", ",", ":", "/", "\\\\"};
-        Scanner scan = new Scanner(new FileReader(getLogFile()));
-        String delimiterFind = "";
-        String[] split = new String[1];
-        int delimNum = -1;
-        for (int i = 0; i < 10 && scan.hasNext(); i++) {
-            delimiterFind = scan.nextLine();
-            for (int j = 0; j < delim.length; j++) {
-                split = delimiterFind.split(delim[j]);
-                if (split.length > fieldCount) {
-                    fieldCount = split.length;
-                    delimNum = j;
-                }
-            }
-        }
-        scan.close();
-        return delim[delimNum];
-    }
+		scan.close();
+		return delim[delimNum];
+	}
 }

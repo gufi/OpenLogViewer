@@ -36,7 +36,7 @@ import org.diyefi.openlogviewer.coloring.MarkedColor;
 public enum InitialLineColoring{
 
 	INSTANCE;
-	
+
 	private InitialLineColoring(){
 		colorList = new LinkedList<MarkedColor>();
 		colorList.addFirst(new MarkedColor(Color.getHSBColor(1.0F, 1.0F, 1.0F), true, 0.0));
@@ -51,9 +51,11 @@ public enum InitialLineColoring{
 	private void addColors(long hueOffsetDinominator){
 		long numColors = hueOffsetDinominator/2;
 		double hueOffset = 1.0/hueOffsetDinominator;
+
 		for(long i = 0; i < (numColors - 1); i++){
 			double hue = 0.0;
-			hue += hueOffset;	//Always skip pure red and go to the next hue.
+			hue += hueOffset; // Always skip pure red and go to the next hue.
+
 			for(int j = 0; j < 4; j++){
 				MarkedColor newColor = new MarkedColor(Color.getHSBColor((float)hue, 1.0F, 1.0F), true, hue);
 				if(!colorList.contains(newColor)){
@@ -63,21 +65,23 @@ public enum InitialLineColoring{
 			}
 		}
 	}
-	
+
 	public Color getBestAvailableColor(){
 		Color nextColor = Color.gray;
 		ListIterator<MarkedColor> i = colorList.listIterator();
+
 		for(boolean found = false; i.hasNext() && !found;){
 			MarkedColor c = i.next();
+
 			if(c.isAvailable()){
 				c.setAvailability(false);
-				nextColor = c.getColor();				
+				nextColor = c.getColor();
 				found = true;
 			}
 		}
 		return nextColor;
 	}
-	
+
 	public void giveBackColor(Color c){
 		if(colorList.contains(c)){
 			colorList.get(colorList.indexOf(c)).setAvailability(true);

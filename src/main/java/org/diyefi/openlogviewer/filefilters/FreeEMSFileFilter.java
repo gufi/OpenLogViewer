@@ -27,29 +27,27 @@ import java.io.*;
 import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
-/**
- *
- * @author Bryan
- */
 public class FreeEMSFileFilter extends FileFilter {
-    public FreeEMSFileFilter () {
-        super();
-    }
+	public FreeEMSFileFilter () {
+		super();
+	}
 
-    @Override
-    public String getDescription() {
-       return "FreeEMSBinary Logs";
-    }
+	@Override
+	public String getDescription() {
+		return "FreeEMSBinary Logs";
+	}
 
-    @Override
-    public boolean accept(File f) {
-        if(f.isDirectory()) {
-            return true;
-        }
-        String extension = Utilities.getExtension(f);
-        if(extension != null && extension.equals("bin")) return true;
+	@Override
+	public boolean accept(File file) {
+		if(file.isDirectory()) {
+			return true;
+		}
 
-        //if nothing is satisfied return false
-        return false;
-    }
+		String extension = Utilities.getExtension(file);
+		if(extension != null && extension.equals("bin")){
+			return true;
+		}
+
+		return false;
+	}
 }

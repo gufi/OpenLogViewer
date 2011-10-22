@@ -54,605 +54,598 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 
-/**
- *
- * @author Bryan Harris
- */
 @SuppressWarnings("serial")
 public class OptionFrameV2 extends JFrame {
+	private JFrame thisRef;
+	private JPanel inactiveHeaders;
+	private ModifyGraphPane infoPanel;
+	private JButton addDivisionButton;
 
-    private JFrame thisRef;
-    private JPanel inactiveHeaders;
-    private ModifyGraphPane infoPanel;
-    private JButton addDivisionButton;
-    
-    private JLayeredPane layeredPane;
-    private ArrayList<JPanel> activePanelList;
+	private JLayeredPane layeredPane;
+	private ArrayList<JPanel> activePanelList;
 
-    private static final int WIDTH_OF_BOXES = 6; 
-    private static final int HEIGHT_OF_BOXES = 2;
-    private static final int MAX_NUMBER_OF_BOXES = WIDTH_OF_BOXES * HEIGHT_OF_BOXES;
+	private static final int WIDTH_OF_BOXES = 6;
+	private static final int HEIGHT_OF_BOXES = 2;
+	private static final int MAX_NUMBER_OF_BOXES = WIDTH_OF_BOXES * HEIGHT_OF_BOXES;
 
-    private static final int NUMBER_OF_COLS_OF_FREEEMS_FIELDS = 7; // Clearly a hack, but just to clarify and parameterise the existing math...
-    private static final int HEIGHT_IN_FIELDS = 12;
-    private static final int NUMBER_OF_ADD_BUTTONS = 1;
-    
-    private static final int WTF = 4; // Don't ask me...
-    private static final int WTF2 = 3; // No fucking idea AT ALL...
-    private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
-    private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
-    private static final int PANEL_WIDTH = 140;// panels are 120 px wide buttons and labels are also; default 120
-    private static final int PANEL_HEIGHT = 120;// panels are 120 px high;default 120
-    private static final int SCROLL_BAR_SIZE = 16; // Measured
+	private static final int NUMBER_OF_COLS_OF_FREEEMS_FIELDS = 7; // Clearly a hack, but just to clarify and parameterise the existing math...
+	private static final int HEIGHT_IN_FIELDS = 12;
+	private static final int NUMBER_OF_ADD_BUTTONS = 1;
 
-    // Both are wrong for scroll bars... probably need an event to handle that?
-    private static final int WIDTH_OF_WINDOW = (NUMBER_OF_COLS_OF_FREEEMS_FIELDS * PANEL_WIDTH);
-    private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
+	private static final int WTF = 4; // Don't ask me...
+	private static final int WTF2 = 3; // No fucking idea AT ALL...
+	private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
+	private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
+	private static final int PANEL_WIDTH = 140;// panels are 120 px wide buttons and labels are also; default 120
+	private static final int PANEL_HEIGHT = 120;// panels are 120 px high;default 120
+	private static final int SCROLL_BAR_SIZE = 16; // Measured
 
-    public OptionFrameV2() {
+	// Both are wrong for scroll bars... probably need an event to handle that?
+	private static final int WIDTH_OF_WINDOW = (NUMBER_OF_COLS_OF_FREEEMS_FIELDS * PANEL_WIDTH);
+	private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
 
-        super("Graphing Option Pane");
-        this.setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
-        this.setPreferredSize(this.getSize());
+	public OptionFrameV2() {
+		super("Graphing Option Pane");
+		this.setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
+		this.setPreferredSize(this.getSize());
 
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        thisRef = this;
-        activePanelList = new ArrayList<JPanel>();
-        layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
+		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		thisRef = this;
+		activePanelList = new ArrayList<JPanel>();
+		layeredPane = new JLayeredPane();
+		layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
 
+		JScrollPane scroll = new JScrollPane(layeredPane);
 
-        JScrollPane scroll = new JScrollPane(layeredPane);
+		inactiveHeaders = initHeaderPanel();
+		layeredPane.add(inactiveHeaders);
+		infoPanel = new ModifyGraphPane();
+		this.add(infoPanel);
 
-        inactiveHeaders = initHeaderPanel();
-        layeredPane.add(inactiveHeaders);
-        infoPanel = new ModifyGraphPane();
-        this.add(infoPanel);
+		this.add(scroll);
+		addActiveHeaderPanel();
+	}
 
-        this.add(scroll);
-        addActiveHeaderPanel();
+	private JPanel initHeaderPanel() {
+		JPanel ih = new JPanel();
+		ih.setLayout(null);
+		ih.setName("Drop InactiveHeaderPanel");
+		this.addDivisionButton = new JButton("Add Division");
+		addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
+		addDivisionButton.addActionListener(addDivisionListener);
+		ih.add(addDivisionButton);
+		ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
+		return ih;
+	}
 
-    }
+	private ActionListener addDivisionListener = new ActionListener() {
 
-    private JPanel initHeaderPanel() {
-        JPanel ih = new JPanel();
-        ih.setLayout(null);
-        ih.setName("Drop InactiveHeaderPanel");
-        this.addDivisionButton = new JButton("Add Division");
-        addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
-        addDivisionButton.addActionListener(addDivisionListener);
-        ih.add(addDivisionButton);
-        ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
-        return ih;
-    }
-    private ActionListener addDivisionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			addActiveHeaderPanel();
+		}
+	};
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            addActiveHeaderPanel();
-        }
-    };
-    private ActionListener remDivisionListener = new ActionListener() {
+	private ActionListener remDivisionListener = new ActionListener() {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            remActiveHeaderPanel(e);
-        }
-    };
-    private ContainerListener addRemoveListener = new ContainerListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			remActiveHeaderPanel(e);
+		}
+	};
 
-        @Override
-        public void componentAdded(ContainerEvent e) {
+	private ContainerListener addRemoveListener = new ContainerListener() {
 
-            if (e.getChild() != null) {
-                if (e.getChild() instanceof ActiveHeaderLabel) {
-                    ((ActiveHeaderLabel) e.getChild()).setEnabled(true);
-                    ((ActiveHeaderLabel) e.getChild()).setSelected(true);
-                    ((ActiveHeaderLabel) e.getChild()).getGDE().setSplitNumber(
-                            activePanelList.indexOf(
-                            e.getChild().getParent()) + 1);
-                }
-            }
-        }
+		@Override
+		public void componentAdded(ContainerEvent e) {
 
-        @Override
-        public void componentRemoved(ContainerEvent e) {
-            if (e.getChild() != null) {
-                if (e.getChild() instanceof ActiveHeaderLabel) {
-                    ((ActiveHeaderLabel) e.getChild()).setEnabled(false);
-                    ((ActiveHeaderLabel) e.getChild()).setSelected(false);
-                }
-                for (int i = 0; i < e.getContainer().getComponentCount(); i++) {
-                    if (e.getContainer().getComponent(i) instanceof ActiveHeaderLabel) {
-                        e.getContainer().getComponent(i).setLocation(0, i * COMP_HEIGHT);
-                    }
-                }
-            }
-        }
-    };
+			if (e.getChild() != null) {
+				if (e.getChild() instanceof ActiveHeaderLabel) {
+					((ActiveHeaderLabel) e.getChild()).setEnabled(true);
+					((ActiveHeaderLabel) e.getChild()).setSelected(true);
+					((ActiveHeaderLabel) e.getChild()).getGDE().setSplitNumber(activePanelList.indexOf(e.getChild().getParent()) + 1); // Why one?
+				}
+			}
+		}
 
-    private void addActiveHeaderPanel() {
+		@Override
+		public void componentRemoved(ContainerEvent e) {
+			if (e.getChild() != null) {
+				if (e.getChild() instanceof ActiveHeaderLabel) {
+					((ActiveHeaderLabel) e.getChild()).setEnabled(false);
+					((ActiveHeaderLabel) e.getChild()).setSelected(false);
+				}
+				for (int i = 0; i < e.getContainer().getComponentCount(); i++) {
+					if (e.getContainer().getComponent(i) instanceof ActiveHeaderLabel) {
+						e.getContainer().getComponent(i).setLocation(0, i * COMP_HEIGHT);
+					}
+				}
+			}
+		}
+	};
 
-        if (activePanelList.size() < MAX_NUMBER_OF_BOXES) {
+	private void addActiveHeaderPanel() {
 
-            int row = activePanelList.size() / WIDTH_OF_BOXES;
-            int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviors at once...
-            JPanel activePanel = new JPanel();
-            activePanelList.add(activePanel);
-            if (OpenLogViewerApp.getInstance() != null) {
-                OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
-            }
-            activePanel.setLayout(null);
-            activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
-            activePanel.addContainerListener(addRemoveListener);
+		if (activePanelList.size() < MAX_NUMBER_OF_BOXES) {
 
-            activePanel.setBounds((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row, PANEL_WIDTH, PANEL_HEIGHT);
-            activePanel.setBackground(Color.DARK_GRAY);
-            JButton removeButton = new JButton("Remove");
-            removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
-            removeButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
-            removeButton.addActionListener(remDivisionListener);
-            activePanel.add(removeButton);
-            layeredPane.add(activePanel);
-            if (activePanelList.size() == MAX_NUMBER_OF_BOXES) {
-                addDivisionButton.setEnabled(false);
-            } 
-        }
-    }
+			int row = activePanelList.size() / WIDTH_OF_BOXES;
+			int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviors at once...
+			JPanel activePanel = new JPanel();
+			activePanelList.add(activePanel);
+			if (OpenLogViewerApp.getInstance() != null) {
+				OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
+			}
+			activePanel.setLayout(null);
+			activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
+			activePanel.addContainerListener(addRemoveListener);
 
-    private void remActiveHeaderPanel(ActionEvent e) {
-        JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
-        activePanelList.remove(panel);
-        OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
-        for (int i = 0; i < panel.getComponentCount();) {
-            if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
-                ActiveHeaderLabel GCB = (ActiveHeaderLabel) panel.getComponent(i);
-                GCB.getInactivePanel().add(GCB);
-                GCB.setLocation(GCB.getInactiveLocation());
-                GCB.setSelected(false);
-            } else if (panel.getComponent(i) instanceof JButton) {
-                panel.remove(panel.getComponent(i));//removes the button
-            } else {
-                i++;
-            }
-        }
+			activePanel.setBounds((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row, PANEL_WIDTH, PANEL_HEIGHT);
+			activePanel.setBackground(Color.DARK_GRAY);
+			JButton removeButton = new JButton("Remove");
+			removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
+			removeButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
+			removeButton.addActionListener(remDivisionListener);
+			activePanel.add(removeButton);
+			layeredPane.add(activePanel);
 
-        panel.getParent().remove(panel);
-        for (int i = 0; i < activePanelList.size(); i++) {
-            int row = i / WIDTH_OF_BOXES;
-            int col = i % WIDTH_OF_BOXES;
-            activePanelList.get(i).setLocation((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row);
-        }
-        if (!addDivisionButton.isEnabled()) {
-            addDivisionButton.setEnabled(true);
-        }
-        ////////////////////////////////////////////////////////////////////Move this to events eventually,
-        if (activePanelList.size() > 1) {
-            for (int i = 0; i < activePanelList.size(); i++) {
-                JPanel active = activePanelList.get(i);
-                if (active.getComponentCount() > 1) {
-                    for (int j = 0; j < active.getComponentCount(); j++) {
-                        if (active.getComponent(j) instanceof ActiveHeaderLabel) {
-                            ((ActiveHeaderLabel) active.getComponent(j)).getGDE().setSplitNumber(i + 1);
-                        }
-                    }
-                }
-            }
-        }
-        if(activePanelList.isEmpty()) addActiveHeaderPanel();
-        this.repaint();
-    }
-    private MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
+			if (activePanelList.size() == MAX_NUMBER_OF_BOXES) {
+				addDivisionButton.setEnabled(false);
+			}
+		}
+	}
 
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            Component c = e.getComponent();
-            ActiveHeaderLabel GCB = (ActiveHeaderLabel) c;
-            GCB.setDragging(true);
-            if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) {// 4 == right mouse button
-                if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
-                    Component cn = c.getParent().getParent().getComponentAt(layeredPane.getMousePosition());
-                    if (cn instanceof JPanel) {
-                        JPanel j = (JPanel) cn;
-                        if (j.getName().contains("Drop")) { // implement a better way to do this later
-                            j.add(c);// components cannot share parents so it is automatically removed
-                            c.setLocation( // reset the location to where the mouse is, otherwise first pixel when moving to the new jpanel
-                                    // will cause a location issue reflecting where the panel was in the PREVIOUS panel
-                                    layeredPane.getMousePosition().x - c.getParent().getX() - (c.getWidth() / 2),
-                                    layeredPane.getMousePosition().y - c.getParent().getY() - (c.getHeight() / 2));
-                        }
-                    }
-                } else {
-                    c.setLocation(c.getX() + e.getX() - (c.getWidth() / 2), c.getY() + e.getY() - (c.getHeight() / 2));
-                }
-                thisRef.repaint();
-            }
-        }
-    };
+	private void remActiveHeaderPanel(ActionEvent e) {
+		JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
+		activePanelList.remove(panel);
+		OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
 
-    private boolean place(ActiveHeaderLabel GCB) {
-        int x = 0;
-        int y = COMP_HEIGHT;
-        while (y < GCB.getParent().getHeight()) {
-            if (GCB.getParent().getComponentAt(x, y) == GCB.getParent() || GCB.getParent().getComponentAt(x, y) == GCB) {
-                GCB.setLocation(x, y);
-                return true;
-            }
-            y = y + COMP_HEIGHT;
-        }
-        return false;
-    }
+		for (int i = 0; i < panel.getComponentCount();) {
+			if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
+				ActiveHeaderLabel GCB = (ActiveHeaderLabel) panel.getComponent(i);
+				GCB.getInactivePanel().add(GCB);
+				GCB.setLocation(GCB.getInactiveLocation());
+				GCB.setSelected(false);
+			} else if (panel.getComponent(i) instanceof JButton) {
+				panel.remove(panel.getComponent(i));//removes the button
+			} else {
+				i++;
+			}
+		}
+
+		panel.getParent().remove(panel);
+		for (int i = 0; i < activePanelList.size(); i++) {
+			int row = i / WIDTH_OF_BOXES;
+			int col = i % WIDTH_OF_BOXES;
+			activePanelList.get(i).setLocation((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row);
+		}
+
+		if (!addDivisionButton.isEnabled()) {
+			addDivisionButton.setEnabled(true);
+		}
+
+		// Move this to events eventually,
+		if (activePanelList.size() > 1) {
+			for (int i = 0; i < activePanelList.size(); i++) {
+				JPanel active = activePanelList.get(i);
+				if (active.getComponentCount() > 1) {
+					for (int j = 0; j < active.getComponentCount(); j++) {
+						if (active.getComponent(j) instanceof ActiveHeaderLabel) {
+							((ActiveHeaderLabel) active.getComponent(j)).getGDE().setSplitNumber(i + 1);
+						}
+					}
+				}
+			}
+		}
+
+		if(activePanelList.isEmpty()) addActiveHeaderPanel();
+		this.repaint();
+	}
+
+	private MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			Component c = e.getComponent();
+			ActiveHeaderLabel GCB = (ActiveHeaderLabel) c;
+			GCB.setDragging(true);
+			if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) {// 4 == right mouse button
+				if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
+					Component cn = c.getParent().getParent().getComponentAt(layeredPane.getMousePosition());
+					if (cn instanceof JPanel) {
+						JPanel j = (JPanel) cn;
+						if (j.getName().contains("Drop")) { // implement a better way to do this later
+							j.add(c);// components cannot share parents so it is automatically removed
+							c.setLocation( // reset the location to where the mouse is, otherwise first pixel when moving to the new jpanel
+									// will cause a location issue reflecting where the panel was in the PREVIOUS panel
+									layeredPane.getMousePosition().x - c.getParent().getX() - (c.getWidth() / 2),
+									layeredPane.getMousePosition().y - c.getParent().getY() - (c.getHeight() / 2));
+						}
+					}
+				} else {
+					c.setLocation(c.getX() + e.getX() - (c.getWidth() / 2), c.getY() + e.getY() - (c.getHeight() / 2));
+				}
+				thisRef.repaint();
+			}
+		}
+	};
+
+	private boolean place(ActiveHeaderLabel GCB) {
+		int x = 0;
+		int y = COMP_HEIGHT;
+		while (y < GCB.getParent().getHeight()) {
+			if (GCB.getParent().getComponentAt(x, y) == GCB.getParent() || GCB.getParent().getComponentAt(x, y) == GCB) {
+				GCB.setLocation(x, y);
+				return true;
+			}
+			y = y + COMP_HEIGHT;
+		}
+		return false;
+	}
 
 	public void updateFromLog(GenericLog gl) {
 
-        while (activePanelList.size() > 0) {
-            activePanelList.get(0).removeAll();
-            layeredPane.remove(activePanelList.get(0));
-            activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point
-        }
+		while (activePanelList.size() > 0) {
+			activePanelList.get(0).removeAll();
+			layeredPane.remove(activePanelList.get(0));
+			activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point
+		}
 
-        addDivisionButton.setEnabled(true);
+		addDivisionButton.setEnabled(true);
 
-        if (inactiveHeaders.getComponentCount() > 1) {
-            inactiveHeaders.removeAll();
-            inactiveHeaders.add(this.addDivisionButton);
-        }
-        this.addActiveHeaderPanel(); // will be based on highest number of divisions found when properties are applied
-
-
-        ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
-        Iterator<String> i = gl.keySet().iterator();
-        String head = "";
-        ActiveHeaderLabel toBeAdded = null;
-
-        while (i.hasNext()) {
-            head = (String) i.next();
-            GenericDataElement GDE = gl.get(head);
-            toBeAdded = new ActiveHeaderLabel();
-
-            toBeAdded.setName(head);
-            toBeAdded.setText(head);
-            toBeAdded.setRef(GDE);
-            toBeAdded.setEnabled(false);//you are unable to activate a graph in the inacivelist
-            toBeAdded.addMouseMotionListener(labelAdapter);
-            if (checkForProperties(toBeAdded, GDE)) {
-                toBeAdded.setBackground(GDE.getColor());
-            }
-            tmpList.add(toBeAdded);
-
-        }
-        Collections.sort(tmpList);
-        int j = 0;
-        int leftSide = 0;
-        for (int it = 0; it < tmpList.size(); it++) {
-            if (COMP_HEIGHT + (COMP_HEIGHT * (j + 1)) > inactiveHeaders.getHeight()) {
-                j = 0;
-                leftSide += PANEL_WIDTH;
-            }
-            tmpList.get(it).setBounds(leftSide, (COMP_HEIGHT + (COMP_HEIGHT * j)), PANEL_WIDTH, COMP_HEIGHT);
-            inactiveHeaders.add(tmpList.get(it));
-
-            j++;
-
-        }
-
-        this.repaint();
-        this.setDefaultCloseOperation(JFrame.ICONIFIED);
-        this.setVisible(true);
-    }
-
-    private boolean checkForProperties(ActiveHeaderLabel GCB, GenericDataElement GDE) {
-        for (int i = 0; i < OpenLogViewerApp.getInstance().getProperties().size(); i++) {
-            if (OpenLogViewerApp.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
-                GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
-                GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
-                GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
-                GDE.setSplitNumber(OpenLogViewerApp.getInstance().getProperties().get(i).getSplit());
-                if (OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
-                    //GCB.setSelected(true);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private class ModifyGraphPane extends JInternalFrame {
-
-        GenericDataElement GDE;
-        ActiveHeaderLabel AHL;
-        private JLabel minLabel;
-        private JLabel maxLabel;
-        private JTextField minField;
-        private JTextField maxField;
-        private JButton resetButton;
-        private JButton applyButton;
-        private JButton saveButton;
-        private JButton colorButton;
-        private ActionListener resetButtonListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (GDE != null) {
-                    GDE.reset();
-                    minField.setText(Double.toString(GDE.getMinValue()));
-                    maxField.setText(Double.toString(GDE.getMaxValue()));
-                }
-            }
-        };
-        private ActionListener applyButtonListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (GDE != null) {
-                    changeGDEValues();
-                }
-            }
-        };
-        private ActionListener saveButtonListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (GDE != null) {
-                    changeGDEValues();
-                    OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(new SingleProperty(GDE));
-                }
-            }
-        };
-        private ActionListener colorButtonListener = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color c = JColorChooser.showDialog(
-                        new JFrame(),
-                        "Choose Background Color",
-                        colorButton.getForeground());
-                if (c != null) {
-                    colorButton.setForeground(c);
-                }
-            }
-        };
-
-        public ModifyGraphPane() {
-            this.setName("InfoPanel");
-            minLabel = new JLabel("Min:");
-            maxLabel = new JLabel("Max:");
-            minField = new JTextField(10);
-            maxField = new JTextField(10);
-            resetButton = new JButton("Reset Min/Max");
-            resetButton.addActionListener(resetButtonListener);
-
-            applyButton = new JButton("Apply");
-            applyButton.addActionListener(applyButtonListener);
-
-            saveButton = new JButton("Save");
-            saveButton.addActionListener(saveButtonListener);
-
-            colorButton = new JButton("Color");
-            colorButton.addActionListener(colorButtonListener);
+		if (inactiveHeaders.getComponentCount() > 1) {
+			inactiveHeaders.removeAll();
+			inactiveHeaders.add(this.addDivisionButton);
+		}
+		this.addActiveHeaderPanel(); // will be based on highest number of divisions found when properties are applied
 
 
-            //X       Y       width   height
-            minLabel.setBounds(0, 0, COMP_WIDTH / 2, COMP_HEIGHT);
-            minField.setBounds(100, 0, COMP_WIDTH / 2, COMP_HEIGHT);
-            maxLabel.setBounds(0, 20, COMP_WIDTH / 2, COMP_HEIGHT);
-            maxField.setBounds(100, 20, COMP_WIDTH / 2, COMP_HEIGHT);
-            colorButton.setBounds(0, 40, COMP_WIDTH, COMP_HEIGHT);
-            applyButton.setBounds(0, 60, COMP_WIDTH / 2, COMP_HEIGHT);
-            saveButton.setBounds(100, 60, COMP_WIDTH / 2, COMP_HEIGHT);
-            resetButton.setBounds(0, 80, COMP_WIDTH, COMP_HEIGHT);
+		ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
+		Iterator<String> i = gl.keySet().iterator();
+		String head = "";
+		ActiveHeaderLabel toBeAdded = null;
 
-            this.setLayout(null);
+		while (i.hasNext()) {
+			head = (String) i.next();
+			GenericDataElement GDE = gl.get(head);
+			toBeAdded = new ActiveHeaderLabel();
 
-            ///ip.add(headerLabel);
-            this.add(minLabel);
-            this.add(minField);
-            this.add(maxLabel);
-            this.add(maxField);
-            this.add(colorButton);
-            this.add(applyButton);
-            this.add(saveButton);
-            this.add(resetButton);
-            this.setBounds(500, 180, 210, 133);
-            this.setMaximizable(false);
-            this.setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
-            this.setClosable(true);
-        }
+			toBeAdded.setName(head);
+			toBeAdded.setText(head);
+			toBeAdded.setRef(GDE);
+			toBeAdded.setEnabled(false);//you are unable to activate a graph in the inacivelist
+			toBeAdded.addMouseMotionListener(labelAdapter);
+			if (checkForProperties(toBeAdded, GDE)) {
+				toBeAdded.setBackground(GDE.getColor());
+			}
+			tmpList.add(toBeAdded);
 
-        public void setGDE(GenericDataElement gde, ActiveHeaderLabel ahl) {
-            this.GDE = gde;
-            this.AHL = ahl;
-            this.setTitle(GDE.getName());
-            minField.setText(GDE.getMinValue().toString());
-            maxField.setText(GDE.getMaxValue().toString());
-            colorButton.setForeground(GDE.getColor());
-        }
+		}
+		Collections.sort(tmpList);
+		int j = 0;
+		int leftSide = 0;
+		for (int it = 0; it < tmpList.size(); it++) {
+			if (COMP_HEIGHT + (COMP_HEIGHT * (j + 1)) > inactiveHeaders.getHeight()) {
+				j = 0;
+				leftSide += PANEL_WIDTH;
+			}
 
-        private void changeGDEValues() {
-            try {
-                GDE.setMaxValue(Double.parseDouble(maxField.getText()));
-            } catch (Exception ex) {
-                //TO-DO: do something with Auto field
-            }
-            try {
-                GDE.setMinValue(Double.parseDouble(minField.getText()));
-            } catch (Exception ex) {
-                //TO-DO: do something with Auto field
-            }
-            if (!GDE.getColor().equals(colorButton.getForeground())) {
-                GDE.setColor(colorButton.getForeground());
-                AHL.setForeground(colorButton.getForeground());
-            }
-        }
-    }
+			tmpList.get(it).setBounds(leftSide, (COMP_HEIGHT + (COMP_HEIGHT * j)), PANEL_WIDTH, COMP_HEIGHT);
+			inactiveHeaders.add(tmpList.get(it));
+			j++;
+		}
 
-    private class ActiveHeaderLabel extends JLabel implements Comparable<Object> {
+		this.repaint();
+		this.setDefaultCloseOperation(JFrame.ICONIFIED);
+		this.setVisible(true);
+	}
 
-        private GenericDataElement GDE;
-        private Point inactiveLocation;
-        private JPanel previousPanel;
-        private JPanel inactivePanel;
-        private boolean dragging;
-        private boolean selected;
-        private MouseListener selectedListener = new MouseListener() {
+	private boolean checkForProperties(ActiveHeaderLabel GCB, GenericDataElement GDE) {
+		for (int i = 0; i < OpenLogViewerApp.getInstance().getProperties().size(); i++) {
+			if (OpenLogViewerApp.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
+				GDE.setColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
+				GDE.setMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
+				GDE.setMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
+				GDE.setSplitNumber(OpenLogViewerApp.getInstance().getProperties().get(i).getSplit());
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getModifiers() == 16) {
-                    setSelected(!selected);
-                } else if (e.getModifiers() == 18) {
-                    infoPanel.setGDE(GDE, (ActiveHeaderLabel) e.getSource());
-                    if (!infoPanel.isVisible()) {
-                        infoPanel.setVisible(true);
+				if (OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-                    }
-                }
-                // System.out.println(e.getModifiers());
-            }
+	private class ModifyGraphPane extends JInternalFrame {
+		GenericDataElement GDE;
+		ActiveHeaderLabel AHL;
+		private JLabel minLabel;
+		private JLabel maxLabel;
+		private JTextField minField;
+		private JTextField maxField;
+		private JButton resetButton;
+		private JButton applyButton;
+		private JButton saveButton;
+		private JButton colorButton;
+		private ActionListener resetButtonListener = new ActionListener() {
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (GDE != null) {
+					GDE.reset();
+					minField.setText(Double.toString(GDE.getMinValue()));
+					maxField.setText(Double.toString(GDE.getMaxValue()));
+				}
+			}
+		};
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
+		private ActionListener applyButtonListener = new ActionListener() {
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-                ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
-                GCB.setPreviousPanel((JPanel) GCB.getParent());
-            }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (GDE != null) {
+					changeGDEValues();
+				}
+			}
+		};
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
-                if (GCB.isDragging()) {
-                    if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
-                        GCB.setLocation(GCB.getInactiveLocation());
-                        GCB.setSelected(false);
-                        GCB.setEnabled(false);
-                    } else { // moving to
+		private ActionListener saveButtonListener = new ActionListener() {
 
-                        if (!place(GCB)) {
-                            if (GCB.getPreviousPanel() != GCB.getParent()) { // if it moved
-                                GCB.getPreviousPanel().add(GCB);
-                                place(GCB);
-                            }
-                            if (GCB.getPreviousPanel() == GCB.getInactivePanel()) {
-                                GCB.setLocation(GCB.getInactiveLocation());
-                                GCB.setEnabled(false);
-                                GCB.setSelected(false);
-                            } else {
-                                place(GCB);
-                            }
-                            thisRef.repaint();
-                        }
-                    }
-                    GCB.setDragging(false);
-                }
-            }
-        };
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (GDE != null) {
+					changeGDEValues();
+					OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(new SingleProperty(GDE));
+				}
+			}
+		};
 
-        public ActiveHeaderLabel() {
-            super();
-            addMouseListener(selectedListener);
-            super.setOpaque(false);
-            inactivePanel = inactiveHeaders;
-            dragging = false;
-            selected = false;
-            super.setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.white));
+		private ActionListener colorButtonListener = new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Color c = JColorChooser.showDialog(
+						new JFrame(),
+						"Choose Background Color",
+						colorButton.getForeground());
+				if (c != null) {
+					colorButton.setForeground(c);
+				}
+			}
+		};
 
-        }
+		public ModifyGraphPane() {
+			this.setName("InfoPanel");
+			minLabel = new JLabel("Min:");
+			maxLabel = new JLabel("Max:");
+			minField = new JTextField(10);
+			maxField = new JTextField(10);
+			resetButton = new JButton("Reset Min/Max");
+			resetButton.addActionListener(resetButtonListener);
 
-        @Override
-        public void setBounds(int x, int y, int widht, int height) {
-            super.setBounds(x, y, widht, height);
-            if (inactiveLocation == null) {
-                inactiveLocation = new Point(x, y);
-            }
-        }
+			applyButton = new JButton("Apply");
+			applyButton.addActionListener(applyButtonListener);
 
-        public void setRef(GenericDataElement GDE) {
-            this.GDE = GDE;
-            // this line is here because if the tool tip is never set no mouse events
-            // will ever be created for tool tips
-            this.setToolTipText();
-        }
+			saveButton = new JButton("Save");
+			saveButton.addActionListener(saveButtonListener);
 
-        @Override
-        public String getToolTipText(MouseEvent e) {
-            this.setToolTipText();
-            return getToolTipText();
-        }
+			colorButton = new JButton("Color");
+			colorButton.addActionListener(colorButtonListener);
 
-        public void setToolTipText() {
-            this.setToolTipText("<HTML> Data Stream: </b>" + GDE.getName() 
-		    + "</b><br>Min Value: <b>" + GDE.getMinValue()
-                    + "</b><br>Max Value: <b>" + GDE.getMaxValue()
-                    + "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
-                    + "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
-        }
+			minLabel.setBounds(0, 0, COMP_WIDTH / 2, COMP_HEIGHT);
+			minField.setBounds(100, 0, COMP_WIDTH / 2, COMP_HEIGHT);
+			maxLabel.setBounds(0, 20, COMP_WIDTH / 2, COMP_HEIGHT);
+			maxField.setBounds(100, 20, COMP_WIDTH / 2, COMP_HEIGHT);
+			colorButton.setBounds(0, 40, COMP_WIDTH, COMP_HEIGHT);
+			applyButton.setBounds(0, 60, COMP_WIDTH / 2, COMP_HEIGHT);
+			saveButton.setBounds(100, 60, COMP_WIDTH / 2, COMP_HEIGHT);
+			resetButton.setBounds(0, 80, COMP_WIDTH, COMP_HEIGHT);
 
-        public GenericDataElement getGDE() {
-            return GDE;
-        }
+			this.setLayout(null);
 
-        public JPanel getPreviousPanel() {
-            return previousPanel;
-        }
+			this.add(minLabel);
+			this.add(minField);
+			this.add(maxLabel);
+			this.add(maxField);
+			this.add(colorButton);
+			this.add(applyButton);
+			this.add(saveButton);
+			this.add(resetButton);
+			this.setBounds(500, 180, 210, 133);
+			this.setMaximizable(false);
+			this.setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+			this.setClosable(true);
+		}
 
-        public void setPreviousPanel(JPanel previousPanel) {
-            this.previousPanel = previousPanel;
-        }
+		public void setGDE(GenericDataElement gde, ActiveHeaderLabel ahl) {
+			this.GDE = gde;
+			this.AHL = ahl;
+			this.setTitle(GDE.getName());
+			minField.setText(GDE.getMinValue().toString());
+			maxField.setText(GDE.getMaxValue().toString());
+			colorButton.setForeground(GDE.getColor());
+		}
 
-        public Point getInactiveLocation() {
-            return inactiveLocation;
-        }
+		private void changeGDEValues() {
+			try {
+				GDE.setMaxValue(Double.parseDouble(maxField.getText()));
+			} catch (Exception ex) {
+				throw new RuntimeException("TODO: do something with Auto field"); // TODO
+			}
 
-        public JPanel getInactivePanel() {
-            return inactivePanel;
-        }
+			try {
+				GDE.setMinValue(Double.parseDouble(minField.getText()));
+			} catch (Exception ex) {
+				throw new RuntimeException("TODO: do something with Auto field"); // TODO
+			}
 
-        public boolean isDragging() {
-            return dragging;
-        }
+			if (!GDE.getColor().equals(colorButton.getForeground())) {
+				GDE.setColor(colorButton.getForeground());
+				AHL.setForeground(colorButton.getForeground());
+			}
+		}
+	}
 
-        public void setDragging(boolean dragging) {
-            this.dragging = dragging;
-        }
+	private class ActiveHeaderLabel extends JLabel implements Comparable<Object> {
+		private GenericDataElement GDE;
+		private Point inactiveLocation;
+		private JPanel previousPanel;
+		private JPanel inactivePanel;
+		private boolean dragging;
+		private boolean selected;
+		private MouseListener selectedListener = new MouseListener() {
 
-        public void setSelected(boolean selected) {
-            if (this.isEnabled()) {
-                this.selected = selected;
-            } else {
-                this.selected = false;
-            }
-            addRemGraph();
-        }
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getModifiers() == 16) {
+					setSelected(!selected);
+				} else if (e.getModifiers() == 18) {
+					infoPanel.setGDE(GDE, (ActiveHeaderLabel) e.getSource());
+					if (!infoPanel.isVisible()) {
+						infoPanel.setVisible(true);
+					}
+				}
+			}
 
-        private void addRemGraph() {
-            if (selected) {
-                this.setForeground(GDE.getColor());
-                this.repaint();
-                OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().addGraph(this.getName());
-            } else {
-                this.setForeground(GDE.getColor().darker().darker());
-                if (OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName())) {
-                    OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().repaint();
-                }
-            }
-        }
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
 
-        @Override
-        public int compareTo(Object o) {
-            if (o instanceof ActiveHeaderLabel) {
-                ActiveHeaderLabel GCB = (ActiveHeaderLabel) o;
-                return this.GDE.compareTo(GCB.getGDE());
-            } else {
-                return -1;
-            }
-        }
-    }
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
+				GCB.setPreviousPanel((JPanel) GCB.getParent());
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
+				if (GCB.isDragging()) {
+					if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
+						GCB.setLocation(GCB.getInactiveLocation());
+					GCB.setSelected(false);
+					GCB.setEnabled(false);
+					} else { // moving to
+						if (!place(GCB)) {
+							if (GCB.getPreviousPanel() != GCB.getParent()) { // if it moved
+								GCB.getPreviousPanel().add(GCB);
+								place(GCB);
+							}
+							if (GCB.getPreviousPanel() == GCB.getInactivePanel()) {
+								GCB.setLocation(GCB.getInactiveLocation());
+								GCB.setEnabled(false);
+								GCB.setSelected(false);
+							} else {
+								place(GCB);
+							}
+							thisRef.repaint();
+						}
+					}
+					GCB.setDragging(false);
+				}
+			}
+		};
+
+		public ActiveHeaderLabel() {
+			super();
+			addMouseListener(selectedListener);
+			super.setOpaque(false);
+			inactivePanel = inactiveHeaders;
+			dragging = false;
+			selected = false;
+			super.setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.white));
+		}
+
+		@Override
+		public void setBounds(int x, int y, int widht, int height) {
+			super.setBounds(x, y, widht, height);
+			if (inactiveLocation == null) {
+				inactiveLocation = new Point(x, y);
+			}
+		}
+
+		public void setRef(GenericDataElement GDE) {
+			this.GDE = GDE;
+			// this line is here because if the tool tip is never set no mouse events
+			// will ever be created for tool tips
+			this.setToolTipText();
+		}
+
+		@Override
+		public String getToolTipText(MouseEvent e) {
+			this.setToolTipText();
+			return getToolTipText();
+		}
+
+		public void setToolTipText() {
+			this.setToolTipText("<HTML> Data Stream: </b>" + GDE.getName()
+					+ "</b><br>Min Value: <b>" + GDE.getMinValue()
+					+ "</b><br>Max Value: <b>" + GDE.getMaxValue()
+					+ "</b><br>Total Length: <b>" + GDE.size() + "</b> data points"
+					+ "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
+		}
+
+		public GenericDataElement getGDE() {
+			return GDE;
+		}
+
+		public JPanel getPreviousPanel() {
+			return previousPanel;
+		}
+
+		public void setPreviousPanel(JPanel previousPanel) {
+			this.previousPanel = previousPanel;
+		}
+
+		public Point getInactiveLocation() {
+			return inactiveLocation;
+		}
+
+		public JPanel getInactivePanel() {
+			return inactivePanel;
+		}
+
+		public boolean isDragging() {
+			return dragging;
+		}
+
+		public void setDragging(boolean dragging) {
+			this.dragging = dragging;
+		}
+
+		public void setSelected(boolean selected) {
+			if (this.isEnabled()) {
+				this.selected = selected;
+			} else {
+				this.selected = false;
+			}
+			addRemGraph();
+		}
+
+		private void addRemGraph() {
+			if (selected) {
+				this.setForeground(GDE.getColor());
+				this.repaint();
+				OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().addGraph(this.getName());
+			} else {
+				this.setForeground(GDE.getColor().darker().darker());
+				if (OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName())) {
+					OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().repaint();
+				}
+			}
+		}
+
+		@Override
+		public int compareTo(Object o) {
+			if (o instanceof ActiveHeaderLabel) {
+				ActiveHeaderLabel GCB = (ActiveHeaderLabel) o;
+				return this.GDE.compareTo(GCB.getGDE());
+			} else {
+				return -1;
+			}
+		}
+	}
 }

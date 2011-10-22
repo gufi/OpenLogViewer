@@ -28,12 +28,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 
-
-
-/**
- *
- * @author Bryan
- */
 @SuppressWarnings("serial")
 public class GenericLog extends HashMap<String, GenericDataElement> {
 
@@ -53,136 +47,138 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 
 	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
-            if ((Integer) propertyChangeEvent.getNewValue() == 0) {
-            	GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
-            	genLog.setLogStatus(GenericLog.LOG_LOADING);
-                OpenLogViewerApp.getInstance().setLog(genLog);
-            } else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
-            	GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
-            	genLog.setLogStatus(GenericLog.LOG_LOADED);
-            	OpenLogViewerApp.getInstance().setLog(genLog);
-                OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog(genLog);
-            }
-        }
-    };
+			if ((Integer) propertyChangeEvent.getNewValue() == 0) {
+				GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
+				genLog.setLogStatus(GenericLog.LOG_LOADING);
+				OpenLogViewerApp.getInstance().setLog(genLog);
+			} else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
+				GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
+				genLog.setLogStatus(GenericLog.LOG_LOADED);
+				OpenLogViewerApp.getInstance().setLog(genLog);
+				OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog(genLog);
+			}
+		}
+	};
 
-    public GenericLog() {
-        super();
-        logStatus = LOG_NOT_LOADED;
-        PCS = new PropertyChangeSupport(this);
-        addPropertyChangeListener("LogLoaded", autoLoad);
-        metaData = "";
+	public GenericLog() {
+		super();
+		logStatus = LOG_NOT_LOADED;
+		PCS = new PropertyChangeSupport(this);
+		addPropertyChangeListener("LogLoaded", autoLoad);
+		metaData = "";
+	}
 
-    }
+	/**
+	 * provide a <code>String</code> array of headers<br>
+	 * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
+	 * @param headers - of the data to be converted
+	 */
+	public GenericLog(String[] headers) {
+		super();
 
-    /**
-     * provide a <code>String</code> array of headers<br>
-     * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
-     * @param headers - of the data to be converted
-     */
-    public GenericLog(String[] headers) {
-        super();
+		logStatus = LOG_NOT_LOADED;
+		PCS = new PropertyChangeSupport(this);
+		addPropertyChangeListener("LogLoaded", autoLoad);
 
-        logStatus = LOG_NOT_LOADED;
-        PCS = new PropertyChangeSupport(this);
-        addPropertyChangeListener("LogLoaded", autoLoad);
+		metaData = "";
 
-        metaData = "";
+		// A bit dirty, but not too bad.
+		String[] internalHeaders = new String[headers.length + 1];
+		for(int i=0;i<headers.length;i++){
+			internalHeaders[i] = headers[i];
+		}
 
-        // A bit dirty, but not too bad.
-        String[] internalHeaders = new String[headers.length + 1];
-        for(int i=0;i<headers.length;i++){
-        	internalHeaders[i] = headers[i];
-        }
-        internalHeaders[headers.length] = lineKey;
-        this.setHeaders(internalHeaders);
-        lineCountElement = this.get(lineKey);
-        firstKey = headers[0];
-    }
+		internalHeaders[headers.length] = lineKey;
+		this.setHeaders(internalHeaders);
+		lineCountElement = this.get(lineKey);
+		firstKey = headers[0];
+	}
 
-    /**
-     * Add a piece of data to the <code>ArrayList</code> associated with the <code>key</code>
-     * @param key - header
-     * @param value - data to be added
-     * @return true or false if it was successfully added
-     */
-    public boolean addValue(String key, double value) {
-        GenericDataElement logElement = this.get(key);
-        if(key.equals(firstKey)){
-        	lineCountElement.add((double)lineCount);
-        	lineCount++;
-        }
-        return logElement.add(value);
-    }
+	/**
+	 * Add a piece of data to the <code>ArrayList</code> associated with the <code>key</code>
+	 * @param key - header
+	 * @param value - data to be added
+	 * @return true or false if it was successfully added
+	 */
+	public boolean addValue(String key, double value) {
+		GenericDataElement logElement = this.get(key);
+		if(key.equals(firstKey)){
+			lineCountElement.add((double)lineCount);
+			lineCount++;
+		}
+		return logElement.add(value);
+	}
 
-    /**
-     * Set the state of the log
-     * @param newLogStatus GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
-     */
-    public void setLogStatus(int newLogStatus) {
-        int oldLogStatus = this.logStatus;
-        this.logStatus = newLogStatus;
-        PCS.firePropertyChange("LogLoaded", oldLogStatus, newLogStatus);
-    }
+	/**
+	 * Set the state of the log
+	 * @param newLogStatus GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
+	 */
+	public void setLogStatus(int newLogStatus) {
+		int oldLogStatus = this.logStatus;
+		this.logStatus = newLogStatus;
+		PCS.firePropertyChange("LogLoaded", oldLogStatus, newLogStatus);
+	}
 
-    /**
-     *
-     * @return -1 if log not loaded 0 if loading or 1 if log is loaded
-     */
-    public int getLogStatus() {
-        return this.logStatus;
-    }
-    /**
-     * sets the names of the headers for the Comparable interface of GenericDataElement
-     * @param headers
-     */
-    public void setHeaders(String[] headers) {
-        for (int x = 0; x < headers.length; x++) {
-            GenericDataElement GDE = new GenericDataElement();
-            GDE.setName(headers[x]);
-            this.put(headers[x], GDE);
-        }
-    }
+	/**
+	 *
+	 * @return -1 if log not loaded 0 if loading or 1 if log is loaded
+	 */
+	public int getLogStatus() {
+		return this.logStatus;
+	}
 
-    /**
-     * Add metadata This is information about the log being converted such as the location it was from or the date<br>
-     * This method does not add to its self so in order to add more info you must VAR.addMetaData(VAR.getMetaData() + NEWINFO)
-     * @param md meta data to be added
-     */
-    public void setMetaData(String md) {
-        metaData = md;
-    }
+	/**
+	 * sets the names of the headers for the Comparable interface of GenericDataElement
+	 * @param headers
+	 */
+	public void setHeaders(String[] headers) {
+		for (int x = 0; x < headers.length; x++) {
+			GenericDataElement GDE = new GenericDataElement();
+			GDE.setName(headers[x]);
+			this.put(headers[x], GDE);
+		}
+	}
 
-    /**
-     *
-     * @return String containing the current meta data
-     */
-    public String getMetadata() {
-        return metaData;
-    }
-    /**
-     * Add a property change listener to the generic log, REQUIRED!!
-     * GenericLog.LOG_STATUS is the name of the status property
-     * @param name
-     * @param listener
-     * <code>new OBJECT.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {<br>
-     *       public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {<br>
-     *           OpenLogViewerApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-     *           ...Insert code here...<br>
-     *
-     *       }<br>
-     *   });</code>
-     */
-    public void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
-        PCS.addPropertyChangeListener(name, listener);
-    }
+	/**
+	 * Add metadata This is information about the log being converted such as the location it was from or the date<br>
+	 * This method does not add to its self so in order to add more info you must VAR.addMetaData(VAR.getMetaData() + NEWINFO)
+	 * @param md meta data to be added
+	 */
+	public void setMetaData(String md) {
+		metaData = md;
+	}
 
-    /**
-     * Remove a PropertyChangeListener
-     * @param propertyName name of listener
-     * @param listener listener
-     */
-    public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-        PCS.removePropertyChangeListener(propertyName, listener);
-    }
+	/**
+	 *
+	 * @return String containing the current meta data
+	 */
+	public String getMetadata() {
+		return metaData;
+	}
+
+	/**
+	 * Add a property change listener to the generic log, REQUIRED!!
+	 * GenericLog.LOG_STATUS is the name of the status property
+	 * @param name
+	 * @param listener
+	 * <code>new OBJECT.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {<br>
+	 *       public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {<br>
+	 *           OpenLogViewerApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
+	 *           ...Insert code here...<br>
+	 *
+	 *       }<br>
+	 *   });</code>
+	 */
+	public void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
+		PCS.addPropertyChangeListener(name, listener);
+	}
+
+	/**
+	 * Remove a PropertyChangeListener
+	 * @param propertyName name of listener
+	 * @param listener listener
+	 */
+	public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
+		PCS.removePropertyChangeListener(propertyName, listener);
+	}
 }

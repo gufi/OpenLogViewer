@@ -56,397 +56,385 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 
-/**
- *
- * @author Bryan Harris
- */
 public class PropertiesPane extends JFrame {
+	private static final long serialVersionUID = -66677778898998591L;
+	File OLVProperties;
+	ArrayList<SingleProperty> properties;
+	ArrayList<SingleProperty> removeProperties;
+	JPanel propertyPanel;
+	JPanel propertyView;
 
-    //ScriptEngineManager mgr = new ScriptEngineManager();
-    //ScriptEngine math = new ScriptEngineManager().getEngineByName("JavaScript");
-    File OLVProperties;
-    ArrayList<SingleProperty> properties;
-    ArrayList<SingleProperty> removeProperties;
-    JPanel propertyPanel;
-    JPanel propertyView;
+	public PropertiesPane(String title) throws HeadlessException {
+		super(title);
+		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.setPreferredSize(new Dimension(350, 500));
+		this.setSize(new Dimension(550, 500));
+		this.setJMenuBar(createMenuBar());
 
-    public PropertiesPane(String title) throws HeadlessException {
-        super(title);
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        this.setPreferredSize(new Dimension(350, 500));
-        this.setSize(new Dimension(550, 500));
-        this.setJMenuBar(createMenuBar());
+		propertyPanel = new JPanel();
+		propertyPanel.setLayout(new BorderLayout());
+		propertyView = new JPanel();
+		propertyView.setPreferredSize(new Dimension(400, 0));
+		propertyView.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+		JScrollPane jsp = new JScrollPane(propertyView);
+		propertyPanel.add(jsp, BorderLayout.CENTER);
+		propertyPanel.add(createAcceptPanel(), BorderLayout.SOUTH);
+		this.add(propertyPanel);
+	}
 
+	public void setProperties(ArrayList<SingleProperty> p) {
+		removeProperties = new ArrayList<SingleProperty>();
+		properties = p;
+		setupForLoad();
+	}
 
+	private void setupForLoad() {
+		try {
+			String systemDelim = File.separator;
+			File homeDir = new File(System.getProperty("user.home"));
 
-        propertyPanel = new JPanel();
-        propertyPanel.setLayout(new BorderLayout());
-        propertyView = new JPanel();
-        propertyView.setPreferredSize(new Dimension(400, 0));
-        propertyView.setLayout(new FlowLayout(FlowLayout.LEFT));
+			if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
+				System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
 
-        JScrollPane jsp = new JScrollPane(propertyView);
-        propertyPanel.add(jsp, BorderLayout.CENTER);
-        propertyPanel.add(createAcceptPanel(), BorderLayout.SOUTH);
-        this.add(propertyPanel);
-    }
+			} else {
+				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
+			}
 
-    public void setProperties(ArrayList<SingleProperty> p) {
-        removeProperties = new ArrayList<SingleProperty>();
-        properties = p;
-        setupForLoad();
-    }
+			if (!OLVProperties.exists()) {
+				try {
+					if (OLVProperties.mkdir()) {
+						OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+						if (OLVProperties.createNewFile()) {
+							loadProperties();
+						}
+					} else {
+						//find somewhere else
+					}
+				} catch (IOException IOE) {
+					System.out.print(IOE.getMessage());
+				}
+			} else {
+				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+				loadProperties();
+			}
+		} catch (Exception E) {
+			System.out.print(E.getMessage());
+		}
+	}
 
-    private void setupForLoad() {
-        try {
-            String systemDelim = File.separator;
-            File homeDir = new File(System.getProperty("user.home"));
+	private JMenuBar createMenuBar() {
+		JMenuBar propMenuBar = new JMenuBar();
 
-            if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
-                System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
+		JMenu optionMenu = new JMenu("Options");
+		propMenuBar.add(optionMenu);
+		JMenuItem addProp = new JMenuItem("Add New Property");
+		JMenuItem remProp = new JMenuItem("Remove Selected Propertys");
 
-            } else {
-                OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
-            }
-            if (!OLVProperties.exists()) {
-                try {
-                    if (OLVProperties.mkdir()) {
-                        OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
-                        if (OLVProperties.createNewFile()) {
-                            loadProperties();
-                        }
-                    } else {
-                        //find somewhere else
-                    }
-                } catch (IOException IOE) {
-                    System.out.print(IOE.getMessage());
-                }
-            } else {
-                OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
-                loadProperties();
-            }
-        } catch (Exception E) {
-            System.out.print(E.getMessage());
-        }
-    }
+		addProp.addActionListener(new ActionListener() {
 
-    private JMenuBar createMenuBar() {
-        JMenuBar propMenuBar = new JMenuBar();
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
+				if(!s.equals("") || s != null){
+					SingleProperty newprop = new SingleProperty();
+					newprop.setHeader(s);
+					addProperty(newprop);
+				}
+			}
+		});
 
-        JMenu optionMenu = new JMenu("Options");
-        propMenuBar.add(optionMenu);
-        JMenuItem addProp = new JMenuItem("Add New Property");
-        JMenuItem remProp = new JMenuItem("Remove Selected Propertys");
+		remProp.addActionListener(new ActionListener() {
 
-        addProp.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				removePropertyPanels();
+			}
+		});
 
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-                if(!s.equals("") || s != null){
-                SingleProperty newprop = new SingleProperty();
-                newprop.setHeader(s);
-                addProperty(newprop);
-                }
-            }
-        });
+		optionMenu.add(addProp);
+		optionMenu.add(remProp);
 
-        remProp.addActionListener(new ActionListener() {
+		return propMenuBar;
+	}
 
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                removePropertyPanels();
-            }
-        });
+	private JPanel createAcceptPanel() {
+		JPanel aPanel = new JPanel();
+		aPanel.setPreferredSize(new Dimension(500, 32));
+		aPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
 
-        optionMenu.add(addProp);
-        optionMenu.add(remProp);
+		JButton okButton = new JButton("OK");
+		JButton cancel = new JButton("Cancel");
 
+		okButton.addActionListener(new ActionListener() {
 
-        return propMenuBar;
-    }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				OpenLogViewerApp.getInstance().getPropertyPane().save();
+				OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
+			}
+		});
 
-    private JPanel createAcceptPanel() {
-        JPanel aPanel = new JPanel();
-        aPanel.setPreferredSize(new Dimension(500, 32));
-        aPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
+		cancel.addActionListener(new ActionListener() {
 
-        JButton okButton = new JButton("OK");
-        JButton cancel = new JButton("Cancel");
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
-        okButton.addActionListener(new ActionListener() {
+				OpenLogViewerApp.getInstance().getPropertyPane().resetProperties();
+				OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
+			}
+		});
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OpenLogViewerApp.getInstance().getPropertyPane().save();
-                OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
-            }
-        });
-        cancel.addActionListener(new ActionListener() {
+		aPanel.add(cancel);
+		aPanel.add(okButton);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
+		return aPanel;
+	}
 
-                OpenLogViewerApp.getInstance().getPropertyPane().resetProperties();
-                OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
-            }
-        });
+	private void loadProperties() {
+		try {
+			Scanner scan = new Scanner(new FileReader(OLVProperties));
 
-        aPanel.add(cancel);
-        aPanel.add(okButton);
+			while (scan.hasNext()) {
+				String[] propLine = scan.nextLine().split("=");
+				SingleProperty sp = new SingleProperty();
+				String[] prop = propLine[1].split(",");
+				sp.setHeader(propLine[0]);
+				sp.setColor(new Color(
+						Integer.parseInt(prop[0]),
+						Integer.parseInt(prop[1]),
+						Integer.parseInt(prop[2])));
+				sp.setMin(Double.parseDouble(prop[3]));
+				sp.setMax(Double.parseDouble(prop[4]));
+				sp.setSplit(Integer.parseInt(prop[5]));
+				sp.setActive(Boolean.parseBoolean(prop[6]));
+				addProperty(sp);
+			}
 
-        return aPanel;
-    }
+			scan.close();
+		} catch (FileNotFoundException FNF) {
+			System.out.print(FNF.toString());
+			throw new RuntimeException(FNF);
+		}
+	}
 
-    private void loadProperties() {
-        try {
-            Scanner scan = new Scanner(new FileReader(OLVProperties));
+	public void save() {
+		try {
+			removeProperties.clear();
+			updateProperties();
+			FileWriter fstream = new FileWriter(OLVProperties);
+			BufferedWriter out = new BufferedWriter(fstream);
 
-            while (scan.hasNext()) {
-                String[] propLine = scan.nextLine().split("=");
-                SingleProperty sp = new SingleProperty();
-                String[] prop = propLine[1].split(",");
-                sp.setHeader(propLine[0]);
-                sp.setColor(new Color(
-                        Integer.parseInt(prop[0]),
-                        Integer.parseInt(prop[1]),
-                        Integer.parseInt(prop[2])));
-                sp.setMin(Double.parseDouble(prop[3]));
-                sp.setMax(Double.parseDouble(prop[4]));
-                sp.setSplit(Integer.parseInt(prop[5]));
-                sp.setActive(Boolean.parseBoolean(prop[6]));
-                addProperty(sp);
-            }
-            scan.close();
+			for (int i = 0; i < properties.size(); i++) {
+				out.write(properties.get(i).toString());
+				out.newLine();
+			}
 
-        } catch (FileNotFoundException FNF) {
-            System.out.print(FNF.toString());
-        }
-    }
+			out.close();
+		} catch (Exception e) {//Catch exception if any
+			System.err.println("Error: " + e.getMessage());
+			throw new RuntimeException("Catchall of type Exception is evil!", e);
+		}
+	}
 
-    public void save() {
-        try {
-            removeProperties.clear();
-            updateProperties();
-            FileWriter fstream = new FileWriter(OLVProperties);
-            BufferedWriter out = new BufferedWriter(fstream);
-            for (int i = 0; i < properties.size(); i++) {
-                out.write(properties.get(i).toString());
-                out.newLine();
-            }
-            //Close the output stream
-            out.close();
-        } catch (Exception e) {//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
-        }
-    }
+	private void updateProperties() {
+		for (int i = 0; i < propertyView.getComponentCount(); i++) {
+			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			pp.updateSP();
+		}
+	}
 
-    private void updateProperties() {
-        for (int i = 0; i < propertyView.getComponentCount(); i++) {
-            PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
-            pp.updateSP();
-        }
-    }
+	public void resetProperties() {
+		for (int i = 0; i < propertyView.getComponentCount(); i++) {
+			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			pp.reset();
+		}
+		if (removeProperties.size() > 0) {
+			for (int i = 0; i < removeProperties.size(); i++) {
+				addProperty(removeProperties.get(i));
+			}
+			removeProperties.clear();
+		}
+	}
 
-    public void resetProperties() {
-        for (int i = 0; i < propertyView.getComponentCount(); i++) {
-            PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
-            pp.reset();
-        }
-        if (removeProperties.size() > 0) {
-            for (int i = 0; i < removeProperties.size(); i++) {
-                addProperty(removeProperties.get(i));
-            }
-            removeProperties.clear();
-        }
-    }
+	private PropertyPanel exists(SingleProperty sp) {
 
-    private PropertyPanel exists(SingleProperty sp) {
+		for (int i = 0; i < propertyView.getComponentCount(); i++) {
+			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			if (pp.getSp().getHeader().equalsIgnoreCase(sp.getHeader())) {
+				return pp;
+			}
+		}
+		return null;
+	}
 
-        for (int i = 0; i < propertyView.getComponentCount(); i++) {
-            PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
-            if (pp.getSp().getHeader().equalsIgnoreCase(sp.getHeader())) {
-                return pp;
-            }
-        }
-        return null;
-    }
+	public void addProperty(SingleProperty sp) {
+		PropertyPanel pp = exists(sp);
+		if (pp == null) {
+			properties.add(sp);
+			Collections.sort(properties);
+			propertyView.add(new PropertyPanel(sp), properties.indexOf(sp));
+			propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
+			propertyView.revalidate();
+		} else {
+			for(int i = 0; i < properties.size(); i++){
+				if(properties.get(i).getHeader().equalsIgnoreCase(sp.getHeader())){
+					properties.set(i, sp);
+				}
+			}
+			pp.setSp(sp);
+			pp.reset();
+		}
+	}
 
-    public void addProperty(SingleProperty sp) {
-        PropertyPanel pp = exists(sp);
-        if (pp == null) {
-            properties.add(sp);
-            Collections.sort(properties);
-            propertyView.add(new PropertyPanel(sp), properties.indexOf(sp));
-            propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
-            propertyView.revalidate();
-        } else {
-            for(int i = 0; i < properties.size(); i++){
-                if(properties.get(i).getHeader().equalsIgnoreCase(sp.getHeader())){
-                    properties.set(i, sp);
-                }
-            }
-            pp.setSp(sp);
-            pp.reset();
-        }
+	public void addPropertyAndSave(SingleProperty sp) {
+		addProperty(sp);
+		save();
+	}
 
-    }
+	private void removeProperty(SingleProperty sp) {
+		if (properties.contains(sp)) {
+			properties.remove(sp);
+		}
+	}
 
-    public void addPropertyAndSave(SingleProperty sp) {
-        addProperty(sp);
-        save();
-    }
+	private void removePropertyPanels() {
+		for (int i = 0; i < propertyView.getComponentCount();) {
+			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			if (pp.getCheck().isSelected()) {
+				if (!removeProperties.contains(pp.getSp())) {
+					removeProperties.add(pp.getSp());
+				}
 
-    private void removeProperty(SingleProperty sp) {
-        if (properties.contains(sp)) {
-            properties.remove(sp);
-        }
-    }
+				removeProperty(pp.getSp()); // Move this to add to a queue of things to remove, incase of cancel
+				propertyView.remove(propertyView.getComponent(i));
+				propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height - 60));
+				propertyView.revalidate();
+			} else {
+				i++;
+			}
+		}
+		propertyView.repaint();
+	}
 
-    private void removePropertyPanels() {
-        for (int i = 0; i < propertyView.getComponentCount();) {
-            PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
-            if (pp.getCheck().isSelected()) {
-                if (!removeProperties.contains(pp.getSp())) {
-                    removeProperties.add(pp.getSp());
-                }
-                removeProperty(pp.getSp());/// move this to add to a queue of things to remove, incase of cancel
-                propertyView.remove(propertyView.getComponent(i));
-                propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height - 60));
+	private class PropertyPanel extends JPanel implements Comparable<PropertyPanel> {
+		private static final long serialVersionUID = 1L;
+		SingleProperty sp;
+		JCheckBox check;
+		JPanel colorBox;
+		JTextField minBox;
+		JTextField maxBox;
+		JTextField splitBox;
+		JComboBox activeBox;
 
-                propertyView.revalidate();
-            } else {
-                i++;
-            }
-        }
-        propertyView.repaint();
-    }
+		public PropertyPanel(SingleProperty sp) {
+			super();
+			this.sp = sp;
+			this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
+			this.setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
+			setPreferredSize(new Dimension(500, 50));
+			JLabel minLabel = new JLabel("Min:");
+			JLabel maxLabel = new JLabel("Max:");
+			JLabel colorLabel = new JLabel("Color:");
+			JLabel splitLabel = new JLabel("Split:");
+			JLabel activeLabel = new JLabel("Active:");
+			splitBox = new JTextField();
+			splitBox.setPreferredSize(new Dimension(15, 20));
+			splitBox.setText(Integer.toString(sp.getSplit()));
+			minBox = new JTextField();
+			minBox.setPreferredSize(new Dimension(50, 20));
+			minBox.setText(Double.toString(sp.getMin()));
+			maxBox = new JTextField();
+			maxBox.setPreferredSize(new Dimension(50, 20));
+			maxBox.setText(Double.toString(sp.getMax()));
+			colorBox = new JPanel();
+			colorBox.setBackground(sp.getColor());
+			colorBox.setPreferredSize(new Dimension(30, 20));
+			String[] tf = {"False", "True"};
+			activeBox = new JComboBox(tf);
 
-    private class PropertyPanel extends JPanel implements Comparable {
+			if (sp.isActive()) {
+				activeBox.setSelectedIndex(1);
+			}
 
-        SingleProperty sp;
-        JCheckBox check;
-        JPanel colorBox;
-        JTextField minBox;
-        JTextField maxBox;
-        JTextField splitBox;
-        JComboBox activeBox;
+			activeBox.setPreferredSize(new Dimension(60, 20));
+			check = new JCheckBox();
 
-        public PropertyPanel(SingleProperty sp) {
-            super();
-            this.sp = sp;
-            this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
-            this.setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
-            setPreferredSize(new Dimension(500, 50));
-            JLabel minLabel = new JLabel("Min:");
-            JLabel maxLabel = new JLabel("Max:");
-            JLabel colorLabel = new JLabel("Color:");
-            JLabel splitLabel = new JLabel("Split:");
-            JLabel activeLabel = new JLabel("Active:");
-            splitBox = new JTextField();
-            splitBox.setPreferredSize(new Dimension(15, 20));
-            splitBox.setText(Integer.toString(sp.getSplit()));
-            minBox = new JTextField();
-            minBox.setPreferredSize(new Dimension(50, 20));
-            minBox.setText(Double.toString(sp.getMin()));
-            maxBox = new JTextField();
-            maxBox.setPreferredSize(new Dimension(50, 20));
-            maxBox.setText(Double.toString(sp.getMax()));
-            colorBox = new JPanel();
-            colorBox.setBackground(sp.getColor());
-            colorBox.setPreferredSize(new Dimension(30, 20));
-            String[] tf = {"False", "True"};
-            activeBox = new JComboBox(tf);
-            if (sp.isActive()) {
-                activeBox.setSelectedIndex(1);
-            }
-            activeBox.setPreferredSize(new Dimension(60, 20));
-            check = new JCheckBox();
+			colorBox.addMouseListener(new MouseListener() {
 
-            colorBox.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					Color newColor = JColorChooser.showDialog(
+							OpenLogViewerApp.getInstance().getOptionFrame(),
+							"Choose New Color", colorBox.getBackground());
+					if (newColor != null) {
+						colorBox.setBackground(newColor);
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    Color newColor = JColorChooser.showDialog(
-                            OpenLogViewerApp.getInstance().getOptionFrame(),
-                            "Choose New Color", colorBox.getBackground());
-                    if (newColor != null) {
-                        colorBox.setBackground(newColor);
+					}
+				}
 
-                    }
-                }
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
 
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                }
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
 
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                }
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
 
-                @Override
-                public void mouseExited(MouseEvent e) {
-                }
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+			});
 
-                @Override
-                public void mousePressed(MouseEvent e) {
-                }
-            });
-            add(colorLabel);
-            add(colorBox);
-            add(minLabel);
-            add(minBox);
-            add(maxLabel);
-            add(maxBox);
-            add(splitLabel);
-            add(splitBox);
-            add(activeLabel);
-            add(activeBox);
-            add(check);
-        }
+			add(colorLabel);
+			add(colorBox);
+			add(minLabel);
+			add(minBox);
+			add(maxLabel);
+			add(maxBox);
+			add(splitLabel);
+			add(splitBox);
+			add(activeLabel);
+			add(activeBox);
+			add(check);
+		}
 
-        public JCheckBox getCheck() {
-            return check;
-        }
+		public JCheckBox getCheck() {
+			return check;
+		}
 
-        public void setCheck(JCheckBox check) {
-            this.check = check;
-        }
+		public SingleProperty getSp() {
+			return sp;
+		}
 
-        public SingleProperty getSp() {
-            return sp;
-        }
+		public void setSp(SingleProperty sp) {
+			this.sp = sp;
+		}
 
-        public void setSp(SingleProperty sp) {
-            this.sp = sp;
-        }
+		public void updateSP() {
+			sp.setMin(Double.parseDouble(minBox.getText()));
+			sp.setMax(Double.parseDouble(maxBox.getText()));
+			sp.setColor(colorBox.getBackground());
+			sp.setSplit(Integer.parseInt(splitBox.getText()));
+			String active = (String) activeBox.getSelectedItem();
+			sp.setActive(Boolean.parseBoolean(active));
+		}
 
-        public void updateSP() {
-            sp.setMin(Double.parseDouble(minBox.getText()));
-            sp.setMax(Double.parseDouble(maxBox.getText()));
-            sp.setColor(colorBox.getBackground());
-            sp.setSplit(Integer.parseInt(splitBox.getText()));
-            String active = (String) activeBox.getSelectedItem();
-            sp.setActive(Boolean.parseBoolean(active));
-        }
+		public void reset() {
+			minBox.setText(Double.toString(sp.getMin()));
+			maxBox.setText(Double.toString(sp.getMax()));
+			colorBox.setBackground(sp.getColor());
+			splitBox.setText(Integer.toString(sp.getSplit()));
+			activeBox.setSelectedItem(Boolean.toString(sp.isActive()));
+		}
 
-        public void reset() {
-            minBox.setText(Double.toString(sp.getMin()));
-            maxBox.setText(Double.toString(sp.getMax()));
-            colorBox.setBackground(sp.getColor());
-            splitBox.setText(Integer.toString(sp.getSplit()));
-            activeBox.setSelectedItem(Boolean.toString(sp.isActive()));
-        }
-
-        @Override
-        public int compareTo(Object o) {
-            if (o instanceof PropertyPanel) {
-                PropertyPanel pp = (PropertyPanel) o;
-                return this.sp.getHeader().compareToIgnoreCase(pp.getSp().getHeader());
-            } else {
-                return -1;
-            }
-        }
-    }
+		@Override
+		public int compareTo(PropertyPanel pp) {
+			return this.sp.getHeader().compareToIgnoreCase(pp.getSp().getHeader());
+		}
+	}
 }
