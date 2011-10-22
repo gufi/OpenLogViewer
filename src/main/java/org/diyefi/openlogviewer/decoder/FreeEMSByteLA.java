@@ -50,10 +50,10 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 
 	/**
 	 * FreeEmsBin Constructor: <code>String</code> path to your binary log
-	 * @param path The file system path of the log file.
+	 * @param file The log file to parse and load.
 	 */
-	public FreeEMSByteLA(String path) {
-		logFile = new File(path);
+	public FreeEMSByteLA(File file) {
+		logFile = file;
 		startFound = false;
 		wholePacket = new short[3000];
 		decodedLog = new GenericLog(headers);
