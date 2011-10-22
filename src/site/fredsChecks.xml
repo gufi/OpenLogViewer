@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+	"-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+	"http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<!-- A note from Fred Cooke. This is my personal set of checks, -->
+<!-- which will likely evolve over time from this base point.   -->
+
+<module name="Checker">
+	<!--<property name="severity" value="warning"/> Move some checks to error and some to warning, run some checks more than once at different levels. -->
+
+	<module name="FileLength" />
+	<module name="NewlineAtEndOfFile"/><!--Checks that there is a newline at the end of each file.-->
+	<!-- Configure this to check for GPL header at some point module name="Header"/> OR this: -->
+	<!-- <module name="RegexpHeader"/> Checks the header of the source against a header file that contains a-->
+
+	<module name="TreeWalker">
+		<property name="tabWidth" value="4"/><!-- 8 is too much for java IMO. -->
+
+		<module name="AbstractClassName"/><!--Ensures that the names of abstract classes conforming to some regular expression. -->
+		<module name="AnnotationUseStyle"/><!--This check controls the style with the usage of annotations. -->
+		<module name="AnonInnerLength"/><!--Checks for long anonymous inner classes. -->
+		<module name="ArrayTrailingComma"/><!--Checks if array initialization contains optional trailing comma. -->
+		<module name="ArrayTypeStyle"/><!--Checks the style of array type definitions. -->
+		<module name="AvoidInlineConditionals"/><!--Detects inline conditionals. -->
+		<module name="AvoidStaticImport"/><!--Check that finds static imports. -->
+		<module name="ClassDataAbstractionCoupling"/><!--This metric measures the number of instantiations of other classes within the given class. -->
+		<module name="ClassFanOutComplexity"/><!--The number of other classes a given class relies on. -->
+		<module name="ClassTypeParameterName"/><!--Checks that class type parameter names conform to a format specified by the format property. -->
+		<module name="ConstantName"/><!--Checks that constant names conform to a format specified by the format property. -->
+		<module name="CovariantEquals"/><!--Checks that if a class defines a covariant method equals, then it defines method equals(java.lang.Object). -->
+		<module name="DeclarationOrder"/><!--Checks that the parts of a class or interface declaration appear in the order suggested by the Code Conventions for the Java Programming Language.-->
+		<module name="DefaultComesLast"/><!--Check that the default is after all the cases in a switch statement.-->
+		<module name="DescendantToken"/><!--Checks for restricted tokens beneath other tokens. -->
+		<module name="DesignForExtension"/><!--Checks that classes are designed for inheritance. -->
+		<module name="DoubleCheckedLocking"/><!--Detect the double-checked locking idiom, a technique that tries to avoid synchronization overhead but is incorrect because of subtle artifacts of the java memory model. -->
+		<module name="EmptyBlock"/><!--Checks for empty blocks. -->
+		<module name="EmptyForInitializerPad"/><!--Checks the padding of an empty for initializer; that is whether a space is required at an empty for initializer, or such spaces are forbidden. -->
+		<module name="EmptyForIteratorPad"/><!--Checks the padding of an empty for iterator; that is whether a space is required at an empty for iterator, or such spaces are forbidden. -->
+		<module name="EmptyStatement"/><!--Detects empty statements (standalone ';'). -->
+		<module name="EqualsAvoidNull"/><!--Checks that any combination of String literals with optional assignment is on the left side of an equals() comparison. -->
+		<module name="EqualsHashCode"/><!--Checks that classes that override equals() also override hashCode(). -->
+		<module name="ExecutableStatementCount"/><!--Restricts the number of executable statements to a specified limit (default = 30). -->
+		<module name="ExplicitInitialization"/><!--Checks if any class or object member explicitly initialized to default for its type value (null for object references, zero for numeric types and char and false for boolean. -->
+		<module name="FallThrough"/><!--Checks for fall through in switch statements Finds locations where a case contains Java code - but lacks a break, return, throw or continue statement. -->
+		<module name="FinalClass"/><!--Checks that class which has only private ctors is declared as final. -->
+		<module name="FinalLocalVariable"/><!--Ensures that local variables that never get their values changed, must be declared final. -->
+		<module name="FinalParameters"/><!--Check that method/constructor/catch/foreach parameters are final. -->
+		<module name="GenericWhitespace"/><!--Checks that the whitespace around the Generic tokens < and > are correct to the typical convention.-->
+		<module name="HiddenField"/><!--Checks that a local variable or a parameter does not shadow a field that is defined in the same class. -->
+		<module name="HideUtilityClassConstructor"/><!--Make sure that utility classes (classes that contain only static methods) do not have a public constructor. -->
+		<module name="IllegalCatch"/><!--Catching java.lang.Exception, java.lang.Error or java.lang.RuntimeException is almost never acceptable. -->
+		<module name="IllegalImport"/><!--Checks for imports from a set of illegal packages. -->
+		<module name="IllegalInstantiation"/><!--Checks for illegal instantiations where a factory method is preferred. -->
+		<module name="IllegalThrows"/><!--Throwing java.lang.Error or java.lang.RuntimeException is almost never acceptable. -->
+		<module name="IllegalTokenText"/><!--Checks for illegal token text. -->
+		<module name="IllegalType"/><!--Checks that particular class are never used as types in variable declarations, return values or parameters. -->
+		<module name="Indentation"/><!--Checks correct indentation of Java Code. -->
+		<module name="InnerAssignment"/><!-- Checks for assignments in subexpressions, such as in String s = Integer.toString(i = 2);. -->
+		<module name="InterfaceIsType"/><!--Implements Bloch, Effective Java, Item 17 - Use Interfaces only to define types. -->
+		<module name="JUnitTestCase"/><!--Ensures that the setUp(), tearDown()methods are named correctly, have no arguments, return void and are either public or protected.-->
+		<module name="JavaNCSS"/><!--This check calculates the Non Commenting Source Statements (NCSS) metric for java source files and methods. -->
+		<module name="LeftCurly"/><!--Checks the placement of left curly braces on types, methods and other blocks: -->
+		<module name="LocalFinalVariableName"/><!--Checks that local final variable names conform to a format specified by the format property. -->
+		<module name="LocalVariableName"/><!--Checks that local, non-final variable names conform to a format specified by the format property. -->
+		<module name="MemberName"/><!--Checks that instance variable names conform to a format specified by the format property. -->
+		<module name="MethodName"/><!--Checks that method names conform to a format specified by the format property. -->
+		<module name="MethodParamPad"/><!--Checks the padding between the identifier of a method definition, constructor definition, method call, or constructor invocation; and the left parenthesis of the parameter list. -->
+		<module name="MethodTypeParameterName"/><!--Checks that class type parameter names conform to a format specified by the format property. -->
+		<module name="MissingCtor"/><!--Checks that classes (except abstract one) define a ctor and don't rely on the default one. -->
+		<module name="MissingDeprecated"/><!--This class is used to verify that both the -->
+		<module name="MissingOverride"/><!--This class is used to verify that the -->
+		<module name="ModifierOrder"/><!--Checks that the order of modifiers conforms to the suggestions in the Java Language specification, sections 8.1.1, 8.3.1 and 8.4.3. -->
+		<module name="MultipleStringLiterals"/><!--Checks for multiple occurrences of the same string literal within a single file. -->
+		<module name="MultipleVariableDeclarations"/><!--Checks that each variable declaration is in its own statement and on its own line. -->
+		<module name="MutableException"/><!--Ensures that exceptions (defined as any class name conforming to some regular expression) are immutable. -->
+		<module name="NPathComplexity"/><!--Checks the npath complexity against a specified limit (default = 200). -->
+		<module name="NeedBraces"/><!--Checks for braces around code blocks. -->
+		<module name="NoClone"/><!--Checks that the clone method is not overridden from the Object class. -->
+		<module name="NoFinalizer"/><!--Checks that no method having zero parameters is defined using the name finalize. -->
+		<module name="NoWhitespaceBefore"/><!-- Checks that there is no whitespace before a token. -->
+		<module name="OperatorWrap"/><!--Checks line wrapping for operators. -->
+		<module name="OuterTypeNumber"/><!--Checks for the number of defined types at the "outer" level. -->
+		<module name="PackageAnnotation"/><!--This check makes sure that all package annotations are in the package-info.java file. -->
+		<module name="PackageDeclaration"/><!--Ensures there is a package declaration and (optionally) in the correct directory. -->
+		<module name="PackageName"/><!--Checks that package names conform to a format specified by the format property. -->
+		<module name="ParameterName"/><!--Checks that parameter names conform to a format specified by the format property. -->
+		<module name="ParameterNumber"/><!--Checks the number of parameters that a method or constructor has. -->
+		<module name="ParenPad"/><!--Checks the padding of parentheses; that is whether a space is required after a left parenthesis and before a right parenthesis, or such spaces are forbidden, with the exception that it does not check for padding of the right parenthesis at an empty for iterator. -->
+		<module name="RedundantImport"/><!--Checks for imports that are redundant. -->
+		<module name="RedundantModifier"/><!--Checks for redundant modifiers in interface and annotation definitions. -->
+		<module name="RedundantThrows"/><!--Checks for redundant exceptions declared in throws clause such as duplicates, unchecked exceptions or subclasses of another declared exception.-->
+		<module name="RightCurly"/><!--Checks the placement of right curly braces. -->
+		<module name="StaticVariableName"/><!--Checks that static, non-final variable names conform to a format specified by the format property. -->
+		<module name="SuperClone"/><!--Checks that an overriding clone() method invokes super.clone(). -->
+		<module name="SuperFinalize"/><!--Checks that an overriding finalize() method invokes super.finalize(). -->
+		<module name="SuppressWarnings"/><!--This check allows you to specify what warnings that -->
+		<module name="ThrowsCount"/><!--Restricts throws statements to a specified count (default = 1). -->
+		<module name="TodoComment"/><!--A check for TODO comments. -->
+		<module name="TypeName"/><!--Checks that type names conform to a format specified by the format property. -->
+		<module name="TypecastParenPad"/><!--Checks the padding of parentheses for typecasts. -->
+		<module name="UncommentedMain"/><!--Detects uncommented main methods. -->
+		<module name="UpperEll"/><!--Checks that long constants are defined with an upper ell. -->
+		<module name="VisibilityModifier"/><!--Checks visibility of class members.-->
+		<module name="WhitespaceAfter"/><!-- Checks that a token is followed by whitespace, with the exception that it does not check for whitespace after the semicolon of an empty for iterator.-->
+		<module name="WhitespaceAround"/><!-- Checks that a token is surrounded by whitespace.-->
+		<module name="WriteTag"/><!--Outputs a JavaDoc tag as information.-->
+
+		<!-- Not just yet! -->
+		<!-- <module name="JavadocMethod"/>--><!--Checks the Javadoc of a method or constructor.-->
+		<!-- <module name="JavadocStyle"/>--><!--Custom Checkstyle Check to validate Javadoc.-->
+		<!-- <module name="JavadocType"/>--><!--Checks the Javadoc of a type.-->
+		<!-- <module name="JavadocVariable"/>--><!--Checks that a variable has Javadoc comment.-->
+
+		<!-- The following are not in version of checkstyle used by older maven plugin. -->
+		<!-- <module name="InnerTypeLast"/> Check nested (internal) classes/interfaces are declared at the bottom of the class after all method and field declarations.-->
+		<!-- <module name="MethodCount"/> Checks the number of methods declared in each type. -->
+		<!-- <module name="NestedForDepth"/> Restricts nested for blocks to a specified depth (default = 1). -->
+		<!-- <module name="OneStatementPerLine"/> Checks there is only one statement per line. -->
+		<!-- <module name="OuterTypeFilename"/> Checks that the outer type name and the file name match. -->
+
+		<module name="MagicNumber"/>
+		<module name="UnusedImports"/>
+		<module name="AvoidStarImport"/>
+		<module name="AvoidNestedBlocks"/>
+		<module name="NoWhitespaceAfter"/>
+		<module name="BooleanExpressionComplexity"/>
+		<module name="CyclomaticComplexity"/>
+		<module name="MethodLength"/>
+		<module name="MissingSwitchDefault"/>
+		<module name="ModifiedControlVariable"/> 
+		<module name="NestedTryDepth"/> 
+		<module name="ParameterAssignment"/>
+		<module name="SimplifyBooleanExpression"/>
+		<module name="SimplifyBooleanReturn"/>
+		<module name="StringLiteralEquality"/> 
+
+		<module name="LineLength" >
+			<property name="max" value="160"/> <!-- Fits on a 1280 screen. -->
+		</module>
+
+		<module name="NestedIfDepth">
+			<property name="max" value="2"/>
+		</module>
+
+		<module name="ReturnCount"/>
+	</module>
+</module>
