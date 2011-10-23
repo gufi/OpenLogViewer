@@ -25,7 +25,7 @@ package org.diyefi.openlogviewer.optionpanel;
 
 import javax.swing.DefaultComboBoxModel;
 
-public class SortComboBoxModel extends DefaultComboBoxModel{
+public class SortComboBoxModel extends DefaultComboBoxModel {
 	private static final long serialVersionUID = 1L;
 
 	public SortComboBoxModel() {
@@ -42,9 +42,10 @@ public class SortComboBoxModel extends DefaultComboBoxModel{
 	public void insertElementAt(Object element, int index) {
 		int size = getSize();
 		for (index = 0; index < size; index++) {
-				Comparable c = (Comparable)getElementAt( index );
-				if (c.compareTo(element) > 0)
-					break;
+			Comparable c = (Comparable) getElementAt(index);
+			if (c.compareTo(element) > 0) {
+				break;
+			}
 		}
 		super.insertElementAt(element, index);
 	}

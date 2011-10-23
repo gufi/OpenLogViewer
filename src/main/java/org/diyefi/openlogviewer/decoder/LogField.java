@@ -1,7 +1,7 @@
 package org.diyefi.openlogviewer.decoder;
 
-public class LogField{
-	public enum types{
+public class LogField {
+	public enum types {
 		UINT8  (1),
 		UINT16 (2),
 		UINT32 (4),
@@ -14,67 +14,67 @@ public class LogField{
 
 		public final int width;
 
-		private types(int width){
+		private types(int width) {
 			this.width = width;
 		}
 	}
 
-	
+
 	static final double divideByOne = 1.0;
 	static final double addToZero = 0.0;
 
-	public LogField(String ID){
+	public LogField(String ID) {
 		this(ID, types.UINT16, divideByOne, addToZero);
 	}
-	public LogField(String ID, types type){
+	public LogField(String ID, types type) {
 		this(ID, type, divideByOne, addToZero);
 	}
-	public LogField(String ID, types type, double divBy){
-		this(ID, type ,divBy, addToZero);
+	public LogField(String ID, types type, double divBy) {
+		this(ID, type , divBy, addToZero);
 	}
 
-	public LogField(String ID, double divBy){
+	public LogField(String ID, double divBy) {
 		this(ID, types.UINT16, divBy, addToZero);
 	}
-	public LogField(String ID, double divBy, double addTo){
+	public LogField(String ID, double divBy, double addTo) {
 		this(ID, types.UINT16, divBy, addTo);
 	}
 
-	public LogField(String ID, types type, double divBy, double addTo){
+	public LogField(String ID, types type, double divBy, double addTo) {
 		this.ID = ID;
 		this.type = type;
 		this.divBy = divBy;
 		this.addTo = addTo;
 
-		if(ID == null){
+		if (ID == null) {
 			throw new RuntimeException("ID is null, needs to be a valid string!");
-		}else if(type == null){
+		} else if (type == null) {
 			throw new RuntimeException("Type must be specified!");
-		}else if((this.type == types.BITS8) || (this.type == types.BITS16) || (this.type == types.BITS32)){
+		} else if ((this.type == types.BITS8) || (this.type == types.BITS16) || (this.type == types.BITS32)) {
 			throw new RuntimeException("This constructor must NOT be used with flag variables");
-		}else if(this.divBy == addToZero){
+		} else if (this.divBy == addToZero) {
 			throw new RuntimeException("Divide by zero not possible, don't be silly!");
 		}
 	}
 
-	public LogField(String ID, types type, String[] bitFieldNames){
+	public LogField(String ID, types type, String[] bitFieldNames) {
 		this.ID = ID;
 		this.type = type;
 		this.bitFieldNames = bitFieldNames;
 
-		if(ID == null){
+		if (ID == null) {
 			throw new RuntimeException("ID is null, needs to be a valid string!");
-		}else if(this.type != types.BITS8 && this.type != types.BITS16 && this.type != types.BITS32){
+		} else if (this.type != types.BITS8 && this.type != types.BITS16 && this.type != types.BITS32) {
 			throw new RuntimeException("This constructor can only be used with flag variables!");
 		}
 
-		if(this.bitFieldNames == null){
+		if (this.bitFieldNames == null) {
 			throw new IllegalArgumentException("bitFieldNames is null!");
-		}else if((this.type == types.BITS8) && (bitFieldNames.length != 8)){
+		} else if ((this.type == types.BITS8) && (bitFieldNames.length != 8)) {
 			throw new IllegalArgumentException("BITS8 requires 8 flag names!");
-		}else if((this.type == types.BITS16) && (bitFieldNames.length != 16)){
+		} else if ((this.type == types.BITS16) && (bitFieldNames.length != 16)) {
 			throw new IllegalArgumentException("BITS16 requires 16 flag names!");
-		}else if((this.type == types.BITS32) && (bitFieldNames.length != 32)){
+		} else if ((this.type == types.BITS32) && (bitFieldNames.length != 32)) {
 			throw new IllegalArgumentException("BITS16 requires 32 flag names!");
 		}
 	}

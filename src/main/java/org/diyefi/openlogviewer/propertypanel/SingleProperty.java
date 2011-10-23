@@ -88,7 +88,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 	}
 
 	public void setSplit(int split) {
-		if(split < 1){
+		if (split < 1) {
 			split = 1;
 		}
 		this.split = split;

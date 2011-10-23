@@ -136,7 +136,7 @@ public class PropertiesPane extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-				if(!s.equals("") || s != null){
+				if (!s.equals("") || (s != null)) { // TODO Bad need of stringUtils here...
 					SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
 					addProperty(newprop);
@@ -231,7 +231,7 @@ public class PropertiesPane extends JFrame {
 			}
 
 			out.close();
-		} catch (Exception e) {//Catch exception if any
+		} catch (Exception e) { // Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 			throw new RuntimeException("Catchall of type Exception is evil!", e);
 		}
@@ -277,8 +277,8 @@ public class PropertiesPane extends JFrame {
 			propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height + 60));
 			propertyView.revalidate();
 		} else {
-			for(int i = 0; i < properties.size(); i++){
-				if(properties.get(i).getHeader().equalsIgnoreCase(sp.getHeader())){
+			for (int i = 0; i < properties.size(); i++) {
+				if (properties.get(i).getHeader().equalsIgnoreCase(sp.getHeader())) {
 					properties.set(i, sp);
 				}
 			}

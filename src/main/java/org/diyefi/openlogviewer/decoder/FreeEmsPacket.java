@@ -93,9 +93,9 @@ public class FreeEmsPacket {
 	}
 
 	public short getSequence() {
-		if(hasSequence){
+		if (hasSequence) {
 			return sequence;
-		}else{
+		} else {
 			throw new RuntimeException("Has no sequence!");
 		}
 	}
@@ -105,9 +105,9 @@ public class FreeEmsPacket {
 	}
 
 	public short getErrorId() {
-		if(isNack){
+		if (isNack) {
 			return errorId;
-		}else{
+		} else {
 			throw new RuntimeException("Not a nack!");
 		}
 	}

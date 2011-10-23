@@ -84,7 +84,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 
 		// A bit dirty, but not too bad.
 		String[] internalHeaders = new String[headers.length + 1];
-		for(int i=0;i<headers.length;i++){
+		for (int i = 0; i < headers.length; i++) {
 			internalHeaders[i] = headers[i];
 		}
 
@@ -102,8 +102,8 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 */
 	public boolean addValue(String key, double value) {
 		GenericDataElement logElement = this.get(key);
-		if(key.equals(firstKey)){
-			lineCountElement.add((double)lineCount);
+		if (key.equals(firstKey)) {
+			lineCountElement.add((double) lineCount);
 			lineCount++;
 		}
 		return logElement.add(value);

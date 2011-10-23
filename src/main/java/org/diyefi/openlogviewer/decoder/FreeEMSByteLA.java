@@ -32,14 +32,14 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  */
 public class FreeEMSByteLA implements Runnable { // implements runnable to make this class theadable
 
-	private final short ESCAPE_BYTE = 0xBB;// for unsigned byte
-	private final short START_BYTE = 0xAA;// for unsigned byte
-	private final short STOP_BYTE = 0xCC;// for unsigned byte
-	private final short ESCAPED_ESCAPE_BYTE = 0x44;// for unsigned byte
-	private final short ESCAPED_START_BYTE = 0x55;// for unsigned byte
-	private final short ESCAPED_STOP_BYTE = 0x33;// for unsigned byte
+	private final short ESCAPE_BYTE = 0xBB;         // for unsigned byte
+	private final short START_BYTE = 0xAA;          // for unsigned byte
+	private final short STOP_BYTE = 0xCC;           // for unsigned byte
+	private final short ESCAPED_ESCAPE_BYTE = 0x44; // for unsigned byte
+	private final short ESCAPED_START_BYTE = 0x55;  // for unsigned byte
+	private final short ESCAPED_STOP_BYTE = 0x33;   // for unsigned byte
 
-	private short[] wholePacket;// for unsigned byte
+	private short[] wholePacket;
 	private File logFile;
 	private FileInputStream logStream;
 	private boolean startFound;
@@ -72,7 +72,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	public void run() {
 		try {
 			byte[] readByte = new byte[1];
-			short uByte = 0;// uByte stands for UNSIGNED BYTE
+			short uByte = 0;
 
 			startFound = false;
 			logStream = new FileInputStream(logFile);
@@ -121,7 +121,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 *
 	 */
 	private void decodePacket(short[] packet, int length) {
-		int PTIT = (int)packet[3];
+		int PTIT = (int) packet[3];
 		int T0 = 0;
 		int T1 = 0;
 		int T2 = 0;
@@ -132,35 +132,35 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 		int T7 = 0;
 		decodedLog.addValue("PTIT", PTIT);
 
-		if((PTIT % 2) == 1){
+		if ((PTIT % 2) == 1) {
 			T0 = 1;
 			PTIT -= 1;
 		}
-		if((PTIT % 4) == 2){
+		if ((PTIT % 4) == 2) {
 			T1 = 1;
 			PTIT -= 2;
 		}
-		if((PTIT % 8) == 4){
+		if ((PTIT % 8) == 4) {
 			T2 = 1;
 			PTIT -= 4;
 		}
-		if((PTIT % 16) == 8){
+		if ((PTIT % 16) == 8) {
 			T3 = 1;
 			PTIT -= 8;
 		}
-		if((PTIT % 32) == 16){
+		if ((PTIT % 32) == 16) {
 			T4 = 1;
 			PTIT -= 16;
 		}
-		if((PTIT % 64) == 32){
+		if ((PTIT % 64) == 32) {
 			T5 = 1;
 			PTIT -= 32;
 		}
-		if((PTIT % 128) == 64){
+		if ((PTIT % 128) == 64) {
 			T6 = 1;
 			PTIT -= 64;
 		}
-		if(PTIT == 128){
+		if (PTIT == 128) {
 			T7 = 1;
 		}
 
@@ -181,15 +181,15 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 * @return true or false based on if the checksum passes
 	 */
 	private boolean checksum(short[] packet, int length) {
-		if(length > 0){
-			short includedSum = packet[length -1]; // sum is last byte
+		if (length > 0) {
+			short includedSum = packet[length - 1]; // sum is last byte
 			long veryBIGsum = 0;
-			for(int x=0;x<length-1;x++){
+			for (int x = 0; x < length - 1; x++) {
 				veryBIGsum += packet[x];
 			}
-			short calculatedSum = (short)(veryBIGsum % 256);
+			short calculatedSum = (short) (veryBIGsum % 256);
 			return (calculatedSum == includedSum);
-		}else{
+		} else {
 			return false;
 		}
 	}

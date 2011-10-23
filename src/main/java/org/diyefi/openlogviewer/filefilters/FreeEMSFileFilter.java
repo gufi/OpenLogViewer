@@ -28,7 +28,7 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class FreeEMSFileFilter extends FileFilter {
-	public FreeEMSFileFilter () {
+	public FreeEMSFileFilter() {
 		super();
 	}
 
@@ -39,12 +39,12 @@ public class FreeEMSFileFilter extends FileFilter {
 
 	@Override
 	public boolean accept(File file) {
-		if(file.isDirectory()) {
+		if (file.isDirectory()) {
 			return true;
 		}
 
 		String extension = Utilities.getExtension(file);
-		if(extension != null && extension.equals("bin")){
+		if (extension != null && extension.equals("bin")) {
 			return true;
 		}
 

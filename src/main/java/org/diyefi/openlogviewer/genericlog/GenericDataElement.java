@@ -113,7 +113,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	private void addFlavors() {
 		dataFlavor = new DataFlavor[3];
 		//try {
-		dataFlavor[0] = new DataFlavor(DataFlavor.javaSerializedObjectMimeType+
+		dataFlavor[0] = new DataFlavor(DataFlavor.javaSerializedObjectMimeType +
 				";class=\"" + GenericDataElement.class.getName() + "\"",
 		"OLV GenericDataElement");
 		dataFlavor[1] = DataFlavor.stringFlavor;
@@ -131,6 +131,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 			maxValue = d;
 			newMaxValue = d;
 		}
+
 		if (newMinValue > d) {
 			minValue = d;
 			newMinValue = d;
@@ -145,9 +146,10 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	 * @param splitNumber
 	 */
 	public void setSplitNumber(int splitNumber) {
-		if(splitNumber < 1 ) {
+		if (splitNumber < 1) {
 			splitNumber = 1;
 		}
+
 		int old = this.splitNumber;
 		this.splitNumber = splitNumber;
 		PCS.firePropertyChange("Split", old, this.splitNumber);
@@ -182,11 +184,11 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 
 	@Override
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		if(flavor.equals(dataFlavor[0])) {
+		if (flavor.equals(dataFlavor[0])) {
 			return this;
-		}else if(flavor.equals(dataFlavor[1])){
+		} else if (flavor.equals(dataFlavor[1])) {
 			return "Unsupported";
-		}else if(flavor.equals(dataFlavor[2])){
+		} else if (flavor.equals(dataFlavor[2])) {
 			return "Unsupported";
 		}
 		else {
@@ -201,8 +203,8 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 
 	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		for(int i = 0; i<dataFlavor.length;i++){
-			if(flavor.equals(dataFlavor[i])){
+		for (int i = 0; i < dataFlavor.length; i++) {
+			if (flavor.equals(dataFlavor[i])) {
 				return true;
 			}
 		}

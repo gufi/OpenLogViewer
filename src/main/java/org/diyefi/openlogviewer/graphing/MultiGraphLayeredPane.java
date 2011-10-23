@@ -60,8 +60,8 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		boolean found = false;
 		for (int i = 0; i < this.getComponentCount() && !found; i++) {
 			if (this.getComponent(i) instanceof SingleGraphPanel) {
-				SingleGraphPanel gl = (SingleGraphPanel)this.getComponent(i);
-				if(gl.getName().equals(header)){
+				SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
+				if (gl.getName().equals(header)) {
 					found = true;
 				}
 			}
@@ -71,11 +71,12 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			graph.setSize(this.getSize());
 			graph.setName(header);
 			this.add(graph);
-			this.addHierarchyBoundsListener(graph);// updates graph size automatically
+			this.addHierarchyBoundsListener(graph); // updates graph size automatically
 			genLog.get(header).addPropertyChangeListener("Split", graph);
 			graph.setData(genLog.get(header));
 			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPositionMax();
 		}
+
 		if (p) {
 			OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
 		}
@@ -115,7 +116,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		repaint();
 	}
 
-	public InfoPanel getInfoPanel(){
+	public InfoPanel getInfoPanel() {
 		return infoPanel;
 	}
 

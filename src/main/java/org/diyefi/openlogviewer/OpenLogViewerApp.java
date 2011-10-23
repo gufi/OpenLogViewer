@@ -209,7 +209,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		});
 	}
 
-	public EntireGraphingPanel getEntireGraphingPanel(){
+	public EntireGraphingPanel getEntireGraphingPanel() {
 		return graphingPanel;
 	}
 

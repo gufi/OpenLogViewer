@@ -25,7 +25,7 @@ package org.diyefi.openlogviewer;
 
 import javax.swing.JPanel;
 
-public class GraphWindow extends JPanel{
+public class GraphWindow extends JPanel {
 	private static final long serialVersionUID = 834983459835L;
 
 	public GraphWindow() {

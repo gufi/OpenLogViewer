@@ -193,7 +193,7 @@ public class PlayBarPanel extends JPanel {
 	 * modifys the state of the PlayableLog zoom in 1 pixel up to 10 pixels
 	 * @param evt
 	 */
-	private void zoomInButtonMouseReleased(MouseEvent e){
+	private void zoomInButtonMouseReleased(MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
 	}
 
@@ -201,7 +201,7 @@ public class PlayBarPanel extends JPanel {
 	 * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
 	 * @param evt
 	 */
-	private void zoomOutButtonMouseReleased(MouseEvent e){
+	private void zoomOutButtonMouseReleased(MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
 	}
 

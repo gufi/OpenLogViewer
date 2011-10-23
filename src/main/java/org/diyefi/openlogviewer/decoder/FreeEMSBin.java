@@ -99,7 +99,8 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			"FF-commsErrorMessagesNotSent"   // Incremented when an error message can't be sent due to the TX buffer
 	};
 
-	private LogField[] fields = { // This should be read from a file at some point, as it's going to be flexible. See FreeEMS/src/inc/structs.h for definitive answers.
+	// This should be read from a file at some point, as it's going to be flexible. See FreeEMS/src/inc/structs.h for definitive answers.
+	private LogField[] fields = {
 		// CoreVars struct contents:
 		new LogField("IAT",  100),   // Inlet Air Temperature           : 0.0 -   655.35       (0.01 Kelvin (/100))
 		new LogField("CHT",  100),   // Coolant / Head Temperature      : 0.0 -   655.35       (0.01 Kelvin (/100))
@@ -119,25 +120,25 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		new LogField("DDRPM"),       // Delta Delta RPM (Calced)        : 0.0 - 65535.0        (raw units from lookup)
 
 		// DerivedVars struct contents:
-		new LogField("LoadMain", 512),        // Configurable unit of load, scale same as map by default
-		new LogField("VEMain", 512),          // Volumetric Efficiency in 0 - 128%
-		new LogField("Lambda", 32768),        // Integral Lambda 0 - 2.0
-		new LogField("AirFlow"),              // raw intermediate, remove
-		new LogField("densityAndFuel"),       // raw intermediate, remove
-		new LogField("BasePW", 1250),         // Raw PW before corrections 0 - ~52ms
-		new LogField("ETE", (100.0/32768.0)), // Engine Temperature Enrichment percentage correction 0 - 200%
-		new LogField("TFCTotal", 1250),       // Transient fuel correction PW (+/-)  0 - ~52ms
-		new LogField("EffectivePW", 1250),    // Actual PW of fuel delivery 0 - ~52ms
-		new LogField("IDT", 1250),            // PW duration before fuel flow begins 0 - ~52ms
-		new LogField("RefPW", 1250),          // Reference electrical PW 0 - ~52ms
-		new LogField("Advance", 50),          // Ignition advance (scaled degrees / oneDegree(currently 50) = degrees) 0 - ~64*
-		new LogField("Dwell", 1250),          // Dwell period, s 0 - ~52ms
+		new LogField("LoadMain", 512),          // Configurable unit of load, scale same as map by default
+		new LogField("VEMain", 512),            // Volumetric Efficiency in 0 - 128%
+		new LogField("Lambda", 32768),          // Integral Lambda 0 - 2.0
+		new LogField("AirFlow"),                // raw intermediate, remove
+		new LogField("densityAndFuel"),         // raw intermediate, remove
+		new LogField("BasePW", 1250),           // Raw PW before corrections 0 - ~52ms
+		new LogField("ETE", (100.0 / 32768.0)), // Engine Temperature Enrichment percentage correction 0 - 200%
+		new LogField("TFCTotal", 1250),         // Transient fuel correction PW (+/-)  0 - ~52ms
+		new LogField("EffectivePW", 1250),      // Actual PW of fuel delivery 0 - ~52ms
+		new LogField("IDT", 1250),              // PW duration before fuel flow begins 0 - ~52ms
+		new LogField("RefPW", 1250),            // Reference electrical PW 0 - ~52ms
+		new LogField("Advance", 50),            // Ignition advance (scaled degrees / oneDegree(currently 50) = degrees) 0 - ~64*
+		new LogField("Dwell", 1250),            // Dwell period, s 0 - ~52ms
 
 		// KeyUserDebugs struct contents
 		new LogField("tempClock"),     // Incremented once per log sent, to be moved to a char TODO
 		new LogField("coreStatusA",  types.BITS8, coreStatusAFlagNames),    // Duplicated, migrate here, remove global var
 		new LogField("decoderFlags", types.BITS8, decoderFlagsFlagNames),   // Various decoder state flags
-		new LogField("flaggableFlags", types.BITS16, flaggableFlagsNames),///< Flags to go with our flaggables struct.
+		new LogField("flaggableFlags", types.BITS16, flaggableFlagsNames),  // Flags to go with our flaggables struct.
 		new LogField("currentEvent",             types.UINT8), // Which input event was last to come in
 		new LogField("syncLostWithThisID",       types.UINT8), // A unique identifier for the reason behind a loss of sync
 		new LogField("syncLostOnThisEvent",      types.UINT8), // Where in the input pattern it all went very badly wrong
@@ -185,14 +186,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		// Eventually pull this in from files and config etc instead of default, if it makes sense to.
 		String[] headers = new String[fields.length * 32]; // Hack to make it plenty big, trim afterwards...
 		int headersPosition = 0;
-		for(int i=0;i<fields.length;i++){
-			if((fields[i].type == types.BITS8) || (fields[i].type == types.BITS16) || (fields[i].type == types.BITS32)){
-				for(int j=0;j<fields[i].bitFieldNames.length;j++){
-					String flagID = fields[i].bitFieldNames[j] + "-" + fields[i].ID + "-B"+ j;
+		for (int i = 0; i < fields.length; i++) {
+			if ((fields[i].type == types.BITS8) || (fields[i].type == types.BITS16) || (fields[i].type == types.BITS32)) {
+				for (int j = 0; j < fields[i].bitFieldNames.length; j++) {
+					String flagID = fields[i].bitFieldNames[j] + "-" + fields[i].ID + "-B" + j;
 					headers[headersPosition] = flagID;
 					headersPosition++;
 				}
-			}else{
+			} else {
 				headers[headersPosition] = fields[i].ID;
 				headersPosition++;
 			}
@@ -242,23 +243,24 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 					packetLength = 0; // Reset array position, always (discard existing data recorded, if any)
 				} else if (startFound) { // Skip stray bytes until a start is found
 					if (uByte == STOP_BYTE) {
-						if(packetLength < minimumPacketLength){
+						if (packetLength < minimumPacketLength) {
 							packetsUnderLength++;
-						}else if(packetLength > maximumPacketLength){
+						} else if (packetLength > maximumPacketLength) {
 							packetsOverLength++;
-						}else{
+						} else {
 							short[] justThePacket = new short[packetLength];
-							for(int i=0;i<packetLength;i++){
+							for (int i = 0; i < packetLength; i++) {
 								justThePacket[i] = packetBuffer[i];
 							}
-							if (checksum(justThePacket)){//, packetLength)) {
-								if(decodeBasicLogPacket(justThePacket, payloadIDToParse)){
+
+							if (checksum(justThePacket)) {
+								if (decodeBasicLogPacket(justThePacket, payloadIDToParse)) {
 									packetsParsedFully++;
-								}else{
+								} else {
 									packetLengthWrong++;
 									payloadIDWrong++; // TODO maybe handle various possibilities post valid packet being parsed
 								}
-							}else{
+							} else {
 								checksumMismatches++;
 							}
 						}
@@ -278,7 +280,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 						packetBuffer[packetLength] = uByte; // Store the data as-is for processing later
 						packetLength++;
 					}
-				}else{
+				} else {
 					strayBytesLost++;
 				}
 			}
@@ -333,72 +335,72 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		position++;
 		int payloadId = (payloadIdUpper * 256) + payloadIdLower;
 
-		if(payloadId != payloadIDToParse){
+		if (payloadId != payloadIDToParse) {
 			return false; // TODO make this a code, or throw exception, but it's not exceptional at all for this to occur...
 		}
 
 		int[] flagValues = processFlagBytes(flags, 8);
 
-		if(flagValues[HEADER_HAS_SEQUENCE_INDEX] == 1){
+		if (flagValues[HEADER_HAS_SEQUENCE_INDEX] == 1) {
 			position++; // Skip this!
 		}
 
-		if(flagValues[HEADER_HAS_LENGTH_INDEX] == 1){
+		if (flagValues[HEADER_HAS_LENGTH_INDEX] == 1) {
 			position += 2; // Ignore this for now, it's the payload length, check it vs actual length and check actual vs required.
 		}
 
 		int lengthOfFields = 0; // warn if length in config is not equal, but allow both sides of wrong as it is reasonable to not care about some and also to truncate shorter on the ECU side.
-		for(int i=0;i<fields.length;i++){
+		for (int i = 0; i < fields.length; i++) {
 			lengthOfFields += fields[i].type.width;
 		}
 
 		int payloadLength = ((packet.length - position) - 1);
-		if(payloadLength != lengthOfFields){ // First run through to find out what the lengths are.
+		if (payloadLength != lengthOfFields) { // First run through to find out what the lengths are.
 			System.out.print(" Fields length is: " + lengthOfFields);
 			System.out.print(" Packet length is: " + packet.length);
 			System.out.println(" Payload length is: " + payloadLength);
 			return false;
 		}
 
-		for(int i=0;i<fields.length;i++){
+		for (int i = 0; i < fields.length; i++) {
 			LogField field = fields[i];
 
 			int rawValue = 0;
-			for(int j=0;j<field.type.width;j++){
+			for (int j = 0; j < field.type.width; j++) {
 				rawValue = (rawValue * 256) + packet[position];
 				position++;
 			}
 
-			if((field.type == types.UINT8) || (field.type == types.UINT16) || (field.type == types.UINT32)){
-				double scaledValue = (double)rawValue/field.divBy;
+			if ((field.type == types.UINT8) || (field.type == types.UINT16) || (field.type == types.UINT32)) {
+				double scaledValue = (double) rawValue / field.divBy;
 				double finalValue = scaledValue + field.addTo;
 				decodedLog.addValue(field.ID, finalValue);
-			}else if((field.type == types.BITS8) || (field.type == types.BITS16) || (field.type == types.BITS32)){
+			} else if ((field.type == types.BITS8) || (field.type == types.BITS16) || (field.type == types.BITS32)) {
 				int[] processedFlags = processFlagBytes(rawValue, (8 * field.type.width));
-				for(int j=0;j<processedFlags.length;j++){
-					String flagID = field.bitFieldNames[j] + "-" + field.ID + "-B"+ j;
+				for (int j = 0; j < processedFlags.length; j++) {
+					String flagID = field.bitFieldNames[j] + "-" + field.ID + "-B" + j;
 					decodedLog.addValue(flagID, processedFlags[j]);
 				}
-			}else if(field.type == types.SINT8){ //??
+			} else if (field.type == types.SINT8) { // TODO handle signed ints...
 				decodedLog.addValue(field.ID, rawValue);
-			}else if(field.type == types.SINT16){
+			} else if (field.type == types.SINT16) {
 				decodedLog.addValue(field.ID, rawValue);
-			}else if(field.type == types.SINT32){
+			} else if (field.type == types.SINT32) {
 				decodedLog.addValue(field.ID, rawValue);
 			}
 		}
 		return true; // TODO FIXME : Default to all things being good till I attack this!
 	}
 
-	int[] processFlagBytes(long valueOfFlags, int numberOfFlags){
-		if((numberOfFlags != 8) && (numberOfFlags != 16) && (numberOfFlags != 32)){
+	int[] processFlagBytes(long valueOfFlags, int numberOfFlags) {
+		if ((numberOfFlags != 8) && (numberOfFlags != 16) && (numberOfFlags != 32)) {
 			throw new IllegalArgumentException("Basic units of computer sciene apply, embedded flags are never " + numberOfFlags + " wide!"); // Unless they are 64, but shhhh...
 		}
 
 		int[] flagValues = new int[numberOfFlags];
 		int comparison = 1;
-		for(int i=0;i<numberOfFlags;i++){
-			if((valueOfFlags % (2 * comparison)) == comparison){
+		for (int i = 0; i < numberOfFlags; i++) {
+			if ((valueOfFlags % (2 * comparison)) == comparison) {
 				flagValues[i] = 1;
 				valueOfFlags -= comparison;
 			}
@@ -415,15 +417,15 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @return true or false based on if the checksum passes
 	 */
 	private boolean checksum(short[] packet) {
-		if(packetLength > 0){
-			short includedSum = packet[packetLength -1]; // sum is last byte
+		if (packetLength > 0) {
+			short includedSum = packet[packetLength - 1]; // sum is last byte
 			long veryBIGsum = 0;
-			for(int x=0;x<packetLength-1;x++){
+			for (int x = 0; x < packetLength - 1; x++) {
 				veryBIGsum += packet[x];
 			}
-			short calculatedSum = (short)(veryBIGsum % 256);
+			short calculatedSum = (short) (veryBIGsum % 256);
 			return (calculatedSum == includedSum);
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -452,22 +454,9 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param uInt8 the raw signed byte representation of our raw unsigned char
 	 * @return the value of the unsigned byte stored in a short
 	 */
-	private short unsignedValueOf(byte uInt8){
-		return (short)(0xFF & uInt8);
+	private short unsignedValueOf(byte uInt8) {
+		return (short) (0xFF & uInt8);
 	}
-
-	/**
-	 *
-	 * @return getGenericLog() returns the reference to the generic log the binary data has been converted to
-	 */
-	/*public GenericLog getGenericLog() {
-		if (logLoaded) {
-			return decodedLog;
-		} else {
-			return null;
-		}
-	}*/
-
 
 	/**
 	 *

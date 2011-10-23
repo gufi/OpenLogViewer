@@ -71,7 +71,7 @@ public abstract class BaseDecoder implements Runnable {
 			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADED);
 		} catch (IOException IOE) {
 			this.getDecodedLog().setLogStatus(GenericLog.LOG_NOT_LOADED);
-			System.out.println("Error Loading Log: " +IOE.getMessage());
+			System.out.println("Error Loading Log: " + IOE.getMessage());
 		}
 	}
 

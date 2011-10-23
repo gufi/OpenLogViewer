@@ -56,14 +56,6 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 
 @SuppressWarnings("serial")
 public class OptionFrameV2 extends JFrame {
-	private JFrame thisRef;
-	private JPanel inactiveHeaders;
-	private ModifyGraphPane infoPanel;
-	private JButton addDivisionButton;
-
-	private JLayeredPane layeredPane;
-	private ArrayList<JPanel> activePanelList;
-
 	private static final int WIDTH_OF_BOXES = 6;
 	private static final int HEIGHT_OF_BOXES = 2;
 	private static final int MAX_NUMBER_OF_BOXES = WIDTH_OF_BOXES * HEIGHT_OF_BOXES;
@@ -72,17 +64,26 @@ public class OptionFrameV2 extends JFrame {
 	private static final int HEIGHT_IN_FIELDS = 12;
 	private static final int NUMBER_OF_ADD_BUTTONS = 1;
 
-	private static final int WTF = 4; // Don't ask me...
+	private static final int WTF = 4;  // Don't ask me...
 	private static final int WTF2 = 3; // No fucking idea AT ALL...
-	private static final int COMP_HEIGHT = 20;// every thing except panels are 20 px high; default 20
-	private static final int COMP_WIDTH = 200; // used for buttons and such that are in; default 200
-	private static final int PANEL_WIDTH = 140;// panels are 120 px wide buttons and labels are also; default 120
-	private static final int PANEL_HEIGHT = 120;// panels are 120 px high;default 120
+
+	private static final int COMP_HEIGHT = 20;     // every thing except panels are 20 px high; default 20
+	private static final int COMP_WIDTH = 200;     // used for buttons and such that are in; default 200
+	private static final int PANEL_WIDTH = 140;    // panels are 120 px wide buttons and labels are also; default 120
+	private static final int PANEL_HEIGHT = 120;   // panels are 120 px high;default 120
 	private static final int SCROLL_BAR_SIZE = 16; // Measured
 
 	// Both are wrong for scroll bars... probably need an event to handle that?
 	private static final int WIDTH_OF_WINDOW = (NUMBER_OF_COLS_OF_FREEEMS_FIELDS * PANEL_WIDTH);
 	private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
+
+	private JFrame thisRef;
+	private JPanel inactiveHeaders;
+	private ModifyGraphPane infoPanel;
+	private JButton addDivisionButton;
+
+	private JLayeredPane layeredPane;
+	private ArrayList<JPanel> activePanelList;
 
 	public OptionFrameV2() {
 		super("Graphing Option Pane");
@@ -206,7 +207,7 @@ public class OptionFrameV2 extends JFrame {
 				GCB.setLocation(GCB.getInactiveLocation());
 				GCB.setSelected(false);
 			} else if (panel.getComponent(i) instanceof JButton) {
-				panel.remove(panel.getComponent(i));//removes the button
+				panel.remove(panel.getComponent(i)); // removes the button
 			} else {
 				i++;
 			}
@@ -237,7 +238,10 @@ public class OptionFrameV2 extends JFrame {
 			}
 		}
 
-		if(activePanelList.isEmpty()) addActiveHeaderPanel();
+		if (activePanelList.isEmpty()) {
+			addActiveHeaderPanel();
+		}
+
 		this.repaint();
 	}
 
@@ -248,14 +252,15 @@ public class OptionFrameV2 extends JFrame {
 			Component c = e.getComponent();
 			ActiveHeaderLabel GCB = (ActiveHeaderLabel) c;
 			GCB.setDragging(true);
-			if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) {// 4 == right mouse button
+			if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) { // 4 == right mouse button
 				if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
 					Component cn = c.getParent().getParent().getComponentAt(layeredPane.getMousePosition());
 					if (cn instanceof JPanel) {
 						JPanel j = (JPanel) cn;
 						if (j.getName().contains("Drop")) { // implement a better way to do this later
-							j.add(c);// components cannot share parents so it is automatically removed
-							c.setLocation( // reset the location to where the mouse is, otherwise first pixel when moving to the new jpanel
+							j.add(c); // components cannot share parents so it is automatically removed
+							// reset the location to where the mouse is, otherwise first pixel when moving to the new jpanel
+							c.setLocation(
 									// will cause a location issue reflecting where the panel was in the PREVIOUS panel
 									layeredPane.getMousePosition().x - c.getParent().getX() - (c.getWidth() / 2),
 									layeredPane.getMousePosition().y - c.getParent().getY() - (c.getHeight() / 2));
@@ -312,7 +317,7 @@ public class OptionFrameV2 extends JFrame {
 			toBeAdded.setName(head);
 			toBeAdded.setText(head);
 			toBeAdded.setRef(GDE);
-			toBeAdded.setEnabled(false);//you are unable to activate a graph in the inacivelist
+			toBeAdded.setEnabled(false); // you are unable to activate a graph in the inacivelist
 			toBeAdded.addMouseMotionListener(labelAdapter);
 			if (checkForProperties(toBeAdded, GDE)) {
 				toBeAdded.setBackground(GDE.getColor());

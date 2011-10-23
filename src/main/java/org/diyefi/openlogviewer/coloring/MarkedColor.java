@@ -28,70 +28,70 @@ import java.awt.Color;
  * MarkedColor is a couplet used to allow the marking of colors as "unavailable" or "available".
  * @author Ben Fenner
  */
-public class MarkedColor{
+public class MarkedColor {
 	private Color color;
 	private boolean availability;
 	double hue;
 
-	public MarkedColor(){
+	public MarkedColor() {
 		color = Color.gray;
 		availability = true;
 		hue = -1.0;
 	}
 
-	public MarkedColor(Color color){
+	public MarkedColor(Color color) {
 		this.color = color;
 		availability = true;
 		hue = -1.0;
 	}
 
-	public MarkedColor(boolean availability){
+	public MarkedColor(boolean availability) {
 		color = Color.gray;
 		this.availability = availability;
 		hue = -1.0;
 	}
 
-	public MarkedColor(Color color, boolean availability){
+	public MarkedColor(Color color, boolean availability) {
 		this.color = color;
 		this.availability = availability;
 		hue = -1.0;
 	}
 
-	public MarkedColor(Color color, boolean availability, double hue){
+	public MarkedColor(Color color, boolean availability, double hue) {
 		this.color = color;
 		this.availability = availability;
 		this.hue = hue;
 	}
 
-	public Color getColor(){
+	public Color getColor() {
 		return color;
 	}
 
-	public void setColor(Color color){
+	public void setColor(Color color) {
 		this.color = color;
 	}
 
-	public boolean isAvailable(){
+	public boolean isAvailable() {
 		return availability;
 	}
 
-	public void setAvailability(boolean availability){
+	public void setAvailability(boolean availability) {
 		this.availability = availability;
 	}
 
-	public double getHue(){
+	public double getHue() {
 		return hue;
 	}
 
-	public void setHue(double hue){
+	public void setHue(double hue) {
 		this.hue = hue;
 	}
 
-	public boolean equals(MarkedColor c){
+	public boolean equals(MarkedColor c) {
 		return c.getColor().equals(this.color) || c.getHue() == this.hue;
 	}
 
-	public boolean equals(Color c){
+	public boolean equals(Color c) {
 		return c.equals(this.color);
 	}
 }

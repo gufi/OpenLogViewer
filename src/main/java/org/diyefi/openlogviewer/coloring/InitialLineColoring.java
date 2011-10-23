@@ -33,32 +33,32 @@ import org.diyefi.openlogviewer.coloring.MarkedColor;
  * The colors provided should be the most contrasting colors possible.
  * @author Ben Fenner
  */
-public enum InitialLineColoring{
+public enum InitialLineColoring {
 
 	INSTANCE;
 
-	private InitialLineColoring(){
+	private InitialLineColoring() {
 		colorList = new LinkedList<MarkedColor>();
 		colorList.addFirst(new MarkedColor(Color.getHSBColor(1.0F, 1.0F, 1.0F), true, 0.0));
 		colorList.add(new MarkedColor(Color.getHSBColor(0.25F, 1.0F, 1.0F), true, 0.0));
 		colorList.add(new MarkedColor(Color.getHSBColor(0.5F, 1.0F, 1.0F), true, 0.0));
 		colorList.add(new MarkedColor(Color.getHSBColor(0.75F, 1.0F, 1.0F), true, 0.0));
-		for(long i = 8; i < 128; i*=2) {
+		for (long i = 8; i < 128; i *= 2) {
 			this.addColors(i);
 		}
 	}
 
-	private void addColors(long hueOffsetDinominator){
-		long numColors = hueOffsetDinominator/2;
-		double hueOffset = 1.0/hueOffsetDinominator;
+	private void addColors(long hueOffsetDinominator) {
+		long numColors = hueOffsetDinominator / 2;
+		double hueOffset = 1.0 / hueOffsetDinominator;
 
-		for(long i = 0; i < (numColors - 1); i++){
+		for (long i = 0; i < (numColors - 1); i++) {
 			double hue = 0.0;
 			hue += hueOffset; // Always skip pure red and go to the next hue.
 
-			for(int j = 0; j < 4; j++){
-				MarkedColor newColor = new MarkedColor(Color.getHSBColor((float)hue, 1.0F, 1.0F), true, hue);
-				if(!colorList.contains(newColor)){
+			for (int j = 0; j < 4; j++) {
+				MarkedColor newColor = new MarkedColor(Color.getHSBColor((float) hue, 1.0F, 1.0F), true, hue);
+				if (!colorList.contains(newColor)) {
 					colorList.add(newColor);
 				}
 				hue += 0.25;
@@ -66,14 +66,14 @@ public enum InitialLineColoring{
 		}
 	}
 
-	public Color getBestAvailableColor(){
+	public Color getBestAvailableColor() {
 		Color nextColor = Color.gray;
 		ListIterator<MarkedColor> i = colorList.listIterator();
 
-		for(boolean found = false; i.hasNext() && !found;){
+		for (boolean found = false; i.hasNext() && !found;) {
 			MarkedColor c = i.next();
 
-			if(c.isAvailable()){
+			if (c.isAvailable()) {
 				c.setAvailability(false);
 				nextColor = c.getColor();
 				found = true;
@@ -82,8 +82,8 @@ public enum InitialLineColoring{
 		return nextColor;
 	}
 
-	public void giveBackColor(Color c){
-		if(colorList.contains(c)){
+	public void giveBackColor(Color c) {
+		if (colorList.contains(c)) {
 			colorList.get(colorList.indexOf(c)).setAvailability(true);
 		}
 	}
