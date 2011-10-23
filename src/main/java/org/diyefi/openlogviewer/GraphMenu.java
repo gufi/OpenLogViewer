@@ -29,7 +29,7 @@ import javax.swing.JMenuItem;
 
 public class GraphMenu extends JMenu {
 	private static final long serialVersionUID = 894830948284092834L;
-
+	private static final String OPTION_PANE_NAME = "Option Pane";
 	private JMenuItem optionPaneItem;
 
 	public GraphMenu() {
@@ -42,11 +42,11 @@ public class GraphMenu extends JMenu {
 		this.setName("Graphing Menu");
 
 		optionPaneItem = new JMenuItem();
-		optionPaneItem.setText("Option Pane");
-		optionPaneItem.setName("Option Pane");
+		optionPaneItem.setText(OPTION_PANE_NAME);
+		optionPaneItem.setName(OPTION_PANE_NAME);
 		optionPaneItem.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (!OpenLogViewerApp.getInstance().getOptionFrame().isVisible()) {
 					OpenLogViewerApp.getInstance().getOptionFrame().setVisible(true);
 				}

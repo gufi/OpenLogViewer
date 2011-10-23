@@ -29,13 +29,13 @@ import java.util.Scanner;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class CSVTypeLog extends AbstractDecoder {
-	int fieldCount = -1;
+	private int fieldCount = -1;
 
 	/**
 	 * This constructor is called when a string path is provided
 	 * @param f
 	 */
-	public CSVTypeLog(File f) {
+	public CSVTypeLog(final File f) {
 		this.setLogFile(f);
 		this.setDecodedLog(new GenericLog());
 		this.setT(new Thread(this, "CSV Type Log Loading"));
@@ -53,15 +53,14 @@ public class CSVTypeLog extends AbstractDecoder {
 	 * @throws IOException
 	 */
 	@Override
-	protected void decodeLog() throws IOException {
-		Scanner scan = new Scanner(new FileReader(getLogFile()));
+	protected final void decodeLog() throws IOException {
+		final Scanner scan = new Scanner(new FileReader(getLogFile()));
+		final String delimiter = scanForDelimiter();
 
-		String line = "";
-		String delimiter = "";
 		String[] splitLine = new String[1];
 		String[] headers = new String[1];
-		delimiter = scanForDelimiter();
 
+		String line = "";
 		boolean headerSet = false;
 		while (scan.hasNextLine() && !headerSet) {
 			line = scan.nextLine();
@@ -84,7 +83,6 @@ public class CSVTypeLog extends AbstractDecoder {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -93,13 +91,14 @@ public class CSVTypeLog extends AbstractDecoder {
 	 * @throws IOException
 	 */
 	private String scanForDelimiter() throws IOException {
-		String[] delim = {"\t", ",", ":", "/", "\\\\"};
-		Scanner scan = new Scanner(new FileReader(getLogFile()));
+		final String[] delim = {"\t", ",", ":", "/", "\\\\"};
+		final Scanner scan = new Scanner(new FileReader(getLogFile()));
+		final int magicNumber = 10; // Remove the MAGIC!
 		String delimiterFind = "";
 		String[] split = new String[1];
 		int delimNum = -1;
 
-		for (int i = 0; i < 10 && scan.hasNext(); i++) {
+		for (int i = 0; i < magicNumber && scan.hasNext(); i++) {
 			delimiterFind = scan.nextLine();
 			for (int j = 0; j < delim.length; j++) {
 				split = delimiterFind.split(delim[j]);

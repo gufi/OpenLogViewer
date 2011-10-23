@@ -23,7 +23,7 @@
 
 package org.diyefi.openlogviewer.filefilters;
 
-import java.io.*;
+import java.io.File;
 import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
@@ -33,21 +33,18 @@ public class FreeEMSFileFilter extends FileFilter {
 	}
 
 	@Override
-	public String getDescription() {
+	public final String getDescription() {
 		return "FreeEMSBinary Logs";
 	}
 
 	@Override
-	public boolean accept(File file) {
+	public final boolean accept(final File file) {
 		if (file.isDirectory()) {
 			return true;
 		}
 
-		String extension = Utilities.getExtension(file);
-		if (extension != null && extension.equals("bin")) {
-			return true;
-		}
+		final String extension = Utilities.getExtension(file);
 
-		return false;
+		return "bin".equals(extension);
 	}
 }

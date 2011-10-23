@@ -33,28 +33,26 @@ public class CSVTypeFileFilter extends FileFilter {
 	}
 
 	@Override
-	public String getDescription() {
+	public final String getDescription() {
 		return "Compatable MegaSquirt DataLogs";
 	}
 
 	@Override
-	public boolean accept(File file) {
+	public final boolean accept(final File file) {
 		if (file.isDirectory()) {
 			return true;
 		}
 
-		String extension = Utilities.getExtension(file);
+		final String extension = Utilities.getExtension(file);
 
-		if (extension != null) {
-			if (extension.equals("log")) {
-				return true;
-			} else if (extension.equals("csv")) {
-				return true;
-			} else if (extension.equals("xls")) {
-				return true;
-			} else if (extension.equals("msl")) {
-				return true;
-			}
+		if ("log".equals(extension)) {
+			return true;
+		} else if ("csv".equals(extension)) {
+			return true;
+		} else if ("xls".equals(extension)) {
+			return true;
+		} else if ("msl".equals(extension)) {
+			return true;
 		}
 
 		return false;
