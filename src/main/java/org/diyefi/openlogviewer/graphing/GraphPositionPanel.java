@@ -57,13 +57,13 @@ public class GraphPositionPanel extends JPanel {
 	}
 
 	@Override
-	public void paint(Graphics g) { // override paint because there will be no components in this pane
+	public final void paint(final Graphics g) { // override paint because there will be no components in this pane
 		if (!this.getSize().equals(this.getParent().getSize())) {
 			this.setSize(this.getParent().getSize());
 		}
 
 		setGraduationSpacing();
-		Graphics2D g2d = (Graphics2D) g;
+		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(backgroundColor);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 
@@ -78,10 +78,10 @@ public class GraphPositionPanel extends JPanel {
 		}
 	}
 
-	private void paintPositionBar(Graphics2D g2d) {
-		int center = this.getWidth() / 2;
-		double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+	private void paintPositionBar(final Graphics2D g2d) {
+		final int center = this.getWidth() / 2;
+		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(majorGraduationColor);
 
 		double count = Math.round(graphPosition * zoom);
@@ -103,16 +103,16 @@ public class GraphPositionPanel extends JPanel {
 		g2d.drawLine(0, 0, this.getWidth(), 0);
 	}
 
-	private void paintPositionData(Graphics2D g2d) {
-		int center = this.getWidth() / 2;
-		double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+	private void paintPositionData(final Graphics2D g2d) {
+		final int center = this.getWidth() / 2;
+		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(positionDataColor);
 
 		double count = Math.round(graphPosition * zoom);
 		for (int i = center; i > 0; i--) { // paint left of center
 			if (count % (majorGraduationSpacing * zoom) == 0) {
-				String positionDataString = Integer.toString((int) (count / zoom));
+				final String positionDataString = Integer.toString((int) (count / zoom));
 				g2d.drawString(positionDataString, i - 10, 18);
 			}
 			count--;
@@ -121,7 +121,7 @@ public class GraphPositionPanel extends JPanel {
 		count = Math.round(graphPosition * zoom);
 		for (int i = center; i < this.getWidth(); i++) { // Paint right of center
 			if (count % (majorGraduationSpacing * zoom) == 0) {
-				String positionDataString = Integer.toString((int) (count / zoom));
+				final String positionDataString = Integer.toString((int) (count / zoom));
 				g2d.drawString(positionDataString, i - 10, 18);
 			}
 			count++;
@@ -129,10 +129,10 @@ public class GraphPositionPanel extends JPanel {
 	}
 
 	private void setupMouseCursorLineSnappingPositions() {
-		int center = this.getWidth() / 2;
+		final int center = this.getWidth() / 2;
 		validSnappingPositions = new boolean[this.getWidth()];
-		double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 
 		double count = Math.round(graphPosition * zoom);
 		// Fill array with valid snapping points that are left of center
@@ -153,7 +153,7 @@ public class GraphPositionPanel extends JPanel {
 		}
 	}
 
-	public void setLog(GenericLog log) {
+	public final void setLog(final GenericLog log) {
 		genLog = log;
 		repaint();
 	}
@@ -182,16 +182,16 @@ public class GraphPositionPanel extends JPanel {
 		}
 	}
 
-	public int getBestSnappingPosition(int xMouseCoord) {
+	public final int getBestSnappingPosition(final int xMouseCoord) {
 		int bestPosition = 0;
 		if (validSnappingPositions[xMouseCoord]) {
 			bestPosition = xMouseCoord;
 		} else {
 			boolean found = false;
-			int startPosition = xMouseCoord;
+			final int startPosition = xMouseCoord;
 			for (int distance = 1; !found; distance++) {
-				int next = startPosition + distance;
-				int prev = startPosition - distance;
+				final int next = startPosition + distance;
+				final int prev = startPosition - distance;
 				if (next > validSnappingPositions.length - 1 || prev < 0) {
 					bestPosition = xMouseCoord;
 					found = true;

@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -60,7 +61,13 @@ import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewerApp extends javax.swing.JFrame {
 	private static final long serialVersionUID = 7987394054547975563L;
-	public static OpenLogViewerApp mainAppRef;
+	private static final String PROPERTIES_NAME = "Properties";
+	private static final String PROPERTIES_FILENAME = "OLVAllProperties.olv";
+	private static final String NAME_OF_LAST_FILE_KEY = "lastFingFile";
+	private static final String NAME_OF_LAST_DIR_KEY = "lastFingDir";
+	private static final String NAME_OF_LAST_CHOOSER_CLASS = "chooserClass";
+
+	private static OpenLogViewerApp mainAppRef;
 	private javax.swing.JMenu fileMenu;
 	private javax.swing.JMenu editMenu;
 	private javax.swing.JMenuBar mainMenuBar;
@@ -73,7 +80,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 	private GraphMenu graphMenu;
 	private OptionFrameV2 optionFrame;
 	private PropertiesPane prefFrame;
-	private ArrayList<SingleProperty> properties;
+	private List<SingleProperty> properties;
 
 	/** Creates new form OpenLogViewerApp */
 	public OpenLogViewerApp() {
@@ -82,7 +89,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 
 	private void initComponents() {
 		properties = new ArrayList<SingleProperty>();
-		prefFrame = new PropertiesPane("Properties");
+		prefFrame = new PropertiesPane(PROPERTIES_NAME);
 		prefFrame.setProperties(properties);
 		optionFrame = new OptionFrameV2();
 		mainPanel = new javax.swing.JPanel();
@@ -114,7 +121,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		openFileMenuItem.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				openFileMenuItemMouseReleased(e);
 			}
 		});
@@ -124,7 +131,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		quitFileMenuItem.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				System.exit(0);
 			}
 		});
@@ -138,11 +145,11 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		editMenu.setText("Edit");
 		editMenu.setName("edit");
 
-		propertiesOptionMenuItem.setText("Properties");
+		propertiesOptionMenuItem.setText(PROPERTIES_NAME);
 		propertiesOptionMenuItem.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				OpenLogViewerApp.getInstance().getPropertyPane().setVisible(true);
 				OpenLogViewerApp.getInstance().getPropertyPane().setAlwaysOnTop(true);
 				OpenLogViewerApp.getInstance().getPropertyPane().setAlwaysOnTop(false);
@@ -165,11 +172,11 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		pack();
 	}
 
-	private void openFileMenuItemMouseReleased(ActionEvent evt) {
+	private void openFileMenuItemMouseReleased(final ActionEvent evt) {
 		openFile();
 	}
 
-	public void setLog(GenericLog genericLog) {
+	public void setLog(final GenericLog genericLog) {
 		graphingPanel.setLog(genericLog);
 	}
 
@@ -186,7 +193,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 	 *
 	 * @param args the command line arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
 			@Override
@@ -195,13 +202,13 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 					// Set cross-platform Java L&F (also called "Metal")
 					UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 				} catch (UnsupportedLookAndFeelException e) {
-					// handle exception
+					throw new RuntimeException("Your system would look ugly, sorry!", e);
 				} catch (ClassNotFoundException e) {
-					// handle exception
+					throw new RuntimeException("Metal look not found! (And plastic sucks)", e);
 				} catch (InstantiationException e) {
-					// handle exception
+					throw new RuntimeException("Couldn't create the look we felt you needed!", e);
 				} catch (IllegalAccessException e) {
-					// handle exception
+					throw new RuntimeException("This should be handled more appropriately!", e);
 				}
 
 				mainAppRef = new OpenLogViewerApp();
@@ -235,18 +242,18 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		return prefFrame;
 	}
 
-	public ArrayList<SingleProperty> getProperties() {
+	public List<SingleProperty> getProperties() {
 		return properties;
 	}
 
 	public void openFile() {
-		JFileChooser fileChooser = new JFileChooser();
-		String lastFingFile = getApplicationWideProperty("lastFingFile");
+		final JFileChooser fileChooser = new JFileChooser();
+		final String lastFingFile = getApplicationWideProperty(NAME_OF_LAST_FILE_KEY);
 
 		if (lastFingFile != null) {
 			fileChooser.setSelectedFile(new File(lastFingFile));
 		} else {
-			String lastFingDir = getApplicationWideProperty("lastFingDir");
+			final String lastFingDir = getApplicationWideProperty(NAME_OF_LAST_DIR_KEY);
 			if (lastFingDir != null) {
 				fileChooser.setCurrentDirectory(new File(lastFingDir));
 			}
@@ -255,29 +262,29 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		fileChooser.addChoosableFileFilter(new FreeEMSFileFilter());
 		fileChooser.addChoosableFileFilter(new CSVTypeFileFilter());
 		fileChooser.addChoosableFileFilter(new FreeEMSLAFileFilter());
-		String chooserClass = getApplicationWideProperty("chooserClass");
+		final String chooserClass = getApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 
 		if (chooserClass != null) {
 			try {
 				fileChooser.setFileFilter((FileFilter) Class.forName(chooserClass).newInstance());
 			} catch (ClassNotFoundException c) {
-				removeApplicationWideProperty("chooserClass");
+				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 				System.out.println("Class not found! chooserClass removed from props!");
 			} catch (InstantiationException i) {
-				removeApplicationWideProperty("chooserClass");
+				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 				System.out.println("Could not instantiate class! chooserClass removed from props!");
 			} catch (IllegalAccessException l) {
-				removeApplicationWideProperty("chooserClass");
+				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 				System.out.println("Could access class! chooserClass removed from props!");
 			}
 		}
 
-		int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
+		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
-			File openFile = fileChooser.getSelectedFile();
-			if (Utilities.getExtension(openFile).equals("bin") || fileChooser.getFileFilter() instanceof FreeEMSFileFilter) {
+			final File openFile = fileChooser.getSelectedFile();
+			if ("bin".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
 				new FreeEMSBin(openFile);
-			} else if (Utilities.getExtension(openFile).equals("la") || fileChooser.getFileFilter() instanceof FreeEMSLAFileFilter) {
+			} else if ("la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSLAFileFilter)) {
 				new FreeEMSByteLA(openFile);
 			} else {
 				new CSVTypeLog(openFile);
@@ -285,62 +292,62 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 
 			if (openFile != null) {
 				OpenLogViewerApp.getInstance().setTitle("OpenLogViewer - " + openFile.getName());
-				saveApplicationWideProperty("lastFingDir", openFile.getParent());
-				saveApplicationWideProperty("lastFingFile", openFile.getPath());
-				saveApplicationWideProperty("chooserClass", fileChooser.getFileFilter().getClass().getCanonicalName());
+				saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, openFile.getParent());
+				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
+				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
 				System.gc();
 			}
 		}
 	}
 
-	private String getApplicationWideProperty(String key) {
+	private String getApplicationWideProperty(final String key) {
 		try {
-			Properties AppWide = new Properties();
-			File AppWideFile = openAppWideProps(AppWide);
+			final Properties AppWide = new Properties();
+			final File AppWideFile = openAppWideProps(AppWide);
 			if (AppWideFile != null) {
 				return AppWide.getProperty(key);
 			} else {
-				throw new IllegalArgumentException("received null instead of valid file");
+				throw new IllegalArgumentException("Problem getting property, got null instead of file!");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("IO issue: " + e.getMessage(), e);
 		}
 	}
 
-	private void saveApplicationWideProperty(String key, String value) {
+	private void saveApplicationWideProperty(final String key, final String value) {
 		try {
-			Properties AppWide = new Properties();
-			File AppWideFile = openAppWideProps(AppWide);
+			final Properties AppWide = new Properties();
+			final File AppWideFile = openAppWideProps(AppWide);
 			if (AppWideFile != null) {
 				AppWide.setProperty(key, value);
 				AppWide.store(new FileOutputStream(AppWideFile), "saved");
 			} else {
-				throw new IllegalArgumentException("received null instead of valid file");
+				throw new IllegalArgumentException("Problem saving property, got null instead of file!");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("Another IO issue: " + e.getMessage(), e);
 		}
 	}
 
-	private void removeApplicationWideProperty(String key) {
+	private void removeApplicationWideProperty(final String key) {
 		try {
-			Properties AppWide = new Properties();
-			File AppWideFile = openAppWideProps(AppWide);
+			final Properties AppWide = new Properties();
+			final File AppWideFile = openAppWideProps(AppWide);
 			if (AppWideFile != null) {
 				AppWide.remove(key);
-				AppWide.store(new FileOutputStream(AppWideFile), "saved");
+				AppWide.store(new FileOutputStream(AppWideFile), "removed");
 			} else {
-				throw new IllegalArgumentException("received null instead of valid file");
+				throw new IllegalArgumentException("Problem removing property, got null instead of file!");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("YAIO issue: " + e.getMessage(), e);
 		}
 	}
 
-	private File openAppWideProps(Properties AppWide) throws IOException {
+	private File openAppWideProps(final Properties AppWide) throws IOException {
 		File AppWideFile;
 		AppWideFile = new File(System.getProperty("user.home"));
 
@@ -353,7 +360,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		if (!AppWideFile.exists()) {
 			try {
 				if (AppWideFile.mkdir()) {
-					AppWideFile = new File(AppWideFile, "OLVAllProperties.olv");
+					AppWideFile = new File(AppWideFile, PROPERTIES_FILENAME);
 					if (AppWideFile.createNewFile()) {
 						AppWide.load(new FileInputStream(AppWideFile));
 					}
@@ -365,7 +372,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 				System.out.print(IOE.getMessage());
 			}
 		} else {
-			AppWideFile = new File(AppWideFile, "OLVAllProperties.olv");
+			AppWideFile = new File(AppWideFile, PROPERTIES_FILENAME);
 			if (!AppWideFile.createNewFile()) {
 				AppWide.load(new FileInputStream(AppWideFile));
 			}

@@ -52,22 +52,23 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		this.add(infoPanel);
 	}
 
-	public void addGraph(String header) {
-		boolean p = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isPlaying();
+	public final void addGraph(final String header) {
+		final boolean p = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isPlaying();
 		if (p) {
 			OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
 		}
 		boolean found = false;
 		for (int i = 0; i < this.getComponentCount() && !found; i++) {
 			if (this.getComponent(i) instanceof SingleGraphPanel) {
-				SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
+				final SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
 				if (gl.getName().equals(header)) {
 					found = true;
 				}
 			}
 		}
+
 		if (!found) {
-			SingleGraphPanel graph = new SingleGraphPanel();
+			final SingleGraphPanel graph = new SingleGraphPanel();
 			graph.setSize(this.getSize());
 			graph.setName(header);
 			this.add(graph);
@@ -82,11 +83,11 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		}
 	}
 
-	public boolean removeGraph(String header) {
-		GenericDataElement temp = genLog.get(header);
+	public final boolean removeGraph(final String header) {
+		final GenericDataElement temp = genLog.get(header);
 		for (int i = 0; i < this.getComponentCount(); i++) {
 			if (this.getComponent(i) instanceof SingleGraphPanel) {
-				SingleGraphPanel t = (SingleGraphPanel) this.getComponent(i);
+				final SingleGraphPanel t = (SingleGraphPanel) this.getComponent(i);
 				if (t.getData() == temp) {
 					this.remove(t);
 					this.removeHierarchyBoundsListener(t);
@@ -98,7 +99,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	}
 
 	private void removeAllGraphs() {
-		for (int i = 0; this.getComponentCount() > 1;) {  //Leave InfoPanel in component count
+		for (int i = 0; this.getComponentCount() > 1;) { // Leave InfoPanel in component count
 			if (this.getComponent(i) instanceof SingleGraphPanel) {
 				this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(i));
 				this.remove(getComponent(i));
@@ -109,36 +110,36 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		repaint();
 	}
 
-	public void setLog(GenericLog log) {
+	public final void setLog(final GenericLog log) {
 		removeAllGraphs();
 		genLog = log;
 		infoPanel.setLog(genLog);
 		repaint();
 	}
 
-	public InfoPanel getInfoPanel() {
+	public final InfoPanel getInfoPanel() {
 		return infoPanel;
 	}
 
-	public void setColor(String header, Color newColor) {
+	public final void setColor(final String header, final Color newColor) {
 		for (int i = 0; i < this.getComponentCount(); i++) {
 			if (this.getComponent(i) instanceof SingleGraphPanel && this.getComponent(i).getName().equals(header)) {
-				SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
+				final SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
 				gl.setColor(newColor);
 			}
 		}
 	}
 
-	public int getTotalSplits() {
+	public final int getTotalSplits() {
 		return totalSplits;
 	}
 
-	public void setTotalSplits(int totalSplits) {
+	public final void setTotalSplits(final int totalSplits) {
 		if (totalSplits > 0) {
 			this.totalSplits = totalSplits;
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponent(i) instanceof SingleGraphPanel) {
-					SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
+					final SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
 					gl.sizeGraph();
 				}
 			}

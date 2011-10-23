@@ -190,14 +190,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		final String[] headers = new String[fields.length * 32]; // Hack to make it plenty big, trim afterwards...
 		int headersPosition = 0;
 		for (int i = 0; i < fields.length; i++) {
-			if ((fields[i].type == types.BITS8) || (fields[i].type == types.BITS16) || (fields[i].type == types.BITS32)) {
-				for (int j = 0; j < fields[i].bitFieldNames.length; j++) {
-					final String flagID = fields[i].bitFieldNames[j] + "-" + fields[i].ID + "-B" + j;
+			if ((fields[i].getType() == types.BITS8) || (fields[i].getType() == types.BITS16) || (fields[i].getType() == types.BITS32)) {
+				for (int j = 0; j < fields[i].getBitFieldNames().length; j++) {
+					final String flagID = getFlagName(fields[i], j);
 					headers[headersPosition] = flagID;
 					headersPosition++;
 				}
 			} else {
-				headers[headersPosition] = fields[i].ID;
+				headers[headersPosition] = fields[i].getID();
 				headersPosition++;
 			}
 		}
@@ -291,15 +291,15 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
 			System.out.println(NEWLINE + "Binary Parsing Statistics:" + NEWLINE);
 
-			System.out.println("Value: " + escapePairMismatches + " Incremented when an escape is found but not followed by an escapee");
-			System.out.println("Value: " + startsInsideAPacket  + " Incremented when a start byte is found inside a packet");
-			System.out.println("Value: " + packetsOverLength    + " Incremented when the buffer fills up before the end");
-			System.out.println("Value: " + packetsUnderLength   + " Incremented when a packet is found that is too short");
-			System.out.println("Value: " + checksumMismatches   + " Incremented when calculated checksum did not match the received one");
-			System.out.println("Value: " + packetsParsedFully   + " Number of packets that matched all requirements and got into the log");
-			System.out.println("Value: " + packetLengthWrong    + " The length should match the ID passed in, if not, fail.");
-			System.out.println("Value: " + strayBytesLost       + " How many bytes were not in a packet! (should be low, ie, under one packet");
-			System.out.println("Value: " + payloadIDWrong       + " Requests to parse packet as A when packet was of type B");
+			System.out.println("EscapePairMismatches: " + escapePairMismatches + " Incremented when an escape is found but not followed by an escapee");
+			System.out.println("StartsInsideAPacket:  " + startsInsideAPacket  + " Incremented when a start byte is found inside a packet");
+			System.out.println("PacketsOverLength:    " + packetsOverLength    + " Incremented when the buffer fills up before the end");
+			System.out.println("PacketsUnderLength:   " + packetsUnderLength   + " Incremented when a packet is found that is too short");
+			System.out.println("ChecksumMismatches:   " + checksumMismatches   + " Incremented when calculated checksum did not match the received one");
+			System.out.println("PacketsParsedFully:   " + packetsParsedFully   + " Number of packets that matched all requirements and got into the log");
+			System.out.println("PacketLengthWrong:    " + packetLengthWrong    + " The length should match the ID passed in, if not, fail.");
+			System.out.println("StrayBytesLost:       " + strayBytesLost       + " How many bytes were not in a packet! (should be low, ie, under one packet");
+			System.out.println("PayloadIDWrong:       " + payloadIDWrong       + " Requests to parse packet as A when packet was of type B");
 
 			System.out.println(NEWLINE + "Thank you for choosing FreeEMS!");
 
@@ -354,7 +354,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
 		int lengthOfFields = 0;
 		for (int i = 0; i < fields.length; i++) {
-			lengthOfFields += fields[i].type.width;
+			lengthOfFields += fields[i].getType().getWidth();
 		}
 		// TODO warn if length in config is not equal, but allow both sides of wrong as it
 		// is reasonable to not care about some and also to truncate shorter on the ECU side.
@@ -371,44 +371,46 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			final LogField field = fields[i];
 
 			int rawValue = 0;
-			for (int j = 0; j < field.type.width; j++) {
+			for (int j = 0; j < field.getType().getWidth(); j++) {
 				rawValue = (rawValue * 256) + packet[position];
 				position++;
 			}
 
-			if ((field.type == types.UINT8) || (field.type == types.UINT16) || (field.type == types.UINT32)) {
-				final double scaledValue = (double) rawValue / field.divBy;
-				final double finalValue = scaledValue + field.addTo;
-				decodedLog.addValue(field.ID, finalValue);
-			} else if ((field.type == types.BITS8) || (field.type == types.BITS16) || (field.type == types.BITS32)) {
-				final int[] processedFlags = processFlagBytes(rawValue, (8 * field.type.width));
+			if ((field.getType() == types.UINT8) || (field.getType() == types.UINT16) || (field.getType() == types.UINT32)) {
+				final double scaledValue = (double) rawValue / field.getDivBy();
+				final double finalValue = scaledValue + field.getAddTo();
+				decodedLog.addValue(field.getID(), finalValue);
+			} else if ((field.getType() == types.BITS8) || (field.getType() == types.BITS16) || (field.getType() == types.BITS32)) {
+				final int[] processedFlags = processFlagBytes(rawValue, (8 * field.getType().getWidth()));
 				for (int j = 0; j < processedFlags.length; j++) {
-					final String flagID = field.bitFieldNames[j] + "-" + field.ID + "-B" + j;
+					final String flagID = getFlagName(field, j);
 					decodedLog.addValue(flagID, processedFlags[j]);
 				}
-			} else if (field.type == types.SINT8) { // TODO handle signed ints...
-				decodedLog.addValue(field.ID, rawValue);
-			} else if (field.type == types.SINT16) {
-				decodedLog.addValue(field.ID, rawValue);
-			} else if (field.type == types.SINT32) {
-				decodedLog.addValue(field.ID, rawValue);
+			} else if (field.getType() == types.SINT8) { // TODO handle signed ints...
+				decodedLog.addValue(field.getID(), rawValue);
+			} else if (field.getType() == types.SINT16) {
+				decodedLog.addValue(field.getID(), rawValue);
+			} else if (field.getType() == types.SINT32) {
+				decodedLog.addValue(field.getID(), rawValue);
 			}
 			// TODO handle floats
 		}
 		return true; // TODO FIXME : Default to all things being good till I attack this!
 	}
 
-	int[] processFlagBytes(long valueOfFlags, int numberOfFlags) {
+	private final int[] processFlagBytes(final long valueOfFlags, final int numberOfFlags) {
 		if ((numberOfFlags != 8) && (numberOfFlags != 16) && (numberOfFlags != 32)) {
-			throw new IllegalArgumentException("Basic units of computer sciene apply, embedded flags are never " + numberOfFlags + " wide!"); // Unless they are 64, but shhhh...
+			throw new IllegalArgumentException("Basic units of computer sciene apply, embedded flags are never " + numberOfFlags + " wide!");
+			// Unless they are 64, but shhhh...
 		}
 
-		int[] flagValues = new int[numberOfFlags];
+		final int[] flagValues = new int[numberOfFlags];
 		int comparison = 1;
+		long remainingValueOfFlags = valueOfFlags;
 		for (int i = 0; i < numberOfFlags; i++) {
-			if ((valueOfFlags % (2 * comparison)) == comparison) {
+			if ((remainingValueOfFlags % (2 * comparison)) == comparison) {
 				flagValues[i] = 1;
-				valueOfFlags -= comparison;
+				remainingValueOfFlags -= comparison;
 			}
 			comparison *= 2;
 		}
@@ -422,14 +424,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param packet
 	 * @return true or false based on if the checksum passes
 	 */
-	private boolean checksum(short[] packet) {
+	private boolean checksum(final short[] packet) {
 		if (packetLength > 0) {
-			short includedSum = packet[packetLength - 1]; // sum is last byte
+			final short includedSum = packet[packetLength - 1]; // sum is last byte
 			long veryBIGsum = 0;
 			for (int x = 0; x < packetLength - 1; x++) {
 				veryBIGsum += packet[x];
 			}
-			short calculatedSum = (short) (veryBIGsum % 256);
+			final short calculatedSum = (short) (veryBIGsum % 256);
 			return (calculatedSum == includedSum);
 		} else {
 			return false;
@@ -442,7 +444,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param uByte - byte to be Un-escaped
 	 * @return -1 if bad data or the proper value of the escaped byte
 	 */
-	private short unEscape(short uByte) {
+	private short unEscape(final short uByte) {
 		if (uByte == ESCAPED_START_BYTE) {
 			return START_BYTE;
 		} else if (uByte == ESCAPED_STOP_BYTE) {
@@ -460,7 +462,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param uInt8 the raw signed byte representation of our raw unsigned char
 	 * @return the value of the unsigned byte stored in a short
 	 */
-	private short unsignedValueOf(byte uInt8) {
+	private short unsignedValueOf(final byte uInt8) {
 		return (short) (0xFF & uInt8);
 	}
 
@@ -470,7 +472,11 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * <br> to be implemented in full later
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return super.toString();
+	}
+
+	private String getFlagName(final LogField field, final int flagIndex) {
+		return field.getBitFieldNames()[flagIndex] + "-" + field.getID() + "-B" + flagIndex;
 	}
 }

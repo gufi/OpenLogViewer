@@ -12,46 +12,50 @@ public class LogField {
 		SINT16 (2),
 		SINT32 (4);
 
-		public final int width;
+		private final int width;
 
-		private types(int width) {
+		private types(final int width) {
 			this.width = width;
+		}
+
+		public final int getWidth() {
+			return width;
 		}
 	}
 
 	static final double divideByOne = 1.0;
 	static final double addToZero = 0.0;
 
-	String ID;
-	types type;
-	String[] bitFieldNames;
+	private String ID;
+	private types type;
+	private String[] bitFieldNames;
 
 	// Optional
-	String description;
-	String unit;
+	private String description;
+	private String unit;
 
 	// This does not match MTX:
-	double divBy = divideByOne; // divide first (mtx multiplies, and the result is uglier config IMO
-	double addTo = addToZero;   // add second
+	private double divBy = divideByOne; // divide first (mtx multiplies, and the result is uglier config IMO
+	private double addTo = addToZero;   // add second
 
-	public LogField(String ID) {
+	public LogField(final String ID) {
 		this(ID, types.UINT16, divideByOne, addToZero);
 	}
-	public LogField(String ID, types type) {
+	public LogField(final String ID, final types type) {
 		this(ID, type, divideByOne, addToZero);
 	}
-	public LogField(String ID, types type, double divBy) {
+	public LogField(final String ID, final types type, final double divBy) {
 		this(ID, type , divBy, addToZero);
 	}
 
-	public LogField(String ID, double divBy) {
+	public LogField(final String ID, final double divBy) {
 		this(ID, types.UINT16, divBy, addToZero);
 	}
-	public LogField(String ID, double divBy, double addTo) {
+	public LogField(final String ID, final double divBy, final double addTo) {
 		this(ID, types.UINT16, divBy, addTo);
 	}
 
-	public LogField(String ID, types type, double divBy, double addTo) {
+	public LogField(final String ID, final types type, final double divBy, final double addTo) {
 		this.ID = ID;
 		this.type = type;
 		this.divBy = divBy;
@@ -68,7 +72,7 @@ public class LogField {
 		}
 	}
 
-	public LogField(String ID, types type, String[] bitFieldNames) {
+	public LogField(final String ID, final types type, final String[] bitFieldNames) {
 		this.ID = ID;
 		this.type = type;
 		this.bitFieldNames = bitFieldNames;
@@ -126,7 +130,7 @@ public class LogField {
 	public final String getUnit() {
 		return unit;
 	}
-	public final void setDescription(String description) {
+	public final void setDescription(final String description) {
 		this.description = description;
 	}
 	public final void setUnit(final String unit) {

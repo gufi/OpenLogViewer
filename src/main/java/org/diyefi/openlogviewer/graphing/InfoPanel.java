@@ -46,7 +46,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private Color textBackground = new Color(0, 0, 0, 170);
 	private int xMouseCoord;
 	private int yMouseCoord;
-	boolean mouseOver;
+	private boolean mouseOver;
 
 	public InfoPanel() {
 		genLog = new GenericLog();
@@ -57,7 +57,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	}
 
 	@Override
-	public void paint(Graphics g) { // override paint because there will be no components in this pane
+	public final void paint(final Graphics g) { // override paint because there will be no components in this pane
 		builtTime += System.currentTimeMillis() - currentTime;
 		currentTime = System.currentTimeMillis();
 		if (builtTime <= 1000) {
@@ -74,6 +74,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 		if (!this.getSize().equals(this.getParent().getSize())) {
 			this.setSize(this.getParent().getSize());
 		}
+
 		if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
 			g.setColor(Color.RED);
 			g.drawString("No log loaded, please select a log from the file menu.", 20, 20);
@@ -81,21 +82,24 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			g.setColor(Color.red);
 			g.drawString("Loading log, please wait...", 20, 20);
 		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-			Dimension d = this.getSize();
-			int center = d.width / 2;
-			MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-			Graphics2D g2d = (Graphics2D) g;
+			final Dimension d = this.getSize();
+			final int center = d.width / 2;
+			final MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+			final Graphics2D g2d = (Graphics2D) g;
 			g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
+
 			if (mouseOver) {
-				int snappedDataPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel().getBestSnappingPosition(xMouseCoord);
+				final GraphPositionPanel graphPositionPanel = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
+				final int snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);
 				g2d.setColor(vertBar);
 				g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
 				g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
+
 				for (int i = 0; i < multigGraph.getComponentCount(); i++) {
 					if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
-						SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
+						final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
 						g2d.setColor(textBackground);
-						String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition - center).toString();
+						final String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition - center).toString();
 						g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
 						g2d.setColor(singleGraph.getColor());
 						g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
@@ -105,43 +109,43 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 		}
 	}
 
-	public void setLog(GenericLog log) {
+	public final void setLog(final GenericLog log) {
 		genLog = log;
 		repaint();
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
+	public final void mouseEntered(final MouseEvent e) {
 		mouseOver = true;
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
+	public final void mouseExited(final MouseEvent e) {
 		mouseOver = false;
 		repaint();
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
+	public final void mouseMoved(final MouseEvent e) {
 		xMouseCoord = e.getX();
 		yMouseCoord = e.getY();
 		repaint();
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(final MouseEvent e) {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(final MouseEvent e) {
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
+	public void mouseReleased(final MouseEvent e) {
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(final MouseEvent e) {
 
 	}
 }

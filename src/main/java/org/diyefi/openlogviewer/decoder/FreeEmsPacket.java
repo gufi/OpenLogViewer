@@ -34,11 +34,11 @@ public class FreeEmsPacket {
 	private boolean hasLength;
 	private boolean isNack;
 	private boolean hasSequence;
-	private boolean reserved3;
-	private boolean reserved4;
-	private boolean reserved5;
-	private boolean reserved6;
-	private boolean reserved7;
+//	private boolean reserved3;
+//	private boolean reserved4;
+//	private boolean reserved5;
+//	private boolean reserved6;
+//	private boolean reserved7;
 
 	// Fields from header
 	private short length; // original packet length, which by now, is correct - always valid, regardless of flag
@@ -52,47 +52,28 @@ public class FreeEmsPacket {
 	// Checksum from footer
 	private short checksum; // included and calculated were the same, or this object would not have been created
 
-	public FreeEmsPacket(short[] rawPacket) {
+	public FreeEmsPacket(final short[] rawPacket) {
 		throw new RuntimeException("Not implemented!");
 	}
 
-	public boolean hasLength() {
+	public final boolean hasLength() {
 		return hasLength;
 	}
 
-	public boolean isNack() {
+	public final boolean isNack() {
 		return isNack;
 	}
 
-	public boolean hasSequence() {
+	public final boolean hasSequence() {
 		return hasSequence;
 	}
 
-	public boolean reserved3() {
-		return reserved3;
-	}
 
-	public boolean reserved4() {
-		return reserved4;
-	}
-
-	public boolean reserved5() {
-		return reserved5;
-	}
-
-	public boolean reserved6() {
-		return reserved6;
-	}
-
-	public boolean reserved7() {
-		return reserved7;
-	}
-
-	public short getLength() {
+	public final short getLength() {
 		return length;
 	}
 
-	public short getSequence() {
+	public final short getSequence() {
 		if (hasSequence) {
 			return sequence;
 		} else {
@@ -100,11 +81,11 @@ public class FreeEmsPacket {
 		}
 	}
 
-	public short getPayloadId() {
+	public final short getPayloadId() {
 		return payloadId;
 	}
 
-	public short getErrorId() {
+	public final short getErrorId() {
 		if (isNack) {
 			return errorId;
 		} else {
@@ -112,15 +93,15 @@ public class FreeEmsPacket {
 		}
 	}
 
-	public short[] getPayload() {
+	public final short[] getPayload() {
 		return payload;
 	}
 
-	public int getPayloadLength() {
+	public final int getPayloadLength() {
 		return payload.length;
 	}
 
-	public short getChecksum() {
+	public final short getChecksum() {
 		return checksum;
 	}
 }

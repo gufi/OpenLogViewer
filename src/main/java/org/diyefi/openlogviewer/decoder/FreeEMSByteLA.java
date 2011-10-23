@@ -46,13 +46,13 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	private GenericLog decodedLog;
 	private Thread t;
 
-	String[] headers = {"PTIT", "T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7"};
+	final String[] headers = {"PTIT", "T0", "T1", "T2", "T3", "T4", "T5", "T6", "T7"};
 
 	/**
 	 * FreeEmsBin Constructor: <code>String</code> path to your binary log
 	 * @param file The log file to parse and load.
 	 */
-	public FreeEMSByteLA(File file) {
+	public FreeEMSByteLA(final File file) {
 		logFile = file;
 		startFound = false;
 		wholePacket = new short[3000];
@@ -69,9 +69,9 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 *
 	 * TODO integrate into other decoder...
 	 */
-	public void run() {
+	public final void run() {
 		try {
-			byte[] readByte = new byte[1];
+			final byte[] readByte = new byte[1];
 			short uByte = 0;
 
 			startFound = false;
@@ -120,7 +120,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 * @param packet is a <code>short</code> array containing 1 full packet
 	 *
 	 */
-	private void decodePacket(short[] packet, int length) {
+	private void decodePacket(final short[] packet, final int length) {
 		int PTIT = (int) packet[3];
 		int T0 = 0;
 		int T1 = 0;
@@ -180,14 +180,14 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 * @param packet
 	 * @return true or false based on if the checksum passes
 	 */
-	private boolean checksum(short[] packet, int length) {
+	private boolean checksum(final short[] packet, final int length) {
 		if (length > 0) {
-			short includedSum = packet[length - 1]; // sum is last byte
+			final short includedSum = packet[length - 1]; // sum is last byte
 			long veryBIGsum = 0;
 			for (int x = 0; x < length - 1; x++) {
 				veryBIGsum += packet[x];
 			}
-			short calculatedSum = (short) (veryBIGsum % 256);
+			final short calculatedSum = (short) (veryBIGsum % 256);
 			return (calculatedSum == includedSum);
 		} else {
 			return false;
@@ -199,7 +199,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 * @param uByte - byte to be Un-escaped
 	 * @return -1 if bad data or the proper value of the escaped byte
 	 */
-	private short unEscapeByte(short uByte) {
+	private short unEscapeByte(final short uByte) {
 		if (uByte == ESCAPED_START_BYTE) {
 			return START_BYTE;
 		} else if (uByte == ESCAPED_STOP_BYTE) {
@@ -217,7 +217,7 @@ public class FreeEMSByteLA implements Runnable { // implements runnable to make 
 	 * <br> to be implemented in full later
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return super.toString();
 	}
 }

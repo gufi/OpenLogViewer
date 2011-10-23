@@ -1,0 +1,15 @@
+Finish tidying up OptionFrameV2.java and PropertiesPane.java
+Refactor FreeEMS bin stuff heavily
+Refactor properties file stuff heavily
+Remove duplication from various files
+Remove magic numbers from all files
+Reduce complexity and coupling from all files where it is needed
+MUCH better exception handling and passing of errors back to the user via popups "file not found" "permission denied" etc.
+Fix modified control vars...
+Fix modified parameters...
+And more! :-)
+
+Functional changes
+Bug fixes
+Get Ben setup with mvn plugin and good .classpath and .project files.
+

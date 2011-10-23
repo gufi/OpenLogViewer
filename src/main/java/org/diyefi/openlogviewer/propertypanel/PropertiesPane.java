@@ -38,6 +38,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -57,13 +58,13 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 
 public class PropertiesPane extends JFrame {
 	private static final long serialVersionUID = -66677778898998591L;
-	File OLVProperties;
-	ArrayList<SingleProperty> properties;
-	ArrayList<SingleProperty> removeProperties;
-	JPanel propertyPanel;
-	JPanel propertyView;
+	private File OLVProperties;
+	private List<SingleProperty> properties;
+	private List<SingleProperty> removeProperties;
+	private JPanel propertyPanel;
+	private JPanel propertyView;
 
-	public PropertiesPane(String title) {
+	public PropertiesPane(final String title) {
 		super(title);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setPreferredSize(new Dimension(350, 500));
@@ -76,13 +77,13 @@ public class PropertiesPane extends JFrame {
 		propertyView.setPreferredSize(new Dimension(400, 0));
 		propertyView.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-		JScrollPane jsp = new JScrollPane(propertyView);
+		final JScrollPane jsp = new JScrollPane(propertyView);
 		propertyPanel.add(jsp, BorderLayout.CENTER);
 		propertyPanel.add(createAcceptPanel(), BorderLayout.SOUTH);
 		this.add(propertyPanel);
 	}
 
-	public void setProperties(ArrayList<SingleProperty> p) {
+	public final void setProperties(final List<SingleProperty> p) {
 		removeProperties = new ArrayList<SingleProperty>();
 		properties = p;
 		setupForLoad();
@@ -90,8 +91,8 @@ public class PropertiesPane extends JFrame {
 
 	private void setupForLoad() {
 		try {
-			String systemDelim = File.separator;
-			File homeDir = new File(System.getProperty("user.home"));
+			final String systemDelim = File.separator;
+			final File homeDir = new File(System.getProperty("user.home"));
 
 			if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
 				System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
@@ -108,7 +109,7 @@ public class PropertiesPane extends JFrame {
 							loadProperties();
 						}
 					} else {
-						//find somewhere else
+						throw new RuntimeException("Couldn't create directory for props..."); // find somewhere else
 					}
 				} catch (IOException IOE) {
 					System.out.print(IOE.getMessage());
@@ -123,13 +124,12 @@ public class PropertiesPane extends JFrame {
 	}
 
 	private JMenuBar createMenuBar() {
-		JMenuBar propMenuBar = new JMenuBar();
+		final JMenuBar propMenuBar = new JMenuBar();
+		final JMenu optionMenu = new JMenu("Options");
+		final JMenuItem addProp = new JMenuItem("Add New Property");
+		final JMenuItem remProp = new JMenuItem("Remove Selected Propertys");
 
-		JMenu optionMenu = new JMenu("Options");
 		propMenuBar.add(optionMenu);
-		JMenuItem addProp = new JMenuItem("Add New Property");
-		JMenuItem remProp = new JMenuItem("Remove Selected Propertys");
-
 		addProp.addActionListener(new ActionListener() {
 
 			@Override
@@ -158,7 +158,7 @@ public class PropertiesPane extends JFrame {
 	}
 
 	private JPanel createAcceptPanel() {
-		JPanel aPanel = new JPanel();
+		final JPanel aPanel = new JPanel();
 		aPanel.setPreferredSize(new Dimension(500, 32));
 		aPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
 
@@ -217,12 +217,12 @@ public class PropertiesPane extends JFrame {
 		}
 	}
 
-	public void save() {
+	public final void save() {
 		try {
 			removeProperties.clear();
 			updateProperties();
-			FileWriter fstream = new FileWriter(OLVProperties);
-			BufferedWriter out = new BufferedWriter(fstream);
+			final FileWriter fstream = new FileWriter(OLVProperties);
+			final BufferedWriter out = new BufferedWriter(fstream);
 
 			for (int i = 0; i < properties.size(); i++) {
 				out.write(properties.get(i).toString());
@@ -243,7 +243,7 @@ public class PropertiesPane extends JFrame {
 		}
 	}
 
-	public void resetProperties() {
+	public final void resetProperties() {
 		for (int i = 0; i < propertyView.getComponentCount(); i++) {
 			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
 			pp.reset();
@@ -256,7 +256,7 @@ public class PropertiesPane extends JFrame {
 		}
 	}
 
-	private PropertyPanel exists(SingleProperty sp) {
+	private PropertyPanel exists(final SingleProperty sp) {
 
 		for (int i = 0; i < propertyView.getComponentCount(); i++) {
 			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
@@ -267,7 +267,7 @@ public class PropertiesPane extends JFrame {
 		return null;
 	}
 
-	public void addProperty(SingleProperty sp) {
+	public final void addProperty(final SingleProperty sp) {
 		PropertyPanel pp = exists(sp);
 		if (pp == null) {
 			properties.add(sp);
@@ -286,12 +286,12 @@ public class PropertiesPane extends JFrame {
 		}
 	}
 
-	public void addPropertyAndSave(SingleProperty sp) {
+	public final void addPropertyAndSave(final SingleProperty sp) {
 		addProperty(sp);
 		save();
 	}
 
-	private void removeProperty(SingleProperty sp) {
+	private void removeProperty(final SingleProperty sp) {
 		if (properties.contains(sp)) {
 			properties.remove(sp);
 		}
@@ -316,7 +316,7 @@ public class PropertiesPane extends JFrame {
 		propertyView.repaint();
 	}
 
-	private class PropertyPanel extends JPanel implements Comparable<PropertyPanel> {
+	private final class PropertyPanel extends JPanel implements Comparable<PropertyPanel> {
 		private static final long serialVersionUID = 1L;
 		SingleProperty sp;
 		JCheckBox check;
@@ -326,7 +326,7 @@ public class PropertiesPane extends JFrame {
 		JTextField splitBox;
 		JComboBox activeBox;
 
-		public PropertyPanel(SingleProperty sp) {
+		public PropertyPanel(final SingleProperty sp) {
 			super();
 			this.sp = sp;
 			this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
