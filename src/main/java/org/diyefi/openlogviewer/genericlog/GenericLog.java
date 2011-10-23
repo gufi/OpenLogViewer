@@ -33,11 +33,12 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	public static final int LOG_NOT_LOADED = -1;
 	public static final int LOG_LOADING = 0;
 	public static final int LOG_LOADED = 1;
+	private static final String LOG_LOADED_TEXT = "LogLoaded";
 
 	// Stuff for showing a line count in all files loaded, if we ever do exports, either don't include this, and/or check for it before doing this
 	private final String lineKey = "OLV Line Count";
 	private String firstKey;
-	private int lineCount = 0;
+	private int lineCount;
 	private GenericDataElement lineCountElement;
 
 	private String metaData;
@@ -47,11 +48,11 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
 			if ((Integer) propertyChangeEvent.getNewValue() == 0) {
-				GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
+				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
 				genLog.setLogStatus(GenericLog.LOG_LOADING);
 				OpenLogViewerApp.getInstance().setLog(genLog);
 			} else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
-				GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
+				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
 				genLog.setLogStatus(GenericLog.LOG_LOADED);
 				OpenLogViewerApp.getInstance().setLog(genLog);
 				OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog(genLog);
@@ -63,7 +64,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 		super();
 		logStatus = LOG_NOT_LOADED;
 		PCS = new PropertyChangeSupport(this);
-		addPropertyChangeListener("LogLoaded", autoLoad);
+		addPropertyChangeListener(LOG_LOADED_TEXT, autoLoad);
 		metaData = "";
 	}
 
@@ -72,17 +73,11 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
 	 * @param headers - of the data to be converted
 	 */
-	public GenericLog(String[] headers) {
-		super();
-
-		logStatus = LOG_NOT_LOADED;
-		PCS = new PropertyChangeSupport(this);
-		addPropertyChangeListener("LogLoaded", autoLoad);
-
-		metaData = "";
+	public GenericLog(final String[] headers) {
+		this();
 
 		// A bit dirty, but not too bad.
-		String[] internalHeaders = new String[headers.length + 1];
+		final String[] internalHeaders = new String[headers.length + 1];
 		for (int i = 0; i < headers.length; i++) {
 			internalHeaders[i] = headers[i];
 		}
@@ -91,6 +86,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 		this.setHeaders(internalHeaders);
 		lineCountElement = this.get(lineKey);
 		firstKey = headers[0];
+		lineCount = 0;
 	}
 
 	/**
@@ -99,8 +95,8 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * @param value - data to be added
 	 * @return true or false if it was successfully added
 	 */
-	public boolean addValue(String key, double value) {
-		GenericDataElement logElement = this.get(key);
+	public final boolean addValue(final String key, final double value) {
+		final GenericDataElement logElement = this.get(key);
 		if (key.equals(firstKey)) {
 			lineCountElement.add((double) lineCount);
 			lineCount++;
@@ -112,17 +108,17 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * Set the state of the log
 	 * @param newLogStatus GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
 	 */
-	public void setLogStatus(int newLogStatus) {
+	public final void setLogStatus(final int newLogStatus) {
 		int oldLogStatus = this.logStatus;
 		this.logStatus = newLogStatus;
-		PCS.firePropertyChange("LogLoaded", oldLogStatus, newLogStatus);
+		PCS.firePropertyChange(LOG_LOADED_TEXT, oldLogStatus, newLogStatus);
 	}
 
 	/**
 	 *
 	 * @return -1 if log not loaded 0 if loading or 1 if log is loaded
 	 */
-	public int getLogStatus() {
+	public final int getLogStatus() {
 		return this.logStatus;
 	}
 
@@ -130,7 +126,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * sets the names of the headers for the Comparable interface of GenericDataElement
 	 * @param headers
 	 */
-	public void setHeaders(String[] headers) {
+	public final void setHeaders(final String[] headers) {
 		for (int x = 0; x < headers.length; x++) {
 			GenericDataElement GDE = new GenericDataElement();
 			GDE.setName(headers[x]);
@@ -143,7 +139,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * This method does not add to its self so in order to add more info you must VAR.addMetaData(VAR.getMetaData() + NEWINFO)
 	 * @param md meta data to be added
 	 */
-	public void setMetaData(String md) {
+	public final void setMetaData(final String md) {
 		metaData = md;
 	}
 
@@ -151,7 +147,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 *
 	 * @return String containing the current meta data
 	 */
-	public String getMetadata() {
+	public final String getMetadata() {
 		return metaData;
 	}
 
@@ -168,7 +164,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 *       }<br>
 	 *   });</code>
 	 */
-	public void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
+	public final void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
 		PCS.addPropertyChangeListener(name, listener);
 	}
 
@@ -177,7 +173,7 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * @param propertyName name of listener
 	 * @param listener listener
 	 */
-	public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
+	public final void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
 		PCS.removePropertyChangeListener(propertyName, listener);
 	}
 }

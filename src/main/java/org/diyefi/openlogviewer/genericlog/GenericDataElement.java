@@ -41,7 +41,7 @@ import org.diyefi.openlogviewer.coloring.InitialLineColoring;
  * displayed are pulled from these objects.
  * @author Bryan Harris
  */
-public class GenericDataElement extends ArrayList<Double> implements Comparable<GenericDataElement>, Serializable, Transferable {
+public final class GenericDataElement extends ArrayList<Double> implements Comparable<GenericDataElement>, Serializable, Transferable {
 	private static final long serialVersionUID = 1823741455455439887L;
 
 	/**
@@ -112,7 +112,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	 */
 	private void addFlavors() {
 		dataFlavor = new DataFlavor[3];
-		String supportedFlavour = DataFlavor.javaSerializedObjectMimeType + ";class=\"" + GenericDataElement.class.getName() + "\"";
+		final String supportedFlavour = DataFlavor.javaSerializedObjectMimeType + ";class=\"" + GenericDataElement.class.getName() + "\"";
 		dataFlavor[0] = new DataFlavor(supportedFlavour, "OLV GenericDataElement");
 		dataFlavor[1] = DataFlavor.stringFlavor;
 		dataFlavor[2] = DataFlavor.getTextPlainUnicodeFlavor();
@@ -124,7 +124,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	 * @return true on success, false if unable
 	 */
 	@Override
-	public boolean add(Double d) {
+	public boolean add(final Double d) {
 		if (newMaxValue < d) {
 			maxValue = d;
 			newMaxValue = d;
@@ -141,6 +141,9 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	/**
 	 * sets the splitNumber or division of the graph in the graphing screen
 	 * if its the same a property change event is fired called "Split"
+	 *
+	 * TODO add final to parameter and fix code to work with that change.
+	 *
 	 * @param splitNumber
 	 */
 	public void setSplitNumber(int splitNumber) {
@@ -148,10 +151,9 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 			splitNumber = 1;
 		}
 
-		int old = this.splitNumber;
+		final int old = this.splitNumber;
 		this.splitNumber = splitNumber;
 		PCS.firePropertyChange("Split", old, this.splitNumber);
-
 	}
 
 	/**
@@ -162,11 +164,11 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 		newMaxValue = maxValue;
 	}
 
-	public void addPropertyChangeListener(String property, PropertyChangeListener PCL) {
+	public void addPropertyChangeListener(final String property, final PropertyChangeListener PCL) {
 		PCS.addPropertyChangeListener(property, PCL);
 	}
 
-	public void removePropertyChangeListener(String property, PropertyChangeListener PCL) {
+	public void removePropertyChangeListener(final String property, final PropertyChangeListener PCL) {
 		PCS.removePropertyChangeListener(property, PCL);
 	}
 
@@ -176,12 +178,12 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	}
 
 	@Override
-	public int compareTo(GenericDataElement otherGDE) {
+	public int compareTo(final GenericDataElement otherGDE) {
 		return this.getName().compareToIgnoreCase(otherGDE.getName());
 	}
 
 	@Override
-	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+	public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
 		if (flavor.equals(dataFlavor[0])) {
 			return this;
 		} else if (flavor.equals(dataFlavor[1])) {
@@ -199,7 +201,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	}
 
 	@Override
-	public boolean isDataFlavorSupported(DataFlavor flavor) {
+	public boolean isDataFlavorSupported(final DataFlavor flavor) {
 		for (int i = 0; i < dataFlavor.length; i++) {
 			if (flavor.equals(dataFlavor[i])) {
 				return true;
@@ -212,7 +214,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	 * set header name, called during GenericLog construction
 	 * @param name
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 	public String getName() {
@@ -221,19 +223,19 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	public Double getMaxValue() {
 		return newMaxValue;
 	}
-	public void setMaxValue(Double highValue) {
+	public void setMaxValue(final Double highValue) {
 		this.newMaxValue = highValue;
 	}
 	public Double getMinValue() {
 		return newMinValue;
 	}
-	public void setMinValue(Double lowValue) {
+	public void setMinValue(final Double lowValue) {
 		this.newMinValue = lowValue;
 	}
 	public Color getColor() {
 		return newColor;
 	}
-	public void setColor(Color c) {
+	public void setColor(final Color c) {
 		newColor = c;
 	}
 	public int getSplitNumber() {

@@ -31,7 +31,7 @@ import java.awt.Color;
 public class MarkedColor {
 	private Color color;
 	private boolean availability;
-	double hue;
+	private double hue;
 
 	public MarkedColor() {
 		color = Color.gray;
@@ -39,59 +39,59 @@ public class MarkedColor {
 		hue = -1.0;
 	}
 
-	public MarkedColor(Color color) {
+	public MarkedColor(final Color color) {
 		this.color = color;
 		availability = true;
 		hue = -1.0;
 	}
 
-	public MarkedColor(boolean availability) {
+	public MarkedColor(final boolean availability) {
 		color = Color.gray;
 		this.availability = availability;
 		hue = -1.0;
 	}
 
-	public MarkedColor(Color color, boolean availability) {
+	public MarkedColor(final Color color, final boolean availability) {
 		this.color = color;
 		this.availability = availability;
 		hue = -1.0;
 	}
 
-	public MarkedColor(Color color, boolean availability, double hue) {
+	public MarkedColor(final Color color, final boolean availability, final double hue) {
 		this.color = color;
 		this.availability = availability;
 		this.hue = hue;
 	}
 
-	public Color getColor() {
+	public final Color getColor() {
 		return color;
 	}
 
-	public void setColor(Color color) {
+	public final void setColor(final Color color) {
 		this.color = color;
 	}
 
-	public boolean isAvailable() {
+	public final boolean isAvailable() {
 		return availability;
 	}
 
-	public void setAvailability(boolean availability) {
+	public final void setAvailability(final boolean availability) {
 		this.availability = availability;
 	}
 
-	public double getHue() {
+	public final double getHue() {
 		return hue;
 	}
 
-	public void setHue(double hue) {
+	public final void setHue(final double hue) {
 		this.hue = hue;
 	}
 
-	public boolean equals(MarkedColor c) {
+	public final boolean equals(final MarkedColor c) {
 		return c.getColor().equals(this.color) || c.getHue() == this.hue;
 	}
 
-	public boolean equals(Color c) {
+	public final boolean equals(final Color c) {
 		return c.equals(this.color);
 	}
 }

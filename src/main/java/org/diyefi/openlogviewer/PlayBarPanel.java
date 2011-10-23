@@ -34,6 +34,9 @@ import javax.swing.JPanel;
 
 public class PlayBarPanel extends JPanel {
 	private static final long serialVersionUID = 1294732662423188903L;
+	private static final int PLAY_BAR_PREFERRED_WIDTH = 857;
+	private static final int PLAY_BAR_PREFERRED_HEIGHT = 40;
+
 	private JButton zoomInButton;
 	private JButton zoomOutButton;
 	private JButton playButton;
@@ -63,8 +66,8 @@ public class PlayBarPanel extends JPanel {
 	 * Method to control and setup the components of the playbar
 	 */
 	private void initComponents() {
-		this.setName("this"); // NOI18N
-		this.setPreferredSize(new Dimension(857, 40));
+		this.setName("this");
+		this.setPreferredSize(new Dimension(PLAY_BAR_PREFERRED_WIDTH, PLAY_BAR_PREFERRED_HEIGHT));
 		this.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
 		zoomInButton.setIcon(new ImageIcon(getClass().getResource("Playbar_+.png"))); // NOI18N
@@ -72,12 +75,12 @@ public class PlayBarPanel extends JPanel {
 		zoomInButton.setBorder(null);
 		zoomInButton.setBorderPainted(false);
 		zoomInButton.setContentAreaFilled(false);
-		zoomInButton.setName("zoomInButton"); // NOI18N
+		zoomInButton.setName("zoomInButton");
 		zoomInButton.setRequestFocusEnabled(false);
 
 		zoomInButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				zoomInButtonMouseReleased(e);
 			}
 		});
@@ -88,11 +91,11 @@ public class PlayBarPanel extends JPanel {
 		zoomOutButton.setBorder(null);
 		zoomOutButton.setBorderPainted(false);
 		zoomOutButton.setContentAreaFilled(false);
-		zoomOutButton.setName("zoomOutButton"); // NOI18N
+		zoomOutButton.setName("zoomOutButton");
 		zoomOutButton.setRequestFocusEnabled(false);
 		zoomOutButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				zoomOutButtonMouseReleased(e);
 			}
 		});
@@ -107,7 +110,7 @@ public class PlayBarPanel extends JPanel {
 		slowDownButton.setRequestFocusEnabled(false);
 		slowDownButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				reverseButtonMouseReleased(e);
 			}
 		});
@@ -122,7 +125,7 @@ public class PlayBarPanel extends JPanel {
 		playButton.setRequestFocusEnabled(false);
 		playButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				playButtonMouseReleased(e);
 			}
 		});
@@ -137,7 +140,7 @@ public class PlayBarPanel extends JPanel {
 		pauseButton.setRequestFocusEnabled(false);
 		pauseButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				pauseButtonMouseReleased(e);
 			}
 		});
@@ -152,7 +155,7 @@ public class PlayBarPanel extends JPanel {
 		stopButton.setRequestFocusEnabled(false);
 		stopButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				stopButtonMouseReleased(e);
 			}
 		});
@@ -167,7 +170,7 @@ public class PlayBarPanel extends JPanel {
 		fastForwardButton.setRequestFocusEnabled(false);
 		fastForwardButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				fastForwardButtonMouseReleased(e);
 			}
 		});
@@ -182,7 +185,7 @@ public class PlayBarPanel extends JPanel {
 		ejectButton.setRequestFocusEnabled(false);
 		ejectButton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				ejectButtonMouseReleased(e);
 			}
 		});
@@ -193,7 +196,7 @@ public class PlayBarPanel extends JPanel {
 	 * modifys the state of the PlayableLog zoom in 1 pixel up to 10 pixels
 	 * @param evt
 	 */
-	private void zoomInButtonMouseReleased(MouseEvent e) {
+	private void zoomInButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
 	}
 
@@ -201,7 +204,7 @@ public class PlayBarPanel extends JPanel {
 	 * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
 	 * @param evt
 	 */
-	private void zoomOutButtonMouseReleased(MouseEvent e) {
+	private void zoomOutButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
 	}
 
@@ -209,7 +212,7 @@ public class PlayBarPanel extends JPanel {
 	 * modifys the state of the PlayableLog to begin playing
 	 * @param evt
 	 */
-	private void playButtonMouseReleased(MouseEvent e) {
+	private void playButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel();
 	}
@@ -218,7 +221,7 @@ public class PlayBarPanel extends JPanel {
 	 * Modifys the state of the PlayableLog to pause
 	 * @param evt
 	 */
-	private void pauseButtonMouseReleased(MouseEvent e) {
+	private void pauseButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
 	}
 
@@ -226,7 +229,7 @@ public class PlayBarPanel extends JPanel {
 	 * Modifys the state of the PlayableLog to stop and reset to the beginning
 	 * @param evt
 	 */
-	private void stopButtonMouseReleased(MouseEvent e) {
+	private void stopButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().stop();
 	}
 
@@ -234,7 +237,7 @@ public class PlayBarPanel extends JPanel {
 	 * Speeds up the play back speed of the PlayableLog
 	 * @param evt
 	 */
-	private void fastForwardButtonMouseReleased(MouseEvent e) {
+	private void fastForwardButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().fastForward();
 	}
 
@@ -242,7 +245,7 @@ public class PlayBarPanel extends JPanel {
 	 * Slows down the play back speed of the Playable Log
 	 * @param evt
 	 */
-	private void reverseButtonMouseReleased(MouseEvent e) {
+	private void reverseButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().slowDown();
 	}
 
@@ -250,7 +253,7 @@ public class PlayBarPanel extends JPanel {
 	 * Un-Implimented currently, future plans are to have this as an alternate to open a new log
 	 * @param evt
 	 */
-	private void ejectButtonMouseReleased(MouseEvent e) {
+	private void ejectButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().eject();
 	}
 }

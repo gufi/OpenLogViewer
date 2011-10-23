@@ -51,58 +51,63 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		active = false;
 	}
 
-	public Color getColor() {
+	public final Color getColor() {
 		return color;
 	}
 
-	public void setColor(Color color) {
+	public final void setColor(final Color color) {
 		this.color = color;
 	}
 
-	public String getHeader() {
+	public final String getHeader() {
 		return header;
 	}
 
-	public void setHeader(String header) {
+	public final void setHeader(final String header) {
 		this.header = header;
 	}
 
-	public double getMax() {
+	public final double getMax() {
 		return max;
 	}
 
-	public void setMax(double max) {
+	public final void setMax(final double max) {
 		this.max = max;
 	}
 
-	public double getMin() {
+	public final double getMin() {
 		return min;
 	}
 
-	public void setMin(double min) {
+	public final void setMin(final double min) {
 		this.min = min;
 	}
 
-	public int getSplit() {
+	public final int getSplit() {
 		return split;
 	}
 
-	public void setSplit(int split) {
+	/**
+	 * TODO add final to parameter and make work with this change.
+	 *
+	 * @param split
+	 */
+	public final void setSplit(int split) {
 		if (split < 1) {
 			split = 1;
 		}
 		this.split = split;
 	}
 
-	public boolean isActive() {
+	public final boolean isActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public final void setActive(final boolean active) {
 		this.active = active;
 	}
 
-	public String toString() {
+	public final String toString() {
 		return header + "="
 			+ color.getRed()
 			+ "," + color.getGreen()
@@ -113,11 +118,11 @@ public class SingleProperty implements Comparable<SingleProperty> {
 			+ "," + Boolean.toString(active);
 	}
 
-	public int compareTo(SingleProperty sp) {
+	public final int compareTo(final SingleProperty sp) {
 		return this.getHeader().compareToIgnoreCase(sp.getHeader());
 	}
 
-	public boolean equals(String header) {
-		return header.toLowerCase().equals(this.getHeader().toLowerCase());
+	public final boolean equals(final String otherHeader) {
+		return otherHeader.toLowerCase().equals(this.getHeader().toLowerCase());
 	}
 }

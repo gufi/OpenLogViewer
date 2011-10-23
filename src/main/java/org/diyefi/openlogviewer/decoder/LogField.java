@@ -19,7 +19,6 @@ public class LogField {
 		}
 	}
 
-
 	static final double divideByOne = 1.0;
 	static final double addToZero = 0.0;
 
@@ -91,46 +90,46 @@ public class LogField {
 		}
 	}
 
-	public String getID() {
+	public final String getID() {
 		return ID;
 	}
-	public types getType() {
+	public final types getType() {
 		return type;
 	}
-	public String[] getBitFieldNames() {
+	public final String[] getBitFieldNames() {
 		return bitFieldNames;
 	}
-	public double getDivBy() {
+	public final double getDivBy() {
 		return divBy;
 	}
-	public double getAddTo() {
+	public final double getAddTo() {
 		return addTo;
 	}
-	public void setID(String iD) {
+	public final void setID(final String iD) {
 		ID = iD;
 	}
-	public void setType(types type) {
+	public final void setType(final types type) {
 		this.type = type;
 	}
-	public void setBitFieldNames(String[] bitFieldNames) {
+	public final void setBitFieldNames(final String[] bitFieldNames) {
 		this.bitFieldNames = bitFieldNames;
 	}
-	public void setDivBy(double divBy) {
+	public final void setDivBy(final double divBy) {
 		this.divBy = divBy;
 	}
-	public void setAddTo(double addTo) {
+	public final void setAddTo(final double addTo) {
 		this.addTo = addTo;
 	}
-	public String getDescription() {
+	public final String getDescription() {
 		return description;
 	}
-	public String getUnit() {
+	public final String getUnit() {
 		return unit;
 	}
-	public void setDescription(String description) {
+	public final void setDescription(String description) {
 		this.description = description;
 	}
-	public void setUnit(String unit) {
+	public final void setUnit(final String unit) {
 		this.unit = unit;
 	}
 }

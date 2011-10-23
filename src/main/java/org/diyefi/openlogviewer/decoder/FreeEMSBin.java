@@ -38,17 +38,20 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  */
 public class FreeEMSBin implements Runnable { // implements runnable to make this class theadable
 
-	private final int minimumPacketLength = 3; // Flag byte, payload id word, no payload - defined by protocol
-	private final int maximumPacketLength = 0x0820; // Buffer size on FreeEMS vanilla, take this from config file eventually
-	private final int payloadIDToParse = 0x0191; // Default freeems basic log, get this from config file and maybe default to this
-	// NOTE, standard supported log types require their own structure definition in the code, override-able via files, matched looked for first, then local, then fall back to code
+	private static final int MINIMUM_PACKET_LENGTH = 3; // Flag byte, payload id word, no payload - defined by protocol
+	private static final int MAXIMUM_PACKET_LENGTH = 0x0820; // Buffer size on FreeEMS vanilla, take this from config file eventually
+	private static final int PAYLOAD_ID_TO_PARSE = 0x0191; // Default freeems basic log, get this from config file and maybe default to this
+	// NOTE, standard supported log types require their own structure definition in the code,
+	// override-able via files, matched looked for first, then local, then fall back to code
 
-	private final short ESCAPE_BYTE = 0xBB;         // Used as an unsigned byte
-	private final short START_BYTE = 0xAA;          // Used as an unsigned byte
-	private final short STOP_BYTE = 0xCC;           // Used as an unsigned byte
-	private final short ESCAPED_ESCAPE_BYTE = 0x44; // Used as an unsigned byte
-	private final short ESCAPED_START_BYTE = 0x55;  // Used as an unsigned byte
-	private final short ESCAPED_STOP_BYTE = 0x33;   // Used as an unsigned byte
+	private static final short ESCAPE_BYTE = 0xBB;         // Used as an unsigned byte
+	private static final short START_BYTE = 0xAA;          // Used as an unsigned byte
+	private static final short STOP_BYTE = 0xCC;           // Used as an unsigned byte
+	private static final short ESCAPED_ESCAPE_BYTE = 0x44; // Used as an unsigned byte
+	private static final short ESCAPED_START_BYTE = 0x55;  // Used as an unsigned byte
+	private static final short ESCAPED_STOP_BYTE = 0x33;   // Used as an unsigned byte
+
+	private static final String NEWLINE = System.getProperty("line.separator");
 
 	private boolean startFound;
 	private File logFile;
@@ -58,7 +61,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	private Thread t;
 	private int packetLength; // Track packet length
 
-	String[] coreStatusAFlagNames = {
+	private String[] coreStatusAFlagNames = {
 		"CS-FuelPumpPrime",
 		"CS-unused1",
 		"CS-unused2",
@@ -69,7 +72,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		"CS-unused7"
 	};
 
-	String[] decoderFlagsFlagNames = {
+	private String[] decoderFlagsFlagNames = {
 		"DF-CombustionSync",
 		"DF-CrankSync",
 		"DF-CamSync",
@@ -80,7 +83,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		"DF-Spare-7"
 	};
 
-	String[] flaggableFlagsNames = {
+	private String[] flaggableFlagsNames = {
 		"FF-callsToUISRs",               // to ensure we aren't accidentally triggering unused ISRs.
 		"FF-lowVoltageConditions",       // low voltage conditions.
 		"FF-decoderSyncLosses",          // Number of times cam, crank or combustion sync is lost.
@@ -146,7 +149,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		new LogField("syncResetCalls",           types.UINT8), // Sum of losses, corrections and state clears
 		new LogField("primaryTeethSeen",         types.UINT8), // Free running counters for number of input events, useful at lower RPM
 		new LogField("secondaryTeethSeen",       types.UINT8), // Free running counters for number of input events, useful at lower RPM
-		new LogField("serialOverrunErrors",      types.UINT8), // Incremented when an overrun occurs due to high interrupt load, not a fault, just a fact of life at high RPM
+		new LogField("serialOverrunErrors",      types.UINT8), // Incremented when an overrun occurs due to high ISR load, just a fact of life at high RPM
 		new LogField("serialHardwareErrors",     types.UINT8), // Sum of noise, parity, and framing errors
 		new LogField("serialAndCommsCodeErrors", types.UINT8), // Sum of checksum, escape mismatches, starts inside, and over/under length
 		new LogField("inputEventTimeTolerance"),   // Required to tune noise rejection over RPM TODO add to LT1 and MissingTeeth
@@ -169,7 +172,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param path The file system path of the log file.
 	 *
 	 */
-	public FreeEMSBin(String path) {
+	public FreeEMSBin(final String path) {
 		this(new File(path));
 	}
 
@@ -177,19 +180,19 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * FreeEmsBin Constructor: <code>File</code> object of your Binary log
 	 * @param f The file reference to the log file.
 	 */
-	public FreeEMSBin(File f) {
+	public FreeEMSBin(final File f) {
 		logFile = f;
 		startFound = false;
 		packetBuffer = new short[6000];
 		packetLength = 0;
 
 		// Eventually pull this in from files and config etc instead of default, if it makes sense to.
-		String[] headers = new String[fields.length * 32]; // Hack to make it plenty big, trim afterwards...
+		final String[] headers = new String[fields.length * 32]; // Hack to make it plenty big, trim afterwards...
 		int headersPosition = 0;
 		for (int i = 0; i < fields.length; i++) {
 			if ((fields[i].type == types.BITS8) || (fields[i].type == types.BITS16) || (fields[i].type == types.BITS32)) {
 				for (int j = 0; j < fields[i].bitFieldNames.length; j++) {
-					String flagID = fields[i].bitFieldNames[j] + "-" + fields[i].ID + "-B" + j;
+					final String flagID = fields[i].bitFieldNames[j] + "-" + fields[i].ID + "-B" + j;
 					headers[headersPosition] = flagID;
 					headersPosition++;
 				}
@@ -212,10 +215,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * to the required method of this class such as decodePacket or checksum.
 	 */
 	@Override
-	public void run() {
+	public final void run() {
 		try {
 			// file setup
-			byte[] readByte = new byte[1];
+			final byte[] readByte = new byte[1];
 			short uByte = 0;
 
 			// These can be caused by noise, but if there is no noise, then it's a code issue with the firmware!
@@ -243,18 +246,18 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 					packetLength = 0; // Reset array position, always (discard existing data recorded, if any)
 				} else if (startFound) { // Skip stray bytes until a start is found
 					if (uByte == STOP_BYTE) {
-						if (packetLength < minimumPacketLength) {
+						if (packetLength < MINIMUM_PACKET_LENGTH) {
 							packetsUnderLength++;
-						} else if (packetLength > maximumPacketLength) {
+						} else if (packetLength > MAXIMUM_PACKET_LENGTH) {
 							packetsOverLength++;
 						} else {
-							short[] justThePacket = new short[packetLength];
+							final short[] justThePacket = new short[packetLength];
 							for (int i = 0; i < packetLength; i++) {
 								justThePacket[i] = packetBuffer[i];
 							}
 
 							if (checksum(justThePacket)) {
-								if (decodeBasicLogPacket(justThePacket, payloadIDToParse)) {
+								if (decodeBasicLogPacket(justThePacket, PAYLOAD_ID_TO_PARSE)) {
 									packetsParsedFully++;
 								} else {
 									packetLengthWrong++;
@@ -286,7 +289,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			}
 			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
 
-			System.out.println(System.getProperty("line.separator") + "Binary Parsing Statistics:" + System.getProperty("line.separator"));
+			System.out.println(NEWLINE + "Binary Parsing Statistics:" + NEWLINE);
 
 			System.out.println("Value: " + escapePairMismatches + " Incremented when an escape is found but not followed by an escapee");
 			System.out.println("Value: " + startsInsideAPacket  + " Incremented when a start byte is found inside a packet");
@@ -298,10 +301,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			System.out.println("Value: " + strayBytesLost       + " How many bytes were not in a packet! (should be low, ie, under one packet");
 			System.out.println("Value: " + payloadIDWrong       + " Requests to parse packet as A when packet was of type B");
 
-			System.out.println(System.getProperty("line.separator") + "Thank you for choosing FreeEMS!");
+			System.out.println(NEWLINE + "Thank you for choosing FreeEMS!");
 
-		} catch (IOException IOE) {
-			System.out.println(IOE.getMessage());
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
 			// TODO Add code to handle or warn of the error
 		}
 	}
@@ -312,7 +315,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param packet is a <code>short</code> array containing 1 full packet
 	 * @param payloadIDToParse The ID of the payload type to expect and accept.
 	 */
-	private boolean decodeBasicLogPacket(short[] packet, int payloadIDToParse) {
+	private boolean decodeBasicLogPacket(final short[] packet, final int payloadIDToParse) {
 		final int HEADER_HAS_LENGTH_INDEX   = 0;
 //		final int HEADER_IS_NACK_INDEX      = 1;
 		final int HEADER_HAS_SEQUENCE_INDEX = 2;
@@ -326,20 +329,20 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		// Increment post use
 		int position = 0;
 
-		short flags = packet[position];
+		final short flags = packet[position];
 		position++;
 
-		short payloadIdUpper = packet[position];
+		final short payloadIdUpper = packet[position];
 		position++;
-		short payloadIdLower = packet[position];
+		final short payloadIdLower = packet[position];
 		position++;
-		int payloadId = (payloadIdUpper * 256) + payloadIdLower;
+		final int payloadId = (payloadIdUpper * 256) + payloadIdLower;
 
 		if (payloadId != payloadIDToParse) {
 			return false; // TODO make this a code, or throw exception, but it's not exceptional at all for this to occur...
 		}
 
-		int[] flagValues = processFlagBytes(flags, 8);
+		final int[] flagValues = processFlagBytes(flags, 8);
 
 		if (flagValues[HEADER_HAS_SEQUENCE_INDEX] == 1) {
 			position++; // Skip this!
@@ -349,12 +352,14 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			position += 2; // Ignore this for now, it's the payload length, check it vs actual length and check actual vs required.
 		}
 
-		int lengthOfFields = 0; // warn if length in config is not equal, but allow both sides of wrong as it is reasonable to not care about some and also to truncate shorter on the ECU side.
+		int lengthOfFields = 0;
 		for (int i = 0; i < fields.length; i++) {
 			lengthOfFields += fields[i].type.width;
 		}
+		// TODO warn if length in config is not equal, but allow both sides of wrong as it
+		// is reasonable to not care about some and also to truncate shorter on the ECU side.
 
-		int payloadLength = ((packet.length - position) - 1);
+		final int payloadLength = ((packet.length - position) - 1);
 		if (payloadLength != lengthOfFields) { // First run through to find out what the lengths are.
 			System.out.print(" Fields length is: " + lengthOfFields);
 			System.out.print(" Packet length is: " + packet.length);
@@ -363,7 +368,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		}
 
 		for (int i = 0; i < fields.length; i++) {
-			LogField field = fields[i];
+			final LogField field = fields[i];
 
 			int rawValue = 0;
 			for (int j = 0; j < field.type.width; j++) {
@@ -372,13 +377,13 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			}
 
 			if ((field.type == types.UINT8) || (field.type == types.UINT16) || (field.type == types.UINT32)) {
-				double scaledValue = (double) rawValue / field.divBy;
-				double finalValue = scaledValue + field.addTo;
+				final double scaledValue = (double) rawValue / field.divBy;
+				final double finalValue = scaledValue + field.addTo;
 				decodedLog.addValue(field.ID, finalValue);
 			} else if ((field.type == types.BITS8) || (field.type == types.BITS16) || (field.type == types.BITS32)) {
-				int[] processedFlags = processFlagBytes(rawValue, (8 * field.type.width));
+				final int[] processedFlags = processFlagBytes(rawValue, (8 * field.type.width));
 				for (int j = 0; j < processedFlags.length; j++) {
-					String flagID = field.bitFieldNames[j] + "-" + field.ID + "-B" + j;
+					final String flagID = field.bitFieldNames[j] + "-" + field.ID + "-B" + j;
 					decodedLog.addValue(flagID, processedFlags[j]);
 				}
 			} else if (field.type == types.SINT8) { // TODO handle signed ints...
@@ -388,6 +393,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			} else if (field.type == types.SINT32) {
 				decodedLog.addValue(field.ID, rawValue);
 			}
+			// TODO handle floats
 		}
 		return true; // TODO FIXME : Default to all things being good till I attack this!
 	}

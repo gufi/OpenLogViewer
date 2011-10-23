@@ -63,7 +63,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * Overriden Run from the Runnable Interface to do the work for us in a threaded fashion.
 	 */
 	@Override
-	public void run() {
+	public final void run() {
 		try {
 			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADING);
 			decodeLog();
@@ -85,7 +85,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * used for getting the decided log for injection to the main pieces of the program that will use it
 	 * @return GenericLog
 	 */
-	public GenericLog getDecodedLog() {
+	public final GenericLog getDecodedLog() {
 		return decodedLog;
 	}
 
@@ -93,7 +93,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * sets the GenericLog
 	 * @param decodedLog
 	 */
-	public void setDecodedLog(GenericLog decodedLog) {
+	public final void setDecodedLog(final GenericLog decodedLog) {
 		this.decodedLog = decodedLog;
 	}
 
@@ -101,7 +101,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * get the log File
 	 * @return File
 	 */
-	public File getLogFile() {
+	public final File getLogFile() {
 		return logFile;
 	}
 
@@ -109,7 +109,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * set the log File
 	 * @param logFile
 	 */
-	public void setLogFile(File logFile) {
+	public final void setLogFile(final File logFile) {
 		this.logFile = logFile;
 	}
 
@@ -120,7 +120,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * this.getT().start();
 	 * @return the thread that this decoder is running in.
 	 */
-	public Thread getT() {
+	public final Thread getT() {
 		return t;
 	}
 
@@ -128,7 +128,7 @@ public abstract class AbstractDecoder implements Runnable {
 	 * set the Thread
 	 * @param t
 	 */
-	public void setT(Thread t) {
+	public final void setT(final Thread t) {
 		this.t = t;
 	}
 }
