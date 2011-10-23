@@ -98,12 +98,13 @@
 		<module name="TodoComment"/><!--A check for TODO comments. -->
 		<module name="TypeName"/><!--Checks that type names conform to a format specified by the format property. -->
 		<module name="TypecastParenPad"/><!--Checks the padding of parentheses for typecasts. -->
-		<module name="UncommentedMain"/><!--Detects uncommented main methods. -->
+		<module name="UncommentedMain"><!--Detects uncommented main methods. -->
+			<property name="excludedClasses" value="OpenLogViewerApp"/>
+		</module>
 		<module name="UpperEll"/><!--Checks that long constants are defined with an upper ell. -->
 		<module name="VisibilityModifier"/><!--Checks visibility of class members.-->
 		<module name="WhitespaceAfter"/><!-- Checks that a token is followed by whitespace, with the exception that it does not check for whitespace after the semicolon of an empty for iterator.-->
 		<module name="WhitespaceAround"/><!-- Checks that a token is surrounded by whitespace.-->
-		<module name="WriteTag"/><!--Outputs a JavaDoc tag as information.-->
 
 		<!-- Not just yet! -->
 		<!-- <module name="JavadocMethod"/>--><!--Checks the Javadoc of a method or constructor.-->
