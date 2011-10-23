@@ -47,12 +47,12 @@ public class FreeEmsPacket {
 
 	// Data from payload
 	private short errorId; // only populated if isNack is true;
-	private short payload[];
+	private short[] payload;
 
 	// Checksum from footer
 	private short checksum; // included and calculated were the same, or this object would not have been created
 
-	public FreeEmsPacket(short rawPacket[]) {
+	public FreeEmsPacket(short[] rawPacket) {
 		throw new RuntimeException("Not implemented!");
 	}
 

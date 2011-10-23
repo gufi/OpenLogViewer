@@ -23,6 +23,18 @@ public class LogField {
 	static final double divideByOne = 1.0;
 	static final double addToZero = 0.0;
 
+	String ID;
+	types type;
+	String[] bitFieldNames;
+
+	// Optional
+	String description;
+	String unit;
+
+	// This does not match MTX:
+	double divBy = divideByOne; // divide first (mtx multiplies, and the result is uglier config IMO
+	double addTo = addToZero;   // add second
+
 	public LogField(String ID) {
 		this(ID, types.UINT16, divideByOne, addToZero);
 	}
@@ -78,18 +90,6 @@ public class LogField {
 			throw new IllegalArgumentException("BITS16 requires 32 flag names!");
 		}
 	}
-
-	String ID;
-	types type;
-	String[] bitFieldNames;
-
-	// Optional
-	String description;
-	String unit;
-
-	// This does not match MTX:
-	double divBy = divideByOne; // divide first (mtx multiplies, and the result is uglier config IMO
-	double addTo = addToZero;   // add second
 
 	public String getID() {
 		return ID;

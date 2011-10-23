@@ -39,9 +39,8 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
     }</code>
  * @author Bryan Harris
- * @version 0.1.3
  */
-public abstract class BaseDecoder implements Runnable {
+public abstract class AbstractDecoder implements Runnable {
 
 	/**
 	 * logFile is the <code>File</code> object that points to the file you are

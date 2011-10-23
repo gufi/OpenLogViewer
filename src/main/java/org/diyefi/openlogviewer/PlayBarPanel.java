@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class PlayBarPanel extends JPanel {
+	private static final long serialVersionUID = 1294732662423188903L;
 	private JButton zoomInButton;
 	private JButton zoomOutButton;
 	private JButton playButton;
@@ -41,7 +42,6 @@ public class PlayBarPanel extends JPanel {
 	private JButton ejectButton;
 	private JButton fastForwardButton;
 	private JButton pauseButton;
-	private static final long serialVersionUID = 1294732662423188903L;
 
 	/**
 	 * Default JPanel constructor initializing the playbar buttons

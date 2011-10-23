@@ -59,6 +59,7 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewerApp extends javax.swing.JFrame {
+	private static final long serialVersionUID = 7987394054547975563L;
 	public static OpenLogViewerApp mainAppRef;
 	private javax.swing.JMenu fileMenu;
 	private javax.swing.JMenu editMenu;
@@ -73,7 +74,6 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 	private OptionFrameV2 optionFrame;
 	private PropertiesPane prefFrame;
 	private ArrayList<SingleProperty> properties;
-	private static final long serialVersionUID = 7987394054547975563L;
 
 	/** Creates new form OpenLogViewerApp */
 	public OpenLogViewerApp() {
@@ -182,9 +182,11 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 	}
 
 	/**
+	 * The entry point of OLV!
+	 *
 	 * @param args the command line arguments
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
 			@Override

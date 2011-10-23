@@ -26,8 +26,6 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import org.diyefi.openlogviewer.coloring.MarkedColor;
-
 /**
  * InitialLineColoring is used to provide the coloring for the GenericDataElements.
  * The colors provided should be the most contrasting colors possible.
@@ -36,6 +34,8 @@ import org.diyefi.openlogviewer.coloring.MarkedColor;
 public enum InitialLineColoring {
 
 	INSTANCE;
+
+	private final LinkedList<MarkedColor> colorList;
 
 	private InitialLineColoring() {
 		colorList = new LinkedList<MarkedColor>();
@@ -87,6 +87,4 @@ public enum InitialLineColoring {
 			colorList.get(colorList.indexOf(c)).setAvailability(true);
 		}
 	}
-
-	private final LinkedList<MarkedColor> colorList;
 }

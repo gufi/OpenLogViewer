@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
-public class CSVTypeLog extends BaseDecoder {
+public class CSVTypeLog extends AbstractDecoder {
 	int fieldCount = -1;
 
 	/**
@@ -93,7 +93,7 @@ public class CSVTypeLog extends BaseDecoder {
 	 * @throws IOException
 	 */
 	private String scanForDelimiter() throws IOException {
-		String delim[] = {"\t", ",", ":", "/", "\\\\"};
+		String[] delim = {"\t", ",", ":", "/", "\\\\"};
 		Scanner scan = new Scanner(new FileReader(getLogFile()));
 		String delimiterFind = "";
 		String[] split = new String[1];

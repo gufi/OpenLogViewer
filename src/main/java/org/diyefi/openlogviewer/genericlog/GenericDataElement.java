@@ -112,10 +112,8 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 	 */
 	private void addFlavors() {
 		dataFlavor = new DataFlavor[3];
-		//try {
-		dataFlavor[0] = new DataFlavor(DataFlavor.javaSerializedObjectMimeType +
-				";class=\"" + GenericDataElement.class.getName() + "\"",
-		"OLV GenericDataElement");
+		String supportedFlavour = DataFlavor.javaSerializedObjectMimeType + ";class=\"" + GenericDataElement.class.getName() + "\"";
+		dataFlavor[0] = new DataFlavor(supportedFlavour, "OLV GenericDataElement");
 		dataFlavor[1] = DataFlavor.stringFlavor;
 		dataFlavor[2] = DataFlavor.getTextPlainUnicodeFlavor();
 	}
@@ -190,8 +188,7 @@ public class GenericDataElement extends ArrayList<Double> implements Comparable<
 			return "Unsupported";
 		} else if (flavor.equals(dataFlavor[2])) {
 			return "Unsupported";
-		}
-		else {
+		} else {
 			throw new UnsupportedFlavorException(flavor);
 		}
 	}

@@ -39,9 +39,9 @@ import javax.swing.Timer;
 
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
-import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
+	private static final long serialVersionUID = 6880240079754110792L;
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
 	private double graphPosition;
@@ -56,7 +56,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private int prevDragXCoord;
 	private int flingInertia;
 	private int zoom;
-	private static final long serialVersionUID = 6880240079754110792L;
 
 	public EntireGraphingPanel() {
 		super();

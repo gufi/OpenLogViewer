@@ -531,8 +531,8 @@ public class OptionFrameV2 extends JFrame {
 				if (GCB.isDragging()) {
 					if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
 						GCB.setLocation(GCB.getInactiveLocation());
-					GCB.setSelected(false);
-					GCB.setEnabled(false);
+						GCB.setSelected(false);
+						GCB.setEnabled(false);
 					} else { // moving to
 						if (!place(GCB)) {
 							if (GCB.getPreviousPanel() != GCB.getParent()) { // if it moved

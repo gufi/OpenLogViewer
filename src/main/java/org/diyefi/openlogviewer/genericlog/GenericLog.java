@@ -30,16 +30,15 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 
 @SuppressWarnings("serial")
 public class GenericLog extends HashMap<String, GenericDataElement> {
+	public static final int LOG_NOT_LOADED = -1;
+	public static final int LOG_LOADING = 0;
+	public static final int LOG_LOADED = 1;
 
 	// Stuff for showing a line count in all files loaded, if we ever do exports, either don't include this, and/or check for it before doing this
 	private final String lineKey = "OLV Line Count";
 	private String firstKey;
 	private int lineCount = 0;
 	private GenericDataElement lineCountElement;
-
-	final public static int LOG_NOT_LOADED = -1;
-	final public static int LOG_LOADING = 0;
-	final public static int LOG_LOADED = 1;
 
 	private String metaData;
 	protected final PropertyChangeSupport PCS;

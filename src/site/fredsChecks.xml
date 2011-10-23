@@ -20,7 +20,6 @@
 		<module name="AbstractClassName"/><!--Ensures that the names of abstract classes conforming to some regular expression. -->
 		<module name="AnnotationUseStyle"/><!--This check controls the style with the usage of annotations. -->
 		<module name="AnonInnerLength"/><!--Checks for long anonymous inner classes. -->
-		<module name="ArrayTrailingComma"/><!--Checks if array initialization contains optional trailing comma. -->
 		<module name="ArrayTypeStyle"/><!--Checks the style of array type definitions. -->
 		<module name="AvoidInlineConditionals"/><!--Detects inline conditionals. -->
 		<module name="AvoidStaticImport"/><!--Check that finds static imports. -->

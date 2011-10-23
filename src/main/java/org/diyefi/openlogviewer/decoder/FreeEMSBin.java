@@ -59,44 +59,44 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	private int packetLength; // Track packet length
 
 	String[] coreStatusAFlagNames = {
-			"CS-FuelPumpPrime",
-			"CS-unused1",
-			"CS-unused2",
-			"CS-unused3",
-			"CS-unused4",
-			"CS-unused5",
-			"CS-unused6",
-			"CS-unused7"
-		};
+		"CS-FuelPumpPrime",
+		"CS-unused1",
+		"CS-unused2",
+		"CS-unused3",
+		"CS-unused4",
+		"CS-unused5",
+		"CS-unused6",
+		"CS-unused7"
+	};
 
 	String[] decoderFlagsFlagNames = {
-			"DF-CombustionSync",
-			"DF-CrankSync",
-			"DF-CamSync",
-			"DF-LAST_TIMESTAMP_VALID",
-			"DF-LAST_PERIOD_VALID",
-			"DF-LAST_MATCH_VALID",
-			"DF-Spare-6",
-			"DF-Spare-7"
-		};
+		"DF-CombustionSync",
+		"DF-CrankSync",
+		"DF-CamSync",
+		"DF-LAST_TIMESTAMP_VALID",
+		"DF-LAST_PERIOD_VALID",
+		"DF-LAST_MATCH_VALID",
+		"DF-Spare-6",
+		"DF-Spare-7"
+	};
 
 	String[] flaggableFlagsNames = {
-			"FF-callsToUISRs",               // to ensure we aren't accidentally triggering unused ISRs.
-			"FF-lowVoltageConditions",       // low voltage conditions.
-			"FF-decoderSyncLosses",          // Number of times cam, crank or combustion sync is lost.
-			"FF-decoderSyncCorrections",     // Definite decoder syncs found while already synced in a different position.
-			"FF-decoderSyncStateClears",     // Sync loss called when not synced yet, thus discarding data and preventing sync.
-			"FF-serialNoiseErrors",          // Incremented when noise is detected
-			"FF-serialFramingErrors",        // Incremented when a framing error occurs
-			"FF-serialParityErrors",         // Incremented when a parity error occurs
-			"FF-serialOverrunErrors",        // Incremented when overrun occurs (duplicated in KeyUserDebug below)
-			"FF-serialEscapePairMismatches", // Incremented when an escape is found but not followed by an escapee
-			"FF-serialStartsInsideAPacket",  // Incremented when a start byte is found inside a packet
-			"FF-serialPacketsOverLength",    // Incremented when the buffer fills up before the end
-			"FF-serialChecksumMismatches",   // Incremented when calculated checksum did not match the received one
-			"FF-serialPacketsUnderLength",   // Incremented when a packet is found that is too short
-			"FF-commsDebugMessagesNotSent",  // Incremented when a debug message can't be sent due to the TX buffer
-			"FF-commsErrorMessagesNotSent"   // Incremented when an error message can't be sent due to the TX buffer
+		"FF-callsToUISRs",               // to ensure we aren't accidentally triggering unused ISRs.
+		"FF-lowVoltageConditions",       // low voltage conditions.
+		"FF-decoderSyncLosses",          // Number of times cam, crank or combustion sync is lost.
+		"FF-decoderSyncCorrections",     // Definite decoder syncs found while already synced in a different position.
+		"FF-decoderSyncStateClears",     // Sync loss called when not synced yet, thus discarding data and preventing sync.
+		"FF-serialNoiseErrors",          // Incremented when noise is detected
+		"FF-serialFramingErrors",        // Incremented when a framing error occurs
+		"FF-serialParityErrors",         // Incremented when a parity error occurs
+		"FF-serialOverrunErrors",        // Incremented when overrun occurs (duplicated in KeyUserDebug below)
+		"FF-serialEscapePairMismatches", // Incremented when an escape is found but not followed by an escapee
+		"FF-serialStartsInsideAPacket",  // Incremented when a start byte is found inside a packet
+		"FF-serialPacketsOverLength",    // Incremented when the buffer fills up before the end
+		"FF-serialChecksumMismatches",   // Incremented when calculated checksum did not match the received one
+		"FF-serialPacketsUnderLength",   // Incremented when a packet is found that is too short
+		"FF-commsDebugMessagesNotSent",  // Incremented when a debug message can't be sent due to the TX buffer
+		"FF-commsErrorMessagesNotSent"   // Incremented when an error message can't be sent due to the TX buffer
 	};
 
 	// This should be read from a file at some point, as it's going to be flexible. See FreeEMS/src/inc/structs.h for definitive answers.

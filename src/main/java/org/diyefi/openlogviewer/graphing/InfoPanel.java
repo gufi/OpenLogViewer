@@ -36,6 +36,7 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
+	private static final long serialVersionUID = -6657156551430700622L;
 	private int FPScounter = 0;
 	private int FPS = 0;
 	private long currentTime;
@@ -46,7 +47,6 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private int xMouseCoord;
 	private int yMouseCoord;
 	boolean mouseOver;
-	private static final long serialVersionUID = -6657156551430700622L;
 
 	public InfoPanel() {
 		genLog = new GenericLog();

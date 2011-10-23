@@ -25,11 +25,18 @@ package org.diyefi.openlogviewer.utils;
 
 import java.io.File;
 
-public class Utilities {
-	public static String getExtension(File f) {
+
+public final class Utilities {
+	/**
+	 * Prevent instantiation.
+	 */
+	private Utilities() {
+	}
+
+	public static String getExtension(final File f) {
 		String ext = null;
-		String s = f.getName();
-		int i = s.lastIndexOf('.');
+		final String s = f.getName();
+		final int i = s.lastIndexOf('.');
 
 		if (i > 0 && i < s.length() - 1) {
 			ext = s.substring(i + 1).toLowerCase();
