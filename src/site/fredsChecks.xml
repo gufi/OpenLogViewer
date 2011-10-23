@@ -46,7 +46,10 @@
 		<module name="FinalLocalVariable"/><!--Ensures that local variables that never get their values changed, must be declared final. -->
 		<module name="FinalParameters"/><!--Check that method/constructor/catch/foreach parameters are final. -->
 		<module name="GenericWhitespace"/><!--Checks that the whitespace around the Generic tokens < and > are correct to the typical convention.-->
-		<module name="HiddenField"/><!--Checks that a local variable or a parameter does not shadow a field that is defined in the same class. -->
+		<module name="HiddenField"><!--Checks that a local variable or a parameter does not shadow a field that is defined in the same class. -->
+			<property name="ignoreSetter" value="true"/>
+			<property name="ignoreConstructorParameter" value="true"/>
+		</module>
 		<module name="HideUtilityClassConstructor"/><!--Make sure that utility classes (classes that contain only static methods) do not have a public constructor. -->
 		<module name="IllegalCatch"/><!--Catching java.lang.Exception, java.lang.Error or java.lang.RuntimeException is almost never acceptable. -->
 		<module name="IllegalImport"/><!--Checks for imports from a set of illegal packages. -->
