@@ -145,7 +145,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+				if(zoomedOut){
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + 1, prevScreenPositionYCoord);
+				} else {
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+				}
 			}
 
 			// Move to next trace data in the list
@@ -237,7 +241,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
+				if(zoomedOut){
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - 1, prevScreenPositionYCoord);
+				} else {
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
+				}
 			}
 
 			// Move to next trace data in the list
