@@ -80,11 +80,21 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 	@Override
 	public final void paint(final Graphics g) { // overridden paint because there will be no other painting other than this
-		initGraph();
-		if (hasDataPointToDisplay()) {
-			// TODO Candidates for refactoring into single class, maybe. Did not look in detail.
-			paintLeftDataPoints(g);
-			paintRightDataPoints(g);
+		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+		if(zoomedOut){
+			initGraphZoomedOut();
+			if (hasDataPointToDisplay()) {
+				paintLeftDataPoints(g);
+				paintRightDataPoints(g);
+			}
+		} else{
+			initGraphZoomed();
+			if (hasDataPointToDisplay()) {
+				// TODO Candidates for refactoring into single class, maybe. Did not look in detail.
+				// Ben says they should be left alone.
+				paintLeftDataPoints(g);
+				paintRightDataPoints(g);
+			}
 		}
 	}
 
@@ -107,7 +117,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		} else {
 			if (rightDataPointsToDisplay.size() > 1) {
 				rightOfTraceData = rightDataPointsToDisplay.get(1);
-			} // At graph end TODO, should this do something, did have empty block!
+			} // else at graph end
 		}
 		if (it.hasNext()) {
 			leftOfTraceData = it.next();
@@ -117,6 +127,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 
 		// Setup data point screen location stuff
+		final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
@@ -128,7 +139,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		while (it.hasNext()) {
 
 			// Draw data point
-			if (zoom > 5 && (!traceData.equals(leftOfTraceData) || !traceData.equals(rightOfTraceData))) {
+			if (zoom > 5 && !zoomedOut && (!traceData.equals(leftOfTraceData) || !traceData.equals(rightOfTraceData))) {
 				g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
 			}
 
@@ -150,7 +161,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			// Reconfigure data point screen location stuff
 			prevScreenPositionYCoord = screenPositionYCoord;
 			screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
-			screenPositionXCoord -= zoom;
+			if(zoomedOut){
+				screenPositionXCoord--;
+			} else{
+				screenPositionXCoord -= zoom;
+			}
 			firstDataPoint = false;
 		}
 
@@ -159,13 +174,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
 
 			// Draw data point
-			if (zoom > 5) {
+			if (zoom > 5 && !zoomedOut) {
 				g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
 			}
 
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+				if(zoomedOut){
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + 1, prevScreenPositionYCoord);
+				} else {
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
+				}
 			}
 		}
 	}
@@ -189,7 +208,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		} else {
 			if (leftDataPointsToDisplay.size() > 1) {
 				leftOfTraceData = leftDataPointsToDisplay.get(1);
-			} // At graph beginning TODO, should this do something, did have empty block!
+			} // else at graph beginning
 		}
 
 		if (it.hasNext()) {
@@ -200,6 +219,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 
 		// Setup data point screen location stuff
+		final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
@@ -211,7 +231,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		while (it.hasNext()) {
 
 			// Draw data point
-			if (zoom > 5 && (!traceData.equals(leftOfTraceData) || !traceData.equals(rightOfTraceData))) {
+			if (zoom > 5 && !zoomedOut && (!traceData.equals(leftOfTraceData) || !traceData.equals(rightOfTraceData))) {
 				g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
 			}
 
@@ -233,7 +253,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			// Reconfigure data point screen location stuff
 			prevScreenPositionYCoord = screenPositionYCoord;
 			screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
-			screenPositionXCoord += zoom;
+			if(zoomedOut){
+				screenPositionXCoord++;
+			} else{
+				screenPositionXCoord += zoom;
+			}
 			firstDataPoint = false;
 		}
 
@@ -241,12 +265,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		if (atGraphEnd) {
 			screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
 			// Draw data point
-			if (zoom > 5 && !traceData.equals(leftOfTraceData)) {
+			if (zoom > 5 && !zoomedOut && !traceData.equals(leftOfTraceData)) {
 				g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
 			}
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
+				if(zoomedOut){
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - 1, prevScreenPositionYCoord);
+				} else {
+					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
+				}
 			}
 		}
 	}
@@ -282,15 +310,23 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	/**
-	 * used for InfoLayer to get the data from the GraphLayers for data under the mouse
-	 * needs to be rewritten. < no shit? :-)
+	 * Used for InfoLayer to get the data from the single graphs for data under the mouse
 	 *
-	 * TODO add final to parameter and rewrite to work with that change.
-	 *
-	 * @param i
-	 * @return Double representation of info at the mouse pointer
+	 * @param pointerDistanceFromCenter
+	 * @return Double representation of info at the mouse cursor line which snaps to data points
 	 */
-	public final Double getMouseInfo(int cursorDistanceFromCenter) {
+	public final Double getMouseInfo(final int cursorDistanceFromCenter) {
+		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+		Double info = -1.0;
+		if(zoomedOut){
+			info = getMouseInfoZoomedOut(cursorDistanceFromCenter);
+		} else {
+			info = getMouseInfoZoomed(cursorDistanceFromCenter);
+		}
+		return info;
+	}
+
+	private final Double getMouseInfoZoomed(int cursorDistanceFromCenter){
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
@@ -298,7 +334,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		double numSnapsFromCenter = ((double) cursorDistanceFromCenter / (double) zoom);
 		numSnapsFromCenter = Math.round(numSnapsFromCenter);
 		final int cursorPosition = (int) graphPosition + (int) numSnapsFromCenter;
+		if ((cursorPosition >= 0) && (cursorPosition < GDE.size())) {
+			return GDE.get(cursorPosition);
+		} else {
+			return -1.0;
+		}
+	}
 
+	private final Double getMouseInfoZoomedOut(int cursorDistanceFromCenter){
+		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		final int cursorPosition = (int) graphPosition + (cursorDistanceFromCenter * zoom);
 		if ((cursorPosition >= 0) && (cursorPosition < GDE.size())) {
 			return GDE.get(cursorPosition);
 		} else {
@@ -315,10 +361,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	/**
-	 * initialize the graph when the width of the graph parent changes or any time a major update happens
-	 * such as changing current
+	 * initialize the graph any time you need to paint
 	 */
-	public final void initGraph() {
+	public final void initGraphZoomed() {
 		if (GDE != null) {
 			leftDataPointsToDisplay = new LinkedList<Double>();
 			rightDataPointsToDisplay = new LinkedList<Double>();
@@ -345,6 +390,35 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	/**
+	 * initialize the graph any time you need to paint
+	 */
+	public final void initGraphZoomedOut() {
+		if (GDE != null) {
+			leftDataPointsToDisplay = new LinkedList<Double>();
+			rightDataPointsToDisplay = new LinkedList<Double>();
+			final int graphPosition = (int) OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+			final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+			int numPointsThatFitInDisplay = this.getWidth() * zoom;
+			numPointsThatFitInDisplay += 6; // Add six data points for off-screen (not just two, because of zoom stupidity) = LOL
+			final int halfNumPoints = numPointsThatFitInDisplay / 2;
+			final int leftGraphPosition = graphPosition - halfNumPoints;
+			final int rightGraphPosition = graphPosition + halfNumPoints;
+
+			for (int i = graphPosition; i > leftGraphPosition; i-=zoom) {
+				if (i >= 0 && i < GDE.size()) {
+					leftDataPointsToDisplay.add(GDE.get(i));
+				}
+			}
+
+			for (int i = graphPosition; i < rightGraphPosition; i+=zoom) {
+				if (i >= 0 && i < GDE.size()) {
+					rightDataPointsToDisplay.add(GDE.get(i));
+				}
+			}
+		}
+	}
+
+	/**
 	 * maintains the size of the graph when applying divisions
 	 */
 	public final void sizeGraph() {
@@ -359,7 +433,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 
 		this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
-		initGraph();
+		initGraphZoomed();
 	}
 
 	/**

@@ -56,6 +56,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private int prevDragXCoord;
 	private int flingInertia;
 	private int zoom;
+	private boolean zoomedBeyondOneToOne;
 
 	public EntireGraphingPanel() {
 		super();
@@ -88,6 +89,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		stopFlinging();
 		thePast = System.currentTimeMillis();
 		zoom = 1;
+		zoomedBeyondOneToOne = false;
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
@@ -124,17 +126,31 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void zoomIn() {
-		if (zoom < 500) {
+		if(zoomedBeyondOneToOne && zoom == 2){
+			zoomedBeyondOneToOne = false;
+			zoom = 1;
+		} else if (zoomedBeyondOneToOne){
+			zoom--;
+		} else if (zoom < 512) {
 			zoom++;
 		}
 		repaint();
 	}
 
 	public final void zoomOut() {
-		if (zoom > 1) {
+		if(!zoomedBeyondOneToOne && zoom == 1){
+			zoomedBeyondOneToOne = true;
+			zoom = 2;
+		} else if (zoomedBeyondOneToOne && zoom < 1024){
+			zoom++;
+		} else {
 			zoom--;
 		}
 		repaint();
+	}
+
+	public boolean isZoomedBeyondOneToOne(){
+		return zoomedBeyondOneToOne;
 	}
 
 	public final void play() {
@@ -338,7 +354,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		if (notches < 0) {
 			zoomIn();
 			moveEntireGraphingPanel(zoomInMove);
-		} else if (zoom > 1) {
+		} else {
 			zoomOut();
 			moveEntireGraphingPanel(zoomOutMove);
 		}

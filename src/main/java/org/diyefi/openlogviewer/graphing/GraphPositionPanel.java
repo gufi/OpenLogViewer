@@ -61,29 +61,32 @@ public class GraphPositionPanel extends JPanel {
 		if (!this.getSize().equals(this.getParent().getSize())) {
 			this.setSize(this.getParent().getSize());
 		}
-
 		setGraduationSpacing();
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(backgroundColor);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-
 		if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
-			paintPositionBar(g2d);
+			paintPositionBarZoomed(g2d);
 		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
-			paintPositionBar(g2d);
+			paintPositionBarZoomed(g2d);
 		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-			paintPositionBar(g2d);
-			paintPositionData(g2d);
-			setupMouseCursorLineSnappingPositions();
+			final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+			if(zoomedOut){
+				paintPositionBarZoomedOut(g2d);
+				paintPositionDataZoomedOut(g2d);
+			} else {
+				paintPositionBarZoomed(g2d);
+				paintPositionDataZoomed(g2d);
+				setupMouseCursorLineSnappingPositions();
+			}
 		}
 	}
 
-	private void paintPositionBar(final Graphics2D g2d) {
+	private void paintPositionBarZoomed(final Graphics2D g2d) {
 		final int center = this.getWidth() / 2;
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(majorGraduationColor);
-
 		double count = Math.round(graphPosition * zoom);
 		for (int i = center; i > 0; i--) { //paint left of center
 			if (count % (majorGraduationSpacing * zoom) == 0) {
@@ -91,7 +94,6 @@ public class GraphPositionPanel extends JPanel {
 			}
 			count--;
 		}
-
 		count = Math.round(graphPosition * zoom);
 		for (int i = center; i < this.getWidth(); i++) { // Paint right of center
 			if (count % (majorGraduationSpacing * zoom) == 0) {
@@ -99,16 +101,36 @@ public class GraphPositionPanel extends JPanel {
 			}
 			count++;
 		}
-
 		g2d.drawLine(0, 0, this.getWidth(), 0);
 	}
 
-	private void paintPositionData(final Graphics2D g2d) {
+	private void paintPositionBarZoomedOut(final Graphics2D g2d) {
+		final int center = this.getWidth() / 2;
+		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		g2d.setColor(majorGraduationColor);
+		double count = Math.round(graphPosition * zoom);
+		for (int i = center; i > 0; i--) { //paint left of center
+			if (count % (majorGraduationSpacing / zoom) == 0) {
+				g2d.drawLine(i, 0, i, 6);
+			}
+			count--;
+		}
+		count = Math.round(graphPosition * zoom);
+		for (int i = center; i < this.getWidth(); i++) { // Paint right of center
+			if (count % (majorGraduationSpacing / zoom) == 0) {
+				g2d.drawLine(i, 0, i, 6);
+			}
+			count++;
+		}
+		g2d.drawLine(0, 0, this.getWidth(), 0);
+	}
+
+	private void paintPositionDataZoomed(final Graphics2D g2d) {
 		final int center = this.getWidth() / 2;
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(positionDataColor);
-
 		double count = Math.round(graphPosition * zoom);
 		for (int i = center; i > 0; i--) { // paint left of center
 			if (count % (majorGraduationSpacing * zoom) == 0) {
@@ -117,11 +139,33 @@ public class GraphPositionPanel extends JPanel {
 			}
 			count--;
 		}
-
 		count = Math.round(graphPosition * zoom);
 		for (int i = center; i < this.getWidth(); i++) { // Paint right of center
 			if (count % (majorGraduationSpacing * zoom) == 0) {
 				final String positionDataString = Integer.toString((int) (count / zoom));
+				g2d.drawString(positionDataString, i - 10, 18);
+			}
+			count++;
+		}
+	}
+
+	private void paintPositionDataZoomedOut(final Graphics2D g2d) {
+		final int center = this.getWidth() / 2;
+		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		g2d.setColor(positionDataColor);
+		double count = Math.round(graphPosition * zoom);
+		for (int i = center; i > 0; i--) { // paint left of center
+			if (count % (majorGraduationSpacing / zoom) == 0) {
+				final String positionDataString = Integer.toString((int) (count * zoom));
+				g2d.drawString(positionDataString, i - 10, 18);
+			}
+			count--;
+		}
+		count = Math.round(graphPosition * zoom);
+		for (int i = center; i < this.getWidth(); i++) { // Paint right of center
+			if (count % (majorGraduationSpacing / zoom) == 0) {
+				final String positionDataString = Integer.toString((int) (count * zoom));
 				g2d.drawString(positionDataString, i - 10, 18);
 			}
 			count++;
@@ -133,7 +177,6 @@ public class GraphPositionPanel extends JPanel {
 		validSnappingPositions = new boolean[this.getWidth()];
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-
 		double count = Math.round(graphPosition * zoom);
 		// Fill array with valid snapping points that are left of center
 		for (int i = center; i > 0; i--) {
@@ -142,7 +185,6 @@ public class GraphPositionPanel extends JPanel {
 			}
 			count--;
 		}
-
 		count = Math.round(graphPosition * zoom);
 		// Fill array with valid snapping points that are right of center
 		for (int i = center; i < this.getWidth(); i++) {
@@ -160,25 +202,31 @@ public class GraphPositionPanel extends JPanel {
 
 	private void setGraduationSpacing() {
 		int zoom = 1;
+		boolean zoomedOut = false;
 		if (OpenLogViewerApp.getInstance() != null) {
 			zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+			zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
 		}
-		if (zoom > 64) {
-			majorGraduationSpacing = 1;
-		} else if (zoom > 32) {
-			majorGraduationSpacing = 2;
-		} else if (zoom > 16) {
-			majorGraduationSpacing = 5;
-		} else if (zoom > 8) {
-			majorGraduationSpacing = 10;
-		} else if (zoom > 4) {
-			majorGraduationSpacing = 20;
-		} else if (zoom > 2) {
-			majorGraduationSpacing = 25; // Hmmmmmmm :-)
-		} else if (zoom > 1) {
-			majorGraduationSpacing = 50;
-		} else {
-			majorGraduationSpacing = 100;
+		if (zoomedOut){
+			majorGraduationSpacing = zoom * 100;
+		} else{
+			if (zoom > 64) {
+				majorGraduationSpacing = 1;
+			} else if (zoom > 32) {
+				majorGraduationSpacing = 2;
+			} else if (zoom > 16) {
+				majorGraduationSpacing = 5;
+			} else if (zoom > 8) {
+				majorGraduationSpacing = 10;
+			} else if (zoom > 4) {
+				majorGraduationSpacing = 20;
+			} else if (zoom > 2) {
+				majorGraduationSpacing = 25; // Hmmmmmmm :-)
+			} else if (zoom > 1) {
+				majorGraduationSpacing = 50;
+			} else {
+				majorGraduationSpacing = 100;
+			}
 		}
 	}
 
