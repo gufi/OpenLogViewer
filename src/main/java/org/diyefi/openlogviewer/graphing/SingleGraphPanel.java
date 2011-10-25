@@ -128,7 +128,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 		// Setup data point screen location stuff
 		final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
-		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		if(zoomedOut){
+			zoom = 1;
+		}
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
 		int screenPositionXCoord = (this.getWidth() / 2) - (int) offset;
@@ -145,11 +148,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				if(zoomedOut){
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + 1, prevScreenPositionYCoord);
-				} else {
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
-				}
+				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
 			}
 
 			// Move to next trace data in the list
@@ -165,11 +164,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			// Reconfigure data point screen location stuff
 			prevScreenPositionYCoord = screenPositionYCoord;
 			screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
-			if(zoomedOut){
-				screenPositionXCoord--;
-			} else{
-				screenPositionXCoord -= zoom;
-			}
+			screenPositionXCoord -= zoom;
 			firstDataPoint = false;
 		}
 
@@ -184,11 +179,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				if(zoomedOut){
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + 1, prevScreenPositionYCoord);
-				} else {
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
-				}
+				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, prevScreenPositionYCoord);
 			}
 		}
 	}
@@ -224,7 +215,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 		// Setup data point screen location stuff
 		final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
-		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		if(zoomedOut){
+			zoom = 1;
+		}
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
 		int screenPositionXCoord = (this.getWidth() / 2) - (int) offset;
@@ -241,11 +235,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				if(zoomedOut){
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - 1, prevScreenPositionYCoord);
-				} else {
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
-				}
+				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
 			}
 
 			// Move to next trace data in the list
@@ -261,11 +251,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			// Reconfigure data point screen location stuff
 			prevScreenPositionYCoord = screenPositionYCoord;
 			screenPositionYCoord = getScreenPositionYCoord(traceData, GDE.getMinValue(), GDE.getMaxValue());
-			if(zoomedOut){
-				screenPositionXCoord++;
-			} else{
-				screenPositionXCoord += zoom;
-			}
+			screenPositionXCoord += zoom;
 			firstDataPoint = false;
 		}
 
@@ -278,11 +264,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			}
 			// Draw graph trace line
 			if (!firstDataPoint) {
-				if(zoomedOut){
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - 1, prevScreenPositionYCoord);
-				} else {
-					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
-				}
+				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord - zoom, prevScreenPositionYCoord);
 			}
 		}
 	}
