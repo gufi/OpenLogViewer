@@ -34,10 +34,11 @@ import javax.swing.JPanel;
 
 public class PlayBarPanel extends JPanel {
 	private static final long serialVersionUID = 1294732662423188903L;
-	private static final int PLAY_BAR_PREFERRED_WIDTH = 857;
+	private static final int PLAY_BAR_PREFERRED_WIDTH = 888;
 	private static final int PLAY_BAR_PREFERRED_HEIGHT = 40;
 
 	private JButton zoomInButton;
+	private JButton zoomResetButton;
 	private JButton zoomOutButton;
 	private JButton playButton;
 	private JButton slowDownButton;
@@ -52,6 +53,7 @@ public class PlayBarPanel extends JPanel {
 	public PlayBarPanel() {
 		super();
 		zoomInButton = new JButton();
+		zoomResetButton = new JButton();
 		zoomOutButton = new JButton();
 		slowDownButton = new JButton();
 		playButton = new JButton();
@@ -85,6 +87,21 @@ public class PlayBarPanel extends JPanel {
 			}
 		});
 		this.add(zoomInButton);
+
+		zoomResetButton.setIcon(new ImageIcon(getClass().getResource("Playbar_o.png"))); // NOI18N
+		zoomResetButton.setAlignmentY(0.0F);
+		zoomResetButton.setBorder(null);
+		zoomResetButton.setBorderPainted(false);
+		zoomResetButton.setContentAreaFilled(false);
+		zoomResetButton.setName("zoomResetButton");
+		zoomResetButton.setRequestFocusEnabled(false);
+		zoomResetButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				zoomResetButtonMouseReleased(e);
+			}
+		});
+		this.add(zoomResetButton);
 
 		zoomOutButton.setIcon(new ImageIcon(getClass().getResource("Playbar_-.png"))); // NOI18N
 		zoomOutButton.setAlignmentY(0.0F);
@@ -193,7 +210,7 @@ public class PlayBarPanel extends JPanel {
 	}
 
 	/**
-	 * modifys the state of the PlayableLog zoom in 1 pixel up to 10 pixels
+	 * Modify the state of the PlayableLog zoom in 1 pixel up to 512 pixels
 	 * @param evt
 	 */
 	private void zoomInButtonMouseReleased(final MouseEvent e) {
@@ -201,11 +218,29 @@ public class PlayBarPanel extends JPanel {
 	}
 
 	/**
-	 * modifys the state of the PlayableLog zoom in 1 pixel down to 1 pixel
+	 * Modify the state of the PlayableLog zoom in 1 pixel down to -1024 pixels
 	 * @param evt
 	 */
 	private void zoomOutButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
+	}
+
+	/**
+	 * Modify the state of the PlayableLog zoom to exactly 1
+	 * @param evt
+	 */
+	private void zoomResetButtonMouseReleased(final MouseEvent e) {
+		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+		if(zoomedOut){
+			for(int i = zoom; i > 1; i--){
+				OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
+			}
+		} else {
+			for(int i = zoom; i > 1; i--){
+				OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
+			}
+		}
 	}
 
 	/**
