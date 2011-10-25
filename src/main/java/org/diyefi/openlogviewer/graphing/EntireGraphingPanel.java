@@ -37,7 +37,6 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
@@ -251,18 +250,21 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	private void moveEntireGraphingPanel(final double newPosition) {
-		final double currentGraphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		final int currentGraphPositionMax = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionMax();
 		final double center = this.getWidth() / 2;
-		final double move = (newPosition - center) / zoom;
-		if (move + currentGraphPosition < currentGraphPositionMax) {
-			if (move + currentGraphPosition < 0) {
-				OpenLogViewerApp.getInstance().getEntireGraphingPanel().resetGraphPosition();
+		double move = -1.0;
+		if(zoomedBeyondOneToOne){
+			move = (newPosition - center) * zoom;
+		} else {
+			move = (newPosition - center) / zoom;
+		}
+		if (move + graphPosition < graphPositionMax) {
+			if (move + graphPosition < 0) {
+				resetGraphPosition();
 			} else {
-				OpenLogViewerApp.getInstance().getEntireGraphingPanel().moveGraphPosition(move);
+				moveGraphPosition(move);
 			}
 		} else {
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPosition(currentGraphPositionMax);
+			setGraphPosition(graphPositionMax);
 		}
 	}
 
@@ -303,16 +305,19 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public final void mouseMoved(final MouseEvent e) {
 		// What should be here?
+		// Ben says eventually there might be stuff here, and it is required implementation for the MouseMovementListener interface.
 	}
 
 	@Override
 	public final void mouseEntered(final MouseEvent e) {
 		// What should be here?
+		// Ben says eventually there might be stuff here, and it is required implementation for the MouseMovementListener interface.
 	}
 
 	@Override
 	public final void mouseExited(final MouseEvent e) {
 		// What should be here?
+		// Ben says eventually there might be stuff here, and it is required implementation for the MouseMovementListener interface.
 	}
 
 	@Override
@@ -481,10 +486,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public final void keyReleased(final KeyEvent e) {
 		// What should be here?
+		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
 	}
 
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		// What should be here?
+		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
 	}
 }
