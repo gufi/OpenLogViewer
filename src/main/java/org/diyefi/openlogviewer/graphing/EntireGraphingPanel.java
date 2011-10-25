@@ -400,7 +400,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center - (1 * zoom));
+					moveEntireGraphingPanel(center - zoom);
 				}
 				break;
 			}
@@ -411,7 +411,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center - (1 * zoom));
+					moveEntireGraphingPanel(center - zoom);
 				}
 				break;
 			}
@@ -429,7 +429,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center + (1 * zoom));
+					moveEntireGraphingPanel(center + zoom);
 				}
 				break;
 			}
@@ -440,7 +440,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center + (1 * zoom));
+					moveEntireGraphingPanel(center + zoom);
 				}
 				break;
 			}
