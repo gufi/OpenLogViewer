@@ -395,7 +395,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			final int halfNumPoints = numPointsThatFitInDisplay / 2;
 			final int leftGraphPosition = graphPosition - halfNumPoints;
 			final int rightGraphPosition = graphPosition + halfNumPoints;
-			Double prevData = GDE.get(graphPosition);
+			Double prevData = 0.0;
 
 			/*
 			* Setup left data points.
@@ -406,13 +406,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* the data spread is used. If the average is lower, then the lowest
 			* value of the data point spread is used.
 			*/
+			prevData = GDE.get(graphPosition);
 			for (int i = graphPosition; i > leftGraphPosition; i-=zoom) {
+
 				if (i >= 0 && i < GDE.size()) {
 					Double minData = Double.MAX_VALUE;
 					Double maxData = Double.MIN_VALUE;
 					Double newData = 0.0;
 					Double acummulateData = 0.0;
 					int divisor = 0;
+
 					for (int j = 0; j < zoom; j++){
 						if (i - j >= 0 && i - j < GDE.size()) {
 							newData = GDE.get(i - j);
@@ -449,13 +452,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* the data spread is used. If the average is lower, then the lowest
 			* value of the data point spread is used.
 			*/
+			prevData = GDE.get(graphPosition);
 			for (int i = graphPosition; i < rightGraphPosition; i+=zoom) {
+
 				if (i >= 0 && i < GDE.size()) {
 					Double minData = Double.MAX_VALUE;
 					Double maxData = Double.MIN_VALUE;
 					Double newData = 0.0;
 					Double acummulateData = 0.0;
 					int divisor = 0;
+
 					for (int j = 0; j < zoom; j++){
 						if (i + j >= 0 && i + j < GDE.size()) {
 							newData = GDE.get(i + j);
