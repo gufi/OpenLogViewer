@@ -389,58 +389,82 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			// Scroll left key bindings
 			case KeyEvent.VK_PAGE_UP: {
+				int localZoom = zoom;
+				if(zoomedBeyondOneToOne){
+					localZoom = 1;
+				}
 				//Big scroll
-				moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
+				moveEntireGraphingPanel(-(this.getWidth() / 4) / localZoom);
 				break;
 			}
 
 			case KeyEvent.VK_LEFT: {
+				int localZoom = zoom;
+				if(zoomedBeyondOneToOne){
+					localZoom = 1;
+				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
+					moveEntireGraphingPanel(-(this.getWidth() / 4) / localZoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center - zoom);
+					moveEntireGraphingPanel(center - localZoom);
 				}
 				break;
 			}
 
 			case KeyEvent.VK_KP_LEFT: {
+				int localZoom = zoom;
+				if(zoomedBeyondOneToOne){
+					localZoom = 1;
+				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(-(this.getWidth() / 4) / zoom);
+					moveEntireGraphingPanel(-(this.getWidth() / 4) / localZoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center - zoom);
+					moveEntireGraphingPanel(center - localZoom);
 				}
 				break;
 			}
 
 			// Scroll right key bindings
 			case KeyEvent.VK_PAGE_DOWN: {
+				int localZoom = zoom;
+				if(zoomedBeyondOneToOne){
+					localZoom = 1;
+				}
 				//Big scroll
-				moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+				moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / localZoom);
 				break;
 			}
 
 			case KeyEvent.VK_RIGHT: {
+				int localZoom = zoom;
+				if(zoomedBeyondOneToOne){
+					localZoom = 1;
+				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / localZoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center + zoom);
+					moveEntireGraphingPanel(center + localZoom);
 				}
 				break;
 			}
 
 			case KeyEvent.VK_KP_RIGHT: {
+				int localZoom = zoom;
+				if(zoomedBeyondOneToOne){
+					localZoom = 1;
+				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / zoom);
+					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / localZoom);
 				} else {
 					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center + zoom);
+					moveEntireGraphingPanel(center + localZoom);
 				}
 				break;
 			}
