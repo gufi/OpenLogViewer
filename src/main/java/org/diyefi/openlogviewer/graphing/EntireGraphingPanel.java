@@ -223,9 +223,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private void moveGraphPosition(final double amount) {
 		final double newPos = graphPosition + amount;
 		if (newPos > graphPositionMax){
-			setGraphPosition(graphPositionMax);
+			goToLastGraphPosition();
 		} else if (newPos < 0){
-			setGraphPosition(0);
+			resetGraphPosition();
 		} else {
 			setGraphPosition(newPos);
 		}

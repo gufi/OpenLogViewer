@@ -90,7 +90,11 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 			if (mouseOver) {
 				final GraphPositionPanel graphPositionPanel = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
-				final int snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);
+				final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+				int snappedDataPosition = xMouseCoord;
+				if(!zoomedOut){
+					snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);
+				}
 				g2d.setColor(vertBar);
 				g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
 				g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
