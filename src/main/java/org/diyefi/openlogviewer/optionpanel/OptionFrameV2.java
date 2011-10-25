@@ -130,7 +130,7 @@ public class OptionFrameV2 extends JFrame {
 	private ActionListener remDivisionListener = new ActionListener() {
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			remActiveHeaderPanel(e);
 		}
 	};
@@ -138,7 +138,7 @@ public class OptionFrameV2 extends JFrame {
 	private ContainerListener addRemoveListener = new ContainerListener() {
 
 		@Override
-		public void componentAdded(ContainerEvent e) {
+		public void componentAdded(final ContainerEvent e) {
 
 			if (e.getChild() != null) {
 				if (e.getChild() instanceof ActiveHeaderLabel) {
@@ -150,7 +150,7 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		@Override
-		public void componentRemoved(ContainerEvent e) {
+		public void componentRemoved(final ContainerEvent e) {
 			if (e.getChild() != null) {
 				if (e.getChild() instanceof ActiveHeaderLabel) {
 					((ActiveHeaderLabel) e.getChild()).setEnabled(false);
@@ -169,9 +169,9 @@ public class OptionFrameV2 extends JFrame {
 
 		if (activePanelList.size() < MAX_NUMBER_OF_BOXES) {
 
-			int row = activePanelList.size() / WIDTH_OF_BOXES;
-			int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviors at once...
-			JPanel activePanel = new JPanel();
+			final int row = activePanelList.size() / WIDTH_OF_BOXES;
+			final int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviors at once...
+			final JPanel activePanel = new JPanel();
 			activePanelList.add(activePanel);
 			if (OpenLogViewerApp.getInstance() != null) {
 				OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
@@ -182,7 +182,7 @@ public class OptionFrameV2 extends JFrame {
 
 			activePanel.setBounds((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row, PANEL_WIDTH, PANEL_HEIGHT);
 			activePanel.setBackground(Color.DARK_GRAY);
-			JButton removeButton = new JButton("Remove");
+			final JButton removeButton = new JButton("Remove");
 			removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
 			removeButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
 			removeButton.addActionListener(remDivisionListener);
@@ -195,14 +195,14 @@ public class OptionFrameV2 extends JFrame {
 		}
 	}
 
-	private void remActiveHeaderPanel(ActionEvent e) {
-		JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
+	private void remActiveHeaderPanel(final ActionEvent e) {
+		final JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
 		activePanelList.remove(panel);
 		OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
 
 		for (int i = 0; i < panel.getComponentCount();) {
 			if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
-				ActiveHeaderLabel GCB = (ActiveHeaderLabel) panel.getComponent(i);
+				final ActiveHeaderLabel GCB = (ActiveHeaderLabel) panel.getComponent(i);
 				GCB.getInactivePanel().add(GCB);
 				GCB.setLocation(GCB.getInactiveLocation());
 				GCB.setSelected(false);
@@ -215,8 +215,8 @@ public class OptionFrameV2 extends JFrame {
 
 		panel.getParent().remove(panel);
 		for (int i = 0; i < activePanelList.size(); i++) {
-			int row = i / WIDTH_OF_BOXES;
-			int col = i % WIDTH_OF_BOXES;
+			final int row = i / WIDTH_OF_BOXES;
+			final int col = i % WIDTH_OF_BOXES;
 			activePanelList.get(i).setLocation((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row);
 		}
 
@@ -227,7 +227,7 @@ public class OptionFrameV2 extends JFrame {
 		// Move this to events eventually,
 		if (activePanelList.size() > 1) {
 			for (int i = 0; i < activePanelList.size(); i++) {
-				JPanel active = activePanelList.get(i);
+				final JPanel active = activePanelList.get(i);
 				if (active.getComponentCount() > 1) {
 					for (int j = 0; j < active.getComponentCount(); j++) {
 						if (active.getComponent(j) instanceof ActiveHeaderLabel) {
@@ -248,22 +248,25 @@ public class OptionFrameV2 extends JFrame {
 	private MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
 
 		@Override
-		public void mouseDragged(MouseEvent e) {
-			Component c = e.getComponent();
-			ActiveHeaderLabel GCB = (ActiveHeaderLabel) c;
+		public void mouseDragged(final MouseEvent e) {
+			final Component c = e.getComponent();
+			final ActiveHeaderLabel GCB = (ActiveHeaderLabel) c;
 			GCB.setDragging(true);
-			if (c.getParent() != null && layeredPane.getMousePosition() != null && (e.getModifiers() == 16)) { // 4 == right mouse button
-				if (!c.getParent().contains(layeredPane.getMousePosition().x - c.getParent().getX(), layeredPane.getMousePosition().y - c.getParent().getY())) {
-					Component cn = c.getParent().getParent().getComponentAt(layeredPane.getMousePosition());
+			final Point pointNow = layeredPane.getMousePosition();
+			final Component parent = c.getParent();
+			if ((e.getModifiers() == 16) && (parent != null) && (pointNow != null)) { // 4 == right mouse button
+				if (!parent.contains(pointNow.x - parent.getX(), pointNow.y - parent.getY())) {
+					final Component parentsParent = parent.getParent();
+					final Component cn = parentsParent.getComponentAt(pointNow);
 					if (cn instanceof JPanel) {
-						JPanel j = (JPanel) cn;
+						final JPanel j = (JPanel) cn;
 						if (j.getName().contains("Drop")) { // implement a better way to do this later
 							j.add(c); // components cannot share parents so it is automatically removed
 							// reset the location to where the mouse is, otherwise first pixel when moving to the new jpanel
 							c.setLocation(
 									// will cause a location issue reflecting where the panel was in the PREVIOUS panel
-									layeredPane.getMousePosition().x - c.getParent().getX() - (c.getWidth() / 2),
-									layeredPane.getMousePosition().y - c.getParent().getY() - (c.getHeight() / 2));
+									pointNow.x - parent.getX() - (c.getWidth() / 2),
+									pointNow.y - parent.getY() - (c.getHeight() / 2));
 						}
 					}
 				} else {
@@ -274,8 +277,8 @@ public class OptionFrameV2 extends JFrame {
 		}
 	};
 
-	private boolean place(ActiveHeaderLabel GCB) {
-		int x = 0;
+	private boolean place(final ActiveHeaderLabel GCB) {
+		final int x = 0;
 		int y = COMP_HEIGHT;
 		while (y < GCB.getParent().getHeight()) {
 			if (GCB.getParent().getComponentAt(x, y) == GCB.getParent() || GCB.getParent().getComponentAt(x, y) == GCB) {
@@ -287,7 +290,7 @@ public class OptionFrameV2 extends JFrame {
 		return false;
 	}
 
-	public void updateFromLog(GenericLog gl) {
+	public void updateFromLog(final GenericLog gl) {
 
 		while (activePanelList.size() > 0) {
 			activePanelList.get(0).removeAll();
@@ -304,14 +307,14 @@ public class OptionFrameV2 extends JFrame {
 		this.addActiveHeaderPanel(); // will be based on highest number of divisions found when properties are applied
 
 
-		ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
-		Iterator<String> i = gl.keySet().iterator();
+		final ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
+		final Iterator<String> i = gl.keySet().iterator();
 		String head = "";
 		ActiveHeaderLabel toBeAdded = null;
 
 		while (i.hasNext()) {
 			head = (String) i.next();
-			GenericDataElement GDE = gl.get(head);
+			final GenericDataElement GDE = gl.get(head);
 			toBeAdded = new ActiveHeaderLabel();
 
 			toBeAdded.setName(head);
@@ -374,7 +377,7 @@ public class OptionFrameV2 extends JFrame {
 		private ActionListener resetButtonListener = new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (GDE != null) {
 					GDE.reset();
 					minField.setText(Double.toString(GDE.getMinValue()));
@@ -386,7 +389,7 @@ public class OptionFrameV2 extends JFrame {
 		private ActionListener applyButtonListener = new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (GDE != null) {
 					changeGDEValues();
 				}
@@ -396,7 +399,7 @@ public class OptionFrameV2 extends JFrame {
 		private ActionListener saveButtonListener = new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (GDE != null) {
 					changeGDEValues();
 					OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(new SingleProperty(GDE));
@@ -407,7 +410,7 @@ public class OptionFrameV2 extends JFrame {
 		private ActionListener colorButtonListener = new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				Color c = JColorChooser.showDialog(
 						new JFrame(),
 						"Choose Background Color",
