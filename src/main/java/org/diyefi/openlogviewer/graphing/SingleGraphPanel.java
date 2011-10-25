@@ -365,12 +365,14 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			final int leftGraphPosition = graphPosition - halfNumPoints;
 			final int rightGraphPosition = graphPosition + halfNumPoints;
 
+			// Setup left data points.
 			for (int i = graphPosition; i > leftGraphPosition; i--) {
 				if (i >= 0 && i < GDE.size()) {
 					leftDataPointsToDisplay.add(GDE.get(i));
 				}
 			}
 
+			// Setup right data points.
 			for (int i = graphPosition; i < rightGraphPosition; i++) {
 				if (i >= 0 && i < GDE.size()) {
 					rightDataPointsToDisplay.add(GDE.get(i));
@@ -393,16 +395,91 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			final int halfNumPoints = numPointsThatFitInDisplay / 2;
 			final int leftGraphPosition = graphPosition - halfNumPoints;
 			final int rightGraphPosition = graphPosition + halfNumPoints;
+			Double prevData = GDE.get(graphPosition);
 
+			/*
+			* Setup left data points.
+			*
+			* The data point to display is calculated by taking the average of
+			* the data point spread and comparing it to the previous calculated
+			* data point. If the average is higher, then the highest value of
+			* the data spread is used. If the average is lower, then the lowest
+			* value of the data point spread is used.
+			*/
 			for (int i = graphPosition; i > leftGraphPosition; i-=zoom) {
 				if (i >= 0 && i < GDE.size()) {
-					leftDataPointsToDisplay.add(GDE.get(i));
+					Double minData = Double.MAX_VALUE;
+					Double maxData = Double.MIN_VALUE;
+					Double newData = 0.0;
+					Double acummulateData = 0.0;
+					int divisor = 0;
+					for (int j = 0; j < zoom; j++){
+						if (i - j >= 0 && i - j < GDE.size()) {
+							newData = GDE.get(i - j);
+							acummulateData += newData;
+							divisor++;
+							if (newData < minData){
+								minData = newData;
+							}
+							if (newData > maxData){
+								maxData = newData;
+							}
+						}
+					}
+					Double averageData = acummulateData / divisor;
+					if (averageData > prevData){
+						leftDataPointsToDisplay.add(maxData);
+						prevData = maxData;
+					} else if (averageData < prevData){
+						leftDataPointsToDisplay.add(minData);
+						prevData = minData;
+					} else {
+						leftDataPointsToDisplay.add(averageData);
+						prevData = averageData;
+					}
 				}
 			}
 
+			/*
+			* Setup right data points.
+			*
+			* The data point to display is calculated by taking the average of
+			* the data point spread and comparing it to the previous calculated
+			* data point. If the average is higher, then the highest value of
+			* the data spread is used. If the average is lower, then the lowest
+			* value of the data point spread is used.
+			*/
 			for (int i = graphPosition; i < rightGraphPosition; i+=zoom) {
 				if (i >= 0 && i < GDE.size()) {
-					rightDataPointsToDisplay.add(GDE.get(i));
+					Double minData = Double.MAX_VALUE;
+					Double maxData = Double.MIN_VALUE;
+					Double newData = 0.0;
+					Double acummulateData = 0.0;
+					int divisor = 0;
+					for (int j = 0; j < zoom; j++){
+						if (i + j >= 0 && i + j < GDE.size()) {
+							newData = GDE.get(i + j);
+							acummulateData += newData;
+							divisor++;
+							if (newData < minData){
+								minData = newData;
+							}
+							if (newData > maxData){
+								maxData = newData;
+							}
+						}
+					}
+					Double averageData = acummulateData / divisor;
+					if (averageData > prevData){
+						rightDataPointsToDisplay.add(maxData);
+						prevData = maxData;
+					} else if (averageData < prevData){
+						rightDataPointsToDisplay.add(minData);
+						prevData = minData;
+					} else {
+						rightDataPointsToDisplay.add(averageData);
+						prevData = averageData;
+					}
 				}
 			}
 		}
@@ -423,7 +500,12 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 
 		this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
-		initGraphZoomed();
+		final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+		if(zoomedOut){
+			initGraphZoomedOut();
+		} else {
+			initGraphZoomed();
+		}
 	}
 
 	/**
