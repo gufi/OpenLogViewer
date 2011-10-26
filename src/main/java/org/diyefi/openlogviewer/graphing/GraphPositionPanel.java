@@ -70,10 +70,11 @@ public class GraphPositionPanel extends JPanel {
 		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
 			paintPositionBar(g2d, false);
 		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+			final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 			final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
 			paintPositionBar(g2d, zoomedOut);
 			paintPositionData(g2d, zoomedOut);
-			if(!zoomedOut){
+			if(!zoomedOut && zoom > 1){
 				setupMouseCursorLineSnappingPositions();
 			}
 		}

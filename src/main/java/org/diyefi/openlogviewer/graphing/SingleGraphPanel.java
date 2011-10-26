@@ -405,6 +405,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* data point. If the average is higher, then the highest value of
 			* the data spread is used. If the average is lower, then the lowest
 			* value of the data point spread is used.
+			*
+			* In other words, if the graph is trending upward, the peak is used.
+			* If the graph is trending downward, the valley is used.
+			* This keeps the peaks and valleys intact and the middle stuff is
+			* lost. This maintains the general shape of the graph, and assumes
+			* that local peaks and valleys are the most interesting parts of the
+			* graph to display.
 			*/
 			prevData = GDE.get(graphPosition);
 			for (int i = graphPosition; i > leftGraphPosition; i-=zoom) {
@@ -451,6 +458,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* data point. If the average is higher, then the highest value of
 			* the data spread is used. If the average is lower, then the lowest
 			* value of the data point spread is used.
+			*
+			* In other words, if the graph is trending upward, the peak is used.
+			* If the graph is trending downward, the valley is used.
+			* This keeps the peaks and valleys intact and the middle stuff is
+			* lost. This maintains the general shape of the graph, and assumes
+			* that local peaks and valleys are the most interesting parts of the
+			* graph to display.
 			*/
 			prevData = GDE.get(graphPosition);
 			for (int i = graphPosition; i < rightGraphPosition; i+=zoom) {
