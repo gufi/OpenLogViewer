@@ -23,6 +23,7 @@
 package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -85,32 +86,48 @@ public class GraphPositionPanel extends JPanel {
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(majorGraduationColor);
-		double count = -1.0;
+
+		// Setup count
+		int count = -1;
 		if(zoomedOut){
-			count = Math.round(graphPosition / zoom);
+			count = (int)Math.round(graphPosition / zoom);
 		} else {
-			count = Math.round(graphPosition * zoom);
+			count = (int)Math.round(graphPosition * zoom);
 		}
-		for (int i = center; i > 0; i--) { //paint left of center
+
+		// Paint left of center
+		for (int i = center; i > 0; i--) {
 			if ((count % (majorGraduationSpacing * zoom) == 0) ||
 					(zoomedOut && count % (majorGraduationSpacing / zoom) == 0)) {
-				g2d.drawLine(i, 0, i, 6);
+				if(count > 0){
+					g2d.drawLine(i, 0, i, 6);  //Paint graduation marker
+					g2d.drawLine(center, 0, i - count, 0);  //Paint top section of position bar
+				} else if (count == 0){  //Paint graph position bar zero position marker which is taller than normal
+					g2d.drawLine(i, 0, i, this.getHeight());
+					g2d.drawLine(center, 0, i, 0);  //Paint top section of position bar
+				} else {
+					i = 0;  // End loop early
+				}
 			}
 			count--;
 		}
+
+		// Reset count
 		if(zoomedOut){
-			count = Math.round(graphPosition / zoom);
+			count = (int)Math.round(graphPosition / zoom);
 		} else {
-			count = Math.round(graphPosition * zoom);
+			count = (int)Math.round(graphPosition * zoom);
 		}
-		for (int i = center; i < this.getWidth(); i++) { // Paint right of center
+
+		// Paint right of center
+		for (int i = center; i < this.getWidth(); i++) {
 			if ((count % (majorGraduationSpacing * zoom) == 0) ||
 					(zoomedOut && count % (majorGraduationSpacing / zoom) == 0)) {
 				g2d.drawLine(i, 0, i, 6);
 			}
 			count++;
 		}
-		g2d.drawLine(0, 0, this.getWidth(), 0);
+		g2d.drawLine(center, 0, this.getWidth(), 0);
 	}
 
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
@@ -118,6 +135,7 @@ public class GraphPositionPanel extends JPanel {
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(positionDataColor);
+		FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
 
 		// Setup count.
 		double count = -1.0;
@@ -131,13 +149,23 @@ public class GraphPositionPanel extends JPanel {
 		for (int i = center; i > 0; i--) {
 			if ((count % (majorGraduationSpacing * zoom) == 0) ||
 					(zoomedOut && count % (majorGraduationSpacing / zoom) == 0)) {
+				Integer positionData = -1;
 				String positionDataString = "";
 				if(zoomedOut){
-					positionDataString = Integer.toString((int) (count * zoom));
+					positionData = (int) (count * zoom);
+					positionDataString = positionData.toString();
 				} else {
-					positionDataString = Integer.toString((int) (count / zoom));
+					positionData = (int) (count / zoom);
+					positionDataString = positionData.toString();
 				}
-				g2d.drawString(positionDataString, i - 10, 18);
+				if (positionData > 0){
+					int stringWidth = fm.stringWidth(positionDataString);
+					g2d.drawString(positionDataString, i - (stringWidth / 2), 18);
+				} else if (positionData == 0){
+					g2d.drawString(positionDataString, i + 2, 18);
+				} else {
+					i = 0;  // End loop early
+				}
 			}
 			count--;
 		}
@@ -159,7 +187,10 @@ public class GraphPositionPanel extends JPanel {
 				} else {
 					positionDataString = Integer.toString((int) (count / zoom));
 				}
-				g2d.drawString(positionDataString, i - 10, 18);
+				if(!positionDataString.equals("0")){
+					int stringWidth = fm.stringWidth(positionDataString);
+					g2d.drawString(positionDataString, i - (stringWidth / 2), 18);
+				}
 			}
 			count++;
 		}
