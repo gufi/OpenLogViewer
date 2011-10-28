@@ -303,11 +303,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * Used for InfoLayer to get the data from the single graphs for data under the mouse
 	 *
 	 * @param pointerDistanceFromCenter
-	 * @return Double representation of info at the mouse cursor line which snaps to data points
+	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	public final Double getMouseInfo(final int cursorDistanceFromCenter) {
 		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
-		Double info = -1.0;
+		Double info = null;
 		if(zoomedOut){
 			info = getMouseInfoZoomedOut(cursorDistanceFromCenter);
 		} else {
@@ -316,6 +316,12 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		return info;
 	}
 
+	/**
+	 * Used for InfoLayer to get the data from the single graphs for data under the mouse when not zoomed out
+	 *
+	 * @param pointerDistanceFromCenter
+	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
+	 */
 	private final Double getMouseInfoZoomed(int cursorDistanceFromCenter){
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
@@ -327,10 +333,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		if ((cursorPosition >= 0) && (cursorPosition < GDE.size())) {
 			return GDE.get(cursorPosition);
 		} else {
-			return -1.0;
+			return null;
 		}
 	}
 
+	/**
+	 * Used for InfoLayer to get the data from the single graphs for data under the mouse when zoomed out
+	 *
+	 * @param pointerDistanceFromCenter
+	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
+	 */
 	private final Double getMouseInfoZoomedOut(int cursorDistanceFromCenter){
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
@@ -338,7 +350,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		if ((cursorPosition >= 0) && (cursorPosition < GDE.size())) {
 			return GDE.get(cursorPosition);
 		} else {
-			return -1.0;
+			return null;
 		}
 	}
 
