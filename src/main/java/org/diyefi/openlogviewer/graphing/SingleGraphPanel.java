@@ -402,12 +402,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			rightDataPointsToDisplay = new LinkedList<Double>();
 			final int graphPosition = (int) OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
 			final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-			int numPointsThatFitInDisplay = this.getWidth() * zoom;
-			numPointsThatFitInDisplay += 6; // Add six data points for off-screen (not just two, because of zoom stupidity) = LOL
+			final int numPointsThatFitInDisplay = this.getWidth() * zoom;
 			final int halfNumPoints = numPointsThatFitInDisplay / 2;
-			final int leftGraphPosition = graphPosition - halfNumPoints;
-			final int rightGraphPosition = graphPosition + halfNumPoints;
-			Double prevData = 0.0;
+			final int leftGraphPosition = graphPosition - halfNumPoints - zoom;
+			final int rightGraphPosition = graphPosition + halfNumPoints + zoom;
+			double leftOfNewData = Double.MIN_VALUE;
 
 			/*
 			* Setup left data points.
@@ -425,19 +424,41 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* that local peaks and valleys are the most interesting parts of the
 			* graph to display.
 			*/
-			prevData = GDE.get(graphPosition);
-			for (int i = graphPosition; i > leftGraphPosition; i-=zoom) {
+
+			// Get first leftOfNewData since we need it to start with and it is not explicit
+			if (leftGraphPosition <= 0){
+				// The beginning of the graph is still visible so there is no earlier data
+				// Use earliest data available instead
+				leftOfNewData = GDE.get(0);
+			} else {
+				// Calculate leftOfNewData with points that are off the screen
+				// There is no previous point to compare to, so just use the average instead of min or max
+				double newData = 0.0;
+				double acummulateData = 0.0;
+				int divisor = 0;
+				for (int i = leftGraphPosition - zoom; i < leftGraphPosition ; i++){
+					if(i >= 0){
+						newData = GDE.get(i);
+						acummulateData += newData;
+						divisor++;
+					}
+				}
+				leftOfNewData = (acummulateData / divisor);
+			}
+
+			// Populate leftDataPointsToDisplay
+			for (int i = leftGraphPosition; i <= graphPosition; i+=zoom) {
 
 				if (i >= 0 && i < GDE.size()) {
-					Double minData = Double.MAX_VALUE;
-					Double maxData = Double.MIN_VALUE;
-					Double newData = 0.0;
-					Double acummulateData = 0.0;
+					double minData = Double.MAX_VALUE;
+					double maxData = Double.MIN_VALUE;
+					double newData = 0.0;
+					double acummulateData = 0.0;
 					int divisor = 0;
 
 					for (int j = 0; j < zoom; j++){
-						if (i - j >= 0 && i - j < GDE.size()) {
-							newData = GDE.get(i - j);
+						if (i + j >= 0 && i + j < GDE.size()) {
+							newData = GDE.get(i + j);
 							acummulateData += newData;
 							divisor++;
 							if (newData < minData){
@@ -448,18 +469,21 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 							}
 						}
 					}
-					Double averageData = acummulateData / divisor;
-					if (averageData > prevData){
-						leftDataPointsToDisplay.add(maxData);
-						prevData = maxData;
-					} else if (averageData < prevData){
-						leftDataPointsToDisplay.add(minData);
-						prevData = minData;
+					double averageData = acummulateData / divisor;
+					if (averageData > leftOfNewData){
+						leftDataPointsToDisplay.add(0, maxData);
+						leftOfNewData = maxData;
+					} else if (averageData < leftOfNewData){
+						leftDataPointsToDisplay.add(0, minData);
+						leftOfNewData = minData;
 					} else {
-						leftDataPointsToDisplay.add(averageData);
-						prevData = averageData;
+						leftDataPointsToDisplay.add(0, averageData);
+						leftOfNewData = averageData;
 					}
 				}
+			}
+			if (leftDataPointsToDisplay.isEmpty()){
+				leftDataPointsToDisplay.add(GDE.get(0));
 			}
 
 			/*
@@ -478,14 +502,14 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* that local peaks and valleys are the most interesting parts of the
 			* graph to display.
 			*/
-			prevData = GDE.get(graphPosition);
+			leftOfNewData = leftDataPointsToDisplay.get(0);
 			for (int i = graphPosition; i < rightGraphPosition; i+=zoom) {
 
 				if (i >= 0 && i < GDE.size()) {
-					Double minData = Double.MAX_VALUE;
-					Double maxData = Double.MIN_VALUE;
-					Double newData = 0.0;
-					Double acummulateData = 0.0;
+					double minData = Double.MAX_VALUE;
+					double maxData = Double.MIN_VALUE;
+					double newData = 0.0;
+					double acummulateData = 0.0;
 					int divisor = 0;
 
 					for (int j = 0; j < zoom; j++){
@@ -501,18 +525,27 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 							}
 						}
 					}
-					Double averageData = acummulateData / divisor;
-					if (averageData > prevData){
+					double averageData = acummulateData / divisor;
+					if (averageData > leftOfNewData){
 						rightDataPointsToDisplay.add(maxData);
-						prevData = maxData;
-					} else if (averageData < prevData){
+						leftOfNewData = maxData;
+					} else if (averageData < leftOfNewData){
 						rightDataPointsToDisplay.add(minData);
-						prevData = minData;
+						leftOfNewData = minData;
 					} else {
 						rightDataPointsToDisplay.add(averageData);
-						prevData = averageData;
+						leftOfNewData = averageData;
 					}
 				}
+			}
+
+			// Reconcile  situations where the first point to draw from each list does not match
+			double left = leftDataPointsToDisplay.get(0);
+			double right = rightDataPointsToDisplay.get(0);
+			if (left != right){
+				double average = (left + right) / 2;
+				leftDataPointsToDisplay.set(0, average);
+				rightDataPointsToDisplay.set(0, average);
 			}
 		}
 	}
