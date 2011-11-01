@@ -44,12 +44,15 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
+import org.diyefi.openlogviewer.decoder.AbstractDecoder;
 import org.diyefi.openlogviewer.decoder.CSVTypeLog;
 import org.diyefi.openlogviewer.decoder.FreeEMSBin;
-import org.diyefi.openlogviewer.decoder.FreeEMSByteLA;
-import org.diyefi.openlogviewer.filefilters.CSVTypeFileFilter;
-import org.diyefi.openlogviewer.filefilters.FreeEMSFileFilter;
+import org.diyefi.openlogviewer.filefilters.CSVFileFilter;
+import org.diyefi.openlogviewer.filefilters.FreeEMSBinFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
+import org.diyefi.openlogviewer.filefilters.LogFileFilter;
+import org.diyefi.openlogviewer.filefilters.MSTypeFileFilter;
+import org.diyefi.openlogviewer.filefilters.FreeEMSFileFilter;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.graphing.EntireGraphingPanel;
 import org.diyefi.openlogviewer.graphing.GraphPositionPanel;
@@ -60,6 +63,8 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewerApp extends javax.swing.JFrame {
+	public static final String NEWLINE = System.getProperty("line.separator");
+
 	private static final long serialVersionUID = 7987394054547975563L;
 	private static final String PROPERTIES_NAME = "Properties";
 	private static final String PROPERTIES_FILENAME = "OLVAllProperties.olv";
@@ -81,6 +86,7 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 	private OptionFrameV2 optionFrame;
 	private PropertiesPane prefFrame;
 	private List<SingleProperty> properties;
+	private AbstractDecoder decoderInUse;
 
 	/** Creates new form OpenLogViewerApp */
 	public OpenLogViewerApp() {
@@ -260,13 +266,31 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 		}
 
 		fileChooser.addChoosableFileFilter(new FreeEMSFileFilter());
-		fileChooser.addChoosableFileFilter(new CSVTypeFileFilter());
+		fileChooser.addChoosableFileFilter(new FreeEMSBinFileFilter());
 		fileChooser.addChoosableFileFilter(new FreeEMSLAFileFilter());
+		fileChooser.addChoosableFileFilter(new CSVFileFilter());
+		fileChooser.addChoosableFileFilter(new LogFileFilter());
+		fileChooser.addChoosableFileFilter(new MSTypeFileFilter());
+
 		final String chooserClass = getApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 
 		if (chooserClass != null) {
 			try {
-				fileChooser.setFileFilter((FileFilter) Class.forName(chooserClass).newInstance());
+				final FileFilter[] existingFilters = fileChooser.getChoosableFileFilters();
+				boolean alreadyHasSavedFilter = false;
+				for (int i = 0; i < existingFilters.length; i++) {
+					final String thisFilter = existingFilters[i].getClass().getCanonicalName();
+					if (thisFilter.equals(chooserClass)) {
+						alreadyHasSavedFilter = true;
+						fileChooser.setFileFilter(existingFilters[i]); // If set to a new instance the list will contain two!
+					}
+				}
+
+				// If it's not one of ours, create a new one and set it, though that almost certainly means we'll throw an exception and clean up the prefs...
+				if (!alreadyHasSavedFilter) {
+					final FileFilter savedFilter = (FileFilter) Class.forName(chooserClass).newInstance();
+					fileChooser.setFileFilter(savedFilter);
+				}
 			} catch (ClassNotFoundException c) {
 				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 				System.out.println("Class not found! chooserClass removed from props!");
@@ -281,13 +305,21 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 
 		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
+			if (decoderInUse != null) {
+				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
+				final GenericLog logInUse = decoderInUse.getDecodedLog();
+				if (logInUse != null) {
+					logInUse.clearOut(); // This is the wrong approach. The correct approach is to reuse the object, try that next...
+				}
+				decoderInUse = null;
+				setLog(null);
+			} // else haven't read in a log yet.
+
 			final File openFile = fileChooser.getSelectedFile();
-			if ("bin".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
-				new FreeEMSBin(openFile);
-			} else if ("la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSLAFileFilter)) {
-				new FreeEMSByteLA(openFile);
+			if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
+				decoderInUse = new FreeEMSBin(openFile);
 			} else {
-				new CSVTypeLog(openFile);
+				decoderInUse = new CSVTypeLog(openFile);
 			}
 
 			if (openFile != null) {
@@ -295,7 +327,6 @@ public final class OpenLogViewerApp extends javax.swing.JFrame {
 				saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, openFile.getParent());
 				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
 				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
-				System.gc();
 			}
 		}
 	}

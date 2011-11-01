@@ -41,10 +41,8 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	}
 
 	private void init() {
-		genLog = new GenericLog();
 		totalSplits = 1;
 		infoPanel = new InfoPanel();
-		infoPanel.setLog(genLog);
 		infoPanel.setSize(400, 600);
 		this.setLayer(infoPanel, 99);
 		this.setBackground(Color.BLACK);
@@ -75,7 +73,6 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			this.addHierarchyBoundsListener(graph); // updates graph size automatically
 			genLog.get(header).addPropertyChangeListener("Split", graph);
 			graph.setData(genLog.get(header));
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPositionMax();
 		}
 
 		if (p) {

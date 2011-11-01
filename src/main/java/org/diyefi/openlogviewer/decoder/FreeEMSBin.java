@@ -25,9 +25,11 @@ package org.diyefi.openlogviewer.decoder;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.decoder.LogField.types;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -36,11 +38,12 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  * This function takes a binary log file, plucks FreeEMS packets out of it,
  * filters for standard packets and parses them into fields with appropriate scaling.
  */
-public class FreeEMSBin implements Runnable { // implements runnable to make this class theadable
+public class FreeEMSBin extends AbstractDecoder implements Runnable { // implements runnable to make this class theadable
+	private final int initialLength = 75000;
+	private final int loadFactor = 2;
 
 	private static final int MINIMUM_PACKET_LENGTH = 3; // Flag byte, payload id word, no payload - defined by protocol
 	private static final int MAXIMUM_PACKET_LENGTH = 0x0820; // Buffer size on FreeEMS vanilla, take this from config file eventually
-	private static final int PAYLOAD_ID_TO_PARSE = 0x0191; // Default freeems basic log, get this from config file and maybe default to this
 	// NOTE, standard supported log types require their own structure definition in the code,
 	// override-able via files, matched looked for first, then local, then fall back to code
 
@@ -51,17 +54,17 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	private static final short ESCAPED_START_BYTE = 0x55;  // Used as an unsigned byte
 	private static final short ESCAPED_STOP_BYTE = 0x33;   // Used as an unsigned byte
 
-	private static final String NEWLINE = System.getProperty("line.separator");
-
 	private boolean startFound;
 	private File logFile;
-	private FileInputStream logStream;
 	private short[] packetBuffer; // For use as an unsigned byte
 	private GenericLog decodedLog;
 	private Thread t;
 	private int packetLength; // Track packet length
+	private int firstPayloadIDFound = -1;
 
-	private String[] coreStatusAFlagNames = {
+	private long startTime;
+
+	private static String[] coreStatusAFlagNames = {
 		"CS-FuelPumpPrime",
 		"CS-unused1",
 		"CS-unused2",
@@ -72,7 +75,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		"CS-unused7"
 	};
 
-	private String[] decoderFlagsFlagNames = {
+	private static String[] decoderFlagsFlagNames = {
 		"DF-CombustionSync",
 		"DF-CrankSync",
 		"DF-CamSync",
@@ -83,7 +86,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		"DF-Spare-7"
 	};
 
-	private String[] flaggableFlagsNames = {
+	private static String[] flaggableFlagsNames = {
 		"FF-callsToUISRs",               // to ensure we aren't accidentally triggering unused ISRs.
 		"FF-lowVoltageConditions",       // low voltage conditions.
 		"FF-decoderSyncLosses",          // Number of times cam, crank or combustion sync is lost.
@@ -103,7 +106,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	};
 
 	// This should be read from a file at some point, as it's going to be flexible. See FreeEMS/src/inc/structs.h for definitive answers.
-	private LogField[] fields = {
+	private static LogField[] fields = {
 		// CoreVars struct contents:
 		new LogField("IAT",  100),   // Inlet Air Temperature           : 0.0 -   655.35       (0.01 Kelvin (/100))
 		new LogField("CHT",  100),   // Coolant / Head Temperature      : 0.0 -   655.35       (0.01 Kelvin (/100))
@@ -181,10 +184,13 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param f The file reference to the log file.
 	 */
 	public FreeEMSBin(final File f) {
+		startTime = System.currentTimeMillis(); // Let's profile this bitch! OS style :-)
 		logFile = f;
 		startFound = false;
 		packetBuffer = new short[6000];
 		packetLength = 0;
+
+		// TODO put matching name grabber here
 
 		// Eventually pull this in from files and config etc instead of default, if it makes sense to.
 		final String[] headers = new String[fields.length * 32]; // Hack to make it plenty big, trim afterwards...
@@ -202,7 +208,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			}
 		}
 
-		decodedLog = new GenericLog(Arrays.copyOfRange(headers, 0, headersPosition));
+		decodedLog = new GenericLog(Arrays.copyOfRange(headers, 0, headersPosition), initialLength, loadFactor);
 
 		t = new Thread(this, "FreeEMSBin Loading");
 		t.setPriority(Thread.MAX_PRIORITY);
@@ -216,6 +222,8 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 */
 	@Override
 	public final void run() {
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
 		try {
 			// file setup
 			final byte[] readByte = new byte[1];
@@ -233,9 +241,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			int payloadIDWrong       = 0; // Requests to parse packet as A when packet was of type B
 
 			startFound = false;
-			logStream = new FileInputStream(logFile);
+			fis = new FileInputStream(logFile);
+			bis = new BufferedInputStream(fis);
 			decodedLog.setLogStatus(GenericLog.LOG_LOADING);
-			while (logStream.read(readByte) != -1) {
+			while (bis.read(readByte) != -1) {
 				uByte = unsignedValueOf(readByte[0]);
 				if (uByte == START_BYTE) {
 					if (!startFound) {
@@ -251,13 +260,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 						} else if (packetLength > MAXIMUM_PACKET_LENGTH) {
 							packetsOverLength++;
 						} else {
-							final short[] justThePacket = new short[packetLength];
-							for (int i = 0; i < packetLength; i++) {
-								justThePacket[i] = packetBuffer[i];
-							}
-
+							decodedLog.incrementPosition(); // Do this before attempting to load data
+							final short[] justThePacket = Arrays.copyOfRange(packetBuffer, 0, packetLength);
 							if (checksum(justThePacket)) {
-								if (decodeBasicLogPacket(justThePacket, PAYLOAD_ID_TO_PARSE)) {
+								if (decodeBasicLogPacket(justThePacket)) {
 									packetsParsedFully++;
 								} else {
 									packetLengthWrong++;
@@ -269,7 +275,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 						}
 						startFound = false;
 					} else if (uByte == ESCAPE_BYTE) {
-						if (logStream.read(readByte) != -1) { // Read in the byte to be un-escaped
+						if (bis.read(readByte) != -1) { // Read in the byte to be un-escaped
 							uByte = unEscape(unsignedValueOf(readByte[0])); // un-escape this byte
 							if (uByte != (short) -1) {
 								packetBuffer[packetLength] = uByte; // Store the un-escaped data for processing later
@@ -289,7 +295,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			}
 			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
 
-			System.out.println(NEWLINE + "Binary Parsing Statistics:" + NEWLINE);
+			System.out.println(OpenLogViewerApp.NEWLINE + "Binary Parsing Statistics:" + OpenLogViewerApp.NEWLINE);
 
 			System.out.println("EscapePairMismatches: " + escapePairMismatches + " Incremented when an escape is found but not followed by an escapee");
 			System.out.println("StartsInsideAPacket:  " + startsInsideAPacket  + " Incremented when a start byte is found inside a packet");
@@ -301,11 +307,33 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 			System.out.println("StrayBytesLost:       " + strayBytesLost       + " How many bytes were not in a packet! (should be low, ie, under one packet");
 			System.out.println("PayloadIDWrong:       " + payloadIDWrong       + " Requests to parse packet as A when packet was of type B");
 
-			System.out.println(NEWLINE + "Thank you for choosing FreeEMS!");
+			System.out.println(OpenLogViewerApp.NEWLINE + "Thank you for choosing FreeEMS!");
 
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			// TODO Add code to handle or warn of the error
+		} catch (Exception e) {
+			e.printStackTrace();
+			decodedLog.setLogStatusMessage(e.getMessage());
+		} finally { // Setup the log to be displayed TODO in future it will just display as it goes
+			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPositionMax(decodedLog.getRecordCount());
+			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
+			System.out.println("Loaded " + (decodedLog.getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
+
+			try {
+				if (bis != null) {
+					bis.close();
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+				System.out.println("Failed To Close BIS Stream!");
+			}
+
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+				System.out.println("Failed To Close FIS Stream!");
+			}
 		}
 	}
 
@@ -315,7 +343,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param packet is a <code>short</code> array containing 1 full packet
 	 * @param payloadIDToParse The ID of the payload type to expect and accept.
 	 */
-	private boolean decodeBasicLogPacket(final short[] packet, final int payloadIDToParse) {
+	private boolean decodeBasicLogPacket(final short[] packet) {
 		final int HEADER_HAS_LENGTH_INDEX   = 0;
 //		final int HEADER_IS_NACK_INDEX      = 1;
 		final int HEADER_HAS_SEQUENCE_INDEX = 2;
@@ -338,9 +366,13 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 		position++;
 		final int payloadId = (payloadIdUpper * 256) + payloadIdLower;
 
-		if (payloadId != payloadIDToParse) {
+		if (firstPayloadIDFound < 0) {
+			firstPayloadIDFound = payloadId;
+		} else if (payloadId != firstPayloadIDFound) {
 			return false; // TODO make this a code, or throw exception, but it's not exceptional at all for this to occur...
 		}
+		// record packet IDs that don't match desired in a Other Packets field, eventually put the packet
+		// itself into meta data with an index number. how to invalidate these when looping? if looping...
 
 		final int[] flagValues = processFlagBytes(flags, 8);
 
@@ -462,7 +494,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param uInt8 the raw signed byte representation of our raw unsigned char
 	 * @return the value of the unsigned byte stored in a short
 	 */
-	private short unsignedValueOf(final byte uInt8) {
+	private final short unsignedValueOf(final byte uInt8) {
 		return (short) (0xFF & uInt8);
 	}
 

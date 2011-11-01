@@ -30,7 +30,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.diyefi.openlogviewer.coloring.InitialLineColoring;
 
@@ -41,41 +41,25 @@ import org.diyefi.openlogviewer.coloring.InitialLineColoring;
  * displayed are pulled from these objects.
  * @author Bryan Harris
  */
-public final class GenericDataElement extends ArrayList<Double> implements Comparable<GenericDataElement>, Serializable, Transferable {
+public final class GenericDataElement implements Comparable<GenericDataElement>, Serializable, Transferable {
 	private static final long serialVersionUID = 1823741455455439887L;
+	private static int currentRecord;
 
 	/**
-	 * default max value determined while loading up data
+	 * The meat of this object! Previously in a slow fat ArrayList.
 	 */
-	private Double maxValue;
+	private double values[];
 
-	/**
-	 * newMaxValue is the value returned at any time getMaxValue() is called.
-	 * it can be modified to change the graphing display
-	 */
+	// These two fields belong here:
+	private double minValue;
+	private double maxValue;
+	private boolean realMinAndMaxFound = false;
 
-	private Double newMaxValue;
-	/**
-	 * default min value determined while loading up data
-	 */
-
-	private Double minValue;
-	/**
-	 * newMinValue is the value returned at any time getMinValue() is called.
-	 * it can be modified to change the graphing display
-	 */
-
-	private Double newMinValue;
-	/**
-	 * default color created when building the GDE
-	 */
-	private Color color;
-
-	/**
-	 * Color that can be modified
-	 */
-
-	private Color newColor;
+	// These three do not - move them into some graphics object and keep the data separated from the look...
+	private double displayMinValue;
+	private double displayMaxValue;
+	private Color displayColor;
+	private boolean displayMinAndMaxSet = false;
 
 	/**
 	 * GDE Header name
@@ -94,17 +78,29 @@ public final class GenericDataElement extends ArrayList<Double> implements Compa
 	 * in order to reduce the number of times the Array list has to copy its contents
 	 * in order to increase size.
 	 */
-	public GenericDataElement() {
-		super(50000); // TODO remove MAGIC
+	protected GenericDataElement(final int initialLength) {
+		values = new double[initialLength];
+
 		PCS = new PropertyChangeSupport(this);
-		maxValue = Double.MIN_VALUE;
-		newMaxValue = maxValue;
+
+		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
-		newMinValue = minValue;
-		color = InitialLineColoring.INSTANCE.getBestAvailableColor();
-		newColor = color;
+
+		// this should just be white and should become something at drop time. Drop has an event, let's use it.
+		displayColor = InitialLineColoring.INSTANCE.getBestAvailableColor();
 		splitNumber = 1;
 		addFlavors();
+	}
+
+	protected void increaseCapacity(final int ourLoadFactor) {
+		values = Arrays.copyOf(values, (values.length * ourLoadFactor));
+	}
+
+	protected static void incrementPosition() {
+		currentRecord++;
+	}
+	protected static void resetPosition() {
+		currentRecord = -1;
 	}
 
 	/**
@@ -123,45 +119,41 @@ public final class GenericDataElement extends ArrayList<Double> implements Compa
 	 * @param d Double - Double.parseDouble(String) value to add to the array
 	 * @return true on success, false if unable
 	 */
-	@Override
-	public boolean add(final Double d) {
-		if (newMaxValue < d) {
-			maxValue = d;
-			newMaxValue = d;
-		}
+	public void add(final double value) { //  TODO simplify the shit out of this, and/or remove it.
+		values[currentRecord] = value;
+	}
 
-		if (newMinValue > d) {
-			minValue = d;
-			newMinValue = d;
-		}
-
-		return super.add(d);
+	// TODO maybe make these a direct reference to the array for efficiency sake, and above ^
+	public double get(final int index) {
+		return values[index];
+	}
+	public int size() { // TODO ^
+		return currentRecord; // was values.length; array length is longer than data in it.
 	}
 
 	/**
 	 * sets the splitNumber or division of the graph in the graphing screen
 	 * if its the same a property change event is fired called "Split"
 	 *
-	 * TODO add final to parameter and fix code to work with that change.
-	 *
 	 * @param splitNumber
 	 */
-	public void setSplitNumber(int splitNumber) {
-		if (splitNumber < 1) {
-			splitNumber = 1;
+	public void setSplitNumber(final int splitNumber) {
+		int newSplitNumber = 1;
+		if (splitNumber > 1) {
+			newSplitNumber = splitNumber;
 		}
 
 		final int old = this.splitNumber;
-		this.splitNumber = splitNumber;
+		this.splitNumber = newSplitNumber;
 		PCS.firePropertyChange("Split", old, this.splitNumber);
 	}
 
 	/**
-	 * this will set the min and max to the default min/max values
+	 * TODO move this into GUI space and out of this class!!
 	 */
 	public void reset() {
-		newMinValue = minValue;
-		newMaxValue = maxValue;
+		displayMinValue = getMinValue();
+		displayMaxValue = getMaxValue();
 	}
 
 	public void addPropertyChangeListener(final String property, final PropertyChangeListener PCL) {
@@ -220,25 +212,75 @@ public final class GenericDataElement extends ArrayList<Double> implements Compa
 	public String getName() {
 		return name;
 	}
-	public Double getMaxValue() {
-		return newMaxValue;
+
+	public double getMaxValue() {
+		findMinAndMaxValues();
+		return maxValue;
 	}
-	public void setMaxValue(final Double highValue) {
-		this.newMaxValue = highValue;
+	public double getMinValue() {
+		findMinAndMaxValues();
+		return minValue;
 	}
-	public Double getMinValue() {
-		return newMinValue;
+
+	private void findMinAndMaxValues() {
+		if (!realMinAndMaxFound) {
+			for (int i = 0; i < currentRecord; i++) {
+				final double value = values[i];
+				if (maxValue < value) {
+					maxValue = value;
+				}
+				if (minValue > value) {
+					minValue = value;
+				}
+			}
+			// System.out.println("MinMaxFor: " + this.name); // Used to check for option pane running this code inappropriately...
+
+			realMinAndMaxFound = true;
+		}
 	}
-	public void setMinValue(final Double lowValue) {
-		this.newMinValue = lowValue;
+
+	public double getDisplayMinValue() {
+		setDisplayMinAndMaxDefaultsIfRequired();
+		return displayMinValue;
 	}
-	public Color getColor() {
-		return newColor;
+	public double getDisplayMaxValue() {
+		setDisplayMinAndMaxDefaultsIfRequired();
+		return displayMaxValue;
 	}
-	public void setColor(final Color c) {
-		newColor = c;
+	private void setDisplayMinAndMaxDefaultsIfRequired() {
+		if (!displayMinAndMaxSet) {
+			displayMinValue = getMinValue();
+			displayMaxValue = getMaxValue();
+			displayMinAndMaxSet = true;
+		}
+	}
+
+	public void setDisplayMaxValue(final double highValue) {
+		if (!displayMinAndMaxSet) {
+			displayMinValue = getMinValue();
+			displayMinAndMaxSet = true;
+		}
+		this.displayMaxValue = highValue;
+	}
+	public void setDisplayMinValue(final double lowValue) {
+		if (!displayMinAndMaxSet) {
+			displayMaxValue = getMaxValue();
+			displayMinAndMaxSet = true;
+		}
+		this.displayMinValue = lowValue;
+	}
+
+	public Color getDisplayColor() {
+		return displayColor;
+	}
+	public void setDisplayColor(final Color c) {
+		displayColor = c;
 	}
 	public int getSplitNumber() {
 		return splitNumber;
+	}
+
+	public final void clearOut() {
+		values = null;
 	}
 }

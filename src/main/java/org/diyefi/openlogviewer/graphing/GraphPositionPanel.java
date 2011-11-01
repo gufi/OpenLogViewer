@@ -49,7 +49,6 @@ public class GraphPositionPanel extends JPanel {
 	private void init() {
 		this.setOpaque(true);
 		this.setLayout(null);
-		genLog = new GenericLog();
 		majorGraduationColor = Color.GRAY;
 		positionDataColor = majorGraduationColor;
 		backgroundColor = Color.BLACK;
@@ -66,21 +65,24 @@ public class GraphPositionPanel extends JPanel {
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(backgroundColor);
 		g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
-		if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
+		if (genLog ==  null) {
 			paintPositionBar(g2d, false);
-		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
-			paintPositionBar(g2d, false);
-		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-			final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-			final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
-			paintPositionBar(g2d, zoomedOut);
-			paintPositionData(g2d, zoomedOut);
-			if(!zoomedOut && zoom > 1){
-				setupMouseCursorLineSnappingPositions();
+		} else {
+			if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
+				paintPositionBar(g2d, false);
+			} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+				final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+				final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+				paintPositionBar(g2d, zoomedOut);
+				paintPositionData(g2d, zoomedOut);
+				if(!zoomedOut && zoom > 1){
+					setupMouseCursorLineSnappingPositions();
+				}
 			}
 		}
 	}
 
+	// TODO http://issues.freeems.org/view.php?id=360
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final int center = this.getWidth() / 2;
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
@@ -130,6 +132,7 @@ public class GraphPositionPanel extends JPanel {
 		g2d.drawLine(center, 0, this.getWidth(), 0);
 	}
 
+	// TODO http://issues.freeems.org/view.php?id=360
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final int center = this.getWidth() / 2;
 		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
@@ -229,8 +232,10 @@ public class GraphPositionPanel extends JPanel {
 		boolean zoomedOut = false;
 		if (OpenLogViewerApp.getInstance() != null) {
 			zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-			zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+			zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		}
+
+		// ROFL: I tried to make this sweeter, but the code that actually draws it had other ideas :-) http://issues.freeems.org/view.php?id=360
 		if (zoomedOut){
 			majorGraduationSpacing = zoom * 100;
 		} else{

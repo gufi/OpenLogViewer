@@ -37,6 +37,8 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
 	private static final long serialVersionUID = -6657156551430700622L;
+	private static final int LEFT_MARGIN_OFFSET = 10;
+	private static final int ONE_TEXTUAL_HEIGHT = 20;
 	private int FPScounter = 0;
 	private int FPS = 0;
 	private long currentTime;
@@ -49,7 +51,6 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private boolean mouseOver;
 
 	public InfoPanel() {
-		genLog = new GenericLog();
 		xMouseCoord = -100;
 		yMouseCoord = -100;
 		mouseOver = false;
@@ -75,43 +76,57 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			this.setSize(this.getParent().getSize());
 		}
 
-		if (genLog.getLogStatus() == GenericLog.LOG_NOT_LOADED) {
+		if (genLog == null) {
 			g.setColor(Color.RED);
-			g.drawString("No log loaded, please select a log from the file menu.", 20, 20);
-		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
-			g.setColor(Color.red);
-			g.drawString("Loading log, please wait...", 20, 20);
-		} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-			final Dimension d = this.getSize();
-			final int center = d.width / 2;
-			final MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
-			final Graphics2D g2d = (Graphics2D) g;
-			g2d.drawString("FPS: " + Double.toString(FPS), 30, 60);
-
-			if (mouseOver) {
-				final GraphPositionPanel graphPositionPanel = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
-				final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-				final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
-				int snappedDataPosition = xMouseCoord;
-				if(!zoomedOut && zoom > 1){
-					snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);
+			g.drawString("No log loaded, please select a log from the file menu.", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+		} else {
+			if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
+				g.setColor(Color.red);
+				g.drawString("Loading log, please wait...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+			} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+				int fpsHeight = 0;
+				if (genLog.getLogStatusMessage() != null) {
+					g.setColor(Color.RED);
+					g.drawString(":-( The very sad decoder crashed! Last words: ", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+					g.drawString(genLog.getLogStatusMessage(), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 2);
+					g.drawString("Displaying what we managed to read in before the catastrophy anyway...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 3);
+					fpsHeight = ONE_TEXTUAL_HEIGHT * 4;
+				} else {
+					fpsHeight = ONE_TEXTUAL_HEIGHT;
 				}
-				g2d.setColor(vertBar);
-				g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
-				g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
 
-				for (int i = 0; i < multigGraph.getComponentCount(); i++) {
-					if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
-						final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
-						g2d.setColor(textBackground);
-						final Double mouseData = singleGraph.getMouseInfo(snappedDataPosition - center);
-						String mouseDataString = "-.-";
-						if(mouseData != null){
-							mouseDataString = mouseData.toString();
+				final Dimension d = this.getSize();
+				final int center = d.width / 2;
+				final MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+				final Graphics2D g2d = (Graphics2D) g;
+				g.setColor(Color.GRAY);
+				g2d.drawString("FPS: " + Double.toString(FPS), LEFT_MARGIN_OFFSET, fpsHeight);
+
+				if (mouseOver) {
+					final GraphPositionPanel graphPositionPanel = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
+					final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+					final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+					int snappedDataPosition = xMouseCoord;
+					if(!zoomedOut && zoom > 1){
+						snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);
+					}
+					g2d.setColor(vertBar);
+					g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
+					g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
+
+					for (int i = 0; i < multigGraph.getComponentCount(); i++) {
+						if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
+							final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
+							g2d.setColor(textBackground);
+							final Double mouseData = singleGraph.getMouseInfo(snappedDataPosition - center);
+							String mouseDataString = "-.-";
+							if(mouseData != null){
+								mouseDataString = mouseData.toString();
+							}
+							g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
+							g2d.setColor(singleGraph.getColor());
+							g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
 						}
-						g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
-						g2d.setColor(singleGraph.getColor());
-						g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
 					}
 				}
 			}

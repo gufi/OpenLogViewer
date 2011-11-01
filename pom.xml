@@ -138,7 +138,7 @@
 	</reporting>
 
 	<build>
-		<defaultGoal>exec:exec</defaultGoal>
+		<defaultGoal>install exec:exec</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -158,6 +158,8 @@
 				<configuration>
 					<executable>java</executable>
 					<arguments>
+						<argument>-Xms256m</argument>
+						<argument>-Xmx512m</argument>
 						<argument>-classpath</argument>
 						<classpath/>
 						<argument>org.diyefi.openlogviewer.OpenLogViewerApp</argument>

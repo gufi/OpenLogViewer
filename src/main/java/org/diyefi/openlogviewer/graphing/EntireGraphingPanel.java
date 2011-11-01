@@ -55,7 +55,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private int prevDragXCoord;
 	private int flingInertia;
 	private int zoom;
-	private boolean zoomedBeyondOneToOne;
+	private boolean zoomedOutBeyondOneToOne;
 
 	public EntireGraphingPanel() {
 		super();
@@ -72,7 +72,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		graphPositionPanel.setPreferredSize(new Dimension(600, 20));
 		this.add(graphPositionPanel, java.awt.BorderLayout.SOUTH);
 		resetGraphPosition();
-		setGraphPositionMax();
 		playing = false;
 		wasPlaying = false;
 		playTimer = new Timer(10, this);
@@ -88,12 +87,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		stopFlinging();
 		thePast = System.currentTimeMillis();
 		zoom = 1;
-		zoomedBeyondOneToOne = false;
+		zoomedOutBeyondOneToOne = false;
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
 		if (playing && graphPosition < graphPositionMax) {
-			if(zoomedBeyondOneToOne){
+			if(zoomedOutBeyondOneToOne){
 				moveGraphPosition(zoom);
 			} else {
 				moveGraphPosition(1);
@@ -129,31 +128,35 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void zoomIn() {
-		if(zoomedBeyondOneToOne && zoom == 2){
-			zoomedBeyondOneToOne = false;
-			zoom = 1;
-		} else if (zoomedBeyondOneToOne){
+		if(zoomedOutBeyondOneToOne) {
+			if (zoom == 2) {
+				zoomedOutBeyondOneToOne = false;
+			}
 			zoom--;
 		} else if (zoom < 512) {
 			zoom++;
 		}
+
 		repaint();
 	}
 
 	public final void zoomOut() {
-		if(!zoomedBeyondOneToOne && zoom == 1){
-			zoomedBeyondOneToOne = true;
-			zoom = 2;
-		} else if (zoomedBeyondOneToOne && zoom < 1024){
+		if (!zoomedOutBeyondOneToOne) {
+			if (zoom == 1) {
+				zoomedOutBeyondOneToOne = true;
+				zoom = 2;
+			} else {
+				zoom--;
+			}
+		} else if (zoom < 1024){
 			zoom++;
-		} else {
-			zoom--;
 		}
+
 		repaint();
 	}
 
-	public boolean isZoomedBeyondOneToOne(){
-		return zoomedBeyondOneToOne;
+	public boolean isZoomedOutBeyondOneToOne(){
+		return zoomedOutBeyondOneToOne;
 	}
 
 	public final void play() {
@@ -236,15 +239,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		repaint();
 	}
 
-	public final void setGraphPositionMax() {
-		boolean found = false;
-		for (int i = 0; i < multiGraph.getComponentCount() && !found; i++) {
-			if (multiGraph.getComponent(i) instanceof SingleGraphPanel) {
-				final SingleGraphPanel gl = (SingleGraphPanel) multiGraph.getComponent(i);
-				graphPositionMax = gl.graphSize() - 1;
-				found = true;
-			}
-		}
+	public final void setGraphPositionMax(final int graphPositionMax) {
+		this.graphPositionMax = graphPositionMax;
 	}
 
 	private void resetGraphPosition() {
@@ -262,7 +258,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private void moveEntireGraphingPanel(final double newPosition) {
 		final double center = this.getWidth() / 2;
 		double move = -1.0;
-		if(zoomedBeyondOneToOne){
+		if(zoomedOutBeyondOneToOne){
 			move = (newPosition - center) * zoom;
 		} else {
 			move = (newPosition - center) / zoom;
@@ -365,14 +361,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		final int notches = e.getWheelRotation();
 		double move = 0;
 		if (notches < 0) {
-			if(zoomedBeyondOneToOne){
+			if(zoomedOutBeyondOneToOne){
 				move = center + ((e.getX() - center) / (zoom - 1.0));
 			} else {
 				move = center + ((e.getX() - center) / zoom);
 			}
 			zoomIn();
 		} else {
-			if(zoomedBeyondOneToOne || zoom == 1){
+			if(zoomedOutBeyondOneToOne || zoom == 1){
 				move = center - ((e.getX() - center) / (zoom + 1.0));
 			} else {
 				move = center - ((e.getX() - center) / zoom);
@@ -407,7 +403,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			// Scroll left key bindings
 			case KeyEvent.VK_PAGE_UP: {
 				int localZoom = zoom;
-				if(zoomedBeyondOneToOne){
+				if(zoomedOutBeyondOneToOne){
 					localZoom = 1;
 				}
 				//Big scroll
@@ -417,7 +413,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			case KeyEvent.VK_LEFT: {
 				int localZoom = zoom;
-				if(zoomedBeyondOneToOne){
+				if(zoomedOutBeyondOneToOne){
 					localZoom = 1;
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
@@ -432,7 +428,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			case KeyEvent.VK_KP_LEFT: {
 				int localZoom = zoom;
-				if(zoomedBeyondOneToOne){
+				if(zoomedOutBeyondOneToOne){
 					localZoom = 1;
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
@@ -448,7 +444,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			// Scroll right key bindings
 			case KeyEvent.VK_PAGE_DOWN: {
 				int localZoom = zoom;
-				if(zoomedBeyondOneToOne){
+				if(zoomedOutBeyondOneToOne){
 					localZoom = 1;
 				}
 				//Big scroll
@@ -458,7 +454,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			case KeyEvent.VK_RIGHT: {
 				int localZoom = zoom;
-				if(zoomedBeyondOneToOne){
+				if(zoomedOutBeyondOneToOne){
 					localZoom = 1;
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
@@ -473,7 +469,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			case KeyEvent.VK_KP_RIGHT: {
 				int localZoom = zoom;
-				if(zoomedBeyondOneToOne){
+				if(zoomedOutBeyondOneToOne){
 					localZoom = 1;
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {

@@ -27,14 +27,14 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
-public class FreeEMSLAFileFilter extends FileFilter {
-	public FreeEMSLAFileFilter() {
+public class FreeEMSBinFileFilter extends FileFilter {
+	public FreeEMSBinFileFilter() {
 		super();
 	}
 
 	@Override
 	public final String getDescription() {
-		return "*.la";
+		return "*.bin";
 	}
 
 	@Override
@@ -45,6 +45,6 @@ public class FreeEMSLAFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		return "la".equals(extension);
+		return "bin".equals(extension);
 	}
 }

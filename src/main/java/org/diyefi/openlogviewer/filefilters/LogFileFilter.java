@@ -26,15 +26,15 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
-public class CSVTypeFileFilter extends FileFilter {
+public class LogFileFilter extends FileFilter {
 
-	public CSVTypeFileFilter() {
+	public LogFileFilter() {
 		super();
 	}
 
 	@Override
 	public final String getDescription() {
-		return "Compatable MegaSquirt DataLogs";
+		return "*.log";
 	}
 
 	@Override
@@ -45,16 +45,6 @@ public class CSVTypeFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		if ("log".equals(extension)) {
-			return true;
-		} else if ("csv".equals(extension)) {
-			return true;
-		} else if ("xls".equals(extension)) {
-			return true;
-		} else if ("msl".equals(extension)) {
-			return true;
-		}
-
-		return false;
+		return "log".equals(extension);
 	}
 }

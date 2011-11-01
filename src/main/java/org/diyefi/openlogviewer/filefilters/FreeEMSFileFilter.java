@@ -34,7 +34,7 @@ public class FreeEMSFileFilter extends FileFilter {
 
 	@Override
 	public final String getDescription() {
-		return "FreeEMSBinary Logs";
+		return "FreeEMS Binary Logs";
 	}
 
 	@Override
@@ -45,6 +45,12 @@ public class FreeEMSFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		return "bin".equals(extension);
+		if ("bin".equals(extension)) {
+			return true;
+		} else if ("la".equals(extension)) {
+			return true;
+		}
+
+		return false;
 	}
 }

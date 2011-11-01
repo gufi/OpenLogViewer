@@ -25,25 +25,42 @@ package org.diyefi.openlogviewer.genericlog;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Iterator;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 
 @SuppressWarnings("serial")
-public class GenericLog extends HashMap<String, GenericDataElement> {
+public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
+	// TODO this is no good, get rid of it, show some sort of status indicator in the GUI showing that log loading is not complete
+	// For streams, always show that as a way of saying "still streaming!"
+	private static final String LOG_LOADED_TEXT = "LogLoaded";
 	public static final int LOG_NOT_LOADED = -1;
 	public static final int LOG_LOADING = 0;
 	public static final int LOG_LOADED = 1;
-	private static final String LOG_LOADED_TEXT = "LogLoaded";
 
-	// Stuff for showing a line count in all files loaded, if we ever do exports, either don't include this, and/or check for it before doing this
-	private final String lineKey = "OLV Line Count";
-	private String firstKey;
-	private int lineCount;
-	private GenericDataElement lineCountElement;
+	// Info to populate built-in fields efficiently, likely to be done differently in future, but if not, put this in some structure.
+	public static final String recordCountKey = "OLV Record Count";
+	public static final String tempResetKey = "OLV Temp Resets";
+	public static final String elapsedTimeKey = "OLV Elapsed Time";
+	private static final int NUMBER_OF_BUILTIN_FIELDS = 3; // See below:
+	private static final int RECORD_COUNT_OFFSET = 0;
+	private static final int TEMP_RESET_OFFSET   = 1;
+	private static final int ELAPSED_TIME_OFFSET = 2;
+	private static final int SIZE_OF_DOUBLE = 8;
+	private static final int NUMBER_OF_BYTES_IN_A_MEG = 1000000;
+	private GenericDataElement recordCountElement;
 
 	private String metaData;
 	protected final PropertyChangeSupport PCS;
 	private int logStatus;
+	private String logStatusMessage = null;
+
+	// Track the size of our children so that we can bump them up one by one where required
+	private int currentCapacity;
+	private int currentPosition = -1;
+	// ^ TODO if we end up limiting memory usage by some configurable amount and recycling positions, for live streaming, then add count
+	private int ourLoadFactor;
+	private int numberOfInternalHeaders;
 
 	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
@@ -60,33 +77,42 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 		}
 	};
 
-	public GenericLog() {
-		super();
-		logStatus = LOG_NOT_LOADED;
-		PCS = new PropertyChangeSupport(this);
-		addPropertyChangeListener(LOG_LOADED_TEXT, autoLoad);
-		metaData = "";
-	}
-
 	/**
 	 * provide a <code>String</code> array of headers<br>
 	 * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
 	 * @param headers - of the data to be converted
 	 */
-	public GenericLog(final String[] headers) {
-		this();
+	public GenericLog(final String[] headers, final int initialCapacity, final int ourLoadFactor) {
+		super(1 + (headers.length + NUMBER_OF_BUILTIN_FIELDS), 1.0f); // refactor to use (capacityRequired+1, 1.0) for maximum performance (no rehashing)
+
+		GenericDataElement.resetPosition(); // Kinda ugly, but...
+		logStatus = LOG_NOT_LOADED;
+		PCS = new PropertyChangeSupport(this);
+		addPropertyChangeListener(LOG_LOADED_TEXT, autoLoad);
+		metaData = "";
+
+		this.ourLoadFactor = ourLoadFactor;
+		currentCapacity = initialCapacity;
 
 		// A bit dirty, but not too bad.
-		final String[] internalHeaders = new String[headers.length + 1];
+		numberOfInternalHeaders = headers.length + NUMBER_OF_BUILTIN_FIELDS;
+		final String[] internalHeaders = new String[numberOfInternalHeaders];
 		for (int i = 0; i < headers.length; i++) {
 			internalHeaders[i] = headers[i];
 		}
 
-		internalHeaders[headers.length] = lineKey;
-		this.setHeaders(internalHeaders);
-		lineCountElement = this.get(lineKey);
-		firstKey = headers[0];
-		lineCount = 0;
+		// If this stays like this, move it to a structure and small loop...
+		internalHeaders[headers.length + RECORD_COUNT_OFFSET] = recordCountKey;
+		internalHeaders[headers.length + TEMP_RESET_OFFSET] = tempResetKey;
+		internalHeaders[headers.length + ELAPSED_TIME_OFFSET] = elapsedTimeKey;
+
+		for (int x = 0; x < internalHeaders.length; x++) {
+			GenericDataElement GDE = new GenericDataElement(initialCapacity);
+			GDE.setName(internalHeaders[x]);
+			this.put(internalHeaders[x], GDE);
+		}
+
+		recordCountElement = this.get(recordCountKey);
 	}
 
 	/**
@@ -95,13 +121,59 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 * @param value - data to be added
 	 * @return true or false if it was successfully added
 	 */
-	public final boolean addValue(final String key, final double value) {
-		final GenericDataElement logElement = this.get(key);
-		if (key.equals(firstKey)) {
-			lineCountElement.add((double) lineCount);
-			lineCount++;
+	public final void addValue(final String key, final double value) {
+		this.get(key).add(value);
+	}
+
+	public final void incrementPosition() {
+		currentPosition++;
+		GenericDataElement.incrementPosition(); // Kinda ugly but...
+		if(currentPosition >= currentCapacity){
+			System.out.println(OpenLogViewerApp.NEWLINE + "############## Memory about to be resized! ##############");
+			final long startResizes = System.currentTimeMillis();
+			System.out.println("Old capacity = " + currentCapacity);
+			Runtime ourRuntime = Runtime.getRuntime();
+
+			System.out.println("Memory Before = Max: " + ourRuntime.maxMemory() + ", Free: " + ourRuntime.freeMemory() + ", Total: " + ourRuntime.totalMemory());
+
+			int numberResized = 0;
+			final Iterator<GenericDataElement> genLogIterator = this.values().iterator();
+			while (genLogIterator.hasNext()) {
+				// Take a stab at detecting impending doom and letting the user know
+				final long overheadInMemory = currentCapacity * SIZE_OF_DOUBLE;
+				final long increaseInMemory =  overheadInMemory * ourLoadFactor;
+
+				// In order to expand our array we need oldArray bytes + newArray bytes.
+				// oldArray is already excluded from free memory, so we just need memory for newArray and a fudge factor
+				final long requiredMemory = 2 * (increaseInMemory + overheadInMemory); // Magic to account for late GC
+				final long availableMemory = ourRuntime.freeMemory();
+
+				if(availableMemory < requiredMemory) {
+					currentPosition--; // Back out the change because we never achieved it for all fields!
+					final String jvmHelp = "Get more with -Xms and -Xmx JVM options!";
+					System.out.println("Detected impending out-of-memory doom! Details below! :-(");
+					System.out.println("Total" + "Available: " + availableMemory + " Required: " + requiredMemory + " Increase: " + increaseInMemory + " Overhead: " + overheadInMemory);
+					System.out.println(jvmHelp);
+					final long allocatedMemory = (ourRuntime.maxMemory() / NUMBER_OF_BYTES_IN_A_MEG);
+					throw new RuntimeException(allocatedMemory + "MB is insufficent memory to increase log size! " + jvmHelp + OpenLogViewerApp.NEWLINE +
+							"Completed " + numberResized + " of " + numberOfInternalHeaders +
+							" while increasing from " + currentCapacity + " records to "+ (currentCapacity * ourLoadFactor) + " records!");
+				}
+
+				final GenericDataElement dataElement = genLogIterator.next();
+				dataElement.increaseCapacity(ourLoadFactor);
+				numberResized++;
+			}
+			currentCapacity *= ourLoadFactor;
+
+			System.out.println("Memory After = Max: " + ourRuntime.maxMemory() + ", Free: " + ourRuntime.freeMemory() + ", Total: " + ourRuntime.totalMemory());
+
+			final long finishResizes = System.currentTimeMillis();
+			System.out.println("New capacity = " + currentCapacity);
+			System.out.println("Resizes took " + (finishResizes - startResizes) + " ms");
 		}
-		return logElement.add(value);
+
+		recordCountElement.add((double) currentPosition);
 	}
 
 	/**
@@ -120,18 +192,6 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 */
 	public final int getLogStatus() {
 		return this.logStatus;
-	}
-
-	/**
-	 * sets the names of the headers for the Comparable interface of GenericDataElement
-	 * @param headers
-	 */
-	public final void setHeaders(final String[] headers) {
-		for (int x = 0; x < headers.length; x++) {
-			GenericDataElement GDE = new GenericDataElement();
-			GDE.setName(headers[x]);
-			this.put(headers[x], GDE);
-		}
 	}
 
 	/**
@@ -175,5 +235,25 @@ public class GenericLog extends HashMap<String, GenericDataElement> {
 	 */
 	public final void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
 		PCS.removePropertyChangeListener(propertyName, listener);
+	}
+
+	public final String getLogStatusMessage() {
+		return logStatusMessage;
+	}
+
+	public void setLogStatusMessage(String message) {
+		this.logStatusMessage = message;
+	}
+
+	public final int getRecordCount() {
+		return currentPosition;
+	}
+
+	public final void clearOut() {
+		final Iterator<GenericDataElement> lastRound = this.values().iterator();
+		while (lastRound.hasNext()) {
+			lastRound.next().clearOut();
+		}
+		this.clear();
 	}
 }

@@ -22,6 +22,7 @@
  */
 package org.diyefi.openlogviewer.decoder;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,6 +30,8 @@ import java.util.Scanner;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class CSVTypeLog extends AbstractDecoder {
+	private final int initialLength = 75000;
+	private final int loadFactor = 2;
 	private int fieldCount = -1;
 
 	/**
@@ -37,10 +40,21 @@ public class CSVTypeLog extends AbstractDecoder {
 	 */
 	public CSVTypeLog(final File f) {
 		this.setLogFile(f);
-		this.setDecodedLog(new GenericLog());
 		this.setT(new Thread(this, "CSV Type Log Loading"));
 		this.getT().setPriority(Thread.MAX_PRIORITY);
 		this.getT().start();
+	}
+
+	@Override
+	public final void run() {
+		try {
+			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADING);
+			decodeLog();
+			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADED);
+		} catch (IOException IOE) {
+			this.getDecodedLog().setLogStatus(GenericLog.LOG_NOT_LOADED);
+			System.out.println("Error Loading Log: " + IOE.getMessage());
+		}
 	}
 
 	/**
@@ -52,9 +66,8 @@ public class CSVTypeLog extends AbstractDecoder {
 	 *
 	 * @throws IOException
 	 */
-	@Override
 	protected final void decodeLog() throws IOException {
-		final Scanner scan = new Scanner(new FileReader(getLogFile()));
+		final Scanner scan = new Scanner(new BufferedReader(new FileReader(getLogFile())));
 		final String delimiter = scanForDelimiter();
 
 		String[] splitLine = new String[1];
@@ -68,7 +81,7 @@ public class CSVTypeLog extends AbstractDecoder {
 
 			if (splitLine.length == fieldCount) {
 				headers = splitLine;
-				this.getDecodedLog().setHeaders(splitLine);
+				this.setDecodedLog(new GenericLog(splitLine, initialLength, loadFactor));
 				headerSet = true;
 			}
 		}
@@ -76,7 +89,7 @@ public class CSVTypeLog extends AbstractDecoder {
 		while (scan.hasNextLine()) {
 			line = scan.nextLine();
 			splitLine = line.split(delimiter);
-
+			this.getDecodedLog().incrementPosition();
 			if (splitLine.length == fieldCount) {
 				for (int x = 0; x < splitLine.length; x++) {
 					this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
@@ -92,7 +105,9 @@ public class CSVTypeLog extends AbstractDecoder {
 	 */
 	private String scanForDelimiter() throws IOException {
 		final String[] delim = {"\t", ",", ":", "/", "\\\\"};
-		final Scanner scan = new Scanner(new FileReader(getLogFile()));
+		final FileReader reader = new FileReader(getLogFile());
+		final Scanner scan = new Scanner(reader);
+
 		final int magicNumber = 10; // Remove the MAGIC!
 		String delimiterFind = "";
 		String[] split = new String[1];
@@ -110,6 +125,7 @@ public class CSVTypeLog extends AbstractDecoder {
 		}
 
 		scan.close();
+		reader.close();
 		return delim[delimNum];
 	}
 }

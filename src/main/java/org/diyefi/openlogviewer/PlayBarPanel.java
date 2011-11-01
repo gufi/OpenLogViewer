@@ -231,7 +231,7 @@ public class PlayBarPanel extends JPanel {
 	 */
 	private void zoomResetButtonMouseReleased(final MouseEvent e) {
 		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedBeyondOneToOne();
+		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		if(zoomedOut){
 			for(int i = zoom; i > 1; i--){
 				OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
