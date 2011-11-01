@@ -37,6 +37,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
@@ -385,6 +386,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			// Play key bindings
 			case KeyEvent.VK_SPACE: {
 				play();
+				break;
+			}
+
+			// Play key bindings
+			case KeyEvent.VK_ESCAPE: {
+				OpenLogViewerApp.getInstance().exitFullScreen();
 				break;
 			}
 
