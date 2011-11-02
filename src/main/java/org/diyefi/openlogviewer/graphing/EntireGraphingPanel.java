@@ -390,9 +390,24 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				break;
 			}
 
+			// Enter full screen key binding
+			case KeyEvent.VK_ENTER: {
+				if (e.getModifiers() == InputEvent.ALT_MASK
+						&& e.getKeyLocation() == KeyEvent.KEY_LOCATION_STANDARD) {
+					OpenLogViewerApp.getInstance().enterFullScreen();
+				}
+				break;
+			}
+
 			// Exit full screen key binding
 			case KeyEvent.VK_ESCAPE: {
 				OpenLogViewerApp.getInstance().exitFullScreen();
+				break;
+			}
+
+			// Toggle full screen key binding
+			case KeyEvent.VK_F11: {
+				OpenLogViewerApp.getInstance().toggleFullScreen();
 				break;
 			}
 

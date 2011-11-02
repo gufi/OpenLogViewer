@@ -452,6 +452,14 @@ public final class OpenLogViewerApp extends JFrame {
 		}
 	}
 
+	public void toggleFullScreen(){
+		if(fullscreen){
+			exitFullScreen();
+		} else {
+			enterFullScreen();
+		}
+	}
+
 	public void setLog(final GenericLog genericLog) {
 		graphingPanel.setLog(genericLog);
 	}
