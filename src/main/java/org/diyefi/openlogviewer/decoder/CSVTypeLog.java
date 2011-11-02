@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
+
+import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class CSVTypeLog extends AbstractDecoder {
@@ -48,12 +50,18 @@ public class CSVTypeLog extends AbstractDecoder {
 	@Override
 	public final void run() {
 		try {
-			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADING);
+			final long startTime = System.currentTimeMillis();
 			decodeLog();
+			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPositionMax(this.getDecodedLog().getRecordCount());
 			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADED);
-		} catch (IOException IOE) {
-			this.getDecodedLog().setLogStatus(GenericLog.LOG_NOT_LOADED);
-			System.out.println("Error Loading Log: " + IOE.getMessage());
+			System.out.println("Loaded " + (this.getDecodedLog().getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (this.getDecodedLog() != null) {
+				this.getDecodedLog().setLogStatusMessage(e.getMessage());
+			} else { // TODO create a new log object and set the status...
+				System.out.println("FIXME!!! CSVTypeLog");
+			}
 		}
 	}
 
