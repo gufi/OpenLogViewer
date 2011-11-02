@@ -33,7 +33,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class PlayBarPanel extends JPanel {
-	private static final long serialVersionUID = 1294732662423188903L;
+	private static final long serialVersionUID = 1L;
+
 	private static final int PLAY_BAR_PREFERRED_WIDTH = 888;
 	private static final int PLAY_BAR_PREFERRED_HEIGHT = 40;
 

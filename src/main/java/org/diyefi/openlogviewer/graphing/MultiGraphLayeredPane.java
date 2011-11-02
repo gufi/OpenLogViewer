@@ -30,7 +30,8 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class MultiGraphLayeredPane extends JLayeredPane {
-	private static final long serialVersionUID = 1213851792900715691L;
+	private static final long serialVersionUID = 1L;
+
 	private GenericLog genLog;
 	private InfoPanel infoPanel;
 	private int totalSplits;

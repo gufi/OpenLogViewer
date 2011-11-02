@@ -33,7 +33,8 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class GraphPositionPanel extends JPanel {
-	private static final long serialVersionUID = -7808475370693818838L;
+	private static final long serialVersionUID = 1L;
+
 	private GenericLog genLog;
 	private Color majorGraduationColor;
 	private Color positionDataColor;

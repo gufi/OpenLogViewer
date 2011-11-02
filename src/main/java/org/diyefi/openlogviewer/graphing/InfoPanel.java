@@ -36,7 +36,8 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
-	private static final long serialVersionUID = -6657156551430700622L;
+	private static final long serialVersionUID = 1L;
+
 	private static final int LEFT_MARGIN_OFFSET = 10;
 	private static final int ONE_TEXTUAL_HEIGHT = 20;
 	private int FPScounter = 0;

@@ -29,8 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.Iterator;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 
-@SuppressWarnings("serial")
 public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
+	private static final long serialVersionUID = 1L;
+
 	// TODO this is no good, get rid of it, show some sort of status indicator in the GUI showing that log loading is not complete
 	// For streams, always show that as a way of saying "still streaming!"
 	private static final String LOG_LOADED_TEXT = "LogLoaded";

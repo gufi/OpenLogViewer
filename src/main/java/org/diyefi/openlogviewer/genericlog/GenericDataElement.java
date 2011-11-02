@@ -42,7 +42,8 @@ import org.diyefi.openlogviewer.coloring.InitialLineColoring;
  * @author Bryan Harris
  */
 public final class GenericDataElement implements Comparable<GenericDataElement>, Serializable, Transferable {
-	private static final long serialVersionUID = 1823741455455439887L;
+	private static final long serialVersionUID = 1L;
+
 	private static int currentRecord;
 
 	/**

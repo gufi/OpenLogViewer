@@ -46,7 +46,8 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
  * @author Bryan Harris
  */
 public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener, PropertyChangeListener {
-	private static final long serialVersionUID = -7808406950399781712L;
+	private static final long serialVersionUID = 1L;
+
 	private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
 	private GenericDataElement GDE;
 	private List<Double> leftDataPointsToDisplay;

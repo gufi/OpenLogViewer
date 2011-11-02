@@ -41,7 +41,8 @@ import org.diyefi.openlogviewer.OpenLogViewerApp;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
-	private static final long serialVersionUID = 6880240079754110792L;
+	private static final long serialVersionUID = 1L;
+
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
 	private double graphPosition;
@@ -383,25 +384,25 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public final void keyPressed(final KeyEvent e) {
 		switch (e.getKeyCode()) {
-			// Play key bindings
+			// Play key binding
 			case KeyEvent.VK_SPACE: {
 				play();
 				break;
 			}
 
-			// Play key bindings
+			// Exit full screen key binding
 			case KeyEvent.VK_ESCAPE: {
 				OpenLogViewerApp.getInstance().exitFullScreen();
 				break;
 			}
 
-			// Home key bindings
+			// Home key binding
 			case KeyEvent.VK_HOME: {
 				resetGraphPosition();
 				break;
 			}
 
-			// End key bindings
+			// End key binding
 			case KeyEvent.VK_END: {
 				goToLastGraphPosition();
 				break;
@@ -490,11 +491,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 
 			// Zoom in key bindings
-			case KeyEvent.VK_UP: {
-				zoomIn();
-				break;
-			}
-
+			case KeyEvent.VK_UP:
 			case KeyEvent.VK_KP_UP: {
 				zoomIn();
 				break;
@@ -508,11 +505,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 
 			// Zoom out key bindings
-			case KeyEvent.VK_DOWN: {
-				zoomOut();
-				break;
-			}
-
+			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_KP_DOWN: {
 				zoomOut();
 				break;

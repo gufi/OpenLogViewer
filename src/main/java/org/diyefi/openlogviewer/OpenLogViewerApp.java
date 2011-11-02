@@ -77,7 +77,7 @@ import org.diyefi.openlogviewer.utils.Utilities;
 public final class OpenLogViewerApp extends JFrame {
 	public static final String NEWLINE = System.getProperty("line.separator");
 
-	private static final long serialVersionUID = 7987394054547975563L;
+	private static final long serialVersionUID = 1L;
 
 	private static final String APPLICATION_KEY = "ApplicationName";
 

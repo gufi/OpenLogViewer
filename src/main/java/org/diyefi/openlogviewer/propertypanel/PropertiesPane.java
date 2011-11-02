@@ -57,7 +57,8 @@ import javax.swing.JTextField;
 import org.diyefi.openlogviewer.OpenLogViewerApp;
 
 public class PropertiesPane extends JFrame {
-	private static final long serialVersionUID = -66677778898998591L;
+	private static final long serialVersionUID = 1L;
+
 	private File OLVProperties;
 	private List<SingleProperty> properties;
 	private List<SingleProperty> removeProperties;

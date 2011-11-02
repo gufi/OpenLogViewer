@@ -53,8 +53,9 @@ import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 
-@SuppressWarnings("serial")
 public class OptionFrameV2 extends JFrame {
+	private static final long serialVersionUID = 1L;
+
 	private static final int NUMBER_OF_COLS_OF_FREEEMS_FIELDS = 8; // Clearly a hack, but just to clarify and parameterise the existing math...
 	private static final int HEIGHT_IN_FIELDS = 12;
 	private static final int NUMBER_OF_ADD_BUTTONS = 1;
@@ -357,6 +358,8 @@ public class OptionFrameV2 extends JFrame {
 	}
 
 	private class ModifyGraphPane extends JInternalFrame {
+		private static final long serialVersionUID = 1L;
+
 		GenericDataElement GDE;
 		ActiveHeaderLabel AHL;
 		private JLabel minLabel;
@@ -486,6 +489,8 @@ public class OptionFrameV2 extends JFrame {
 	}
 
 	private class ActiveHeaderLabel extends JLabel implements Comparable<Object> {
+		private static final long serialVersionUID = 1L;
+
 		private GenericDataElement GDE;
 		private Point inactiveLocation;
 		private JPanel previousPanel;
