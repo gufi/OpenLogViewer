@@ -30,8 +30,8 @@ import java.util.Scanner;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class CSVTypeLog extends AbstractDecoder {
-	private final int initialLength = 75000;
-	private final int loadFactor = 2;
+	private static final int initialLength = 75000;
+	private static final int loadFactor = 2;
 	private int fieldCount = -1;
 
 	/**

@@ -39,8 +39,8 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  * filters for standard packets and parses them into fields with appropriate scaling.
  */
 public class FreeEMSBin extends AbstractDecoder implements Runnable { // implements runnable to make this class theadable
-	private final int initialLength = 75000;
-	private final int loadFactor = 2;
+	private static final int initialLength = 75000;
+	private static final int loadFactor = 2;
 
 	private static final int MINIMUM_PACKET_LENGTH = 3; // Flag byte, payload id word, no payload - defined by protocol
 	private static final int MAXIMUM_PACKET_LENGTH = 0x0820; // Buffer size on FreeEMS vanilla, take this from config file eventually

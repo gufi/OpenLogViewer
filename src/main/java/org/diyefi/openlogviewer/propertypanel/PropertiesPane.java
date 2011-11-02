@@ -136,7 +136,7 @@ public class PropertiesPane extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-				if (!s.equals("") || (s != null)) { // TODO Bad need of stringUtils here...
+				if ((s != null) && !"".equals(s) ) { // TODO Bad need of stringUtils here...
 					SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
 					addProperty(newprop);
