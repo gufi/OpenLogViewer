@@ -85,10 +85,10 @@ public final class OpenLogViewerApp extends JFrame {
 	private static final String FILE_MENU_ITEM_OPEN_KEY = "FileMenuItemOpenName";
 	private static final String FILE_MENU_ITEM_QUIT_KEY = "FileMenuItemQuitName";
 
-	private static final String DISPLAY_MENU_KEY = "DisplayMenuName";
-	private static final String DISPLAY_MENU_ITEM_FULL_SCREEN_KEY = "DisplayMenuItemFullScreenName";
-	private static final String DISPLAY_MENU_ITEM_SCALE_AND_COLOR_KEY = "DisplayMenuItemScaleAndColorName";
-	private static final String DISPLAY_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY = "DisplayMenuItemFieldsAndDivisionsName";
+	private static final String VIEW_MENU_KEY = "ViewMenuName";
+	private static final String VIEW_MENU_ITEM_FULL_SCREEN_KEY = "ViewMenuItemFullScreenName";
+	private static final String VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY = "ViewMenuItemScaleAndColorName";
+	private static final String VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY = "ViewMenuItemFieldsAndDivisionsName";
 
 	private static final String FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY = "FailedToGoFullScreenMessage";
 	private static final String CANT_GO_FULLSCREEN_MESSAGE_KEY = "CantGoFullScreenMessage";
@@ -116,7 +116,7 @@ public final class OpenLogViewerApp extends JFrame {
 	private boolean fullscreen;
 
 	public OpenLogViewerApp() {
-		prefFrame = new PropertiesPane(labels.getString(DISPLAY_MENU_ITEM_SCALE_AND_COLOR_KEY));
+		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
 		properties = new ArrayList<SingleProperty>();
 		prefFrame.setProperties(properties);
 
@@ -156,18 +156,18 @@ public final class OpenLogViewerApp extends JFrame {
 			}
 		});
 
-		final JMenuItem fullScreenDisplayMenuItem = new JMenuItem(labels.getString(DISPLAY_MENU_ITEM_FULL_SCREEN_KEY));
-		fullScreenDisplayMenuItem.setName(DISPLAY_MENU_ITEM_FULL_SCREEN_KEY);
-		fullScreenDisplayMenuItem.addActionListener(new ActionListener() {
+		final JMenuItem fullScreenViewMenuItem = new JMenuItem(labels.getString(VIEW_MENU_ITEM_FULL_SCREEN_KEY));
+		fullScreenViewMenuItem.setName(VIEW_MENU_ITEM_FULL_SCREEN_KEY);
+		fullScreenViewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				enterFullScreen();
 			}
 		});
 
-		final JMenuItem scaleAndColorDisplayMenuItem = new JMenuItem(labels.getString(DISPLAY_MENU_ITEM_SCALE_AND_COLOR_KEY));
-		scaleAndColorDisplayMenuItem.setName(DISPLAY_MENU_ITEM_SCALE_AND_COLOR_KEY);
-		scaleAndColorDisplayMenuItem.addActionListener(new ActionListener() {
+		final JMenuItem scaleAndColorViewMenuItem = new JMenuItem(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
+		scaleAndColorViewMenuItem.setName(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY);
+		scaleAndColorViewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				prefFrame.setVisible(true);
@@ -176,9 +176,9 @@ public final class OpenLogViewerApp extends JFrame {
 			}
 		});
 
-		final JMenuItem fieldsAndDivisionsDisplayMenuItem = new JMenuItem(labels.getString(DISPLAY_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY));
-		fieldsAndDivisionsDisplayMenuItem.setName(DISPLAY_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY);
-		fieldsAndDivisionsDisplayMenuItem.addActionListener(new ActionListener() {
+		final JMenuItem fieldsAndDivisionsViewMenuItem = new JMenuItem(labels.getString(VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY));
+		fieldsAndDivisionsViewMenuItem.setName(VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY);
+		fieldsAndDivisionsViewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				optionFrame.setVisible(true);
@@ -201,16 +201,16 @@ public final class OpenLogViewerApp extends JFrame {
 		fileMenu.add(openFileMenuItem);
 		fileMenu.add(quitFileMenuItem);
 
-		final JMenu displayMenu = new JMenu(labels.getString(DISPLAY_MENU_KEY));
-		displayMenu.setName(DISPLAY_MENU_KEY);
-		displayMenu.add(fullScreenDisplayMenuItem);
-		displayMenu.add(scaleAndColorDisplayMenuItem);
-		displayMenu.add(fieldsAndDivisionsDisplayMenuItem);
+		final JMenu viewMenu = new JMenu(labels.getString(VIEW_MENU_KEY));
+		viewMenu.setName(VIEW_MENU_KEY);
+		viewMenu.add(fullScreenViewMenuItem);
+		viewMenu.add(scaleAndColorViewMenuItem);
+		viewMenu.add(fieldsAndDivisionsViewMenuItem);
 
 		menuBar = new JMenuBar();
 		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
-		menuBar.add(displayMenu);
+		menuBar.add(viewMenu);
 		setJMenuBar(menuBar);
 
 		this.addKeyListener(graphingPanel);
