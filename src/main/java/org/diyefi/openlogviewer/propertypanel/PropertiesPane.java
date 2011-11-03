@@ -54,7 +54,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 
 public class PropertiesPane extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -170,8 +170,8 @@ public class PropertiesPane extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OpenLogViewerApp.getInstance().getPropertyPane().save();
-				OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
+				OpenLogViewer.getInstance().getPropertyPane().save();
+				OpenLogViewer.getInstance().getPropertyPane().setVisible(false);
 			}
 		});
 
@@ -180,8 +180,8 @@ public class PropertiesPane extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				OpenLogViewerApp.getInstance().getPropertyPane().resetProperties();
-				OpenLogViewerApp.getInstance().getPropertyPane().setVisible(false);
+				OpenLogViewer.getInstance().getPropertyPane().resetProperties();
+				OpenLogViewer.getInstance().getPropertyPane().setVisible(false);
 			}
 		});
 
@@ -365,7 +365,7 @@ public class PropertiesPane extends JFrame {
 				@Override
 				public void mouseReleased(MouseEvent e) {
 					Color newColor = JColorChooser.showDialog(
-							OpenLogViewerApp.getInstance().getOptionFrame(),
+							OpenLogViewer.getInstance().getOptionFrame(),
 							"Choose New Color", colorBox.getBackground());
 					if (newColor != null) {
 						colorBox.setBackground(newColor);

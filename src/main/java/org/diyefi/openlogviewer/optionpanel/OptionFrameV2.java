@@ -48,7 +48,7 @@ import javax.swing.JTextField;
 import javax.swing.JColorChooser;
 import javax.swing.BorderFactory;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
@@ -169,8 +169,8 @@ public class OptionFrameV2 extends JFrame {
 			final int col = activePanelList.size() % WIDTH_OF_BOXES; // TODO this is duplicated code!!!! I found out because I got two behaviors at once...
 			final JPanel activePanel = new JPanel();
 			activePanelList.add(activePanel);
-			if (OpenLogViewerApp.getInstance() != null) {
-				OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
+			if (OpenLogViewer.getInstance() != null) {
+				OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
 			}
 			activePanel.setLayout(null);
 			activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
@@ -194,7 +194,7 @@ public class OptionFrameV2 extends JFrame {
 	private void remActiveHeaderPanel(final ActionEvent e) {
 		final JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
 		activePanelList.remove(panel);
-		OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
+		OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
 
 		for (int i = 0; i < panel.getComponentCount();) {
 			if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
@@ -342,14 +342,14 @@ public class OptionFrameV2 extends JFrame {
 	}
 
 	private boolean checkForProperties(ActiveHeaderLabel GCB, GenericDataElement GDE) {
-		for (int i = 0; i < OpenLogViewerApp.getInstance().getProperties().size(); i++) {
-			if (OpenLogViewerApp.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
-				GDE.setDisplayColor(OpenLogViewerApp.getInstance().getProperties().get(i).getColor());
-				GDE.setDisplayMaxValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMax());
-				GDE.setDisplayMinValue(OpenLogViewerApp.getInstance().getProperties().get(i).getMin());
-				GDE.setSplitNumber(OpenLogViewerApp.getInstance().getProperties().get(i).getSplit());
+		for (int i = 0; i < OpenLogViewer.getInstance().getProperties().size(); i++) {
+			if (OpenLogViewer.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
+				GDE.setDisplayColor(OpenLogViewer.getInstance().getProperties().get(i).getColor());
+				GDE.setDisplayMaxValue(OpenLogViewer.getInstance().getProperties().get(i).getMax());
+				GDE.setDisplayMinValue(OpenLogViewer.getInstance().getProperties().get(i).getMin());
+				GDE.setSplitNumber(OpenLogViewer.getInstance().getProperties().get(i).getSplit());
 
-				if (OpenLogViewerApp.getInstance().getProperties().get(i).isActive()) {
+				if (OpenLogViewer.getInstance().getProperties().get(i).isActive()) {
 					return true;
 				}
 			}
@@ -397,7 +397,7 @@ public class OptionFrameV2 extends JFrame {
 			public void actionPerformed(final ActionEvent e) {
 				if (GDE != null) {
 					changeGDEValues();
-					OpenLogViewerApp.getInstance().getPropertyPane().addPropertyAndSave(new SingleProperty(GDE));
+					OpenLogViewer.getInstance().getPropertyPane().addPropertyAndSave(new SingleProperty(GDE));
 				}
 			}
 		};
@@ -645,11 +645,11 @@ public class OptionFrameV2 extends JFrame {
 			if (selected) {
 				this.setForeground(GDE.getDisplayColor());
 				this.repaint();
-				OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().addGraph(this.getName());
+				OpenLogViewer.getInstance().getMultiGraphLayeredPane().addGraph(this.getName());
 			} else {
 				this.setForeground(GDE.getDisplayColor().darker().darker());
-				if (OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName())) {
-					OpenLogViewerApp.getInstance().getMultiGraphLayeredPane().repaint();
+				if (OpenLogViewer.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName())) {
+					OpenLogViewer.getInstance().getMultiGraphLayeredPane().repaint();
 				}
 			}
 		}

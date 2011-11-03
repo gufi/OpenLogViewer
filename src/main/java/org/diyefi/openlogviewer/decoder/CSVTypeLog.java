@@ -28,7 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class CSVTypeLog extends AbstractDecoder {
@@ -52,7 +52,7 @@ public class CSVTypeLog extends AbstractDecoder {
 		try {
 			final long startTime = System.currentTimeMillis();
 			decodeLog();
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPositionMax(this.getDecodedLog().getRecordCount());
+			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphPositionMax(this.getDecodedLog().getRecordCount());
 			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADED);
 			System.out.println("Loaded " + (this.getDecodedLog().getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
 		} catch (Exception e) {

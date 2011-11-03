@@ -27,7 +27,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 
 public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private static final long serialVersionUID = 1L;
@@ -68,12 +68,12 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 			if ((Integer) propertyChangeEvent.getNewValue() == 0) {
 				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
 				genLog.setLogStatus(GenericLog.LOG_LOADING);
-				OpenLogViewerApp.getInstance().setLog(genLog);
+				OpenLogViewer.getInstance().setLog(genLog);
 			} else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
 				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
 				genLog.setLogStatus(GenericLog.LOG_LOADED);
-				OpenLogViewerApp.getInstance().setLog(genLog);
-				OpenLogViewerApp.getInstance().getOptionFrame().updateFromLog(genLog);
+				OpenLogViewer.getInstance().setLog(genLog);
+				OpenLogViewer.getInstance().getOptionFrame().updateFromLog(genLog);
 			}
 		}
 	};
@@ -130,7 +130,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 		currentPosition++;
 		GenericDataElement.incrementPosition(); // Kinda ugly but...
 		if(currentPosition >= currentCapacity){
-			System.out.println(OpenLogViewerApp.NEWLINE + "############## Memory about to be resized! ##############");
+			System.out.println(OpenLogViewer.NEWLINE + "############## Memory about to be resized! ##############");
 			final long startResizes = System.currentTimeMillis();
 			System.out.println("Old capacity = " + currentCapacity);
 			Runtime ourRuntime = Runtime.getRuntime();
@@ -156,7 +156,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 					System.out.println("Total" + "Available: " + availableMemory + " Required: " + requiredMemory + " Increase: " + increaseInMemory + " Overhead: " + overheadInMemory);
 					System.out.println(jvmHelp);
 					final long allocatedMemory = (ourRuntime.maxMemory() / NUMBER_OF_BYTES_IN_A_MEG);
-					throw new RuntimeException(allocatedMemory + "MB is insufficent memory to increase log size! " + jvmHelp + OpenLogViewerApp.NEWLINE +
+					throw new RuntimeException(allocatedMemory + "MB is insufficent memory to increase log size! " + jvmHelp + OpenLogViewer.NEWLINE +
 							"Completed " + numberResized + " of " + numberOfInternalHeaders +
 							" while increasing from " + currentCapacity + " records to "+ (currentCapacity * ourLoadFactor) + " records!");
 				}

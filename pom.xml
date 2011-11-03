@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.diyefi</groupId>
+	<groupId>org.diyefi.openlogviewer</groupId>
 	<artifactId>OpenLogViewer</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
@@ -160,9 +160,9 @@
 					<arguments>
 						<argument>-Xms256m</argument>
 						<argument>-Xmx512m</argument>
-						<argument>-classpath</argument>
-						<classpath/>
-						<argument>org.diyefi.openlogviewer.OpenLogViewerApp</argument>
+						<argument>-Xdock:name=${project.artifactId}</argument>
+						<argument>-jar</argument>
+						<argument>${project.basedir}/target/${project.artifactId}-${project.version}.jar</argument>
 					</arguments>
 				</configuration>
 			</plugin>
@@ -173,7 +173,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.diyefi.openlogviewer.OpenLogViewerApp</mainClass>
+							<mainClass>${project.groupId}.${project.artifactId}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

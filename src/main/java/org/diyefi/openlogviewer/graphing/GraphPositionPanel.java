@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class GraphPositionPanel extends JPanel {
@@ -72,8 +72,8 @@ public class GraphPositionPanel extends JPanel {
 			if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
 				paintPositionBar(g2d, false);
 			} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
-				final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-				final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+				final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+				final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 				paintPositionBar(g2d, zoomedOut);
 				paintPositionData(g2d, zoomedOut);
 				if(!zoomedOut && zoom > 1){
@@ -86,8 +86,8 @@ public class GraphPositionPanel extends JPanel {
 	// TODO http://issues.freeems.org/view.php?id=360
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final int center = this.getWidth() / 2;
-		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(majorGraduationColor);
 
 		// Setup count
@@ -136,8 +136,8 @@ public class GraphPositionPanel extends JPanel {
 	// TODO http://issues.freeems.org/view.php?id=360
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final int center = this.getWidth() / 2;
-		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		g2d.setColor(positionDataColor);
 		FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
 
@@ -203,8 +203,8 @@ public class GraphPositionPanel extends JPanel {
 	private void setupMouseCursorLineSnappingPositions() {
 		final int center = this.getWidth() / 2;
 		validSnappingPositions = new boolean[this.getWidth()];
-		final double graphPosition = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPosition();
-		final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
+		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
+		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		double count = Math.round(graphPosition * zoom);
 		// Fill array with valid snapping points that are left of center
 		for (int i = center; i > 0; i--) {
@@ -231,9 +231,9 @@ public class GraphPositionPanel extends JPanel {
 	private void setGraduationSpacing() {
 		int zoom = 1;
 		boolean zoomedOut = false;
-		if (OpenLogViewerApp.getInstance() != null) {
-			zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-			zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+		if (OpenLogViewer.getInstance() != null) {
+			zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+			zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		}
 
 		// ROFL: I tried to make this sweeter, but the code that actually draws it had other ideas :-) http://issues.freeems.org/view.php?id=360

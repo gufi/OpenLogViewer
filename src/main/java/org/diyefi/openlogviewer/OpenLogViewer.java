@@ -74,12 +74,13 @@ import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 import org.diyefi.openlogviewer.utils.Utilities;
 
-public final class OpenLogViewerApp extends JFrame {
+public final class OpenLogViewer extends JFrame {
 	public static final String NEWLINE = System.getProperty("line.separator");
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String APPLICATION_KEY = "ApplicationName";
+	private static final String APPLICATION_NAME = OpenLogViewer.class.getSimpleName();
+	private static final String SETTINGS_DIRECTORY = "." + APPLICATION_NAME;
 
 	private static final String FILE_MENU_KEY = "FileMenuName";
 	private static final String FILE_MENU_ITEM_OPEN_KEY = "FileMenuItemOpenName";
@@ -101,7 +102,7 @@ public final class OpenLogViewerApp extends JFrame {
 	private static final String NAME_OF_LAST_CHOOSER_CLASS = "chooserClass";
 
 	// Real vars start here, many will probably get ripped out later
-	private static OpenLogViewerApp mainAppRef;
+	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
 
 	private JPanel mainPanel;
@@ -115,7 +116,7 @@ public final class OpenLogViewerApp extends JFrame {
 	private JMenuBar menuBar;
 	private boolean fullscreen;
 
-	public OpenLogViewerApp() {
+	public OpenLogViewer() {
 		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
 		properties = new ArrayList<SingleProperty>();
 		prefFrame.setProperties(properties);
@@ -126,7 +127,7 @@ public final class OpenLogViewerApp extends JFrame {
 		graphingPanel.setPreferredSize(new Dimension(600, 420));
 
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		this.setTitle(labels.getString(APPLICATION_KEY));
+		this.setTitle(APPLICATION_NAME);
 		this.setLayout(new BorderLayout());
 		this.setFocusable(true);
 
@@ -151,7 +152,7 @@ public final class OpenLogViewerApp extends JFrame {
 		quitFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				WindowEvent wev = new WindowEvent(OpenLogViewerApp.getInstance(), WindowEvent.WINDOW_CLOSING);
+				WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
 				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 			}
 		});
@@ -231,22 +232,34 @@ public final class OpenLogViewerApp extends JFrame {
 			@Override
 			public void run() {
 				Locale currentLocale = Locale.getDefault();
-				labels = ResourceBundle.getBundle("org.diyefi.openlogviewer.Labels", currentLocale);
+				labels = ResourceBundle.getBundle(this.getClass().getPackage().getName() + ".Labels", currentLocale);
 
-				try {
-					// Set cross-platform Java L&F (also called "Metal")
-					UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-				} catch (UnsupportedLookAndFeelException e) {
-					throw new RuntimeException(labels.getString("LookAndFeelExceptionMessageOne"), e);
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException(labels.getString("LookAndFeelExceptionMessageTwo"), e);
-				} catch (InstantiationException e) {
-					throw new RuntimeException(labels.getString("LookAndFeelExceptionMessageThree"), e);
-				} catch (IllegalAccessException e) {
-					throw new RuntimeException(labels.getString("LookAndFeelExceptionMessageFour"), e);
+				final String lookAndFeel;
+				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
+				if ("com.apple.laf.AquaLookAndFeel".equals(systemLookAndFeel)) { // If Mac!
+					System.setProperty("apple.laf.useScreenMenuBar", "true");
+					lookAndFeel = systemLookAndFeel;
+				} else {
+					lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
 				}
 
-				mainAppRef = new OpenLogViewerApp();
+				try {
+					UIManager.setLookAndFeel(lookAndFeel);
+				} catch (UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString("LookAndFeelExceptionMessageOne"));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString("LookAndFeelExceptionMessageTwo"));
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString("LookAndFeelExceptionMessageThree"));
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString("LookAndFeelExceptionMessageFour"));
+				}
+
+				mainAppRef = new OpenLogViewer();
 			}
 		});
 	}
@@ -302,7 +315,7 @@ public final class OpenLogViewerApp extends JFrame {
 			}
 		}
 
-		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewerApp.getInstance());
+		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewer.getInstance());
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
 			if (decoderInUse != null) {
 				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
@@ -322,7 +335,7 @@ public final class OpenLogViewerApp extends JFrame {
 			}
 
 			if (openFile != null) {
-				OpenLogViewerApp.getInstance().setTitle(labels.getString(APPLICATION_KEY) + " - " + openFile.getName());
+				OpenLogViewer.getInstance().setTitle(APPLICATION_NAME + " - " + openFile.getName());
 				saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, openFile.getParent());
 				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
 				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
@@ -384,7 +397,7 @@ public final class OpenLogViewerApp extends JFrame {
 		if (!AppWideFile.exists() || !AppWideFile.canRead() || !AppWideFile.canWrite()) {
 			System.out.println("Either you dont have a home director, or it isnt read/writeable... fix it!");
 		} else {
-			AppWideFile = new File(AppWideFile, ".OpenLogViewer");
+			AppWideFile = new File(AppWideFile, SETTINGS_DIRECTORY);
 		}
 
 		if (!AppWideFile.exists()) {
@@ -468,7 +481,7 @@ public final class OpenLogViewerApp extends JFrame {
 	 * Returns the reference to this instance, it is meant to be a method to make getting the main frame simpler
 	 * @return <code>this</code> instance
 	 */
-	public static OpenLogViewerApp getInstance() {
+	public static OpenLogViewer getInstance() {
 		return mainAppRef;
 	}
 

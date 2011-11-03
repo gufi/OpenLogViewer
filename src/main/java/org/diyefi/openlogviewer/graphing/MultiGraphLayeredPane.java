@@ -25,7 +25,7 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Color;
 import javax.swing.JLayeredPane;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -52,9 +52,9 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	}
 
 	public final void addGraph(final String header) {
-		final boolean p = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isPlaying();
+		final boolean p = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
 		if (p) {
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
+			OpenLogViewer.getInstance().getEntireGraphingPanel().pause();
 		}
 		boolean found = false;
 		for (int i = 0; i < this.getComponentCount() && !found; i++) {
@@ -77,7 +77,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		}
 
 		if (p) {
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
+			OpenLogViewer.getInstance().getEntireGraphingPanel().play();
 		}
 	}
 

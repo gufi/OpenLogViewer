@@ -29,7 +29,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.decoder.LogField.types;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -295,7 +295,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			}
 			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
 
-			System.out.println(OpenLogViewerApp.NEWLINE + "Binary Parsing Statistics:" + OpenLogViewerApp.NEWLINE);
+			System.out.println(OpenLogViewer.NEWLINE + "Binary Parsing Statistics:" + OpenLogViewer.NEWLINE);
 
 			System.out.println("EscapePairMismatches: " + escapePairMismatches + " Incremented when an escape is found but not followed by an escapee");
 			System.out.println("StartsInsideAPacket:  " + startsInsideAPacket  + " Incremented when a start byte is found inside a packet");
@@ -307,13 +307,13 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			System.out.println("StrayBytesLost:       " + strayBytesLost       + " How many bytes were not in a packet! (should be low, ie, under one packet");
 			System.out.println("PayloadIDWrong:       " + payloadIDWrong       + " Requests to parse packet as A when packet was of type B");
 
-			System.out.println(OpenLogViewerApp.NEWLINE + "Thank you for choosing FreeEMS!");
+			System.out.println(OpenLogViewer.NEWLINE + "Thank you for choosing FreeEMS!");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			decodedLog.setLogStatusMessage(e.getMessage());
 		} finally { // Setup the log to be displayed TODO in future it will just display as it goes
-			OpenLogViewerApp.getInstance().getEntireGraphingPanel().setGraphPositionMax(decodedLog.getRecordCount());
+			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphPositionMax(decodedLog.getRecordCount());
 			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
 			System.out.println("Loaded " + (decodedLog.getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
 

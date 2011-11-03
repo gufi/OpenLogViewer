@@ -24,6 +24,7 @@ package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -32,7 +33,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
@@ -77,6 +78,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			this.setSize(this.getParent().getSize());
 		}
 
+		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 12)); // Required to keep font consistent when using Mac L&F
 		if (genLog == null) {
 			g.setColor(Color.RED);
 			g.drawString("No log loaded, please select a log from the file menu.", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
@@ -98,15 +100,15 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 				final Dimension d = this.getSize();
 				final int center = d.width / 2;
-				final MultiGraphLayeredPane multigGraph = OpenLogViewerApp.getInstance().getMultiGraphLayeredPane();
+				final MultiGraphLayeredPane multigGraph = OpenLogViewer.getInstance().getMultiGraphLayeredPane();
 				final Graphics2D g2d = (Graphics2D) g;
 				g.setColor(Color.GRAY);
 				g2d.drawString("FPS: " + Double.toString(FPS), LEFT_MARGIN_OFFSET, fpsHeight);
 
 				if (mouseOver) {
-					final GraphPositionPanel graphPositionPanel = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
-					final int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-					final boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+					final GraphPositionPanel graphPositionPanel = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
+					final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+					final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 					int snappedDataPosition = xMouseCoord;
 					if(!zoomedOut && zoom > 1){
 						snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);

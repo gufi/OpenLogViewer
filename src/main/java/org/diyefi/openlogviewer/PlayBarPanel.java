@@ -215,7 +215,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void zoomInButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomIn();
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void zoomOutButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOut();
 	}
 
 	/**
@@ -231,15 +231,15 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void zoomResetButtonMouseReleased(final MouseEvent e) {
-		int zoom = OpenLogViewerApp.getInstance().getEntireGraphingPanel().getZoom();
-		boolean zoomedOut = OpenLogViewerApp.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+		int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		if(zoomedOut){
 			for(int i = zoom; i > 1; i--){
-				OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomIn();
+				OpenLogViewer.getInstance().getEntireGraphingPanel().zoomIn();
 			}
 		} else {
 			for(int i = zoom; i > 1; i--){
-				OpenLogViewerApp.getInstance().getEntireGraphingPanel().zoomOut();
+				OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOut();
 			}
 		}
 	}
@@ -249,8 +249,8 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void playButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().play();
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().play();
+		OpenLogViewer.getInstance().getEntireGraphingPanel();
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void pauseButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().pause();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().pause();
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void stopButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().stop();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().stop();
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void fastForwardButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().fastForward();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().fastForward();
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void reverseButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().slowDown();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().slowDown();
 	}
 
 	/**
@@ -290,6 +290,6 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void ejectButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewerApp.getInstance().getEntireGraphingPanel().eject();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().eject();
 	}
 }

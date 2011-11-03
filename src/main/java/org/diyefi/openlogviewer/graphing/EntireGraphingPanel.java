@@ -37,7 +37,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import org.diyefi.openlogviewer.OpenLogViewerApp;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
@@ -394,20 +394,20 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			case KeyEvent.VK_ENTER: {
 				if (e.getModifiers() == InputEvent.ALT_MASK
 						&& e.getKeyLocation() == KeyEvent.KEY_LOCATION_STANDARD) {
-					OpenLogViewerApp.getInstance().enterFullScreen();
+					OpenLogViewer.getInstance().enterFullScreen();
 				}
 				break;
 			}
 
 			// Exit full screen key binding
 			case KeyEvent.VK_ESCAPE: {
-				OpenLogViewerApp.getInstance().exitFullScreen();
+				OpenLogViewer.getInstance().exitFullScreen();
 				break;
 			}
 
 			// Toggle full screen key binding
 			case KeyEvent.VK_F11: {
-				OpenLogViewerApp.getInstance().toggleFullScreen();
+				OpenLogViewer.getInstance().toggleFullScreen();
 				break;
 			}
 
