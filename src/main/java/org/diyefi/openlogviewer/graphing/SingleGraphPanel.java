@@ -200,13 +200,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	public final Double getMouseInfo(final int cursorDistanceFromCenter) {
+	public final Double getMouseInfo(final int cursorPosition) {
 		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		Double info = null;
 		if(zoomedOut){
-			info = getMouseInfoZoomedOut(cursorDistanceFromCenter);
+			info = getMouseInfoZoomedOut(cursorPosition);
 		} else {
-			info = getMouseInfoZoomed(cursorDistanceFromCenter);
+			info = getMouseInfoZoomed(cursorPosition);
 		}
 		return info;
 	}
@@ -217,16 +217,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final Double getMouseInfoZoomed(final int cursorDistanceFromCenter){
+	private final Double getMouseInfoZoomed(final int cursorPosition){
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
-		final int cursorDistanceFromCenterPlusOffset = cursorDistanceFromCenter + (int) offset;
-		double numSnapsFromCenter = ((double) cursorDistanceFromCenterPlusOffset / (double) zoom);
+		final int cursorPositionPlusOffset = cursorPosition + (int) offset;
+		double numSnapsFromCenter = ((double) cursorPositionPlusOffset / (double) zoom);
 		numSnapsFromCenter = Math.round(numSnapsFromCenter);
-		final int cursorPosition = (int) graphPosition + (int) numSnapsFromCenter;
-		if ((cursorPosition >= 0) && (cursorPosition < availableDataRecords)) {
-			return GDE.get(cursorPosition);
+		final int dataLocation = (int) graphPosition + (int) numSnapsFromCenter;
+		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
+			return GDE.get(dataLocation);
 		} else {
 			return null;
 		}
@@ -238,12 +238,12 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final Double getMouseInfoZoomedOut(int cursorDistanceFromCenter){
+	private final Double getMouseInfoZoomedOut(int cursorPosition){
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		final int cursorPosition = (int) graphPosition + (cursorDistanceFromCenter * zoom);
-		if ((cursorPosition >= 0) && (cursorPosition < availableDataRecords)) {
-			return GDE.get(cursorPosition);
+		final int dataLocation = (int) graphPosition + (cursorPosition * zoom);
+		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
+			return GDE.get(dataLocation);
 		} else {
 			return null;
 		}

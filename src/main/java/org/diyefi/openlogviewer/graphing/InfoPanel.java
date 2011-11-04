@@ -121,7 +121,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 						if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
 							final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
 							g2d.setColor(textBackground);
-							final Double mouseData = singleGraph.getMouseInfo(snappedDataPosition - center);
+							final Double mouseData = singleGraph.getMouseInfo(snappedDataPosition);
 							String mouseDataString = "-.-";
 							if(mouseData != null){
 								mouseDataString = mouseData.toString();
