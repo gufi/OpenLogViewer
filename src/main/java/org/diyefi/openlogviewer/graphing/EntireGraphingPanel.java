@@ -103,8 +103,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			if (flingInertia == 0) {
 				stopFlinging();
 			} else {
-				final int center = this.getWidth() / 2;
-				moveEntireGraphingPanel(center + flingInertia);
+				moveEntireGraphingPanel(flingInertia);
 				if (flingInertia > 0) {
 					flingInertia--;
 				} else {
@@ -258,15 +257,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	private void moveEntireGraphingPanel(final double newPosition) {
-		final double center = this.getWidth() / 2;
 		double move = -1.0;
 		if(zoomedOutBeyondOneToOne){
-			move = (newPosition - center) * zoom;
+			move = newPosition * zoom;
 		} else {
-			move = (newPosition - center) / zoom;
+			move = newPosition / zoom;
 		}
-		if (move + graphPosition < graphPositionMax) {
-			if (move + graphPosition < 0) {
+		if (graphPosition + move < graphPositionMax) {
+			if (graphPosition + move < 0) {
 				resetGraphPosition();
 			} else {
 				moveGraphPosition(move);
@@ -290,7 +288,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public final void mouseClicked(final MouseEvent e) {
 		if (!dragging) {
-			moveEntireGraphingPanel(e.getX());
+			final int half = this.getWidth() / 2;
+			moveEntireGraphingPanel(e.getX() - half);
 		} else {
 			stopDragging();
 			stopFlinging();
@@ -300,10 +299,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public final void mouseDragged(final MouseEvent e) {
 		dragging = true;
-		final int center = this.getWidth() / 2;
 		final int xMouseCoord = e.getX();
 		if ((prevDragXCoord > 0) && (prevDragXCoord != xMouseCoord)) {
-			moveEntireGraphingPanel(center + (prevDragXCoord - xMouseCoord));
+			moveEntireGraphingPanel(prevDragXCoord - xMouseCoord);
 			flingInertia = ((prevDragXCoord - xMouseCoord) * 2);
 			thePast = System.currentTimeMillis();
 		}
@@ -359,21 +357,20 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	@Override
 	public final void mouseWheelMoved(final MouseWheelEvent e) {
-		final double center = this.getWidth() / 2.0;
 		final int notches = e.getWheelRotation();
 		double move = 0;
 		if (notches < 0) {
 			if(zoomedOutBeyondOneToOne){
-				move = center + ((e.getX() - center) / (zoom - 1.0));
+				move = e.getX() / (zoom - 1.0);
 			} else {
-				move = center + ((e.getX() - center) / zoom);
+				move = e.getX() / zoom;
 			}
 			zoomIn();
 		} else {
 			if(zoomedOutBeyondOneToOne || zoom == 1){
-				move = center - ((e.getX() - center) / (zoom + 1.0));
+				move = e.getX() / (zoom + 1.0);
 			} else {
-				move = center - ((e.getX() - center) / zoom);
+				move = e.getX() / zoom;
 			}
 			zoomOut();
 		}
@@ -425,12 +422,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			// Scroll left key bindings
 			case KeyEvent.VK_PAGE_UP: {
-				int localZoom = zoom;
-				if(zoomedOutBeyondOneToOne){
-					localZoom = 1;
-				}
 				//Big scroll
-				moveEntireGraphingPanel(-(this.getWidth() / 4) / localZoom);
+				moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 				break;
 			}
 
@@ -441,10 +434,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(-(this.getWidth() / 4) / localZoom);
+					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 				} else {
-					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center - localZoom);
+					moveEntireGraphingPanel(-localZoom);
 				}
 				break;
 			}
@@ -456,22 +448,17 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(-(this.getWidth() / 4) / localZoom);
+					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 				} else {
-					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center - localZoom);
+					moveEntireGraphingPanel(-localZoom);
 				}
 				break;
 			}
 
 			// Scroll right key bindings
 			case KeyEvent.VK_PAGE_DOWN: {
-				int localZoom = zoom;
-				if(zoomedOutBeyondOneToOne){
-					localZoom = 1;
-				}
 				//Big scroll
-				moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / localZoom);
+				moveEntireGraphingPanel(this.getWidth() * 0.75);
 				break;
 			}
 
@@ -482,10 +469,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / localZoom);
+					moveEntireGraphingPanel(this.getWidth() * 0.75);
 				} else {
-					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center + localZoom);
+					moveEntireGraphingPanel(localZoom);
 				}
 				break;
 			}
@@ -497,10 +483,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					//Big scroll
-					moveEntireGraphingPanel(this.getWidth() + (this.getWidth() / 4) / localZoom);
+					moveEntireGraphingPanel(this.getWidth() * 0.75);
 				} else {
-					final int center = this.getWidth() / 2;
-					moveEntireGraphingPanel(center + localZoom);
+					moveEntireGraphingPanel(localZoom);
 				}
 				break;
 			}
