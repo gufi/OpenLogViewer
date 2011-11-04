@@ -289,9 +289,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		if (GDE != null) {
 			final int graphPosition = (int)OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 			int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
-			dataPointsToDisplay = new double[graphWindowWidth + 1];  // Add one data point for off-screen to the right
 			final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-			final int numberOfPointsThatFitInDisplay = WIDTH * zoom;
+			dataPointsToDisplay = new double[graphWindowWidth + 1]; // Add one data point for off-screen to the right
+			final int numberOfRealPointsThatFitInDisplay = (graphWindowWidth * zoom) + zoom; // Add one data point for off-screen to the right
+			final int rightGraphPosition = graphPosition + numberOfRealPointsThatFitInDisplay;
 
 			/*
 			* Setup data points.
@@ -309,10 +310,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			* that local peaks and valleys are the most interesting parts of the
 			* graph to display.
 			*/
-			double leftOfNewData = dataPointsToDisplay[0];
-			for (int i = 0; i < numberOfPointsThatFitInDisplay; i+=zoom) {
+			int nextAarrayIndex = 0;
+			double leftOfNewData = GDE.get(0);
+			for (int i = graphPosition; i < rightGraphPosition; i+=zoom) {
 
-				if (i < availableDataRecords) {
+				if (i >= 0 && i < availableDataRecords) {
 					double minData = Double.MAX_VALUE;
 					double maxData = -Double.MAX_VALUE;
 					double newData = 0.0;
@@ -320,8 +322,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 					int divisor = 0;
 
 					for (int j = 0; j < zoom; j++){
-						if (i + j + graphPosition < availableDataRecords) {
-							newData = GDE.get(i + j + graphPosition);
+						if (i + j >= 0 && i + j < availableDataRecords) {
+							newData = GDE.get(i + j);
 							acummulateData += newData;
 							divisor++;
 							if (newData < minData){
@@ -334,15 +336,19 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 					}
 					double averageData = acummulateData / divisor;
 					if (averageData > leftOfNewData){
-						dataPointsToDisplay[i] = maxData;
+						dataPointsToDisplay[nextAarrayIndex] = maxData;
 						leftOfNewData = maxData;
 					} else if (averageData < leftOfNewData){
-						dataPointsToDisplay[i] = minData;
+						dataPointsToDisplay[nextAarrayIndex] = minData;
 						leftOfNewData = minData;
 					} else {
-						dataPointsToDisplay[i] = averageData;
+						dataPointsToDisplay[nextAarrayIndex] = averageData;
 						leftOfNewData = averageData;
 					}
+					nextAarrayIndex++;
+				} else {
+					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
+					nextAarrayIndex++;
 				}
 			}
 		}
