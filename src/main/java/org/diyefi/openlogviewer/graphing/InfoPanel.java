@@ -99,7 +99,6 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				}
 
 				final Dimension d = this.getSize();
-				final int center = d.width / 2;
 				final MultiGraphLayeredPane multigGraph = OpenLogViewer.getInstance().getMultiGraphLayeredPane();
 				final Graphics2D g2d = (Graphics2D) g;
 				g.setColor(Color.GRAY);
