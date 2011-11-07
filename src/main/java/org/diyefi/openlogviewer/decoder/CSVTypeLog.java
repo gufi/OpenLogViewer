@@ -52,7 +52,7 @@ public class CSVTypeLog extends AbstractDecoder {
 		try {
 			final long startTime = System.currentTimeMillis();
 			decodeLog();
-			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphPositionMax(this.getDecodedLog().getRecordCount());
+			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphSize(this.getDecodedLog().getRecordCount());
 			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADED);
 			System.out.println("Loaded " + (this.getDecodedLog().getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
 		} catch (Exception e) {

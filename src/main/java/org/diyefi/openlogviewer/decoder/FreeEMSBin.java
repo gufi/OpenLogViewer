@@ -313,7 +313,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			e.printStackTrace();
 			decodedLog.setLogStatusMessage(e.getMessage());
 		} finally { // Setup the log to be displayed TODO in future it will just display as it goes
-			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphPositionMax(decodedLog.getRecordCount());
+			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphSize(decodedLog.getRecordCount());
 			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
 			System.out.println("Loaded " + (decodedLog.getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
 

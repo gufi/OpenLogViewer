@@ -46,7 +46,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
 	private double graphPosition;
-	private int graphPositionMax;
+	private int graphSize;
 	private boolean playing;
 	private boolean wasPlaying;
 	private Timer playTimer;
@@ -73,7 +73,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		graphPositionPanel = new GraphPositionPanel();
 		graphPositionPanel.setPreferredSize(new Dimension(600, 20));
 		this.add(graphPositionPanel, java.awt.BorderLayout.SOUTH);
+		zoom = 1;
+		zoomedOutBeyondOneToOne = false;
 		resetGraphPosition();
+		setGraphSize(100);
 		playing = false;
 		wasPlaying = false;
 		playTimer = new Timer(10, this);
@@ -88,18 +91,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		stopDragging();
 		stopFlinging();
 		thePast = System.currentTimeMillis();
-		zoom = 1;
-		zoomedOutBeyondOneToOne = false;
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
-		if (playing && graphPosition < graphPositionMax) {
+		if (playing && graphPosition < getGraphPositionMax()) {
 			if(zoomedOutBeyondOneToOne){
 				moveGraphPosition(zoom);
 			} else {
 				moveGraphPosition(1);
 			}
-		} else if ((flinging && graphPosition < graphPositionMax) && (graphPosition > 0)) {
+		} else if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
 			if (flingInertia == 0) {
 				stopFlinging();
 			} else {
@@ -223,12 +224,70 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		flingTimer.start();
 	}
 
+	private final double getGraphPositionMin(){
+		double min = 0.0;
+		if(zoomedOutBeyondOneToOne){
+			min = -(this.getWidth() * zoom) + zoom;
+		} else {
+			min = -((double)this.getWidth() / (double)zoom) + 1;
+		}
+		return min;
+	}
+
 	public final double getGraphPosition() {
 		return graphPosition;
 	}
 
-	public final int getGraphPositionMax() {
-		return graphPositionMax;
+	private final int getGraphPositionMax() {
+		int max = 0;
+		if(zoomedOutBeyondOneToOne){
+			max = graphSize - zoom;
+		} else {
+			max = graphSize - 1;
+		}
+		return max;
+	}
+
+	public final void setGraphPosition(final double newPos) {
+		graphPosition = newPos;
+		repaint();
+	}
+
+	/**
+	 * How many available data records we are dealing with.
+	 */
+	public final void setGraphSize(final int newGraphSize) {
+		this.graphSize = newGraphSize;
+	}
+
+	/**
+	 * Move the graph to the right so that only one valid
+	 * data point shows on the right-most part of the display.
+	 */
+	private final void resetGraphPosition() {
+		setGraphPosition(getGraphPositionMin());
+	}
+
+	/**
+	 * Move the graph to the center to that there are equal
+	 * data points to the left and to the right.
+	 */
+	private final void centerGraphPosition() {
+		final int center = this.getWidth() / 2;
+		final double centerPosition = (graphSize / 2) - center;
+		setGraphPosition(centerPosition);
+	}
+
+	/**
+	 * Move the graph to the left so that only one valid
+	 * data point shows on the left-most part of the display.
+	 */
+	private void goToLastGraphPosition() {
+		setGraphPosition(getGraphPositionMax());
+	}
+
+	public final boolean isPlaying() {
+		return playing;
 	}
 
 	public final int getZoom() {
@@ -240,34 +299,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 */
 	private void moveGraphPosition(final double amount) {
 		final double newPos = graphPosition + amount;
-		if (newPos > graphPositionMax){
+		if (newPos > getGraphPositionMax()){
 			goToLastGraphPosition();
-		} else if (newPos < 0){
+		} else if (newPos < getGraphPositionMin()){
 			resetGraphPosition();
 		} else {
 			setGraphPosition(newPos);
 		}
-	}
-
-	public final void setGraphPosition(final double newPos) {
-		graphPosition = newPos;
-		repaint();
-	}
-
-	public final void setGraphPositionMax(final int graphPositionMax) {
-		this.graphPositionMax = graphPositionMax;
-	}
-
-	private void resetGraphPosition() {
-		setGraphPosition(0);
-	}
-
-	private void goToLastGraphPosition() {
-		setGraphPosition(graphPositionMax);
-	}
-
-	public final boolean isPlaying() {
-		return playing;
 	}
 
 	/**
@@ -281,14 +319,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		} else {
 			move = newPosition / zoom;
 		}
-		if (graphPosition + move < graphPositionMax) {
-			if (graphPosition + move < 0) {
+		if (graphPosition + move < getGraphPositionMax()) {
+			if (graphPosition + move < getGraphPositionMin()) {
 				resetGraphPosition();
 			} else {
 				moveGraphPosition(move);
 			}
 		} else {
-			setGraphPosition(graphPositionMax);
+			goToLastGraphPosition();
 		}
 	}
 
