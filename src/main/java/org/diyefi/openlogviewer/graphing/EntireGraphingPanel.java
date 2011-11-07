@@ -375,21 +375,22 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	@Override
 	public final void mouseWheelMoved(final MouseWheelEvent e) {
+		final int xMouseCoord = e.getX();
 		final double center = this.getWidth() / 2.0;
 		final int notches = e.getWheelRotation();
 		double move = 0;
 		if (notches < 0) {
 			if(zoomedOutBeyondOneToOne){
-				move = center + (e.getX() - center) / (zoom - 1.0);
+				move = (xMouseCoord - center) / (zoom - 1.0);
 			} else {
-				move = e.getX();
+				move = (xMouseCoord - center) / zoom;
 			}
 			zoomIn();
 		} else {
 			if(zoomedOutBeyondOneToOne || zoom == 1){
-				move = center - ((e.getX() - center) / (zoom + 1.0));
+				move = -(xMouseCoord - center) / (zoom + 1.0);
 			} else {
-				move = e.getX();
+				move = -(xMouseCoord - center) / zoom;
 			}
 			zoomOut();
 		}
