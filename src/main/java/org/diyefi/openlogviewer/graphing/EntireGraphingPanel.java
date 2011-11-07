@@ -129,31 +129,42 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void zoomIn() {
+		final double graphWidth = this.getWidth();
+		double move = 0;
+
 		if(zoomedOutBeyondOneToOne) {
 			if (zoom == 2) {
 				zoomedOutBeyondOneToOne = false;
 			}
 			zoom--;
+			move = graphWidth / (double)(zoom + zoom);
 		} else if (zoom < 512) {
+			move = graphWidth / (double)(zoom + zoom);
 			zoom++;
 		}
 
-		repaint();
+		moveEntireGraphingPanel(move);
 	}
 
 	public final void zoomOut() {
+		final double graphWidth = this.getWidth();
+		double move = 0;
+
 		if (!zoomedOutBeyondOneToOne) {
 			if (zoom == 1) {
 				zoomedOutBeyondOneToOne = true;
 				zoom = 2;
+				move = graphWidth / (double)(zoom + zoom);
 			} else {
+				move = graphWidth / (double)(zoom + zoom);
 				zoom--;
 			}
 		} else if (zoom < 1024){
 			zoom++;
+			move = graphWidth / (double)(zoom + zoom);
 		}
 
-		repaint();
+		moveEntireGraphingPanel(-move);
 	}
 
 	public boolean isZoomedOutBeyondOneToOne(){
@@ -224,6 +235,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		return zoom;
 	}
 
+	/**
+	 * Take the current graph position and move amount positions forward.
+	 */
 	private void moveGraphPosition(final double amount) {
 		final double newPos = graphPosition + amount;
 		if (newPos > graphPositionMax){
@@ -256,6 +270,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		return playing;
 	}
 
+	/**
+	 * Move the graph position to newPosition where newPosition is dictated by
+	 * an x screen coordinate.
+	 */
 	private void moveEntireGraphingPanel(final double newPosition) {
 		double move = -1.0;
 		if(zoomedOutBeyondOneToOne){
@@ -357,20 +375,21 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	@Override
 	public final void mouseWheelMoved(final MouseWheelEvent e) {
+		final double center = this.getWidth() / 2.0;
 		final int notches = e.getWheelRotation();
 		double move = 0;
 		if (notches < 0) {
 			if(zoomedOutBeyondOneToOne){
-				move = e.getX() / (zoom - 1.0);
+				move = center + (e.getX() - center) / (zoom - 1.0);
 			} else {
-				move = e.getX() / zoom;
+				move = e.getX();
 			}
 			zoomIn();
 		} else {
 			if(zoomedOutBeyondOneToOne || zoom == 1){
-				move = e.getX() / (zoom + 1.0);
+				move = center - ((e.getX() - center) / (zoom + 1.0));
 			} else {
-				move = e.getX() / zoom;
+				move = e.getX();
 			}
 			zoomOut();
 		}
