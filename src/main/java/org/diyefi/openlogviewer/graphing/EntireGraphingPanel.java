@@ -187,7 +187,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		final int graphWindowWidth = this.getWidth() - 4; //Remove 2 pixels per side.
 		boolean done = false;
 		if (graphSize < graphWindowWidth){
-			System.out.println("SMALLER!");
 			for (int i = zoom + 1; !done && i < TIGHTEST_ZOOM; i++){
 				if ((graphSize * i) < graphWindowWidth){
 					zoomIn();
@@ -196,17 +195,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 			}
 		} else if (graphSize > graphWindowWidth){
-			System.out.println("BIGGER!");
-			System.out.println("graphWindowWidth: " + graphWindowWidth);
-			System.out.println("graphSize: " + graphSize);
 			for (int i = zoom; !done && i < WIDEST_ZOOM; i++){
-				System.out.println("i: " + i);
-				System.out.println("graphSize / i): " + (graphSize / i));
 				if ((graphSize / i) > graphWindowWidth){
 					zoomOut();
 				} else {
-					System.out.println("i: " + i);
-					System.out.println("DONE!");
 					done = true;
 				}
 			}
