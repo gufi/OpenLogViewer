@@ -42,6 +42,8 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
 	private static final long serialVersionUID = 1L;
+	private static final int TIGHTEST_ZOOM = 512;
+	private static final int WIDEST_ZOOM = 1024;
 
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
@@ -76,7 +78,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		zoom = 1;
 		zoomedOutBeyondOneToOne = false;
 		resetGraphPosition();
-		setGraphSize(100);
+		setGraphSize(0);
 		playing = false;
 		wasPlaying = false;
 		playTimer = new Timer(10, this);
@@ -139,7 +141,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 			zoom--;
 			move = graphWidth / (double)(zoom + zoom);
-		} else if (zoom < 512) {
+		} else if (zoom < TIGHTEST_ZOOM) {
 			move = graphWidth / (double)(zoom + zoom);
 			zoom++;
 		}
@@ -160,12 +162,55 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				move = graphWidth / (double)(zoom + zoom);
 				zoom--;
 			}
-		} else if (zoom < 1024){
+		} else if (zoom < WIDEST_ZOOM){
 			zoom++;
 			move = graphWidth / (double)(zoom + zoom);
 		}
 
 		moveEntireGraphingPanel(-move);
+	}
+
+	/**
+	 * Zoom the graph so that if it is centered, then the
+	 * entire graph will fit within the display. Usually
+	 * this will result in zooming out, but if the graph
+	 * is small enough and/or the display is large enough
+	 * then zooming in will be more appropriate.
+	 *
+	 * If the graph will fit perfectly inside the display
+	 * then it will be sized down one more time so that
+	 * there is always at least 2 pixel of blank space to
+	 * the left and right of the graph so the user will
+	 * know they are seeing the entire graph trace.
+	 */
+	private final void zoomGraphToFit(){
+		final int graphWindowWidth = this.getWidth() - 4; //Remove 2 pixels per side.
+		boolean done = false;
+		if (graphSize < graphWindowWidth){
+			System.out.println("SMALLER!");
+			for (int i = zoom + 1; !done && i < TIGHTEST_ZOOM; i++){
+				if ((graphSize * i) < graphWindowWidth){
+					zoomIn();
+				} else {
+					done = true;
+				}
+			}
+		} else if (graphSize > graphWindowWidth){
+			System.out.println("BIGGER!");
+			System.out.println("graphWindowWidth: " + graphWindowWidth);
+			System.out.println("graphSize: " + graphSize);
+			for (int i = zoom; !done && i < WIDEST_ZOOM; i++){
+				System.out.println("i: " + i);
+				System.out.println("graphSize / i): " + (graphSize / i));
+				if ((graphSize / i) > graphWindowWidth){
+					zoomOut();
+				} else {
+					System.out.println("i: " + i);
+					System.out.println("DONE!");
+					done = true;
+				}
+			}
+		}
 	}
 
 	public boolean isZoomedOutBeyondOneToOne(){
@@ -257,7 +302,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * How many available data records we are dealing with.
 	 */
 	public final void setGraphSize(final int newGraphSize) {
-		this.graphSize = newGraphSize;
+		graphSize = newGraphSize;
+		if(graphSize > 0){
+			centerGraphPosition();
+			zoomGraphToFit();
+		}
 	}
 
 	/**
