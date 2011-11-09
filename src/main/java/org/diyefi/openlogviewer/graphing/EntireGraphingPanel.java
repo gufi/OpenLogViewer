@@ -173,34 +173,42 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Zoom the graph so that if it is centered, then the
 	 * entire graph will fit within the display. Usually
-	 * this will result in zooming out, but if the graph
-	 * is small enough and/or the display is large enough
+	 * this will result in ultimately zooming out, but if the
+	 * graph is small enough and/or the display is large enough
 	 * then zooming in will be more appropriate.
 	 *
 	 * If the graph will fit perfectly inside the display
 	 * then it will be sized down one more time so that
-	 * there is always at least 2 pixel of blank space to
+	 * there is always at least 4 pixels of blank space to
 	 * the left and right of the graph so the user will
 	 * know they are seeing the entire graph trace.
 	 */
-	private final void zoomGraphToFit(){
-		final int graphWindowWidth = this.getWidth() - 4; //Remove 2 pixels per side.
-		boolean done = false;
-		if (graphSize < graphWindowWidth){
-			for (int i = zoom + 1; !done && i < TIGHTEST_ZOOM; i++){
-				if ((graphSize * i) < graphWindowWidth){
-					zoomIn();
-				} else {
-					done = true;
-				}
+	private final void zoomGraphToFit(final int dataPointsToFit){
+		final int graphWindowWidth = this.getWidth() - 8; //Remove 4 pixels per side.
+		int dataPointsThatFitInDisplay = 0;
+		if (zoomedOutBeyondOneToOne){
+			dataPointsThatFitInDisplay = graphWindowWidth * zoom;
+		} else {
+			dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
+		}
+
+		// Zoom in until the data no longer fits in the display.
+		while (dataPointsToFit < dataPointsThatFitInDisplay && zoom != TIGHTEST_ZOOM){
+			zoomIn();
+			if (zoomedOutBeyondOneToOne){
+				dataPointsThatFitInDisplay = graphWindowWidth * zoom;
+			} else {
+				dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
 			}
-		} else if (graphSize > graphWindowWidth){
-			for (int i = zoom; !done && i < WIDEST_ZOOM; i++){
-				if ((graphSize / i) > graphWindowWidth){
-					zoomOut();
-				} else {
-					done = true;
-				}
+		}
+
+		// Zoom out one or more times until the data just fits in the display.
+		while (dataPointsToFit > dataPointsThatFitInDisplay && zoom != WIDEST_ZOOM){
+			zoomOut();
+			if (zoomedOutBeyondOneToOne){
+				dataPointsThatFitInDisplay = graphWindowWidth * zoom;
+			} else {
+				dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
 			}
 		}
 	}
@@ -296,8 +304,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void setGraphSize(final int newGraphSize) {
 		graphSize = newGraphSize;
 		if(graphSize > 0){
-			centerGraphPosition();
-			zoomGraphToFit();
+			centerGraphPosition(0, graphSize);
+			zoomGraphToFit(graphSize);
 		}
 	}
 
@@ -310,12 +318,23 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
-	 * Move the graph to the center to that there are equal
-	 * data points to the left and to the right.
+	 * Move the graph to the center of the two provided graph positions
+	 * so that there are equal data points to the left and to the right.
+	 *
+	 * Right now the method is expecting to get integer data points as
+	 * it should be impossible to select fractions of a data point.
 	 */
-	private final void centerGraphPosition() {
-		final int center = this.getWidth() / 2;
-		final double centerPosition = (graphSize / 2) - center;
+	private final void centerGraphPosition(final int beginPosition, final int endPosition) {
+		final int halfScreen = this.getWidth() / 2;
+		double pointsThatFitInHalfScreen = 0;
+		if (zoomedOutBeyondOneToOne){
+			pointsThatFitInHalfScreen = halfScreen * zoom;
+		} else {
+			pointsThatFitInHalfScreen = halfScreen / zoom;
+		}
+		final int distanceBetweenPositions = endPosition - beginPosition;
+		final double halfwayBetweenTwoPositions = distanceBetweenPositions / 2;
+		final double centerPosition = (beginPosition + halfwayBetweenTwoPositions) - pointsThatFitInHalfScreen;
 		setGraphPosition(centerPosition);
 	}
 
