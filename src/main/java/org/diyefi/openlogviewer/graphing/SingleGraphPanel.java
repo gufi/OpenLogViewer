@@ -84,11 +84,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			initGraphZoomed();
 		}
 		if (hasDataPointToDisplay()) {
-			paintDataPoints(g);
+			paintDataPointsAndTraces(g);
 		}
 	}
 
-	private void paintDataPoints(final Graphics g) {
+	private void paintDataPointsAndTraces(final Graphics g) {
 		// Setup graphics stuff
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(GDE.getDisplayColor());
@@ -98,7 +98,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		double traceData = -Double.MAX_VALUE;
 		double rightOfTraceData = dataPointsToDisplay[0];
 
-		// Initialize graph beginning and end markers
+		// Initialize graph status markers
+		boolean beforeGraphBeginning = true;
 		boolean atGraphBeginning = false;
 		boolean atGraphEnd = false;
 
@@ -128,14 +129,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				rightOfTraceData = dataPointsToDisplay[i + 1];
 			} catch (ArrayIndexOutOfBoundsException e){
 				rightOfTraceData = -Double.MAX_VALUE;
-				atGraphEnd = true;
 			}
 
 			// Setup graph beginning and end markers
 			atGraphBeginning = false;
-			atGraphEnd = false;
 			if(leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE){
 				atGraphBeginning = true;
+				beforeGraphBeginning = false;
 			}
 			if(traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE){
 				atGraphEnd = true;
@@ -153,7 +153,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			}
 
 			// Draw graph trace line
-			if (!atGraphEnd){
+			if (!beforeGraphBeginning && !atGraphEnd){
 				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, nextScreenPositionYCoord);
 			}
 

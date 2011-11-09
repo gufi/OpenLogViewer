@@ -93,7 +93,7 @@ public class GraphPositionPanel extends JPanel {
 		//Find first position marker placement
 		double nextPositionMarker = 0.0;
 		if(graphPosition < 0){
-			while (nextPositionMarker - graphPosition < 0.0){
+			while (nextPositionMarker - graphPosition > majorGraduationSpacing){
 				nextPositionMarker -= majorGraduationSpacing;
 			}
 		} else {
@@ -127,7 +127,7 @@ public class GraphPositionPanel extends JPanel {
 		//Find first position marker placement
 		double nextPositionMarker = 0.0;
 		if(graphPosition < 0){
-			while (nextPositionMarker - graphPosition < 0.0){
+			while (nextPositionMarker - graphPosition > majorGraduationSpacing){
 				nextPositionMarker -= majorGraduationSpacing;
 			}
 		} else {
