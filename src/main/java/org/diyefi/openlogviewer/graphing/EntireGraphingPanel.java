@@ -475,22 +475,30 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void mouseWheelMoved(final MouseWheelEvent e) {
 		final int xMouseCoord = e.getX();
 		final double center = this.getWidth() / 2.0;
-		final int notches = e.getWheelRotation();
+		int notches = e.getWheelRotation();
 		double move = 0;
+		System.out.println("notches: " + notches);
 		if (notches < 0) {
-			if(zoomedOutBeyondOneToOne){
-				move = (xMouseCoord - center) / (zoom - 1.0);
-			} else {
-				move = (xMouseCoord - center) / zoom;
+			notches = Math.abs(notches);
+			for (int i = 0; i < notches; i++){
+				if(zoomedOutBeyondOneToOne){
+					move = (xMouseCoord - center) / (zoom - 1.0);
+				} else {
+					move = (xMouseCoord - center) / zoom;
+				}
+				System.out.println("Zooming in!");
+				zoomIn();
 			}
-			zoomIn();
 		} else {
-			if(zoomedOutBeyondOneToOne || zoom == 1){
-				move = -(xMouseCoord - center) / (zoom + 1.0);
-			} else {
-				move = -(xMouseCoord - center) / zoom;
+			for (int i = 0; i < notches; i++){
+				if(zoomedOutBeyondOneToOne || zoom == 1){
+					move = -(xMouseCoord - center) / (zoom + 1.0);
+				} else {
+					move = -(xMouseCoord - center) / zoom;
+				}
+				System.out.println("Zooming out!");
+				zoomOut();
 			}
-			zoomOut();
 		}
 		moveEntireGraphingPanel(move);
 	}
