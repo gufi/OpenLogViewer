@@ -135,6 +135,7 @@ public class GraphPositionPanel extends JPanel {
 				nextPositionMarker += majorGraduationSpacing;
 			}
 		}
+		nextPositionMarker = roundToSignificantFigures(nextPositionMarker, 2);
 
 		//Paint left to right
 		double position = graphPosition;
@@ -150,6 +151,7 @@ public class GraphPositionPanel extends JPanel {
 				g2d.drawString(positionDataString, i - (stringWidth / 2), 18);
 
 				nextPositionMarker += majorGraduationSpacing;
+				nextPositionMarker = roundToSignificantFigures(nextPositionMarker, 2);
 			}
 			if(zoomedOut){
 				position += zoom;
@@ -188,11 +190,12 @@ public class GraphPositionPanel extends JPanel {
 		}
 
 		majorGraduationSpacing = 100.0;
-		int count = (int)(Math.log((double)zoom) / Math.log(2.0));  // Base-2 logorithm of zoom
+		int count = (int)(Math.log((double)zoom) / Math.log(2.0));  // Base-2 logarithm of zoom
 
 		if (zoomedOut){
 			for (int i = 0; i < count; i++){
 				majorGraduationSpacing *= graduationSpacingMultiplier[i % 3];
+				majorGraduationSpacing = roundToSignificantFigures(majorGraduationSpacing, 2);
 			}
 		} else {
 			for (int i = 0; i < count; i++){
@@ -224,5 +227,27 @@ public class GraphPositionPanel extends JPanel {
 			}
 		}
 		return bestPosition;
+	}
+
+	/**
+	 * Stolen from here:
+	 * http://stackoverflow.com/questions/202302/rounding-to-an-arbitrary-number-of-significant-digits
+	 *
+	 * @param double input - The double you're interested in rounding.
+	 * @param int sigFigs - The number of significant figures you'd like.
+	 * @return double - input rounded to sigFigs significant figures.
+	 */
+
+	private final double roundToSignificantFigures(double input, int sigFigs) {
+	    if(input == 0) {
+	        return 0;
+	    }
+
+	    final double d = Math.ceil(Math.log10(input < 0 ? -input: input));
+	    final int power = sigFigs - (int) d;
+
+	    final double magnitude = Math.pow(10, power);
+	    final long shifted = Math.round(input*magnitude);
+	    return shifted/magnitude;
 	}
 }
