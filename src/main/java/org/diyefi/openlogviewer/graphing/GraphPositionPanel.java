@@ -26,6 +26,8 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 import javax.swing.JPanel;
 
@@ -135,23 +137,22 @@ public class GraphPositionPanel extends JPanel {
 				nextPositionMarker += majorGraduationSpacing;
 			}
 		}
-		nextPositionMarker = roundToSignificantFigures(nextPositionMarker, 2);
 
 		//Paint left to right
 		double position = graphPosition;
-
 		for (int i = 0; i < this.getWidth(); i++) {
 			if (position >= nextPositionMarker){
-				String positionDataString =  Double.toString(nextPositionMarker);
+				String positionDataString = "";
+				BigDecimal positionData = new BigDecimal(nextPositionMarker);
 				if(majorGraduationSpacing > 0.5){
-					positionDataString = positionDataString.substring(0, positionDataString.length() - 2);
+					positionDataString = positionData.toPlainString();
+				} else {
+					positionDataString = roundDecimalsOnlyToTwoSignificantFigures(positionData);
 				}
-
 				int stringWidth = fm.stringWidth(positionDataString);
 				g2d.drawString(positionDataString, i - (stringWidth / 2), 18);
 
 				nextPositionMarker += majorGraduationSpacing;
-				nextPositionMarker = roundToSignificantFigures(nextPositionMarker, 2);
 			}
 			if(zoomedOut){
 				position += zoom;
@@ -195,7 +196,7 @@ public class GraphPositionPanel extends JPanel {
 		if (zoomedOut){
 			for (int i = 0; i < count; i++){
 				majorGraduationSpacing *= graduationSpacingMultiplier[i % 3];
-				majorGraduationSpacing = roundToSignificantFigures(majorGraduationSpacing, 2);
+
 			}
 		} else {
 			for (int i = 0; i < count; i++){
@@ -230,24 +231,63 @@ public class GraphPositionPanel extends JPanel {
 	}
 
 	/**
-	 * Stolen from here:
-	 * http://stackoverflow.com/questions/202302/rounding-to-an-arbitrary-number-of-significant-digits
-	 *
-	 * @param double input - The double you're interested in rounding.
-	 * @param int sigFigs - The number of significant figures you'd like.
-	 * @return double - input rounded to sigFigs significant figures.
-	 */
+	* Use this if you want to avoid BigDecimal in the future:
+	* http://stackoverflow.com/questions/202302/rounding-to-an-arbitrary-number-of-significant-digits
+	*
+	* @param BigDecimal input - The BigDecimal you're interested in rounding.
+	* @return String - A string representation of input rounded to two significant figures to the right of the decimal.
+	*/
 
-	private final double roundToSignificantFigures(double input, int sigFigs) {
-	    if(input == 0) {
-	        return 0;
-	    }
+	private final String roundDecimalsOnlyToTwoSignificantFigures(final BigDecimal input) {
+		String result = "";
+		int indexOfMostSignificantDigit = 0;
 
-	    final double d = Math.ceil(Math.log10(input < 0 ? -input: input));
-	    final int power = sigFigs - (int) d;
+		// Find out if negative or not.
+		result = input.toPlainString();
+		if(result.substring(0, 1).equalsIgnoreCase("-")){
+			indexOfMostSignificantDigit++;
+		}
 
-	    final double magnitude = Math.pow(10, power);
-	    final long shifted = Math.round(input*magnitude);
-	    return shifted/magnitude;
+		// If there are decimals, then count the number of whole integers and leading zeros
+		// to find out what rounding precision is needed to end up with two significant
+		// figures for the decimal portion only.
+		int amountOfIntegerDigits = 0;
+		int amountOfLeadingZerosInDecimalPortion = 0;
+		final int indexOfDecimalPoint = result.indexOf('.');
+		if (indexOfDecimalPoint != -1){
+			amountOfIntegerDigits = result.substring(indexOfMostSignificantDigit, indexOfDecimalPoint).length();
+			boolean done = false;
+			for (int i = indexOfDecimalPoint + 1; i < result.length() && !done; i++){
+				if (result.substring(i, i).equalsIgnoreCase("0")){
+					amountOfLeadingZerosInDecimalPortion++;
+				} else {
+					done = true;
+				}
+			}
+
+		} else {
+			amountOfIntegerDigits = result.substring(indexOfMostSignificantDigit).length();
+
+		}
+		final int amountOfDesiredDecimalDigits = amountOfLeadingZerosInDecimalPortion + 2;
+		final int sigFigs = amountOfIntegerDigits + amountOfDesiredDecimalDigits;
+		BigDecimal roundedInput = input.round(new MathContext(sigFigs));
+		roundedInput = roundedInput.stripTrailingZeros();
+		result = roundedInput.toPlainString();
+
+		// Add on decimal point and trailing zero if doesn't exist.
+		if (result.indexOf('.') == -1){
+			result = result + ".0";
+		}
+
+		// Check for result extremely close to zero.
+		if(result.length() > 16){
+			if (result.substring(0, 16).equalsIgnoreCase("-0.0000000000000")
+					|| result.substring(0, 15).equalsIgnoreCase("0.0000000000000")){
+				result = "0.0";
+			}
+		}
+
+		return result;
 	}
 }
