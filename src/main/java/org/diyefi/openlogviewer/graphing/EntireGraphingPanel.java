@@ -131,6 +131,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		graphPositionPanel.setLog(genLog);
 	}
 
+
+	/**
+	 * Zoom in by one. This control zooms finer than the coarse zoom control.
+	 * This assumes you are zooming in on the data centered in the screen.
+	 * If you need to zoom in on a different location then you must move
+	 * the graph accordingly.
+	 */
 	public final void zoomIn() {
 		final double graphWidth = this.getWidth();
 		double move = 0;
@@ -140,15 +147,34 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				zoomedOutBeyondOneToOne = false;
 			}
 			zoom--;
-			move = graphWidth / (double)(zoom + zoom);
+			move = graphWidth / (double)(zoom * 2);
 		} else if (zoom < TIGHTEST_ZOOM) {
-			move = graphWidth / (double)(zoom + zoom);
+			move = graphWidth / (double)(zoom * 2);
 			zoom++;
 		}
 
 		moveEntireGraphingPanel(move);
 	}
 
+	/**
+	 * Zoom in using steps larger the further away from 1:1 you are.
+	 * This assumes you are zooming in on the data centered in the screen.
+	 * If you need to zoom in on a different location then you must use
+	 * zoomIn() repeatedly coupled with a move each time.
+	 */
+	public final void zoomInCoarse(){
+		final int zoomAmount = (int)Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++){
+			zoomIn();
+		}
+	}
+
+	/**
+	 * Zoom out by one. This control zooms finer than the coarse zoom control.
+	 * This assumes you are zooming out from the data centered in the screen.
+	 * If you need to zoom out from a different location then you must move
+	 * the graph accordingly.
+	 */
 	public final void zoomOut() {
 		final double graphWidth = this.getWidth();
 		double move = 0;
@@ -157,17 +183,30 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			if (zoom == 1) {
 				zoomedOutBeyondOneToOne = true;
 				zoom = 2;
-				move = graphWidth / (double)(zoom + zoom);
+				move = graphWidth / (double)(zoom * 2);
 			} else {
-				move = graphWidth / (double)(zoom + zoom);
+				move = graphWidth / (double)(zoom * 2);
 				zoom--;
 			}
 		} else if (zoom < WIDEST_ZOOM){
 			zoom++;
-			move = graphWidth / (double)(zoom + zoom);
+			move = graphWidth / (double)(zoom * 2);
 		}
 
 		moveEntireGraphingPanel(-move);
+	}
+
+	/**
+	 * Zoom out using steps larger the further away from 1:1 you are.
+	 * This assumes you are zooming out with the data centered in the screen.
+	 * If you need to zoom out on a different location then you must use
+	 * zoomOut() repeatedly coupled with a move each time.
+	 */
+	public final void zoomOutCoarse(){
+		final int zoomAmount = (int)Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++){
+			zoomOut();
+		}
 	}
 
 	/**
@@ -617,13 +656,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			// Zoom in key bindings
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_KP_UP: {
-				zoomIn();
+				zoomInCoarse();
 				break;
 			}
 
 			case KeyEvent.VK_ADD: {
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
-					zoomIn();
+					zoomInCoarse();
 				}
 				break;
 			}
@@ -631,13 +670,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			// Zoom out key bindings
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_KP_DOWN: {
-				zoomOut();
+				zoomOutCoarse();
 				break;
 			}
 
 			case KeyEvent.VK_SUBTRACT: {
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
-					zoomOut();
+					zoomOutCoarse();
 				}
 				break;
 			}

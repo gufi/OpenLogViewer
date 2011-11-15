@@ -215,7 +215,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void zoomInButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomIn();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomInCoarse();
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void zoomOutButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOut();
+		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOutCoarse();
 	}
 
 	/**
