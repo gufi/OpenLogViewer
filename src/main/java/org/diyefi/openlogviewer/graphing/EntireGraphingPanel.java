@@ -536,8 +536,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				} else {
 					move = (xMouseCoord - center) / zoom;
 				}
-				zoomIn();
-				moveEntireGraphingPanel(move);
+				if (!(!zoomedOutBeyondOneToOne && zoom == getTightestZoom())){
+					zoomIn();
+					moveEntireGraphingPanel(move);
+				}
 			}
 		} else {
 			for (int i = 0; i < zoomAmount; i++){
@@ -546,8 +548,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				} else {
 					move = -(xMouseCoord - center) / zoom;
 				}
-				zoomOut();
-				moveEntireGraphingPanel(move);
+				if (!(zoomedOutBeyondOneToOne && zoom == getWidestZoom())){
+					zoomOut();
+					moveEntireGraphingPanel(move);
+				}
 			}
 		}
 	}
