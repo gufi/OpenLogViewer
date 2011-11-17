@@ -134,7 +134,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * The tightest the user should be allowed to zoom in.
 	 */
 	private final int getTightestZoom(){
-		return this.getWidth();
+		return this.getWidth() - 1;
 	}
 
 	/**
