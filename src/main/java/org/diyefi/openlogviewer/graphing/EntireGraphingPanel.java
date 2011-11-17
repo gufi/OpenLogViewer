@@ -42,8 +42,6 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
 	private static final long serialVersionUID = 1L;
-	private static final int TIGHTEST_ZOOM = 512;
-	private static final int WIDEST_ZOOM = 1024;
 
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
@@ -133,6 +131,20 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 
 	/**
+	 * The tightest the user should be allowed to zoom in.
+	 */
+	private final int getTightestZoom(){
+		return this.getWidth();
+	}
+
+	/**
+	 * The widest the user should be allowed to zoom out.
+	 */
+	private final int getWidestZoom(){
+		return Integer.MAX_VALUE;
+	}
+
+	/**
 	 * Zoom in by one. This control zooms finer than the coarse zoom control.
 	 * This assumes you are zooming in on the data centered in the screen.
 	 * If you need to zoom in on a different location then you must move
@@ -148,7 +160,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 			zoom--;
 			move = graphWidth / (double)(zoom * 2);
-		} else if (zoom < TIGHTEST_ZOOM) {
+		} else if (zoom < getTightestZoom()) {
 			move = graphWidth / (double)(zoom * 2);
 			zoom++;
 		}
@@ -188,7 +200,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				move = graphWidth / (double)(zoom * 2);
 				zoom--;
 			}
-		} else if (zoom < WIDEST_ZOOM){
+		} else if (zoom < getWidestZoom()){
 			zoom++;
 			move = graphWidth / (double)(zoom * 2);
 		}
@@ -232,7 +244,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		}
 
 		// Zoom in until the data no longer fits in the display.
-		while (dataPointsToFit < dataPointsThatFitInDisplay && zoom != TIGHTEST_ZOOM){
+		while (dataPointsToFit < dataPointsThatFitInDisplay && zoom != getTightestZoom()){
 			zoomIn();
 			if (zoomedOutBeyondOneToOne){
 				dataPointsThatFitInDisplay = graphWindowWidth * zoom;
@@ -242,7 +254,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		}
 
 		// Zoom out one or more times until the data just fits in the display.
-		while (dataPointsToFit > dataPointsThatFitInDisplay && zoom != WIDEST_ZOOM){
+		while (dataPointsToFit > dataPointsThatFitInDisplay && zoom != getWidestZoom()){
 			zoomOut();
 			if (zoomedOutBeyondOneToOne){
 				dataPointsThatFitInDisplay = graphWindowWidth * zoom;
