@@ -90,23 +90,21 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		double offset = 0;
+		if(zoomedOut){
+			offset = majorGraduationSpacing / zoom;
+		} else {
+			offset = majorGraduationSpacing * zoom;
+		}
+		offset = Math.round(offset);
 		g2d.setColor(majorGraduationColor);
 
 		//Find first position marker placement
-		double nextPositionMarker = 0.0;
-		if(graphPosition < 0){
-			while (nextPositionMarker - graphPosition > majorGraduationSpacing){
-				nextPositionMarker -= majorGraduationSpacing;
-			}
-		} else {
-			while (nextPositionMarker - graphPosition < 0.0){
-				nextPositionMarker += majorGraduationSpacing;
-			}
-		}
+		double nextPositionMarker = getFirstPositionMarkerPlacement();
 
 		//Paint left to right
-		double position = graphPosition;
-		for (int i = 0; i < this.getWidth(); i++) {
+		double position = graphPosition - majorGraduationSpacing;
+		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
 			if (position >= nextPositionMarker){
 				g2d.drawLine(i, 0, i, 6);
 				nextPositionMarker += majorGraduationSpacing;
@@ -123,24 +121,21 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		double offset = 0;
+		if(zoomedOut){
+			offset = majorGraduationSpacing / zoom;
+		} else {
+			offset = majorGraduationSpacing * zoom;
+		}
 		g2d.setColor(positionDataColor);
 		FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
 
 		//Find first position marker placement
-		double nextPositionMarker = 0.0;
-		if(graphPosition < 0){
-			while (nextPositionMarker - graphPosition > majorGraduationSpacing){
-				nextPositionMarker -= majorGraduationSpacing;
-			}
-		} else {
-			while (nextPositionMarker - graphPosition < 0.0){
-				nextPositionMarker += majorGraduationSpacing;
-			}
-		}
+		double nextPositionMarker = getFirstPositionMarkerPlacement();
 
 		//Paint left to right
-		double position = graphPosition;
-		for (int i = 0; i < this.getWidth(); i++) {
+		double position = graphPosition - majorGraduationSpacing;
+		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
 			if (position >= nextPositionMarker){
 				String positionDataString = "";
 				BigDecimal positionData = new BigDecimal(nextPositionMarker);
@@ -162,11 +157,29 @@ public class GraphPositionPanel extends JPanel {
 		}
 	}
 
+	private final double getFirstPositionMarkerPlacement(){
+		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
+
+		double nextPositionMarker = 0.0;
+		if(graphPosition < 0.0){
+			while (nextPositionMarker - graphPosition >= majorGraduationSpacing){
+				nextPositionMarker -= majorGraduationSpacing;
+			}
+		} else {
+			while (nextPositionMarker - graphPosition < 0.0){
+				nextPositionMarker += majorGraduationSpacing;
+			}
+		}
+
+		nextPositionMarker -= majorGraduationSpacing; // Start with one graduation off-screen to the left
+		return nextPositionMarker;
+	}
+
 	private void setupMouseCursorLineSnappingPositions() {
 		validSnappingPositions = new boolean[this.getWidth()];
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		double count = Math.round(graphPosition * zoom);
+		long count = Math.round(graphPosition * zoom);
 
 		// Fill array with valid snapping points from left to right
 		for (int i = 0; i < this.getWidth(); i++) {

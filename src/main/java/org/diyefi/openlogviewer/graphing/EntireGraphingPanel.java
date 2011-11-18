@@ -323,9 +323,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private final double getGraphPositionMin(){
 		double min = 0.0;
 		if(zoomedOutBeyondOneToOne){
-			min = -(this.getWidth() * zoom) + zoom;
+			min = -((this.getWidth() - 1) * zoom);
 		} else {
-			min = -((double)this.getWidth() / (double)zoom) + 1;
+			min = -(((double)this.getWidth() - 1.0) / (double)zoom);
 		}
 		return min;
 	}
@@ -335,13 +335,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	private final int getGraphPositionMax() {
-		int max = 0;
-		if(zoomedOutBeyondOneToOne){
-			max = graphSize - zoom;
-		} else {
-			max = graphSize - 1;
-		}
-		return max;
+		return graphSize;
 	}
 
 	public final void setGraphPosition(final double newPos) {

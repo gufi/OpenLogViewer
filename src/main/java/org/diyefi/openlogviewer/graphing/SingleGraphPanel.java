@@ -89,6 +89,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	private void paintDataPointsAndTraces(final Graphics g) {
+
 		// Setup graphics stuff
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(GDE.getDisplayColor());
@@ -111,7 +112,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
-		int screenPositionXCoord = 0 - (int)offset;  // Start with one point off-screen to the left
+		int screenPositionXCoord = -(int)Math.round(offset);  // Start with one point off-screen to the left
 		int screenPositionYCoord = Integer.MIN_VALUE;
 		int nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, GDE.getDisplayMinValue(), GDE.getDisplayMaxValue());
 
@@ -146,10 +147,18 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, GDE.getDisplayMinValue(), GDE.getDisplayMaxValue());
 
 			// Draw data point
-			if (zoom > 5 && (traceData != leftOfTraceData || traceData != rightOfTraceData)) {
-				g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
-			} else if (zoom > 5 && atGraphBeginning){
-				g2d.fillOval(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+			if(!zoomedOut && zoom > 5){
+				// Draw fat data point
+				// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
+				if (traceData != leftOfTraceData || traceData != rightOfTraceData) {
+					g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+				} else if (atGraphBeginning){
+					g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+				}
+			} else {
+				// Draw small data point
+				// drawLine() is 33% faster than fillRect() for a single pixel on Ben's dev machine
+				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord, screenPositionYCoord);
 			}
 
 			// Draw graph trace line
