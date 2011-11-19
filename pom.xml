@@ -20,16 +20,32 @@
 	its infancy. While in the future it will be amazing, right now it has all of the basics
 	that you need. For free. With no nag screens!</description>
 
-	<scm>
-		<connection>scm:git:git://github.com/FreeEMS/OpenLogViewer.git</connection>
-		<url>https://github.com/FreeEMS/OpenLogViewer</url>
-		<developerConnection>scm:git:git@github.com:FreeEMS/OpenLogViewer.git</developerConnection>
-	</scm>
-
 	<issueManagement>
 		<system>MantisBT</system>
 		<url>http://issues.freeems.org</url>
 	</issueManagement>
+
+	<scm>
+		<connection>scm:git:git://github.com/FreeEMS/OpenLogViewer.git</connection>
+		<url>https://github.com/FreeEMS/OpenLogViewer</url><!-- Browse to here and clone to get your own repo! -->
+		<developerConnection>scm:git:git@github.com:FreeEMS/OpenLogViewer.git</developerConnection>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>freeemsreleases</id>
+			<url>http://beaver.fastcrypt.com:8080/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>freeemssnapshots</id>
+			<url>http://beaver.fastcrypt.com:8080/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<site>
+	 		<id>olvsite</id>
+			<name>OLV Website</name>
+			<url>scp://raptor</url>
+		</site>
+	</distributionManagement>
 
 	<licenses>
 		<license>
