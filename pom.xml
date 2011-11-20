@@ -4,7 +4,7 @@
 	<groupId>org.diyefi.openlogviewer</groupId>
 	<artifactId>OpenLogViewer</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<name>OpenLogViewer</name>
 	<url>http://olv.diyefi.org</url>
