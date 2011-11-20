@@ -42,8 +42,7 @@
 		<site>
 	 		<id>olvsite</id>
 			<name>OLV Website</name>
-			<url>scp://raptor:443/home/olv/site/</url>
-			
+			<url>scp://raptor:443/home/olv/site/releases/${project.version}/</url>
 		</site>
 	</distributionManagement>
 
