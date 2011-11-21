@@ -48,6 +48,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
 	private GenericDataElement GDE;
 	private double[] dataPointsToDisplay;
+	private double[][] dataPointRangeInfo;
 	private int availableDataRecords;
 
 	public SingleGraphPanel() {
@@ -55,6 +56,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		this.setLayout(null);
 		this.GDE = null;
 		dataPointsToDisplay = null;
+		dataPointRangeInfo = null;
 	}
 
 	@Override
@@ -209,14 +211,15 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	public final Double getMouseInfo(final int cursorPosition) {
+	public final String getMouseInfo(final int cursorPosition) {
 		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		Double info = null;
+		String info = "-.-";
 		if(zoomedOut){
 			info = getMouseInfoZoomedOut(cursorPosition);
 		} else {
 			info = getMouseInfoZoomed(cursorPosition);
 		}
+
 		return info;
 	}
 
@@ -226,7 +229,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final Double getMouseInfoZoomed(final int cursorPosition){
+	private final String getMouseInfoZoomed(final int cursorPosition){
+		String result = "-.-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
@@ -235,10 +239,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		numSnapsFromCenter = Math.round(numSnapsFromCenter);
 		final int dataLocation = (int) graphPosition + (int) numSnapsFromCenter;
 		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
-			return GDE.get(dataLocation);
-		} else {
-			return null;
+			result = Double.toString(GDE.get(dataLocation));
 		}
+		return result;
 	}
 
 	/**
@@ -247,15 +250,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final Double getMouseInfoZoomedOut(int cursorPosition){
-		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
-		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		final int dataLocation = (int) graphPosition + (cursorPosition * zoom);
-		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
-			return GDE.get(dataLocation);
-		} else {
-			return null;
+	private final String getMouseInfoZoomedOut(int cursorPosition){
+		String result = "-.- | -.- | -.-";
+		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
+			double minData = dataPointRangeInfo[cursorPosition][0];
+			double meanData = dataPointRangeInfo[cursorPosition][1];
+			double maxData = dataPointRangeInfo[cursorPosition][2];
+			if(minData != -Double.MAX_VALUE){
+				result = Double.toString(minData) + " | " + Double.toString(meanData) + " | " + Double.toString(maxData);
+			}
 		}
+		return result;
 	}
 
 	public final Color getColor() {
@@ -300,6 +305,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
 			final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 			dataPointsToDisplay = new double[graphWindowWidth + 1]; // Add one data point for off-screen to the right
+			dataPointRangeInfo = new double[graphWindowWidth + 1][3]; // Add one data point for off-screen to the right
 			final int numberOfRealPointsThatFitInDisplay = (graphWindowWidth * zoom) + zoom; // Add one data point for off-screen to the right
 			final int rightGraphPosition = graphPosition + numberOfRealPointsThatFitInDisplay;
 
@@ -354,9 +360,15 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 						dataPointsToDisplay[nextAarrayIndex] = averageData;
 						leftOfNewData = averageData;
 					}
+					dataPointRangeInfo[nextAarrayIndex][0] = minData;
+					dataPointRangeInfo[nextAarrayIndex][1] = averageData;
+					dataPointRangeInfo[nextAarrayIndex][2] = maxData;
 					nextAarrayIndex++;
 				} else {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
+					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
+					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
+					dataPointRangeInfo[nextAarrayIndex][2] = -Double.MAX_VALUE;
 					nextAarrayIndex++;
 				}
 			}

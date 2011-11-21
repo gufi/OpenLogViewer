@@ -25,6 +25,7 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -105,6 +106,8 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				g2d.drawString("FPS: " + Double.toString(FPS), LEFT_MARGIN_OFFSET, fpsHeight);
 
 				if (mouseOver) {
+					FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
+					final int fontHeight = fm.getHeight();
 					final GraphPositionPanel graphPositionPanel = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
 					final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 					final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
@@ -120,14 +123,11 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 						if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
 							final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
 							g2d.setColor(textBackground);
-							final Double mouseData = singleGraph.getMouseInfo(snappedDataPosition);
-							String mouseDataString = "-.-";
-							if(mouseData != null){
-								mouseDataString = mouseData.toString();
-							}
-							g2d.fillRect(snappedDataPosition, yMouseCoord + 2 + (15 * i), mouseDataString.length() * 8, 15);
+							String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition);
+							final int stringWidth = fm.stringWidth(mouseDataString);
+							g2d.fillRect(snappedDataPosition + 1, yMouseCoord + 2 + (fontHeight * i), stringWidth + 3, fontHeight);
 							g2d.setColor(singleGraph.getColor());
-							g2d.drawString(mouseDataString, snappedDataPosition + 2, yMouseCoord + 15 + (15 * i));
+							g2d.drawString(mouseDataString, snappedDataPosition + 3, yMouseCoord + fontHeight + (fontHeight * i));
 						}
 					}
 				}
