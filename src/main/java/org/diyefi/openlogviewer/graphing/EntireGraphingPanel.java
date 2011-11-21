@@ -25,6 +25,8 @@ package org.diyefi.openlogviewer.graphing;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -40,7 +42,7 @@ import javax.swing.Timer;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
-public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener {
+public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 
 	private MultiGraphLayeredPane multiGraph;
@@ -58,6 +60,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private int flingInertia;
 	private int zoom;
 	private boolean zoomedOutBeyondOneToOne;
+	private int oldComponentWidth;
 
 	public EntireGraphingPanel() {
 		super();
@@ -75,6 +78,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		this.add(graphPositionPanel, java.awt.BorderLayout.SOUTH);
 		zoom = 1;
 		zoomedOutBeyondOneToOne = false;
+		oldComponentWidth = this.getWidth();
 		resetGraphPosition();
 		setGraphSize(0);
 		playing = false;
@@ -703,5 +707,36 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void keyTyped(final KeyEvent e) {
 		// What should be here?
 		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		System.out.println("Hidden!");
+		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		double move = 0.0;
+		int newWidth = this.getWidth();
+		int amount = newWidth - oldComponentWidth;
+		if(zoomedOutBeyondOneToOne){
+			move = -(amount * zoom);
+		} else {
+			move = -((double)amount / (double)zoom);
+		}
+		move /= 2.0;
+		oldComponentWidth = newWidth;
+		moveGraphPosition(move);
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
 	}
 }

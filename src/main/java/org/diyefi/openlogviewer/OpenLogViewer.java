@@ -215,6 +215,7 @@ public final class OpenLogViewer extends JFrame {
 		setJMenuBar(menuBar);
 
 		this.addKeyListener(graphingPanel);
+		this.addComponentListener(graphingPanel);
 
 		pack();
 
