@@ -103,8 +103,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		double rightOfTraceData = dataPointsToDisplay[0];
 
 		// Initialize graph status markers
-		boolean beforeGraphBeginning = true;
 		boolean atGraphBeginning = false;
+		boolean insideGraph = false;
 		boolean atGraphEnd = false;
 
 		// Initialize and setup data point screen location stuff
@@ -139,7 +139,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			atGraphBeginning = false;
 			if(leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE){
 				atGraphBeginning = true;
-				beforeGraphBeginning = false;
+				insideGraph = true;
 			}
 			if(traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE){
 				atGraphEnd = true;
@@ -153,20 +153,25 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			if(!zoomedOut && zoom > 5){
 				// Draw fat data point
 				// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
-				if (traceData != leftOfTraceData || traceData != rightOfTraceData) {
+				if (insideGraph && (traceData != leftOfTraceData || (traceData != rightOfTraceData && !atGraphEnd))) {
 					g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
 				} else if (atGraphBeginning){
 					g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
 				}
-			} else {
+			} else if (insideGraph) {
 				// Draw small data point
 				// drawLine() is 33% faster than fillRect() for a single pixel on Ben's dev machine
 				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord, screenPositionYCoord);
 			}
 
 			// Draw graph trace line
-			if (!beforeGraphBeginning && !atGraphEnd){
+			if (insideGraph && !atGraphEnd){
 				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, nextScreenPositionYCoord);
+			}
+
+			// Check to see if we are exiting the graph.
+			if(atGraphEnd){
+				insideGraph = false;
 			}
 
 			// Move to the right in preparation of drawing more
