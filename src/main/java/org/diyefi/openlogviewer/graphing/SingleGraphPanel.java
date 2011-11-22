@@ -231,7 +231,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	private final String getMouseInfoZoomed(final int cursorPosition){
-		String result = "-.------";
+		String result = "-.-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
@@ -245,10 +245,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			result = Double.toString(data);
 			if(result.length() > 8){
 				result = result.substring(0, 8);
-			} else {
-				while (result.length() < 8){
-					result = result + "0";
-				}
 			}
 		}
 		return result;
@@ -261,39 +257,32 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	private final String getMouseInfoZoomedOut(int cursorPosition){
-		String result = "-.------ | -.------ | -.------";
+		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
 			double minData = dataPointRangeInfo[cursorPosition][0];
 			double meanData = dataPointRangeInfo[cursorPosition][1];
 			double maxData = dataPointRangeInfo[cursorPosition][2];
 			if(minData != -Double.MAX_VALUE){
 				minData = MathUtils.INSTANCE.roundToSignificantFigures(minData, 6);
-				meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, 6);
 				maxData = MathUtils.INSTANCE.roundToSignificantFigures(maxData, 6);
 				String resultMin = Double.toString(minData);
-				String resultMean = Double.toString(meanData);
 				String resultMax = Double.toString(maxData);
 				if(resultMin.length() > 8){
 					resultMin = resultMin.substring(0, 8);
-				} else {
-					while (resultMin.length() < 8){
-						resultMin = resultMin + "0";
-					}
-				}
-				if(resultMean.length() > 8){
-					resultMean = resultMean.substring(0, 8);
-				} else {
-					while (resultMean.length() < 8){
-						resultMean = resultMean + "0";
-					}
 				}
 				if(resultMax.length() > 8){
 					resultMax = resultMax.substring(0, 8);
-				} else {
-					while (resultMax.length() < 8){
-						resultMax = resultMax + "0";
-					}
 				}
+				meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, 6);
+				String resultMean = Double.toString(meanData);
+				if(resultMin.length() > resultMax.length() && resultMin.length() < resultMean.length()){
+					meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, resultMin.length() - 2);
+					resultMean = resultMean.substring(0, resultMin.length());
+				} else if (resultMax.length() < resultMean.length()){
+					meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, resultMax.length() - 2);
+					resultMean = resultMean.substring(0, resultMax.length());
+				}
+
 				result = resultMin + " | " + resultMean + " | " + resultMax;
 			}
 		}
