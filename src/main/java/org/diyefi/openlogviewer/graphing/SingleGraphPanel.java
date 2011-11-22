@@ -92,7 +92,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	private void paintDataPointsAndTraces(final Graphics g) {
-
 		// Setup graphics stuff
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(GDE.getDisplayColor());
@@ -123,15 +122,15 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		for (int i = 0; i < dataPointsToDisplay.length; i++) {
 
 			// Setup current, previous and next graph trace data points
-			try{
+			if (i > 0){
 				leftOfTraceData = dataPointsToDisplay[i - 1];
-			} catch (ArrayIndexOutOfBoundsException e){
+			} else {
 				leftOfTraceData = -Double.MAX_VALUE;
 			}
 			traceData = dataPointsToDisplay[i];
-			try{
+			if (i + 1 < dataPointsToDisplay.length){
 				rightOfTraceData = dataPointsToDisplay[i + 1];
-			} catch (ArrayIndexOutOfBoundsException e){
+			} else {
 				rightOfTraceData = -Double.MAX_VALUE;
 			}
 
