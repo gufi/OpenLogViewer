@@ -134,28 +134,41 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				rightOfTraceData = -Double.MAX_VALUE;
 			}
 
-			// Setup graph beginning and end markers
-			atGraphBeginning = false;
-			if(leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE){
-				atGraphBeginning = true;
-				insideGraph = true;
-			}
-			if(traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE){
-				atGraphEnd = true;
-			}
-
 			// Setup data point screen location stuff
 			screenPositionYCoord = nextScreenPositionYCoord;
 			nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, GDE.getDisplayMinValue(), GDE.getDisplayMaxValue());
 
+			// Setup graph states and draw graph beginning and end markers
+			if(leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE){
+				// At graph beginning
+				g2d.drawRect(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+				atGraphBeginning = true;
+				insideGraph = true;
+			}
+			if(traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE){
+				// At graph end
+				g2d.drawRect(screenPositionXCoord - 2, screenPositionYCoord - 2, 4, 4);
+				atGraphEnd = true;
+			}
+
 			// Draw data point
 			if(!zoomedOut && zoom > 5){
 				// Draw fat data point
-				// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
-				if (insideGraph && (traceData != leftOfTraceData || (traceData != rightOfTraceData && !atGraphEnd))) {
-					g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
-				} else if (atGraphBeginning){
-					g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+				if (atGraphBeginning){
+					if (traceData != rightOfTraceData) {
+						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+					}
+				} else if (atGraphEnd){
+					if (traceData != leftOfTraceData) {
+						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+					}
+				} else if (insideGraph) {
+					if (traceData != leftOfTraceData || traceData != rightOfTraceData){
+						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+					}
 				}
 			} else if (insideGraph) {
 				// Draw small data point
@@ -168,10 +181,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, nextScreenPositionYCoord);
 			}
 
-			// Check to see if we are exiting the graph.
+			// Reset graph states
 			if(atGraphEnd){
 				insideGraph = false;
 			}
+			atGraphBeginning = false;
 
 			// Move to the right in preparation of drawing more
 			screenPositionXCoord += zoom;
