@@ -141,13 +141,15 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			// Setup graph states and draw graph beginning and end markers
 			if(leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE){
 				// At graph beginning
-				g2d.drawLine(screenPositionXCoord - 2, screenPositionYCoord - 2, screenPositionXCoord - 2, screenPositionYCoord + 2);
+				g2d.drawLine(screenPositionXCoord - 4, screenPositionYCoord - 2, screenPositionXCoord - 2, screenPositionYCoord);
+				g2d.drawLine(screenPositionXCoord - 2, screenPositionYCoord, screenPositionXCoord - 4, screenPositionYCoord + 2);
 				atGraphBeginning = true;
 				insideGraph = true;
 			}
 			if(traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE){
 				// At graph end
-				g2d.drawLine(screenPositionXCoord + 2, screenPositionYCoord - 2, screenPositionXCoord + 2, screenPositionYCoord + 2);
+				g2d.drawLine(screenPositionXCoord + 4, screenPositionYCoord - 2, screenPositionXCoord + 2, screenPositionYCoord);
+				g2d.drawLine(screenPositionXCoord + 2, screenPositionYCoord, screenPositionXCoord + 4, screenPositionYCoord + 2);
 				atGraphEnd = true;
 			}
 
