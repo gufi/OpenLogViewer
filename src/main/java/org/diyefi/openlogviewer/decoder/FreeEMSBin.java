@@ -141,7 +141,8 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 		new LogField("Dwell", 1250),            // Dwell period, s 0 - ~52ms
 
 		// KeyUserDebugs struct contents
-		new LogField("tempClock"),     // Incremented once per log sent, to be moved to a char TODO
+		new LogField("tempClock", types.UINT8),     // Incremented once per log sent, to be moved to a char TODO
+		new LogField("spareChar", types.UINT8),     // Incremented once per log sent, to be moved to a char TODO
 		new LogField("coreStatusA",  types.BITS8, coreStatusAFlagNames),    // Duplicated, migrate here, remove global var
 		new LogField("decoderFlags", types.BITS8, decoderFlagsFlagNames),   // Various decoder state flags
 		new LogField("flaggableFlags", types.BITS16, flaggableFlagsNames),  // Flags to go with our flaggables struct.
