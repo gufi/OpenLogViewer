@@ -239,10 +239,8 @@ public final class OpenLogViewer extends JFrame {
 				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
 				if ("com.apple.laf.AquaLookAndFeel".equals(systemLookAndFeel)) { // If Mac!
 					System.setProperty("apple.laf.useScreenMenuBar", "true");
-					lookAndFeel = systemLookAndFeel;
-				} else {
-					lookAndFeel = "javax.swing.plaf.metal.MetalLookAndFeel";
 				}
+				lookAndFeel = systemLookAndFeel;
 
 				try {
 					UIManager.setLookAndFeel(lookAndFeel);
