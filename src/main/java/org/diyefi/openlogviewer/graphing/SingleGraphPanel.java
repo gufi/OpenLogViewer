@@ -437,7 +437,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 							}
 
 							// Set start/end indices.
-							if (graphBeginningIndex == Integer.MIN_VALUE && gdeIndex < zoom){
+							if (graphBeginningIndex == Integer.MIN_VALUE && (gdeIndex >= 0 && gdeIndex < zoom)){
 								graphBeginningIndex = nextAarrayIndex;
 							}
 							if (gdeIndex == availableDataRecords - 1) {
