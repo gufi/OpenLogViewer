@@ -35,9 +35,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	// TODO this is no good, get rid of it, show some sort of status indicator in the GUI showing that log loading is not complete
 	// For streams, always show that as a way of saying "still streaming!"
 	private static final String LOG_LOADED_TEXT = "LogLoaded";
-	public static final int LOG_NOT_LOADED = -1;
-	public static final int LOG_LOADING = 0;
-	public static final int LOG_LOADED = 1;
+	public static enum LogState { LOG_NOT_LOADED, LOG_LOADING, LOG_LOADED }
 
 	// Info to populate built-in fields efficiently, likely to be done differently in future, but if not, put this in some structure.
 	public static final String recordCountKey = "OLV Record Count";
@@ -53,7 +51,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 
 	private String metaData;
 	protected final PropertyChangeSupport PCS;
-	private int logStatus;
+	private LogState logStatus;
 	private String logStatusMessage = null;
 
 	// Track the size of our children so that we can bump them up one by one where required
@@ -65,13 +63,13 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 
 	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
-			if ((Integer) propertyChangeEvent.getNewValue() == 0) {
+			if ((LogState) propertyChangeEvent.getNewValue() == LogState.LOG_LOADING) {
 				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
-				genLog.setLogStatus(GenericLog.LOG_LOADING);
+				genLog.setLogStatus(LogState.LOG_LOADING);
 				OpenLogViewer.getInstance().setLog(genLog);
-			} else if ((Integer) propertyChangeEvent.getNewValue() == 1) {
+			} else if ((LogState) propertyChangeEvent.getNewValue() == LogState.LOG_LOADED) {
 				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
-				genLog.setLogStatus(GenericLog.LOG_LOADED);
+				genLog.setLogStatus(LogState.LOG_LOADED);
 				OpenLogViewer.getInstance().setLog(genLog);
 				OpenLogViewer.getInstance().getOptionFrame().updateFromLog(genLog);
 			}
@@ -87,7 +85,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 		super(1 + (headers.length + NUMBER_OF_BUILTIN_FIELDS), 1.0f); // refactor to use (capacityRequired+1, 1.0) for maximum performance (no rehashing)
 
 		GenericDataElement.resetPosition(); // Kinda ugly, but...
-		logStatus = LOG_NOT_LOADED;
+		logStatus = LogState.LOG_NOT_LOADED;
 		PCS = new PropertyChangeSupport(this);
 		addPropertyChangeListener(LOG_LOADED_TEXT, autoLoad);
 		metaData = "";
@@ -181,8 +179,8 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 * Set the state of the log
 	 * @param newLogStatus GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
 	 */
-	public final void setLogStatus(final int newLogStatus) {
-		int oldLogStatus = this.logStatus;
+	public final void setLogStatus(final LogState newLogStatus) {
+		LogState oldLogStatus = this.logStatus;
 		this.logStatus = newLogStatus;
 		PCS.firePropertyChange(LOG_LOADED_TEXT, oldLogStatus, newLogStatus);
 	}
@@ -191,7 +189,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 *
 	 * @return -1 if log not loaded 0 if loading or 1 if log is loaded
 	 */
-	public final int getLogStatus() {
+	public final LogState getLogStatus() {
 		return this.logStatus;
 	}
 

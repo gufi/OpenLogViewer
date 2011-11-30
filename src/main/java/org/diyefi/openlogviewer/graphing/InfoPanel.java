@@ -84,10 +84,10 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			g.setColor(Color.RED);
 			g.drawString("No log loaded, please select a log from the file menu.", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 		} else {
-			if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
+			if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADING) {
 				g.setColor(Color.red);
 				g.drawString("Loading log, please wait...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
-			} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
 				int fpsHeight = 0;
 				if (genLog.getLogStatusMessage() != null) {
 					g.setColor(Color.RED);

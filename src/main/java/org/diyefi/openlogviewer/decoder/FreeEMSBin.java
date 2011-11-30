@@ -244,7 +244,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			startFound = false;
 			fis = new FileInputStream(logFile);
 			bis = new BufferedInputStream(fis);
-			decodedLog.setLogStatus(GenericLog.LOG_LOADING);
+			decodedLog.setLogStatus(GenericLog.LogState.LOG_LOADING);
 			while (bis.read(readByte) != -1) {
 				uByte = unsignedValueOf(readByte[0]);
 				if (uByte == START_BYTE) {
@@ -294,7 +294,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 					strayBytesLost++;
 				}
 			}
-			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
+			decodedLog.setLogStatus(GenericLog.LogState.LOG_LOADED);
 
 			System.out.println(OpenLogViewer.NEWLINE + "Binary Parsing Statistics:" + OpenLogViewer.NEWLINE);
 
@@ -315,7 +315,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			decodedLog.setLogStatusMessage(e.getMessage());
 		} finally { // Setup the log to be displayed TODO in future it will just display as it goes
 			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphSize(decodedLog.getRecordCount());
-			decodedLog.setLogStatus(GenericLog.LOG_LOADED);
+			decodedLog.setLogStatus(GenericLog.LogState.LOG_LOADED);
 			System.out.println("Loaded " + (decodedLog.getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
 
 			try {

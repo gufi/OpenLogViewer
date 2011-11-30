@@ -73,9 +73,9 @@ public class GraphPositionPanel extends JPanel {
 		if (genLog ==  null) {
 			paintPositionBar(g2d, false);
 		} else {
-			if (genLog.getLogStatus() == GenericLog.LOG_LOADING) {
+			if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADING) {
 				paintPositionBar(g2d, false);
-			} else if (genLog.getLogStatus() == GenericLog.LOG_LOADED) {
+			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
 				final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 				final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 				paintPositionBar(g2d, zoomedOut);
