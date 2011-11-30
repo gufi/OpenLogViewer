@@ -711,28 +711,42 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		System.out.println("Hidden!");
 		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
 	}
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
+		// Same code as resize event because the Mac sort of treats resizing as a move
+		int newWidth = this.getWidth();
+		if(newWidth != oldComponentWidth){
+			double move = 0.0;
+			int amount = newWidth - oldComponentWidth;
+			if(zoomedOutBeyondOneToOne){
+				move = -(amount * zoom);
+			} else {
+				move = -((double)amount / (double)zoom);
+			}
+			move /= 2.0;
+			oldComponentWidth = newWidth;
+			moveGraphPosition(move);
+		}
 	}
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		double move = 0.0;
 		int newWidth = this.getWidth();
-		int amount = newWidth - oldComponentWidth;
-		if(zoomedOutBeyondOneToOne){
-			move = -(amount * zoom);
-		} else {
-			move = -((double)amount / (double)zoom);
+		if(newWidth != oldComponentWidth){
+			double move = 0.0;
+			int amount = newWidth - oldComponentWidth;
+			if(zoomedOutBeyondOneToOne){
+				move = -(amount * zoom);
+			} else {
+				move = -((double)amount / (double)zoom);
+			}
+			move /= 2.0;
+			oldComponentWidth = newWidth;
+			moveGraphPosition(move);
 		}
-		move /= 2.0;
-		oldComponentWidth = newWidth;
-		moveGraphPosition(move);
 	}
 
 	@Override
