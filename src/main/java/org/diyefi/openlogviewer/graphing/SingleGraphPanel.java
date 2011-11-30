@@ -411,6 +411,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			*/
 			int nextAarrayIndex = 0;
 			double leftOfNewData = GDE.get(0);
+			if (position > 0 && position < availableDataRecords){
+				leftOfNewData = GDE.get(position);
+			}
 			for (int i = position; i < rightGraphPosition; i+=zoom) {
 
 				if (i >= 0 && i < availableDataRecords) {
