@@ -623,7 +623,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					final long delay = now - thePastLeftArrow;
 					if(delay < 50){
 						scrollAcceleration++;
-						moveEntireGraphingPanel(-localZoom - scrollAcceleration);
+						moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
 					} else {
 						scrollAcceleration = 0;
 						moveEntireGraphingPanel(-localZoom);
@@ -646,7 +646,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					final long delay = now - thePastLeftArrow;
 					if(delay < 50){
 						scrollAcceleration++;
-						moveEntireGraphingPanel(-localZoom - scrollAcceleration);
+						moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
 					} else {
 						scrollAcceleration = 0;
 						moveEntireGraphingPanel(-localZoom);
@@ -676,7 +676,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					final long delay = now - thePastRightArrow;
 					if(delay < 50){
 						scrollAcceleration++;
-						moveEntireGraphingPanel(localZoom + scrollAcceleration);
+						moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
 					} else {
 						scrollAcceleration = 0;
 						moveEntireGraphingPanel(localZoom);
@@ -699,7 +699,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					final long delay = now - thePastRightArrow;
 					if(delay < 50){
 						scrollAcceleration++;
-						moveEntireGraphingPanel(localZoom + scrollAcceleration);
+						moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
 					} else {
 						scrollAcceleration = 0;
 						moveEntireGraphingPanel(localZoom);
