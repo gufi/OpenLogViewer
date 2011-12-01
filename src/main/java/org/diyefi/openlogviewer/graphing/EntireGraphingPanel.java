@@ -55,7 +55,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private Timer flingTimer;
 	private boolean dragging;
 	private boolean flinging;
-	private long thePast;
+	private long thePastMouseDragged;
+	private long thePastLeftArrow;
+	private long thePastRightArrow;
+	private int scrollAcceleration;
 	private int prevDragXCoord;
 	private int flingInertia;
 	private int zoom;
@@ -94,7 +97,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		addMouseMotionListener(multiGraph.getInfoPanel());
 		stopDragging();
 		stopFlinging();
-		thePast = System.currentTimeMillis();
+		thePastMouseDragged = System.currentTimeMillis();
+		thePastLeftArrow = System.currentTimeMillis();
+		thePastRightArrow = System.currentTimeMillis();
+		scrollAcceleration = 0;
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
@@ -468,7 +474,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		if ((prevDragXCoord > 0) && (prevDragXCoord != xMouseCoord)) {
 			moveEntireGraphingPanel(prevDragXCoord - xMouseCoord);
 			flingInertia = ((prevDragXCoord - xMouseCoord) * 2);
-			thePast = System.currentTimeMillis();
+			thePastMouseDragged = System.currentTimeMillis();
 		}
 		prevDragXCoord = xMouseCoord;
 	}
@@ -507,7 +513,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		stopDragging();
 
 		final long now = System.currentTimeMillis();
-		if ((now - thePast) > 50) {
+		if ((now - thePastMouseDragged) > 50) {
 			stopFlinging(); // If over 50 milliseconds since dragging then don't fling
 		}
 
@@ -613,7 +619,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					//Big scroll
 					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 				} else {
-					moveEntireGraphingPanel(-localZoom);
+					final long now = System.currentTimeMillis();
+					final long delay = now - thePastLeftArrow;
+					if(delay < 50){
+						scrollAcceleration++;
+						moveEntireGraphingPanel(-localZoom - scrollAcceleration);
+					} else {
+						scrollAcceleration = 0;
+						moveEntireGraphingPanel(-localZoom);
+					}
+					thePastLeftArrow = System.currentTimeMillis();
 				}
 				break;
 			}
@@ -627,7 +642,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					//Big scroll
 					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 				} else {
-					moveEntireGraphingPanel(-localZoom);
+					final long now = System.currentTimeMillis();
+					final long delay = now - thePastLeftArrow;
+					if(delay < 50){
+						scrollAcceleration++;
+						moveEntireGraphingPanel(-localZoom - scrollAcceleration);
+					} else {
+						scrollAcceleration = 0;
+						moveEntireGraphingPanel(-localZoom);
+					}
+					thePastLeftArrow = System.currentTimeMillis();
 				}
 				break;
 			}
@@ -648,7 +672,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					//Big scroll
 					moveEntireGraphingPanel(this.getWidth() * 0.75);
 				} else {
-					moveEntireGraphingPanel(localZoom);
+					final long now = System.currentTimeMillis();
+					final long delay = now - thePastRightArrow;
+					if(delay < 50){
+						scrollAcceleration++;
+						moveEntireGraphingPanel(localZoom + scrollAcceleration);
+					} else {
+						scrollAcceleration = 0;
+						moveEntireGraphingPanel(localZoom);
+					}
+					thePastRightArrow = System.currentTimeMillis();
 				}
 				break;
 			}
@@ -662,7 +695,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					//Big scroll
 					moveEntireGraphingPanel(this.getWidth() * 0.75);
 				} else {
-					moveEntireGraphingPanel(localZoom);
+					final long now = System.currentTimeMillis();
+					final long delay = now - thePastRightArrow;
+					if(delay < 50){
+						scrollAcceleration++;
+						moveEntireGraphingPanel(localZoom + scrollAcceleration);
+					} else {
+						scrollAcceleration = 0;
+						moveEntireGraphingPanel(localZoom);
+					}
+					thePastRightArrow = System.currentTimeMillis();
 				}
 				break;
 			}
