@@ -179,11 +179,13 @@ public class GraphPositionPanel extends JPanel {
 		validSnappingPositions = new boolean[this.getWidth()];
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		MultiGraphLayeredPane multiGraph = OpenLogViewer.getInstance().getEntireGraphingPanel().getMultiGraphLayeredPane();
+		final int availableData = (multiGraph.graphSize() - 1) * zoom;
 		long count = Math.round(graphPosition * zoom);
 
 		// Fill array with valid snapping points from left to right
 		for (int i = 0; i < this.getWidth(); i++) {
-			if (count % zoom == 0) {
+			if (count < -1 || count > availableData + 1 || count % zoom == 0) {
 				validSnappingPositions[i] = true;
 			}
 			count++;

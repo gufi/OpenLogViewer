@@ -143,4 +143,20 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			}
 		}
 	}
+
+	/**
+	 * Graph total size
+	 * @return GDE.size()
+	 */
+	public final int graphSize() {
+		int availableData = 0;
+		boolean found = false;
+		for (int i = 0; i < this.getComponentCount() && !found; i++) {
+			if (this.getComponent(i) instanceof SingleGraphPanel) {
+				final SingleGraphPanel singleGraph = (SingleGraphPanel) this.getComponent(i);
+				availableData = singleGraph.graphSize();
+			}
+		}
+		return availableData;
+	}
 }
