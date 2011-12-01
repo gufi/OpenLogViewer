@@ -414,54 +414,106 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			if (position > 0 && position < availableDataRecords){
 				leftOfNewData = GDE.get(position);
 			}
-			for (int i = position; i < rightGraphPosition; i+=zoom) {
 
-				if (i >= 0 && i < availableDataRecords) {
-					double minData = Double.MAX_VALUE;
-					double maxData = -Double.MAX_VALUE;
-					double newData = 0.0;
-					double acummulateData = 0.0;
-					int divisor = 0;
+			if (zoom < availableDataRecords){
 
-					for (int j = 0; j < zoom; j++){
-						int gdeIndex = i + j;
-						if (gdeIndex >= 0 && gdeIndex < availableDataRecords) {
-							newData = GDE.get(gdeIndex);
-							acummulateData += newData;
-							divisor++;
-							if (newData < minData){
-								minData = newData;
-							}
-							if (newData > maxData){
-								maxData = newData;
-							}
+				for (int i = position; i < rightGraphPosition; i+=zoom) {
 
-							// Set start/end indices.
-							if (graphBeginningIndex == Integer.MIN_VALUE && (gdeIndex >= 0 && gdeIndex < zoom)){
-								graphBeginningIndex = nextAarrayIndex;
-							}
-							if (gdeIndex == availableDataRecords - 1) {
-								graphEndingIndex = nextAarrayIndex;
-							}
+					if (i >= 0 && i < availableDataRecords) {
+						double minData = Double.MAX_VALUE;
+						double maxData = -Double.MAX_VALUE;
+						double newData = 0.0;
+						double acummulateData = 0.0;
+						int divisor = 0;
 
+						for (int j = 0; j < zoom; j++){
+							int gdeIndex = i + j;
+							if (gdeIndex >= 0 && gdeIndex < availableDataRecords) {
+								newData = GDE.get(gdeIndex);
+								acummulateData += newData;
+								divisor++;
+								if (newData < minData){
+									minData = newData;
+								}
+								if (newData > maxData){
+									maxData = newData;
+								}
+
+								// Set start/end indices.
+								if (graphBeginningIndex == Integer.MIN_VALUE && (gdeIndex >= 0 && gdeIndex < zoom)){
+									graphBeginningIndex = nextAarrayIndex;
+								}
+								if (gdeIndex == availableDataRecords - 1) {
+									graphEndingIndex = nextAarrayIndex;
+								}
+
+							}
 						}
-					}
-					double averageData = acummulateData / divisor;
-					if (averageData > leftOfNewData){
-						dataPointsToDisplay[nextAarrayIndex] = maxData;
-						leftOfNewData = maxData;
-					} else if (averageData < leftOfNewData){
-						dataPointsToDisplay[nextAarrayIndex] = minData;
-						leftOfNewData = minData;
+						double averageData = acummulateData / divisor;
+						if (averageData > leftOfNewData){
+							dataPointsToDisplay[nextAarrayIndex] = maxData;
+							leftOfNewData = maxData;
+						} else if (averageData < leftOfNewData){
+							dataPointsToDisplay[nextAarrayIndex] = minData;
+							leftOfNewData = minData;
+						} else {
+							dataPointsToDisplay[nextAarrayIndex] = averageData;
+							leftOfNewData = averageData;
+						}
+						dataPointRangeInfo[nextAarrayIndex][0] = minData;
+						dataPointRangeInfo[nextAarrayIndex][1] = averageData;
+						dataPointRangeInfo[nextAarrayIndex][2] = maxData;
+						nextAarrayIndex++;
 					} else {
-						dataPointsToDisplay[nextAarrayIndex] = averageData;
-						leftOfNewData = averageData;
+						dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
+						dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
+						dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
+						dataPointRangeInfo[nextAarrayIndex][2] = -Double.MAX_VALUE;
+						nextAarrayIndex++;
 					}
-					dataPointRangeInfo[nextAarrayIndex][0] = minData;
-					dataPointRangeInfo[nextAarrayIndex][1] = averageData;
-					dataPointRangeInfo[nextAarrayIndex][2] = maxData;
+				}
+			} else {
+
+				// Fill in null data points until zero position is reached.
+				for (int i = position; i < -zoom; i+=zoom) {
+					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
+					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
+					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
+					dataPointRangeInfo[nextAarrayIndex][2] = -Double.MAX_VALUE;
 					nextAarrayIndex++;
-				} else {
+				}
+
+				// Find min/mean/max of entire available data and place at position zero.
+				double minData = Double.MAX_VALUE;
+				double maxData = -Double.MAX_VALUE;
+				double newData = 0.0;
+				double acummulateData = 0.0;
+				int divisor = 0;
+				for (int i = 0; i < availableDataRecords; i++) {
+					newData = GDE.get(i);
+					acummulateData += newData;
+					divisor++;
+					if (newData < minData){
+						minData = newData;
+					}
+					if (newData > maxData){
+						maxData = newData;
+					}
+				}
+				double averageData = acummulateData / divisor;
+				dataPointsToDisplay[nextAarrayIndex] = averageData;
+				dataPointRangeInfo[nextAarrayIndex][0] = minData;
+				dataPointRangeInfo[nextAarrayIndex][1] = averageData;
+				dataPointRangeInfo[nextAarrayIndex][2] = maxData;
+
+				// Set start/end indices.
+				graphBeginningIndex = nextAarrayIndex;
+				graphEndingIndex = nextAarrayIndex;
+
+				nextAarrayIndex++;
+
+				// Fill in the rest of the array with null data points.
+				for (int i = zoom; i < rightGraphPosition; i+=zoom) {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
