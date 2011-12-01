@@ -272,9 +272,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
 		final int cursorPositionPlusOffset = cursorPosition + (int) offset;
-		double numSnapsFromCenter = ((double) cursorPositionPlusOffset / (double) zoom);
-		numSnapsFromCenter = Math.round(numSnapsFromCenter);
-		final int dataLocation = (int) graphPosition + (int) numSnapsFromCenter;
+		double numSnapsFromLeft = ((double) cursorPositionPlusOffset / (double) zoom);
+		numSnapsFromLeft = Math.round(numSnapsFromLeft);
+		final int dataLocation = (int) graphPosition + (int) numSnapsFromLeft;
 		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
 			double data = GDE.get(dataLocation);
 			data = MathUtils.INSTANCE.roundToSignificantFigures(data, 6);
@@ -295,9 +295,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private final String getMouseInfoZoomedOut(int cursorPosition){
 		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
-			double minData = dataPointRangeInfo[cursorPosition][0];
-			double meanData = dataPointRangeInfo[cursorPosition][1];
-			double maxData = dataPointRangeInfo[cursorPosition][2];
+			double minData = dataPointRangeInfo[cursorPosition + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
+			double meanData = dataPointRangeInfo[cursorPosition + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
+			double maxData = dataPointRangeInfo[cursorPosition + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
 			if(minData != -Double.MAX_VALUE){
 				minData = MathUtils.INSTANCE.roundToSignificantFigures(minData, 6);
 				maxData = MathUtils.INSTANCE.roundToSignificantFigures(maxData, 6);
