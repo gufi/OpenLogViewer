@@ -474,6 +474,18 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				}
 			} else {
 
+				/*
+				* Setup data points when extremely zoomed out.
+				*
+				* If the zoom value is higher than the entire length of
+				* available data then it is possible for the normal algorithm
+				* to skip over the data completely when sweeping across the
+				* screen from left to right in zoom steps. If zoom reaches
+				* that high of a value, then use this alternative algorithm
+				* instead.
+				*
+				*/
+
 				// Fill in null data points until zero position is reached.
 				for (int i = position; i < -zoom; i+=zoom) {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
