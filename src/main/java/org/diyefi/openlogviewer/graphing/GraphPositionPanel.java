@@ -90,13 +90,17 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		double offset = 0;
+		double offset = 0.0;
+		double margin = 0.0;
 		if(zoomedOut){
 			offset = majorGraduationSpacing / zoom;
+			offset = Math.ceil(offset);
 		} else {
 			offset = majorGraduationSpacing * zoom;
+			offset = Math.round(offset);
+			margin = (1.0 / (double)zoom) / 2.0;
 		}
-		offset = Math.round(offset);
+
 		g2d.setColor(majorGraduationColor);
 
 		//Find first position marker placement
@@ -105,14 +109,14 @@ public class GraphPositionPanel extends JPanel {
 		//Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
 		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
-			if (position >= nextPositionMarker){
+			if (position >= nextPositionMarker - margin){
 				g2d.drawLine(i, 0, i, 6);
 				nextPositionMarker += majorGraduationSpacing;
 			}
 			if(zoomedOut){
 				position += zoom;
 			} else {
-				position += (1.0 / zoom);
+				position += (1.0 / (double)zoom);
 			}
 		}
 		g2d.drawLine(0, 0, this.getWidth(), 0);
@@ -121,11 +125,15 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		double offset = 0;
+		double offset = 0.0;
+		double margin = 0.0;
 		if(zoomedOut){
 			offset = majorGraduationSpacing / zoom;
+			offset = Math.ceil(offset);
 		} else {
 			offset = majorGraduationSpacing * zoom;
+			offset = Math.round(offset);
+			margin = (1.0 / (double)zoom) / 2.0;
 		}
 		g2d.setColor(positionDataColor);
 		FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
@@ -136,7 +144,7 @@ public class GraphPositionPanel extends JPanel {
 		//Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
 		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
-			if (position >= nextPositionMarker){
+			if (position >= nextPositionMarker - margin){
 				String positionDataString = "";
 				BigDecimal positionData = new BigDecimal(nextPositionMarker);
 				if(majorGraduationSpacing > 0.5){
@@ -246,6 +254,8 @@ public class GraphPositionPanel extends JPanel {
 	/**
 	* Use this if you want to avoid BigDecimal in the future:
 	* http://stackoverflow.com/questions/202302/rounding-to-an-arbitrary-number-of-significant-digits
+	*
+	* Update: That algorithm has now been implemented in MathUtils.roundToSignificantFigures()
 	*
 	* @param BigDecimal input - The BigDecimal you're interested in rounding.
 	* @return String - A string representation of input rounded to two significant figures to the right of the decimal.
