@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.utils.MathUtils;
 
 public class GraphPositionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -90,15 +91,16 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		double offset = 0.0;
-		double margin = 0.0;
+		double offset = 0d;
+		double margin = 0d;
 		if(zoomedOut){
 			offset = majorGraduationSpacing / zoom;
 			offset = Math.ceil(offset);
+			margin = (1d / zoom) / 2d;
 		} else {
 			offset = majorGraduationSpacing * zoom;
 			offset = Math.round(offset);
-			margin = (1.0 / (double)zoom) / 2.0;
+			margin = (1d / zoom) / 2d;
 		}
 
 		g2d.setColor(majorGraduationColor);
@@ -116,7 +118,7 @@ public class GraphPositionPanel extends JPanel {
 			if(zoomedOut){
 				position += zoom;
 			} else {
-				position += (1.0 / (double)zoom);
+				position += (1d / zoom);
 			}
 		}
 		g2d.drawLine(0, 0, this.getWidth(), 0);
@@ -125,15 +127,15 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		double offset = 0.0;
-		double margin = 0.0;
+		double offset = 0d;
+		double margin = 0d;
 		if(zoomedOut){
 			offset = majorGraduationSpacing / zoom;
 			offset = Math.ceil(offset);
 		} else {
 			offset = majorGraduationSpacing * zoom;
 			offset = Math.round(offset);
-			margin = (1.0 / (double)zoom) / 2.0;
+			margin = (1d / zoom) / 2d;
 		}
 		g2d.setColor(positionDataColor);
 		FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
