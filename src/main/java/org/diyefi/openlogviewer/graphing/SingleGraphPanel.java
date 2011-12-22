@@ -47,10 +47,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private static final long serialVersionUID = 1L;
 
 	private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
-	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
-	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
-	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
-	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
 	private GenericDataElement GDE;
 	private double[] dataPointsToDisplay;
 	private double[][] dataPointRangeInfo;
@@ -122,9 +118,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
-		int screenPositionXCoord = -LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
+		int screenPositionXCoord = -EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
 		if(!zoomedOut){
-			screenPositionXCoord = -(int)Math.round(offset) - (LEFT_OFFSCREEN_POINTS_ZOOMED_IN * zoom);
+			screenPositionXCoord = -(int)Math.round(offset) - (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_IN * zoom);
 		}
 		int screenPositionYCoord = Integer.MIN_VALUE;
 		int nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, GDE.getDisplayMinValue(), GDE.getDisplayMaxValue());
@@ -295,9 +291,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private final String getMouseInfoZoomedOut(int cursorPosition){
 		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
-			double minData = dataPointRangeInfo[cursorPosition + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
-			double meanData = dataPointRangeInfo[cursorPosition + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
-			double maxData = dataPointRangeInfo[cursorPosition + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
+			double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
+			double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
+			double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
 			if(minData != -Double.MAX_VALUE){
 				minData = MathUtils.INSTANCE.roundToSignificantFigures(minData, 6);
 				maxData = MathUtils.INSTANCE.roundToSignificantFigures(maxData, 6);
@@ -342,10 +338,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
 			final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 			int numberOfPointsThatFitInDisplay = graphWindowWidth / zoom;
-			numberOfPointsThatFitInDisplay += LEFT_OFFSCREEN_POINTS_ZOOMED_IN;
-			numberOfPointsThatFitInDisplay += RIGHT_OFFSCREEN_POINTS_ZOOMED_IN;
+			numberOfPointsThatFitInDisplay += EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_IN;
+			numberOfPointsThatFitInDisplay += EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_IN;
 			dataPointsToDisplay = new double[numberOfPointsThatFitInDisplay];
-			int position = graphPosition - LEFT_OFFSCREEN_POINTS_ZOOMED_IN;
+			int position = graphPosition - EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_IN;
 
 			// Reset start/end indices.
 			graphBeginningIndex = Integer.MIN_VALUE;
@@ -380,13 +376,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			final int graphPosition = (int)OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 			int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
 			final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-			final int position = graphPosition - (LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
-			dataPointsToDisplay = new double[graphWindowWidth + LEFT_OFFSCREEN_POINTS_ZOOMED_OUT + RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT];
+			final int position = graphPosition - (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
+			dataPointsToDisplay = new double[graphWindowWidth + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT + EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT];
 			dataPointRangeInfo = new double[dataPointsToDisplay.length][3];
 			final int numberOfRealPointsThatFitInDisplay =
 					(graphWindowWidth * zoom) +
-					(LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom) +
-					(RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
+					(EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom) +
+					(EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
 			final int rightGraphPosition = position + numberOfRealPointsThatFitInDisplay;
 
 			// Reset start/end indices.

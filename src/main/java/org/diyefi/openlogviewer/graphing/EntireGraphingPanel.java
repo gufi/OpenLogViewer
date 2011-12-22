@@ -44,6 +44,10 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
+	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
+	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
+	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
+	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
 
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
@@ -345,6 +349,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	private final int getGraphPositionMax() {
+		if (zoom == getWidestZoom()){
+			int size = graphSize - (LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
+			if (size < 0){
+				size = 0;
+			}
+			return size;
+		}
 		return graphSize;
 	}
 
