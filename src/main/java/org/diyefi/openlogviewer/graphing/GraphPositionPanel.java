@@ -78,11 +78,12 @@ public class GraphPositionPanel extends JPanel {
 			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
 				final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 				final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-				paintPositionBar(g2d, zoomedOut);
-				paintPositionData(g2d, zoomedOut);
-				if(!zoomedOut && zoom > 1){
+				if(!zoomedOut || zoom == 1){
 					setupMouseCursorLineSnappingPositions();
 				}
+				paintPositionBar(g2d, zoomedOut);
+				paintPositionData(g2d, zoomedOut);
+
 			}
 		}
 	}
@@ -90,7 +91,6 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		final int[] xCoordsOfRealPoints = OpenLogViewer.getInstance().getEntireGraphingPanel().getXCoordsOfRealPoints();
 		double offset = 0d;
 		double margin = 0d;
 		if(zoomedOut){
@@ -113,16 +113,13 @@ public class GraphPositionPanel extends JPanel {
 		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
 			if (position >= nextPositionMarker - margin){
 				int xCoord = i;
-				boolean found = false;
-				for (int j = 0; !found && xCoordsOfRealPoints != null && j < xCoordsOfRealPoints.length; j++){
-					if (xCoord == xCoordsOfRealPoints[j]){
-						found = true;
-					} else if (xCoord - 1 == xCoordsOfRealPoints[j]){
+				if(xCoord >= 0 && xCoord < validSnappingPositions.length){
+					if (validSnappingPositions[xCoord]){
+						//Check this first to see if there is no need to modify xCoord.
+					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
 						xCoord --;
-						found = true;
-					}  else if (xCoord + 1 == xCoordsOfRealPoints[j]){
+					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]){
 						xCoord ++;
-						found = true;
 					}
 				}
 				g2d.drawLine(xCoord, 0, xCoord, 6);
@@ -140,7 +137,6 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		final int[] xCoordsOfRealPoints = OpenLogViewer.getInstance().getEntireGraphingPanel().getXCoordsOfRealPoints();
 		double offset = 0d;
 		double margin = 0d;
 		if(zoomedOut){
@@ -163,16 +159,13 @@ public class GraphPositionPanel extends JPanel {
 		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
 			if (position >= nextPositionMarker - margin){
 				int xCoord = i;
-				boolean found = false;
-				for (int j = 0; !found && xCoordsOfRealPoints != null && j < xCoordsOfRealPoints.length; j++){
-					if (xCoord == xCoordsOfRealPoints[j]){
-						found = true;
-					} else if (xCoord - 1 == xCoordsOfRealPoints[j]){
+				if(xCoord >= 0 && xCoord < validSnappingPositions.length){
+					if (validSnappingPositions[xCoord]){
+						//Check this first to see if there is no need to modify xCoord.
+					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
 						xCoord --;
-						found = true;
-					}  else if (xCoord + 1 == xCoordsOfRealPoints[j]){
+					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]){
 						xCoord ++;
-						found = true;
 					}
 				}
 				String positionDataString = "";
