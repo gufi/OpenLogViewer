@@ -487,7 +487,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				*/
 
 				// Fill in null data points until zero position is reached.
-				for (int i = position; i < -zoom; i+=zoom) {
+				for (int i = position; i < 0; i+=zoom) {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
@@ -525,7 +525,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				nextAarrayIndex++;
 
 				// Fill in the rest of the array with null data points.
-				for (int i = zoom; i < rightGraphPosition; i+=zoom) {
+				for (int i = zoom * 2; i < rightGraphPosition; i+=zoom) {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;

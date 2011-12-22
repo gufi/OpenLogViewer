@@ -116,10 +116,10 @@ public class GraphPositionPanel extends JPanel {
 				if(xCoord >= 0 && xCoord < validSnappingPositions.length){
 					if (validSnappingPositions[xCoord]){
 						//Check this first to see if there is no need to modify xCoord.
-					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
-						xCoord --;
 					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]){
 						xCoord ++;
+					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
+						xCoord --;
 					}
 				}
 				g2d.drawLine(xCoord, 0, xCoord, 6);
@@ -162,10 +162,10 @@ public class GraphPositionPanel extends JPanel {
 				if(xCoord >= 0 && xCoord < validSnappingPositions.length){
 					if (validSnappingPositions[xCoord]){
 						//Check this first to see if there is no need to modify xCoord.
-					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
-						xCoord --;
 					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]){
 						xCoord ++;
+					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
+						xCoord --;
 					}
 				}
 				String positionDataString = "";
