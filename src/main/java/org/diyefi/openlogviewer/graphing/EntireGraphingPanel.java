@@ -44,6 +44,10 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
+	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
+	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
+	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
+	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
 
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
@@ -64,6 +68,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private int zoom;
 	private boolean zoomedOutBeyondOneToOne;
 	private int oldComponentWidth;
+	private int[] xCoordsOfRealPoints;
 
 	public EntireGraphingPanel() {
 		super();
@@ -101,6 +106,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		thePastLeftArrow = System.currentTimeMillis();
 		thePastRightArrow = System.currentTimeMillis();
 		scrollAcceleration = 0;
+		resetXCoordsOfRealPoints();
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
@@ -350,6 +356,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	public final void setGraphPosition(final double newPos) {
 		graphPosition = newPos;
+		setXCoordsOfRealPoints();
 		repaint();
 	}
 
@@ -453,6 +460,31 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private void stopFlinging() {
 		flinging = false;
 		flingInertia = 0;
+	}
+
+	private void resetXCoordsOfRealPoints(){
+		xCoordsOfRealPoints = null;
+	}
+
+	private void setXCoordsOfRealPoints(){
+		if(zoomedOutBeyondOneToOne || zoom == 1){
+			xCoordsOfRealPoints = null;
+		} else {
+			xCoordsOfRealPoints = new int[this.getWidth()];
+			final double offset = (graphPosition % 1) * zoom;
+			int screenPositionXCoord = -LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
+			if(!zoomedOutBeyondOneToOne){
+				screenPositionXCoord = -(int)Math.round(offset) - (LEFT_OFFSCREEN_POINTS_ZOOMED_IN * zoom);
+			}
+			for (int i = 0; i < xCoordsOfRealPoints.length; i++){
+				xCoordsOfRealPoints[i] = screenPositionXCoord;
+				screenPositionXCoord += zoom;
+			}
+		}
+	}
+
+	public int[] getXCoordsOfRealPoints(){
+		return xCoordsOfRealPoints;
 	}
 
 	// Mouse listener functionality

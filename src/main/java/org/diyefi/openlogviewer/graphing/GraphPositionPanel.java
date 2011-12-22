@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
-import org.diyefi.openlogviewer.utils.MathUtils;
 
 public class GraphPositionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -91,6 +90,7 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		final int[] xCoordsOfRealPoints = OpenLogViewer.getInstance().getEntireGraphingPanel().getXCoordsOfRealPoints();
 		double offset = 0d;
 		double margin = 0d;
 		if(zoomedOut){
@@ -112,7 +112,20 @@ public class GraphPositionPanel extends JPanel {
 		double position = graphPosition - majorGraduationSpacing;
 		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
 			if (position >= nextPositionMarker - margin){
-				g2d.drawLine(i, 0, i, 6);
+				int xCoord = i;
+				boolean found = false;
+				for (int j = 0; !found && xCoordsOfRealPoints != null && j < xCoordsOfRealPoints.length; j++){
+					if (xCoord == xCoordsOfRealPoints[j]){
+						found = true;
+					} else if (xCoord - 1 == xCoordsOfRealPoints[j]){
+						xCoord --;
+						found = true;
+					}  else if (xCoord + 1 == xCoordsOfRealPoints[j]){
+						xCoord ++;
+						found = true;
+					}
+				}
+				g2d.drawLine(xCoord, 0, xCoord, 6);
 				nextPositionMarker += majorGraduationSpacing;
 			}
 			if(zoomedOut){
@@ -127,11 +140,13 @@ public class GraphPositionPanel extends JPanel {
 	private void paintPositionData(final Graphics2D g2d, final boolean zoomedOut) {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		final int[] xCoordsOfRealPoints = OpenLogViewer.getInstance().getEntireGraphingPanel().getXCoordsOfRealPoints();
 		double offset = 0d;
 		double margin = 0d;
 		if(zoomedOut){
 			offset = majorGraduationSpacing / zoom;
 			offset = Math.ceil(offset);
+			margin = (1d / zoom) / 2d;
 		} else {
 			offset = majorGraduationSpacing * zoom;
 			offset = Math.round(offset);
@@ -147,6 +162,19 @@ public class GraphPositionPanel extends JPanel {
 		double position = graphPosition - majorGraduationSpacing;
 		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
 			if (position >= nextPositionMarker - margin){
+				int xCoord = i;
+				boolean found = false;
+				for (int j = 0; !found && xCoordsOfRealPoints != null && j < xCoordsOfRealPoints.length; j++){
+					if (xCoord == xCoordsOfRealPoints[j]){
+						found = true;
+					} else if (xCoord - 1 == xCoordsOfRealPoints[j]){
+						xCoord --;
+						found = true;
+					}  else if (xCoord + 1 == xCoordsOfRealPoints[j]){
+						xCoord ++;
+						found = true;
+					}
+				}
 				String positionDataString = "";
 				BigDecimal positionData = new BigDecimal(nextPositionMarker);
 				if(majorGraduationSpacing > 0.5){
@@ -155,7 +183,7 @@ public class GraphPositionPanel extends JPanel {
 					positionDataString = roundDecimalsOnlyToTwoSignificantFigures(positionData);
 				}
 				int stringWidth = fm.stringWidth(positionDataString);
-				g2d.drawString(positionDataString, i - (stringWidth / 2), 18);
+				g2d.drawString(positionDataString, xCoord - (stringWidth / 2), 18);
 
 				nextPositionMarker += majorGraduationSpacing;
 			}
@@ -170,8 +198,8 @@ public class GraphPositionPanel extends JPanel {
 	private final double getFirstPositionMarkerPlacement(){
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 
-		double nextPositionMarker = 0.0;
-		if(graphPosition < 0.0){
+		double nextPositionMarker = 0d;
+		if(graphPosition < 0d){
 			while (nextPositionMarker - graphPosition >= majorGraduationSpacing){
 				nextPositionMarker -= majorGraduationSpacing;
 			}
