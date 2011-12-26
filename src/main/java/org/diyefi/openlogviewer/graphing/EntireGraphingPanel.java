@@ -621,29 +621,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				break;
 			}
 
-			case KeyEvent.VK_LEFT: {
-				int localZoom = zoom;
-				if(zoomedOutBeyondOneToOne){
-					localZoom = 1;
-				}
-				if (e.getModifiers() == InputEvent.CTRL_MASK) {
-					//Big scroll
-					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
-				} else {
-					final long now = System.currentTimeMillis();
-					final long delay = now - thePastLeftArrow;
-					if(delay < 50){
-						scrollAcceleration++;
-						moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
-					} else {
-						scrollAcceleration = 0;
-						moveEntireGraphingPanel(-localZoom);
-					}
-					thePastLeftArrow = System.currentTimeMillis();
-				}
-				break;
-			}
-
+			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_KP_LEFT: {
 				int localZoom = zoom;
 				if(zoomedOutBeyondOneToOne){
@@ -674,29 +652,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				break;
 			}
 
-			case KeyEvent.VK_RIGHT: {
-				int localZoom = zoom;
-				if(zoomedOutBeyondOneToOne){
-					localZoom = 1;
-				}
-				if (e.getModifiers() == InputEvent.CTRL_MASK) {
-					//Big scroll
-					moveEntireGraphingPanel(this.getWidth() * 0.75);
-				} else {
-					final long now = System.currentTimeMillis();
-					final long delay = now - thePastRightArrow;
-					if(delay < 50){
-						scrollAcceleration++;
-						moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
-					} else {
-						scrollAcceleration = 0;
-						moveEntireGraphingPanel(localZoom);
-					}
-					thePastRightArrow = System.currentTimeMillis();
-				}
-				break;
-			}
-
+			case KeyEvent.VK_RIGHT:
 			case KeyEvent.VK_KP_RIGHT: {
 				int localZoom = zoom;
 				if(zoomedOutBeyondOneToOne){
@@ -767,22 +723,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
 	}
 
+	// Call resize event handler because the Mac sort of treats resizing as a move
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// Same code as resize event because the Mac sort of treats resizing as a move
-		int newWidth = this.getWidth();
-		if(newWidth != oldComponentWidth){
-			double move = 0.0;
-			int amount = newWidth - oldComponentWidth;
-			if(zoomedOutBeyondOneToOne){
-				move = -(amount * zoom);
-			} else {
-				move = -((double)amount / (double)zoom);
-			}
-			move /= 2.0;
-			oldComponentWidth = newWidth;
-			moveGraphPosition(move);
-		}
+		componentResized(e);
 	}
 
 	@Override
