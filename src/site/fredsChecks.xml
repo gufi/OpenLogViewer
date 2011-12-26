@@ -102,7 +102,7 @@
 		<module name="TypeName"/><!--Checks that type names conform to a format specified by the format property. -->
 		<module name="TypecastParenPad"/><!--Checks the padding of parentheses for typecasts. -->
 		<module name="UncommentedMain"><!--Detects uncommented main methods. -->
-			<property name="excludedClasses" value="OpenLogViewerApp"/>
+			<property name="excludedClasses" value="OpenLogViewer"/>
 		</module>
 		<module name="UpperEll"/><!--Checks that long constants are defined with an upper ell. -->
 		<module name="VisibilityModifier"/><!--Checks visibility of class members.-->
