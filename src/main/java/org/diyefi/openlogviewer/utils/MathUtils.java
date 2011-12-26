@@ -26,28 +26,27 @@ package org.diyefi.openlogviewer.utils;
  * Math is used to provide math functions specific to the project.
  * @author Ben Fenner
  */
-public enum MathUtils {
-
-	INSTANCE;
+public class MathUtils {
 
 	private MathUtils() {
-
 	}
 
-	public double roundToSignificantFigures(double input, int sigFigs) {
-	    if(input == 0) {
-	        return 0;
-	    }
+	public static double roundToSignificantFigures(final double input, final int sigFigs) {
+		double absoluteInput = 0;
+		if (input == 0) {
+			return 0;
+		} else if (input < 0) {
+			absoluteInput = -input;
+		} else {
+			absoluteInput = input;
+		}
 
-	    final double d = Math.ceil(Math.log10(input < 0 ? -input: input));
-	    final int power = sigFigs - (int) d;
+		final double d = Math.ceil(Math.log10(absoluteInput));
+		final int power = sigFigs - (int) d;
 
-	    final double magnitude = Math.pow(10, power);
-	    final long shifted = Math.round(input*magnitude);
-	    return shifted/magnitude;
+		final double magnitude = Math.pow(10, power);
+		final long shifted = Math.round(input * magnitude);
+
+		return shifted / magnitude;
 	}
-
 }
-
-
-

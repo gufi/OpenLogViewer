@@ -273,7 +273,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		final int dataLocation = (int) graphPosition + (int) numSnapsFromLeft;
 		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
 			double data = GDE.get(dataLocation);
-			data = MathUtils.INSTANCE.roundToSignificantFigures(data, 6);
+			data = MathUtils.roundToSignificantFigures(data, 6);
 			result = Double.toString(data);
 			if(result.length() > 8){
 				result = result.substring(0, 8);
@@ -295,8 +295,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
 			double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
 			if(minData != -Double.MAX_VALUE){
-				minData = MathUtils.INSTANCE.roundToSignificantFigures(minData, 6);
-				maxData = MathUtils.INSTANCE.roundToSignificantFigures(maxData, 6);
+				minData = MathUtils.roundToSignificantFigures(minData, 6);
+				maxData = MathUtils.roundToSignificantFigures(maxData, 6);
 				String resultMin = Double.toString(minData);
 				String resultMax = Double.toString(maxData);
 				if(resultMin.length() > 8){
@@ -305,13 +305,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				if(resultMax.length() > 8){
 					resultMax = resultMax.substring(0, 8);
 				}
-				meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, 6);
+				meanData = MathUtils.roundToSignificantFigures(meanData, 6);
 				String resultMean = Double.toString(meanData);
 				if(resultMin.length() > resultMax.length() && resultMin.length() < resultMean.length()){
-					meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, resultMin.length() - 2);
+					meanData = MathUtils.roundToSignificantFigures(meanData, resultMin.length() - 2);
 					resultMean = resultMean.substring(0, resultMin.length());
 				} else if (resultMax.length() < resultMean.length()){
-					meanData = MathUtils.INSTANCE.roundToSignificantFigures(meanData, resultMax.length() - 2);
+					meanData = MathUtils.roundToSignificantFigures(meanData, resultMax.length() - 2);
 					resultMean = resultMean.substring(0, resultMax.length());
 				}
 
