@@ -430,14 +430,14 @@ public final class OpenLogViewer extends JFrame {
 
 			if (gd.isFullScreenSupported()) {
 				try {
-				setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
-				removeNotify();       // without this we can't do the next thing
-				setUndecorated(true); // remove the window frame!
-				addNotify();          // turn things back on again!
-				setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
-				gd.setFullScreenWindow(this);
-				validate();           // required after rearranging component hierarchy
-				fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
+					setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
+					removeNotify();       // without this we can't do the next thing
+					setUndecorated(true); // remove the window frame!
+					addNotify();          // turn things back on again!
+					setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
+					gd.setFullScreenWindow(this);
+					validate();           // required after rearranging component hierarchy
+					fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
 				} catch(Exception e) {
 					e.printStackTrace();
 					System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));

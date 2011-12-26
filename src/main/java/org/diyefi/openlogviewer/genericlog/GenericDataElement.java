@@ -281,7 +281,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		return splitNumber;
 	}
 
-	public final void clearOut() {
+	public void clearOut() {
 		values = null;
 	}
 }

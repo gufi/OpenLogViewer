@@ -147,14 +147,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * The tightest the user should be allowed to zoom in.
 	 */
-	private final int getTightestZoom(){
+	private int getTightestZoom(){
 		return this.getWidth() - 1;
 	}
 
 	/**
 	 * The widest the user should be allowed to zoom out.
 	 */
-	private final int getWidestZoom(){
+	private int getWidestZoom(){
 		return (multiGraph.graphSize() / 2);
 	}
 
@@ -248,7 +248,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * the left and right of the graph so the user will
 	 * know they are seeing the entire graph trace.
 	 */
-	private final void zoomGraphToFit(final int dataPointsToFit){
+	private void zoomGraphToFit(final int dataPointsToFit){
 		final int graphWindowWidth = this.getWidth() - 8; //Remove 4 pixels per side.
 		int dataPointsThatFitInDisplay = 0;
 		if (zoomedOutBeyondOneToOne){
@@ -334,7 +334,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		flingTimer.start();
 	}
 
-	private final double getGraphPositionMin(){
+	private double getGraphPositionMin(){
 		double min = 0.0;
 		if(zoomedOutBeyondOneToOne){
 			min = -((this.getWidth() - 1) * zoom);
@@ -348,7 +348,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		return graphPosition;
 	}
 
-	private final int getGraphPositionMax() {
+	private int getGraphPositionMax() {
 		if (zoom == getWidestZoom()){
 			int size = graphSize - (LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
 			if (size < 0){
@@ -379,7 +379,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph to the right so that only one valid
 	 * data point shows on the right-most part of the display.
 	 */
-	private final void resetGraphPosition() {
+	private void resetGraphPosition() {
 		setGraphPosition(getGraphPositionMin());
 	}
 
@@ -390,7 +390,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Right now the method is expecting to get integer data points as
 	 * it should be impossible to select fractions of a data point.
 	 */
-	private final void centerGraphPosition(final int beginPosition, final int endPosition) {
+	private void centerGraphPosition(final int beginPosition, final int endPosition) {
 		final int halfScreen = this.getWidth() / 2;
 		double pointsThatFitInHalfScreen = 0;
 		if (zoomedOutBeyondOneToOne){

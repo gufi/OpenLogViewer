@@ -239,14 +239,14 @@ public class PropertiesPane extends JFrame {
 
 	private void updateProperties() {
 		for (int i = 0; i < propertyView.getComponentCount(); i++) {
-			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
 			pp.updateSP();
 		}
 	}
 
 	public final void resetProperties() {
 		for (int i = 0; i < propertyView.getComponentCount(); i++) {
-			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
 			pp.reset();
 		}
 		if (removeProperties.size() > 0) {
@@ -260,7 +260,7 @@ public class PropertiesPane extends JFrame {
 	private PropertyPanel exists(final SingleProperty sp) {
 
 		for (int i = 0; i < propertyView.getComponentCount(); i++) {
-			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
 			if (pp.getSp().getHeader().equalsIgnoreCase(sp.getHeader())) {
 				return pp;
 			}
@@ -269,7 +269,7 @@ public class PropertiesPane extends JFrame {
 	}
 
 	public final void addProperty(final SingleProperty sp) {
-		PropertyPanel pp = exists(sp);
+		final PropertyPanel pp = exists(sp);
 		if (pp == null) {
 			properties.add(sp);
 			Collections.sort(properties);
@@ -300,7 +300,7 @@ public class PropertiesPane extends JFrame {
 
 	private void removePropertyPanels() {
 		for (int i = 0; i < propertyView.getComponentCount();) {
-			PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
 			if (pp.getCheck().isSelected()) {
 				if (!removeProperties.contains(pp.getSp())) {
 					removeProperties.add(pp.getSp());
@@ -333,11 +333,11 @@ public class PropertiesPane extends JFrame {
 			this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
 			this.setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
 			setPreferredSize(new Dimension(500, 50));
-			JLabel minLabel = new JLabel("Min:");
-			JLabel maxLabel = new JLabel("Max:");
-			JLabel colorLabel = new JLabel("Color:");
-			JLabel splitLabel = new JLabel("Split:");
-			JLabel activeLabel = new JLabel("Active:");
+			final JLabel minLabel = new JLabel("Min:");
+			final JLabel maxLabel = new JLabel("Max:");
+			final JLabel colorLabel = new JLabel("Color:");
+			final JLabel splitLabel = new JLabel("Split:");
+			final JLabel activeLabel = new JLabel("Active:");
 			splitBox = new JTextField();
 			splitBox.setPreferredSize(new Dimension(15, 20));
 			splitBox.setText(Integer.toString(sp.getSplit()));
@@ -350,7 +350,7 @@ public class PropertiesPane extends JFrame {
 			colorBox = new JPanel();
 			colorBox.setBackground(sp.getColor());
 			colorBox.setPreferredSize(new Dimension(30, 20));
-			String[] tf = {"False", "True"};
+			final String[] tf = {"False", "True"};
 			activeBox = new JComboBox(tf);
 
 			if (sp.isActive()) {
@@ -364,7 +364,7 @@ public class PropertiesPane extends JFrame {
 
 				@Override
 				public void mouseReleased(MouseEvent e) {
-					Color newColor = JColorChooser.showDialog(
+					final Color newColor = JColorChooser.showDialog(
 							OpenLogViewer.getInstance().getOptionFrame(),
 							"Choose New Color", colorBox.getBackground());
 					if (newColor != null) {

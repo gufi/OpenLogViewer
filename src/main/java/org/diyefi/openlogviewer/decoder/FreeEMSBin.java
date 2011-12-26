@@ -431,7 +431,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 		return true; // TODO FIXME : Default to all things being good till I attack this!
 	}
 
-	private final int[] processFlagBytes(final long valueOfFlags, final int numberOfFlags) {
+	private int[] processFlagBytes(final long valueOfFlags, final int numberOfFlags) {
 		if ((numberOfFlags != 8) && (numberOfFlags != 16) && (numberOfFlags != 32)) {
 			throw new IllegalArgumentException("Basic units of computer sciene apply, embedded flags are never " + numberOfFlags + " wide!");
 			// Unless they are 64, but shhhh...
@@ -495,7 +495,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 	 * @param uInt8 the raw signed byte representation of our raw unsigned char
 	 * @return the value of the unsigned byte stored in a short
 	 */
-	private final short unsignedValueOf(final byte uInt8) {
+	private short unsignedValueOf(final byte uInt8) {
 		return (short) (0xFF & uInt8);
 	}
 

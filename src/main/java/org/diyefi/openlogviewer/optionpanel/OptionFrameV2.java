@@ -317,7 +317,7 @@ public class OptionFrameV2 extends JFrame {
 			toBeAdded.setRef(GDE);
 			toBeAdded.setEnabled(false); // you are unable to activate a graph in the inacivelist
 			toBeAdded.addMouseMotionListener(labelAdapter);
-			if (checkForProperties(toBeAdded, GDE)) {
+			if (checkForProperties(GDE)) {
 				toBeAdded.setBackground(GDE.getDisplayColor());
 			}
 			tmpList.add(toBeAdded);
@@ -341,7 +341,7 @@ public class OptionFrameV2 extends JFrame {
 		this.setVisible(true);
 	}
 
-	private boolean checkForProperties(ActiveHeaderLabel GCB, GenericDataElement GDE) {
+	private boolean checkForProperties(GenericDataElement GDE) {
 		for (int i = 0; i < OpenLogViewer.getInstance().getProperties().size(); i++) {
 			if (OpenLogViewer.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
 				GDE.setDisplayColor(OpenLogViewer.getInstance().getProperties().get(i).getColor());
