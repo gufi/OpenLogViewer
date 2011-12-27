@@ -87,16 +87,12 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		return split;
 	}
 
-	/**
-	 * TODO add final to parameter and make work with this change.
-	 *
-	 * @param split
-	 */
-	public final void setSplit(int split) {
+	public final void setSplit(final int split) {
 		if (split < 1) {
-			split = 1;
+			this.split = 1;
+		} else {
+			this.split = split;
 		}
-		this.split = split;
 	}
 
 	public final boolean isActive() {
@@ -122,7 +118,16 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		return this.getHeader().compareToIgnoreCase(sp.getHeader());
 	}
 
+	/*
+	 * TODO investigate this further:
+	 *
+	 * In real use, this gets a SingleProperty passed in, which therefore means
+	 * that we're comparing header with toString output, when toString is header
+	 * concatenated with other fields. IE, it seems as though this is always
+	 * false, however in my second round of testing, it never got called, so I
+	 * just don't know.
+	 */
 	public final boolean equals(final String otherHeader) {
-		return otherHeader.toLowerCase().equals(this.getHeader().toLowerCase());
+		return getHeader().equalsIgnoreCase(otherHeader);
 	}
 }
