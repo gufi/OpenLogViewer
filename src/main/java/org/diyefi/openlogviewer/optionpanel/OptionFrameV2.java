@@ -287,7 +287,7 @@ public class OptionFrameV2 extends JFrame {
 		return false;
 	}
 
-	public void updateFromLog(final GenericLog datalog) {
+	public final void updateFromLog(final GenericLog datalog) {
 
 		while (activePanelList.size() > 0) {
 			activePanelList.get(0).removeAll();
@@ -303,7 +303,7 @@ public class OptionFrameV2 extends JFrame {
 		}
 		this.addActiveHeaderPanel(); // will be based on highest number of divisions found when properties are applied
 
-		final ArrayList<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
+		final List<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
 		final Iterator<String> headers = datalog.keySet().iterator();
 		String header = "";
 		ActiveHeaderLabel toBeAdded = null;
@@ -342,7 +342,7 @@ public class OptionFrameV2 extends JFrame {
 		this.setVisible(true);
 	}
 
-	private boolean checkForProperties(GenericDataElement GDE) {
+	private boolean checkForProperties(final GenericDataElement GDE) {
 		for (int i = 0; i < OpenLogViewer.getInstance().getProperties().size(); i++) {
 			if (OpenLogViewer.getInstance().getProperties().get(i).getHeader().equals(GDE.getName())) {
 				GDE.setDisplayColor(OpenLogViewer.getInstance().getProperties().get(i).getColor());
@@ -460,7 +460,7 @@ public class OptionFrameV2 extends JFrame {
 			this.setClosable(true);
 		}
 
-		public void setGDE(GenericDataElement gde, ActiveHeaderLabel ahl) {
+		public void setGDE(final GenericDataElement gde, final ActiveHeaderLabel ahl) {
 			this.GDE = gde;
 			this.AHL = ahl;
 			this.setTitle(GDE.getName());
@@ -522,13 +522,13 @@ public class OptionFrameV2 extends JFrame {
 
 			@Override
 			public void mousePressed(final MouseEvent e) {
-				ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
+				final ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
 				GCB.setPreviousPanel((JPanel) GCB.getParent());
 			}
 
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
+				final ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
 				if (GCB.isDragging()) {
 					if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
 						GCB.setLocation(GCB.getInactiveLocation());
@@ -566,7 +566,7 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		@Override
-		public void setBounds(int x, int y, int width, int height) {
+		public void setBounds(final int x, final int y, final int width, final int height) {
 			super.setBounds(x, y, width, height);
 			if (inactiveLocation == null) {
 				inactiveLocation = new Point(x, y);
@@ -613,7 +613,7 @@ public class OptionFrameV2 extends JFrame {
 			return previousPanel;
 		}
 
-		public void setPreviousPanel(JPanel previousPanel) {
+		public void setPreviousPanel(final JPanel previousPanel) {
 			this.previousPanel = previousPanel;
 		}
 
@@ -658,7 +658,7 @@ public class OptionFrameV2 extends JFrame {
 		@Override
 		public int compareTo(final Object o) {
 			if (o instanceof ActiveHeaderLabel) {
-				ActiveHeaderLabel GCB = (ActiveHeaderLabel) o;
+				final ActiveHeaderLabel GCB = (ActiveHeaderLabel) o;
 				return this.GDE.compareTo(GCB.getGDE());
 			} else {
 				return -1;

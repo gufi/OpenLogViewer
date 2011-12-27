@@ -106,7 +106,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				g2d.drawString("FPS: " + Double.toString(FPS), LEFT_MARGIN_OFFSET, fpsHeight);
 
 				if (mouseOver) {
-					FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
+					final FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
 					final int fontHeight = fm.getHeight();
 					final GraphPositionPanel graphPositionPanel = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
 					final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
@@ -123,7 +123,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 						if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
 							final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
 							g2d.setColor(textBackground);
-							String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition);
+							final String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition);
 							final int stringWidth = fm.stringWidth(mouseDataString);
 							g2d.fillRect(snappedDataPosition + 1, yMouseCoord + 2 + (fontHeight * i), stringWidth + 3, fontHeight);
 							g2d.setColor(singleGraph.getColor());

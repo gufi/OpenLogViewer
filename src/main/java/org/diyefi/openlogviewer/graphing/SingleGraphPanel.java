@@ -84,7 +84,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 	@Override
 	public final void paint(final Graphics g) { // overridden paint because there will be no other painting other than this
-		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		if (zoomedOut) {
 			initGraphZoomedOut();
 		} else {
@@ -248,7 +248,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	public final String getMouseInfo(final int cursorPosition) {
-		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		String info = "-.-";
 		if (zoomedOut) {
 			info = getMouseInfoZoomedOut(cursorPosition);
@@ -265,7 +265,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final String getMouseInfoZoomed(final int cursorPosition) {
+	private String getMouseInfoZoomed(final int cursorPosition) {
 		String result = "-.-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
@@ -291,7 +291,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final String getMouseInfoZoomedOut(int cursorPosition) {
+	private String getMouseInfoZoomedOut(final int cursorPosition) {
 		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
 			double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
@@ -337,8 +337,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	public final void initGraphZoomed() {
 		if (GDE != null) {
-			final int graphPosition = (int)OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
-			int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
+			final int graphPosition = (int) OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
+			final int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
 			final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 			int numberOfPointsThatFitInDisplay = graphWindowWidth / zoom;
 			numberOfPointsThatFitInDisplay += EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_IN;
@@ -426,7 +426,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 						int divisor = 0;
 
 						for (int j = 0; j < zoom; j++) {
-							int gdeIndex = i + j;
+							final int gdeIndex = i + j;
 							if (gdeIndex >= 0 && gdeIndex < availableDataRecords) {
 								newData = GDE.get(gdeIndex);
 								acummulateData += newData;
@@ -450,7 +450,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 							}
 						}
-						double averageData = acummulateData / divisor;
+						final double averageData = acummulateData / divisor;
 						if (averageData > leftOfNewData) {
 							dataPointsToDisplay[nextAarrayIndex] = maxData;
 							leftOfNewData = maxData;
@@ -514,7 +514,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 						maxData = newData;
 					}
 				}
-				double averageData = acummulateData / divisor;
+				final double averageData = acummulateData / divisor;
 				dataPointsToDisplay[nextAarrayIndex] = averageData;
 				dataPointRangeInfo[nextAarrayIndex][0] = minData;
 				dataPointRangeInfo[nextAarrayIndex][1] = averageData;

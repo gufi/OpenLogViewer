@@ -50,9 +50,9 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private GenericDataElement recordCountElement;
 
 	private String metaData;
-	protected final PropertyChangeSupport PCS;
+	private final PropertyChangeSupport PCS;
 	private LogState logStatus;
-	private String logStatusMessage = null;
+	private String logStatusMessage;
 
 	// Track the size of our children so that we can bump them up one by one where required
 	private int currentCapacity;

@@ -136,8 +136,8 @@ public class PropertiesPane extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent evt) {
 				final String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-				if ((s != null) && !"".equals(s) ) { // TODO Bad need of stringUtils here...
-					SingleProperty newprop = new SingleProperty();
+				if ((s != null) && !"".equals(s)) { // TODO Bad need of stringUtils here...
+					final SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
 					addProperty(newprop);
 				}
@@ -147,7 +147,7 @@ public class PropertiesPane extends JFrame {
 		remProp.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent evt) {
+			public void actionPerformed(final ActionEvent evt) {
 				removePropertyPanels();
 			}
 		});

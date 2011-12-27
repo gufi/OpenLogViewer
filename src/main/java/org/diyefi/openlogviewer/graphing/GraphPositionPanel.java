@@ -168,7 +168,7 @@ public class GraphPositionPanel extends JPanel {
 					}
 				}
 				String positionDataString = "";
-				BigDecimal positionData = new BigDecimal(nextPositionMarker);
+				final BigDecimal positionData = new BigDecimal(nextPositionMarker);
 				if (majorGraduationSpacing > 0.5) {
 					positionDataString = positionData.toPlainString();
 				} else {
@@ -209,7 +209,7 @@ public class GraphPositionPanel extends JPanel {
 		validSnappingPositions = new boolean[this.getWidth()];
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		MultiGraphLayeredPane multiGraph = OpenLogViewer.getInstance().getEntireGraphingPanel().getMultiGraphLayeredPane();
+		final MultiGraphLayeredPane multiGraph = OpenLogViewer.getInstance().getEntireGraphingPanel().getMultiGraphLayeredPane();
 		final int availableData = (multiGraph.graphSize() - 1) * zoom;
 		long count = Math.round(graphPosition * zoom);
 
@@ -236,9 +236,9 @@ public class GraphPositionPanel extends JPanel {
 		}
 
 		majorGraduationSpacing = 100.0;
-		int count = (int) (Math.log((double) zoom) / Math.log(2.0));  // Base-2 logarithm of zoom
+		final int count = (int) (Math.log((double) zoom) / Math.log(2.0));  // Base-2 logarithm of zoom
 
-		if (zoomedOut){
+		if (zoomedOut) {
 			for (int i = 0; i < count; i++) {
 				majorGraduationSpacing *= graduationSpacingMultiplier[i % 3];
 
@@ -283,7 +283,7 @@ public class GraphPositionPanel extends JPanel {
 	* @return String - A string representation of input rounded to two significant figures to the right of the decimal.
 	*/
 
-	private final String roundDecimalsOnlyToTwoSignificantFigures(final BigDecimal input) {
+	private String roundDecimalsOnlyToTwoSignificantFigures(final BigDecimal input) {
 		String result = "";
 		int indexOfMostSignificantDigit = 0;
 
@@ -329,7 +329,7 @@ public class GraphPositionPanel extends JPanel {
 		// Check for result extremely close to zero.
 		if (result.length() > 16) {
 			if (result.substring(0, 16).equalsIgnoreCase("-0.0000000000000")
-					|| result.substring(0, 15).equalsIgnoreCase("0.0000000000000")){
+					|| result.substring(0, 15).equalsIgnoreCase("0.0000000000000")) {
 				result = "0.0";
 			}
 		}

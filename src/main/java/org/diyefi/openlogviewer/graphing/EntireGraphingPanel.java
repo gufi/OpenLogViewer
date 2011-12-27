@@ -278,7 +278,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		}
 	}
 
-	public boolean isZoomedOutBeyondOneToOne() {
+	public final boolean isZoomedOutBeyondOneToOne() {
 		return zoomedOutBeyondOneToOne;
 	}
 
@@ -546,7 +546,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		final double center = this.getWidth() / 2.0;
 		final int notches = e.getWheelRotation();
 		double move = 0;
-		final int zoomAmount = (int)Math.sqrt(zoom);
+		final int zoomAmount = (int) Math.sqrt(zoom);
 		if (notches < 0) {
 			for (int i = 0; i < zoomAmount; i++) {
 				if (zoomedOutBeyondOneToOne) {
@@ -627,7 +627,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_KP_LEFT: {
 				int localZoom = zoom;
-				if(zoomedOutBeyondOneToOne){
+				if (zoomedOutBeyondOneToOne) {
 					localZoom = 1;
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
@@ -658,7 +658,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			case KeyEvent.VK_RIGHT:
 			case KeyEvent.VK_KP_RIGHT: {
 				int localZoom = zoom;
-				if(zoomedOutBeyondOneToOne){
+				if (zoomedOutBeyondOneToOne) {
 					localZoom = 1;
 				}
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
@@ -731,16 +731,16 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	// Call resize event handler because the Mac sort of treats resizing as a move
 	@Override
-	public void componentMoved(final ComponentEvent e) {
+	public final void componentMoved(final ComponentEvent e) {
 		componentResized(e);
 	}
 
 	@Override
-	public void componentResized(final ComponentEvent e) {
-		int newWidth = this.getWidth();
+	public final void componentResized(final ComponentEvent e) {
+		final int newWidth = this.getWidth();
 		if (newWidth != oldComponentWidth) {
 			double move = 0.0;
-			int amount = newWidth - oldComponentWidth;
+			final int amount = newWidth - oldComponentWidth;
 			if (zoomedOutBeyondOneToOne) {
 				move = -(amount * zoom);
 			} else {
