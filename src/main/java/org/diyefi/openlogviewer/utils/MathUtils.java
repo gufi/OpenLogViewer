@@ -26,7 +26,7 @@ package org.diyefi.openlogviewer.utils;
  * Math is used to provide math functions specific to the project.
  * @author Ben Fenner
  */
-public class MathUtils {
+public final class MathUtils {
 
 	private MathUtils() {
 	}

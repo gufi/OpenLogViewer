@@ -85,11 +85,12 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	@Override
 	public final void paint(final Graphics g) { // overridden paint because there will be no other painting other than this
 		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		if(zoomedOut){
+		if (zoomedOut) {
 			initGraphZoomedOut();
-		} else{
+		} else {
 			initGraphZoomed();
 		}
+
 		if (hasDataPointToDisplay()) {
 			paintDataPointsAndTraces(g);
 		}
@@ -113,29 +114,30 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		// Initialize and setup data point screen location stuff
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		if(zoomedOut){
+		if (zoomedOut) {
 			zoom = 1;
 		}
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final double offset = (graphPosition % 1) * zoom;
 		int screenPositionXCoord = -EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
-		if(!zoomedOut){
-			screenPositionXCoord = -(int)Math.round(offset) - (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_IN * zoom);
+		if (!zoomedOut) {
+			screenPositionXCoord = -(int) Math.round(offset) - (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_IN * zoom); // Ugly cast/invert here too
 		}
 		int screenPositionYCoord = Integer.MIN_VALUE;
 		int nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, GDE.getDisplayMinValue(), GDE.getDisplayMaxValue());
 
 		// Draw data points and trace lines from left to right including one off screen to the right
 		for (int i = 0; i < dataPointsToDisplay.length; i++) {
-
 			// Setup current, previous and next graph trace data points
-			if (i > 0){
+			if (i > 0) {
 				leftOfTraceData = dataPointsToDisplay[i - 1];
 			} else {
 				leftOfTraceData = -Double.MAX_VALUE;
 			}
+
 			traceData = dataPointsToDisplay[i];
-			if (i + 1 < dataPointsToDisplay.length){
+
+			if (i + 1 < dataPointsToDisplay.length) {
 				rightOfTraceData = dataPointsToDisplay[i + 1];
 			} else {
 				rightOfTraceData = -Double.MAX_VALUE;
@@ -146,7 +148,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, GDE.getDisplayMinValue(), GDE.getDisplayMaxValue());
 
 			// Draw beginning and end markers
-			if (i == graphBeginningIndex || i == graphEndingIndex){
+			if (i == graphBeginningIndex || i == graphEndingIndex) {
 				g2d.drawLine(screenPositionXCoord - 2, screenPositionYCoord - 1, screenPositionXCoord - 2, screenPositionYCoord + 1);
 				g2d.drawLine(screenPositionXCoord - 1, screenPositionYCoord + 2, screenPositionXCoord + 1, screenPositionYCoord + 2);
 				g2d.drawLine(screenPositionXCoord - 1, screenPositionYCoord - 2, screenPositionXCoord + 1, screenPositionYCoord - 2);
@@ -154,31 +156,32 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			}
 
 			// Setup graph states
-			if(leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE){
+			if (leftOfTraceData == -Double.MAX_VALUE && traceData != -Double.MAX_VALUE) {
 				// At the beginning of the portion of the graph trace designated for display
 				atTraceBeginning = true;
 				insideTrace = true;
 			}
-			if(traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE){
+
+			if (traceData != -Double.MAX_VALUE && rightOfTraceData == -Double.MAX_VALUE) {
 				// At the end of the portion of the graph trace designated for display
 				atTraceEnd = true;
 			}
 
 			// Draw data point
-			if(!zoomedOut && zoom > 5){
+			if (!zoomedOut && zoom > 5) {
 				// Draw fat data point
-				if (atTraceBeginning){
+				if (atTraceBeginning) {
 					if (traceData != rightOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
 						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
 					}
-				} else if (atTraceEnd){
+				} else if (atTraceEnd) {
 					if (traceData != leftOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
 						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
 					}
 				} else if (insideTrace) {
-					if (traceData != leftOfTraceData || traceData != rightOfTraceData){
+					if (traceData != leftOfTraceData || traceData != rightOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
 						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
 					}
@@ -190,12 +193,12 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			}
 
 			// Draw graph trace line
-			if (insideTrace && !atTraceEnd){
+			if (insideTrace && !atTraceEnd) {
 				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + zoom, nextScreenPositionYCoord);
 			}
 
 			// Reset graph states
-			if(atTraceEnd){
+			if (atTraceEnd) {
 				insideTrace = false;
 				atTraceEnd = false;
 			}
@@ -247,7 +250,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	public final String getMouseInfo(final int cursorPosition) {
 		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		String info = "-.-";
-		if(zoomedOut){
+		if (zoomedOut) {
 			info = getMouseInfoZoomedOut(cursorPosition);
 		} else {
 			info = getMouseInfoZoomed(cursorPosition);
@@ -262,7 +265,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final String getMouseInfoZoomed(final int cursorPosition){
+	private final String getMouseInfoZoomed(final int cursorPosition) {
 		String result = "-.-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
@@ -275,7 +278,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			double data = GDE.get(dataLocation);
 			data = MathUtils.roundToSignificantFigures(data, 6);
 			result = Double.toString(data);
-			if(result.length() > 8){
+			if (result.length() > 8) {
 				result = result.substring(0, 8);
 			}
 		}
@@ -288,29 +291,29 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private final String getMouseInfoZoomedOut(int cursorPosition){
+	private final String getMouseInfoZoomedOut(int cursorPosition) {
 		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
 			double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
 			double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
 			double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
-			if(minData != -Double.MAX_VALUE){
+			if (minData != -Double.MAX_VALUE) {
 				minData = MathUtils.roundToSignificantFigures(minData, 6);
 				maxData = MathUtils.roundToSignificantFigures(maxData, 6);
 				String resultMin = Double.toString(minData);
 				String resultMax = Double.toString(maxData);
-				if(resultMin.length() > 8){
+				if (resultMin.length() > 8) {
 					resultMin = resultMin.substring(0, 8);
 				}
-				if(resultMax.length() > 8){
+				if (resultMax.length() > 8) {
 					resultMax = resultMax.substring(0, 8);
 				}
 				meanData = MathUtils.roundToSignificantFigures(meanData, 6);
 				String resultMean = Double.toString(meanData);
-				if(resultMin.length() > resultMax.length() && resultMin.length() < resultMean.length()){
+				if (resultMin.length() > resultMax.length() && resultMin.length() < resultMean.length()) {
 					meanData = MathUtils.roundToSignificantFigures(meanData, resultMin.length() - 2);
 					resultMean = resultMean.substring(0, resultMin.length());
-				} else if (resultMax.length() < resultMean.length()){
+				} else if (resultMax.length() < resultMean.length()) {
 					meanData = MathUtils.roundToSignificantFigures(meanData, resultMax.length() - 2);
 					resultMean = resultMean.substring(0, resultMax.length());
 				}
@@ -353,9 +356,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 					dataPointsToDisplay[i] = GDE.get(position);
 
 					// Set start/end indices.
-					if (position == 0){
+					if (position == 0) {
 						graphBeginningIndex = i;
 					}
+
 					if (position == availableDataRecords - 1) {
 						graphEndingIndex = i;
 					}
@@ -379,10 +383,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			final int position = graphPosition - (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
 			dataPointsToDisplay = new double[graphWindowWidth + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT + EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT];
 			dataPointRangeInfo = new double[dataPointsToDisplay.length][3];
-			final int numberOfRealPointsThatFitInDisplay =
-					(graphWindowWidth * zoom) +
-					(EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom) +
-					(EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
+			final int numberOfRealPointsThatFitInDisplay = (graphWindowWidth * zoom)
+					+ (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom)
+					+ (EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
 			final int rightGraphPosition = position + numberOfRealPointsThatFitInDisplay;
 
 			// Reset start/end indices.
@@ -407,13 +410,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			*/
 			int nextAarrayIndex = 0;
 			double leftOfNewData = GDE.get(0);
-			if (position > 0 && position < availableDataRecords){
+			if (position > 0 && position < availableDataRecords) {
 				leftOfNewData = GDE.get(position);
 			}
 
-			if (zoom < (availableDataRecords / 2)){
+			if (zoom < (availableDataRecords / 2)) {
 
-				for (int i = position; i < rightGraphPosition; i+=zoom) {
+				for (int i = position; i < rightGraphPosition; i += zoom) {
 
 					if (i >= 0 && i < availableDataRecords) {
 						double minData = Double.MAX_VALUE;
@@ -422,23 +425,25 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 						double acummulateData = 0.0;
 						int divisor = 0;
 
-						for (int j = 0; j < zoom; j++){
+						for (int j = 0; j < zoom; j++) {
 							int gdeIndex = i + j;
 							if (gdeIndex >= 0 && gdeIndex < availableDataRecords) {
 								newData = GDE.get(gdeIndex);
 								acummulateData += newData;
 								divisor++;
-								if (newData < minData){
+								if (newData < minData) {
 									minData = newData;
 								}
-								if (newData > maxData){
+
+								if (newData > maxData) {
 									maxData = newData;
 								}
 
 								// Set start/end indices.
-								if (graphBeginningIndex == Integer.MIN_VALUE && (gdeIndex >= 0 && gdeIndex < zoom)){
+								if (graphBeginningIndex == Integer.MIN_VALUE && (gdeIndex >= 0 && gdeIndex < zoom)) {
 									graphBeginningIndex = nextAarrayIndex;
 								}
+
 								if (gdeIndex == availableDataRecords - 1) {
 									graphEndingIndex = nextAarrayIndex;
 								}
@@ -446,10 +451,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 							}
 						}
 						double averageData = acummulateData / divisor;
-						if (averageData > leftOfNewData){
+						if (averageData > leftOfNewData) {
 							dataPointsToDisplay[nextAarrayIndex] = maxData;
 							leftOfNewData = maxData;
-						} else if (averageData < leftOfNewData){
+						} else if (averageData < leftOfNewData) {
 							dataPointsToDisplay[nextAarrayIndex] = minData;
 							leftOfNewData = minData;
 						} else {
@@ -483,7 +488,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				*/
 
 				// Fill in null data points until zero position is reached.
-				for (int i = position; i < 0; i+=zoom) {
+				for (int i = position; i < 0; i += zoom) {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
@@ -501,10 +506,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 					newData = GDE.get(i);
 					acummulateData += newData;
 					divisor++;
-					if (newData < minData){
+					if (newData < minData) {
 						minData = newData;
 					}
-					if (newData > maxData){
+
+					if (newData > maxData) {
 						maxData = newData;
 					}
 				}
@@ -521,7 +527,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				nextAarrayIndex++;
 
 				// Fill in the rest of the array with null data points.
-				for (int i = zoom * 2; i < rightGraphPosition; i+=zoom) {
+				for (int i = zoom * 2; i < rightGraphPosition; i += zoom) {
 					dataPointsToDisplay[nextAarrayIndex] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][0] = -Double.MAX_VALUE;
 					dataPointRangeInfo[nextAarrayIndex][1] = -Double.MAX_VALUE;
@@ -548,7 +554,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 		this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		if(zoomedOut){
+		if (zoomedOut) {
 			initGraphZoomedOut();
 		} else {
 			initGraphZoomed();

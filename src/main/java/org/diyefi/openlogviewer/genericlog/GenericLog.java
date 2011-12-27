@@ -127,11 +127,11 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	public final void incrementPosition() {
 		currentPosition++;
 		GenericDataElement.incrementPosition(); // Kinda ugly but...
-		if(currentPosition >= currentCapacity){
+		if (currentPosition >= currentCapacity) {
 			System.out.println(OpenLogViewer.NEWLINE + "############## Memory about to be resized! ##############");
 			final long startResizes = System.currentTimeMillis();
 			System.out.println("Old capacity = " + currentCapacity);
-			Runtime ourRuntime = Runtime.getRuntime();
+			final Runtime ourRuntime = Runtime.getRuntime();
 
 			System.out.println("Memory Before = Max: " + ourRuntime.maxMemory() + ", Free: " + ourRuntime.freeMemory() + ", Total: " + ourRuntime.totalMemory());
 
@@ -147,16 +147,16 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 				final long requiredMemory = 2 * (increaseInMemory + overheadInMemory); // Magic to account for late GC
 				final long availableMemory = ourRuntime.freeMemory();
 
-				if(availableMemory < requiredMemory) {
+				if (availableMemory < requiredMemory) {
 					currentPosition--; // Back out the change because we never achieved it for all fields!
 					final String jvmHelp = "Get more with -Xms and -Xmx JVM options!";
 					System.out.println("Detected impending out-of-memory doom! Details below! :-(");
 					System.out.println("Total" + "Available: " + availableMemory + " Required: " + requiredMemory + " Increase: " + increaseInMemory + " Overhead: " + overheadInMemory);
 					System.out.println(jvmHelp);
 					final long allocatedMemory = (ourRuntime.maxMemory() / NUMBER_OF_BYTES_IN_A_MEG);
-					throw new RuntimeException(allocatedMemory + "MB is insufficent memory to increase log size! " + jvmHelp + OpenLogViewer.NEWLINE +
-							"Completed " + numberResized + " of " + numberOfInternalHeaders +
-							" while increasing from " + currentCapacity + " records to "+ (currentCapacity * ourLoadFactor) + " records!");
+					throw new RuntimeException(allocatedMemory + "MB is insufficent memory to increase log size! " + jvmHelp + OpenLogViewer.NEWLINE
+							+ "Completed " + numberResized + " of " + numberOfInternalHeaders
+							+ " while increasing from " + currentCapacity + " records to " + (currentCapacity * ourLoadFactor) + " records!");
 				}
 
 				final GenericDataElement dataElement = genLogIterator.next();
@@ -180,7 +180,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 * @param newLogStatus GenericLog.LOG_NOT_LOADED / GenericLog.LOG_LOADING / GenericLog.LOG_LOADED
 	 */
 	public final void setLogStatus(final LogState newLogStatus) {
-		LogState oldLogStatus = this.logStatus;
+		final LogState oldLogStatus = this.logStatus;
 		this.logStatus = newLogStatus;
 		PCS.firePropertyChange(LOG_LOADED_TEXT, oldLogStatus, newLogStatus);
 	}
@@ -240,7 +240,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 		return logStatusMessage;
 	}
 
-	public void setLogStatusMessage(String message) {
+	public final void setLogStatusMessage(final String message) {
 		this.logStatusMessage = message;
 	}
 

@@ -89,7 +89,7 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(zoomInButton);
 
-		zoomResetButton.setIcon(new ImageIcon(getClass().getResource("Playbar_o.png"))); // NOI18N
+		zoomResetButton.setIcon(new ImageIcon(getClass().getResource("Playbar_o.png")));
 		zoomResetButton.setAlignmentY(0.0F);
 		zoomResetButton.setBorder(null);
 		zoomResetButton.setBorderPainted(false);
@@ -231,14 +231,14 @@ public class PlayBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void zoomResetButtonMouseReleased(final MouseEvent e) {
-		int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
-		boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		if(zoomedOut){
-			for(int i = zoom; i > 1; i--){
+		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
+		if (zoomedOut) {
+			for (int i = zoom; i > 1; i--) {
 				OpenLogViewer.getInstance().getEntireGraphingPanel().zoomIn();
 			}
 		} else {
-			for(int i = zoom; i > 1; i--){
+			for (int i = zoom; i > 1; i--) {
 				OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOut();
 			}
 		}

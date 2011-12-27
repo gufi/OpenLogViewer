@@ -109,7 +109,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	public final void actionPerformed(final ActionEvent e) {
 		if (playing && graphPosition < getGraphPositionMax()) {
-			if(zoomedOutBeyondOneToOne){
+			if (zoomedOutBeyondOneToOne) {
 				moveGraphPosition(zoom);
 			} else {
 				moveGraphPosition(1);
@@ -147,14 +147,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * The tightest the user should be allowed to zoom in.
 	 */
-	private int getTightestZoom(){
+	private int getTightestZoom() {
 		return this.getWidth() - 1;
 	}
 
 	/**
 	 * The widest the user should be allowed to zoom out.
 	 */
-	private int getWidestZoom(){
+	private int getWidestZoom() {
 		return (multiGraph.graphSize() / 2);
 	}
 
@@ -168,14 +168,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		final double graphWidth = this.getWidth();
 		double move = 0;
 
-		if(zoomedOutBeyondOneToOne) {
+		if (zoomedOutBeyondOneToOne) {
 			if (zoom == 2) {
 				zoomedOutBeyondOneToOne = false;
 			}
 			zoom--;
-			move = graphWidth / (double)(zoom * 2);
+			move = graphWidth / (double) (zoom * 2);
 		} else if (zoom < getTightestZoom()) {
-			move = graphWidth / (double)(zoom * 2);
+			move = graphWidth / (double) (zoom * 2);
 			zoom++;
 		}
 
@@ -188,9 +188,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * If you need to zoom in on a different location then you must use
 	 * zoomIn() repeatedly coupled with a move each time.
 	 */
-	public final void zoomInCoarse(){
-		final int zoomAmount = (int)Math.sqrt(zoom);
-		for (int i = 0; i < zoomAmount; i++){
+	public final void zoomInCoarse() {
+		final int zoomAmount = (int) Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++) {
 			zoomIn();
 		}
 	}
@@ -209,14 +209,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			if (zoom == 1) {
 				zoomedOutBeyondOneToOne = true;
 				zoom = 2;
-				move = graphWidth / (double)(zoom * 2);
+				move = graphWidth / (double) (zoom * 2);
 			} else {
-				move = graphWidth / (double)(zoom * 2);
+				move = graphWidth / (double) (zoom * 2);
 				zoom--;
 			}
-		} else if (zoom < getWidestZoom()){
+		} else if (zoom < getWidestZoom()) {
 			zoom++;
-			move = graphWidth / (double)(zoom * 2);
+			move = graphWidth / (double) (zoom * 2);
 		}
 
 		moveEntireGraphingPanel(-move);
@@ -228,9 +228,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * If you need to zoom out on a different location then you must use
 	 * zoomOut() repeatedly coupled with a move each time.
 	 */
-	public final void zoomOutCoarse(){
-		final int zoomAmount = (int)Math.sqrt(zoom);
-		for (int i = 0; i < zoomAmount; i++){
+	public final void zoomOutCoarse() {
+		final int zoomAmount = (int) Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++) {
 			zoomOut();
 		}
 	}
@@ -248,19 +248,19 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * the left and right of the graph so the user will
 	 * know they are seeing the entire graph trace.
 	 */
-	private void zoomGraphToFit(final int dataPointsToFit){
+	private void zoomGraphToFit(final int dataPointsToFit) {
 		final int graphWindowWidth = this.getWidth() - 8; //Remove 4 pixels per side.
 		int dataPointsThatFitInDisplay = 0;
-		if (zoomedOutBeyondOneToOne){
+		if (zoomedOutBeyondOneToOne) {
 			dataPointsThatFitInDisplay = graphWindowWidth * zoom;
 		} else {
 			dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
 		}
 
 		// Zoom in until the data no longer fits in the display.
-		while (dataPointsToFit < dataPointsThatFitInDisplay && zoom != getTightestZoom()){
+		while (dataPointsToFit < dataPointsThatFitInDisplay && zoom != getTightestZoom()) {
 			zoomIn();
-			if (zoomedOutBeyondOneToOne){
+			if (zoomedOutBeyondOneToOne) {
 				dataPointsThatFitInDisplay = graphWindowWidth * zoom;
 			} else {
 				dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
@@ -268,9 +268,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		}
 
 		// Zoom out one or more times until the data just fits in the display.
-		while (dataPointsToFit > dataPointsThatFitInDisplay && zoom != getWidestZoom()){
+		while (dataPointsToFit > dataPointsThatFitInDisplay && zoom != getWidestZoom()) {
 			zoomOut();
-			if (zoomedOutBeyondOneToOne){
+			if (zoomedOutBeyondOneToOne) {
 				dataPointsThatFitInDisplay = graphWindowWidth * zoom;
 			} else {
 				dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
@@ -278,7 +278,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		}
 	}
 
-	public boolean isZoomedOutBeyondOneToOne(){
+	public boolean isZoomedOutBeyondOneToOne() {
 		return zoomedOutBeyondOneToOne;
 	}
 
@@ -334,12 +334,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		flingTimer.start();
 	}
 
-	private double getGraphPositionMin(){
+	private double getGraphPositionMin() {
 		double min = 0.0;
-		if(zoomedOutBeyondOneToOne){
+		if (zoomedOutBeyondOneToOne) {
 			min = -((this.getWidth() - 1) * zoom);
 		} else {
-			min = -(((double)this.getWidth() - 1.0) / (double)zoom);
+			min = -(((double) this.getWidth() - 1.0) / (double) zoom);
 		}
 		return min;
 	}
@@ -349,9 +349,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	private int getGraphPositionMax() {
-		if (zoom == getWidestZoom()){
+		if (zoom == getWidestZoom()) {
 			int size = graphSize - (LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
-			if (size < 0){
+			if (size < 0) {
 				size = 0;
 			}
 			return size;
@@ -369,7 +369,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 */
 	public final void setGraphSize(final int newGraphSize) {
 		graphSize = newGraphSize;
-		if(graphSize > 0){
+		if (graphSize > 0) {
 			centerGraphPosition(0, graphSize);
 			zoomGraphToFit(graphSize);
 		}
@@ -393,7 +393,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private void centerGraphPosition(final int beginPosition, final int endPosition) {
 		final int halfScreen = this.getWidth() / 2;
 		double pointsThatFitInHalfScreen = 0;
-		if (zoomedOutBeyondOneToOne){
+		if (zoomedOutBeyondOneToOne) {
 			pointsThatFitInHalfScreen = halfScreen * zoom;
 		} else {
 			pointsThatFitInHalfScreen = halfScreen / zoom;
@@ -425,9 +425,9 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 */
 	private void moveGraphPosition(final double amount) {
 		final double newPos = graphPosition + amount;
-		if (newPos > getGraphPositionMax()){
+		if (newPos > getGraphPositionMax()) {
 			goToLastGraphPosition();
-		} else if (newPos < getGraphPositionMin()){
+		} else if (newPos < getGraphPositionMin()) {
 			resetGraphPosition();
 		} else {
 			setGraphPosition(newPos);
@@ -440,7 +440,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 */
 	private void moveEntireGraphingPanel(final double newPosition) {
 		double move = -1.0;
-		if(zoomedOutBeyondOneToOne){
+		if (zoomedOutBeyondOneToOne) {
 			move = newPosition * zoom;
 		} else {
 			move = newPosition / zoom;
@@ -494,18 +494,21 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void mouseMoved(final MouseEvent e) {
 		// What should be here?
 		// Ben says eventually there might be stuff here, and it is required implementation for the MouseMovementListener interface.
+		// Fred says thanks! :-)
 	}
 
 	@Override
 	public final void mouseEntered(final MouseEvent e) {
 		// What should be here?
 		// Ben says eventually there might be stuff here, and it is required implementation for the MouseMovementListener interface.
+		// Fred says thanks! :-)
 	}
 
 	@Override
 	public final void mouseExited(final MouseEvent e) {
 		// What should be here?
 		// Ben says eventually there might be stuff here, and it is required implementation for the MouseMovementListener interface.
+		// Fred says thanks! :-)
 	}
 
 	@Override
@@ -545,25 +548,25 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		double move = 0;
 		final int zoomAmount = (int)Math.sqrt(zoom);
 		if (notches < 0) {
-			for (int i = 0; i < zoomAmount; i++){
-				if(zoomedOutBeyondOneToOne){
+			for (int i = 0; i < zoomAmount; i++) {
+				if (zoomedOutBeyondOneToOne) {
 					move = (xMouseCoord - center) / (zoom - 1.0);
 				} else {
 					move = (xMouseCoord - center) / zoom;
 				}
-				if (!(!zoomedOutBeyondOneToOne && zoom == getTightestZoom())){
+				if (!(!zoomedOutBeyondOneToOne && zoom == getTightestZoom())) {
 					zoomIn();
 					moveEntireGraphingPanel(move);
 				}
 			}
 		} else {
-			for (int i = 0; i < zoomAmount; i++){
-				if(zoomedOutBeyondOneToOne || zoom == 1){
+			for (int i = 0; i < zoomAmount; i++) {
+				if (zoomedOutBeyondOneToOne || zoom == 1) {
 					move = -(xMouseCoord - center) / (zoom + 1.0);
 				} else {
 					move = -(xMouseCoord - center) / zoom;
 				}
-				if (!(zoomedOutBeyondOneToOne && zoom == getWidestZoom())){
+				if (!(zoomedOutBeyondOneToOne && zoom == getWidestZoom())) {
 					zoomOut();
 					moveEntireGraphingPanel(move);
 				}
@@ -633,7 +636,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				} else {
 					final long now = System.currentTimeMillis();
 					final long delay = now - thePastLeftArrow;
-					if(delay < 50){
+					if (delay < 50) {
 						scrollAcceleration++;
 						moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
 					} else {
@@ -664,7 +667,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				} else {
 					final long now = System.currentTimeMillis();
 					final long delay = now - thePastRightArrow;
-					if(delay < 50){
+					if (delay < 50) {
 						scrollAcceleration++;
 						moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
 					} else {
@@ -710,35 +713,38 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void keyReleased(final KeyEvent e) {
 		// What should be here?
 		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
+		// Fred says thanks! :-)
 	}
 
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		// What should be here?
 		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
+		// Fred says thanks! :-)
 	}
 
 	@Override
-	public void componentHidden(ComponentEvent e) {
+	public void componentHidden(final ComponentEvent e) {
 		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
+		// Fred says thanks! :-)
 	}
 
 	// Call resize event handler because the Mac sort of treats resizing as a move
 	@Override
-	public void componentMoved(ComponentEvent e) {
+	public void componentMoved(final ComponentEvent e) {
 		componentResized(e);
 	}
 
 	@Override
-	public void componentResized(ComponentEvent e) {
+	public void componentResized(final ComponentEvent e) {
 		int newWidth = this.getWidth();
-		if(newWidth != oldComponentWidth){
+		if (newWidth != oldComponentWidth) {
 			double move = 0.0;
 			int amount = newWidth - oldComponentWidth;
-			if(zoomedOutBeyondOneToOne){
+			if (zoomedOutBeyondOneToOne) {
 				move = -(amount * zoom);
 			} else {
-				move = -((double)amount / (double)zoom);
+				move = -((double) amount / (double) zoom);
 			}
 			move /= 2.0;
 			oldComponentWidth = newWidth;
@@ -747,7 +753,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	@Override
-	public void componentShown(ComponentEvent e) {
+	public void componentShown(final ComponentEvent e) {
 		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
+		// Fred says thanks! :-)
 	}
 }

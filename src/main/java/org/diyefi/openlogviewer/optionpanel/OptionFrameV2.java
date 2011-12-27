@@ -36,6 +36,7 @@ import java.awt.event.MouseMotionAdapter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -84,7 +85,7 @@ public class OptionFrameV2 extends JFrame {
 	private JButton addDivisionButton;
 
 	private JLayeredPane layeredPane;
-	private ArrayList<JPanel> activePanelList;
+	private List<JPanel> activePanelList;
 
 	public OptionFrameV2() {
 		super("Graphing Option Pane");
@@ -97,7 +98,7 @@ public class OptionFrameV2 extends JFrame {
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
 
-		JScrollPane scroll = new JScrollPane(layeredPane);
+		final JScrollPane scroll = new JScrollPane(layeredPane);
 
 		inactiveHeaders = initHeaderPanel();
 		layeredPane.add(inactiveHeaders);
@@ -109,7 +110,7 @@ public class OptionFrameV2 extends JFrame {
 	}
 
 	private JPanel initHeaderPanel() {
-		JPanel ih = new JPanel();
+		final JPanel ih = new JPanel();
 		ih.setLayout(null);
 		ih.setName("Drop InactiveHeaderPanel");
 		this.addDivisionButton = new JButton("Add Division");
@@ -122,7 +123,7 @@ public class OptionFrameV2 extends JFrame {
 
 	private ActionListener addDivisionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			addActiveHeaderPanel();
 		}
 	};
@@ -360,8 +361,8 @@ public class OptionFrameV2 extends JFrame {
 	private class ModifyGraphPane extends JInternalFrame {
 		private static final long serialVersionUID = 1L;
 
-		GenericDataElement GDE;
-		ActiveHeaderLabel AHL;
+		private GenericDataElement GDE;
+		private ActiveHeaderLabel AHL;
 		private JLabel minLabel;
 		private JLabel maxLabel;
 		private JTextField minField;
@@ -406,7 +407,7 @@ public class OptionFrameV2 extends JFrame {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Color c = JColorChooser.showDialog(
+				final Color c = JColorChooser.showDialog(
 						new JFrame(),
 						"Choose Background Color",
 						colorButton.getForeground());
@@ -500,7 +501,7 @@ public class OptionFrameV2 extends JFrame {
 		private MouseListener selectedListener = new MouseListener() {
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(final MouseEvent e) {
 				if (e.getModifiers() == 16) {
 					setSelected(!selected);
 				} else if (e.getModifiers() == 18) {
@@ -512,21 +513,21 @@ public class OptionFrameV2 extends JFrame {
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
+			public void mouseEntered(final MouseEvent e) {
 			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseExited(final MouseEvent e) {
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
+			public void mousePressed(final MouseEvent e) {
 				ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
 				GCB.setPreviousPanel((JPanel) GCB.getParent());
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 				ActiveHeaderLabel GCB = (ActiveHeaderLabel) e.getSource();
 				if (GCB.isDragging()) {
 					if (GCB.getParent() == inactiveHeaders) { // moving back to inactive
@@ -565,14 +566,14 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		@Override
-		public void setBounds(int x, int y, int widht, int height) {
-			super.setBounds(x, y, widht, height);
+		public void setBounds(int x, int y, int width, int height) {
+			super.setBounds(x, y, width, height);
 			if (inactiveLocation == null) {
 				inactiveLocation = new Point(x, y);
 			}
 		}
 
-		public void setRef(GenericDataElement GDE) {
+		public void setRef(final GenericDataElement GDE) {
 			this.GDE = GDE;
 			// this line is here because if the tool tip is never set no mouse events
 			// will ever be created for tool tips. TODO There HAS to be a better way to do this...
@@ -581,7 +582,7 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		@Override
-		public String getToolTipText(MouseEvent e) {
+		public String getToolTipText(final MouseEvent e) {
 			this.setToolTipTextFinal();
 			return getToolTipText();
 		}
@@ -628,11 +629,11 @@ public class OptionFrameV2 extends JFrame {
 			return dragging;
 		}
 
-		public void setDragging(boolean dragging) {
+		public void setDragging(final boolean dragging) {
 			this.dragging = dragging;
 		}
 
-		public void setSelected(boolean selected) {
+		public void setSelected(final boolean selected) {
 			if (this.isEnabled()) {
 				this.selected = selected;
 			} else {
@@ -655,7 +656,7 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		@Override
-		public int compareTo(Object o) {
+		public int compareTo(final Object o) {
 			if (o instanceof ActiveHeaderLabel) {
 				ActiveHeaderLabel GCB = (ActiveHeaderLabel) o;
 				return this.GDE.compareTo(GCB.getGDE());

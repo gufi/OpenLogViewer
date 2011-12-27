@@ -152,7 +152,7 @@ public final class OpenLogViewer extends JFrame {
 		quitFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
+				final WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
 				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 			}
 		});
@@ -232,7 +232,7 @@ public final class OpenLogViewer extends JFrame {
 
 			@Override
 			public void run() {
-				Locale currentLocale = Locale.getDefault();
+				final Locale currentLocale = Locale.getDefault();
 				labels = ResourceBundle.getBundle(this.getClass().getPackage().getName() + ".Labels", currentLocale);
 
 				final String lookAndFeel;
@@ -423,7 +423,7 @@ public final class OpenLogViewer extends JFrame {
 	}
 
 	public void enterFullScreen() {
-		if (!fullscreen ) {
+		if (!fullscreen) {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			final GraphicsDevice[] gs = ge.getScreenDevices();
 			final GraphicsDevice gd = gs[0];
@@ -438,7 +438,7 @@ public final class OpenLogViewer extends JFrame {
 					gd.setFullScreenWindow(this);
 					validate();           // required after rearranging component hierarchy
 					fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
-				} catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));
 				}
@@ -450,8 +450,8 @@ public final class OpenLogViewer extends JFrame {
 
 	public void exitFullScreen() {
 		if (fullscreen) {
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			GraphicsDevice[] gs = ge.getScreenDevices();
+			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			final GraphicsDevice[] gs = ge.getScreenDevices();
 			// Do the reverse of what we did to put it into full screen!
 			gs[0].setFullScreenWindow(null);
 			removeNotify();
@@ -464,8 +464,8 @@ public final class OpenLogViewer extends JFrame {
 		}
 	}
 
-	public void toggleFullScreen(){
-		if(fullscreen){
+	public void toggleFullScreen() {
+		if (fullscreen) {
 			exitFullScreen();
 		} else {
 			enterFullScreen();

@@ -49,7 +49,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	/**
 	 * The meat of this object! Previously in a slow fat ArrayList.
 	 */
-	private double values[];
+	private double[] values;
 
 	// These two fields belong here:
 	private double minValue;

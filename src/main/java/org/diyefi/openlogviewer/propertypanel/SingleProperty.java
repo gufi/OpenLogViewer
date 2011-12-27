@@ -42,7 +42,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		active = false;
 	}
 
-	public SingleProperty(GenericDataElement GDE) {
+	public SingleProperty(final GenericDataElement GDE) {
 		color = GDE.getDisplayColor();
 		header = GDE.getName();
 		min = GDE.getDisplayMinValue();

@@ -78,12 +78,11 @@ public class GraphPositionPanel extends JPanel {
 			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
 				final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 				final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-				if(!zoomedOut || zoom == 1){
+				if (!zoomedOut || zoom == 1) {
 					setupMouseCursorLineSnappingPositions();
 				}
 				paintPositionBar(g2d, zoomedOut);
 				paintPositionData(g2d, zoomedOut);
-
 			}
 		}
 	}
@@ -93,7 +92,7 @@ public class GraphPositionPanel extends JPanel {
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		double offset = 0d;
 		double margin = 0d;
-		if(zoomedOut){
+		if (zoomedOut) {
 			offset = majorGraduationSpacing / zoom;
 			offset = Math.ceil(offset);
 			margin = (1d / zoom) / 2d;
@@ -110,22 +109,22 @@ public class GraphPositionPanel extends JPanel {
 
 		//Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
-		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
-			if (position >= nextPositionMarker - margin){
+		for (int i = -(int) offset; i < this.getWidth() + (int) offset; i++) { // TODO It's ugly having the - on the left side of the cast, but moving it *could* change behaviour, so leaving it alone and adding this instead!
+			if (position >= nextPositionMarker - margin) {
 				int xCoord = i;
-				if(xCoord >= 0 && xCoord < validSnappingPositions.length){
-					if (validSnappingPositions[xCoord]){
-						//Check this first to see if there is no need to modify xCoord.
-					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]){
-						xCoord ++;
-					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
-						xCoord --;
+				if (xCoord >= 0 && xCoord < validSnappingPositions.length) {
+					if (validSnappingPositions[xCoord]) {
+						// TODO Ugly, restructure! Check this first to see if there is no need to modify xCoord.
+					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]) {
+						xCoord++;
+					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]) {
+						xCoord--;
 					}
 				}
 				g2d.drawLine(xCoord, 0, xCoord, 6);
 				nextPositionMarker += majorGraduationSpacing;
 			}
-			if(zoomedOut){
+			if (zoomedOut) {
 				position += zoom;
 			} else {
 				position += (1d / zoom);
@@ -139,7 +138,7 @@ public class GraphPositionPanel extends JPanel {
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		double offset = 0d;
 		double margin = 0d;
-		if(zoomedOut){
+		if (zoomedOut) {
 			offset = majorGraduationSpacing / zoom;
 			offset = Math.ceil(offset);
 			margin = (1d / zoom) / 2d;
@@ -149,38 +148,38 @@ public class GraphPositionPanel extends JPanel {
 			margin = (1d / zoom) / 2d;
 		}
 		g2d.setColor(positionDataColor);
-		FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
+		final FontMetrics fm = this.getFontMetrics(this.getFont()); //For getting string width
 
 		//Find first position marker placement
 		double nextPositionMarker = getFirstPositionMarkerPlacement();
 
 		//Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
-		for (int i = -(int)offset; i < this.getWidth() + (int)offset; i++) {
-			if (position >= nextPositionMarker - margin){
+		for (int i = -(int) offset; i < this.getWidth() + (int) offset; i++) { // TODO Ditto!
+			if (position >= nextPositionMarker - margin) {
 				int xCoord = i;
-				if(xCoord >= 0 && xCoord < validSnappingPositions.length){
-					if (validSnappingPositions[xCoord]){
+				if (xCoord >= 0 && xCoord < validSnappingPositions.length) {
+					if (validSnappingPositions[xCoord]) {
 						//Check this first to see if there is no need to modify xCoord.
-					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]){
-						xCoord ++;
-					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]){
-						xCoord --;
+					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]) {
+						xCoord++;
+					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]) {
+						xCoord--;
 					}
 				}
 				String positionDataString = "";
 				BigDecimal positionData = new BigDecimal(nextPositionMarker);
-				if(majorGraduationSpacing > 0.5){
+				if (majorGraduationSpacing > 0.5) {
 					positionDataString = positionData.toPlainString();
 				} else {
 					positionDataString = roundDecimalsOnlyToTwoSignificantFigures(positionData);
 				}
-				int stringWidth = fm.stringWidth(positionDataString);
+				final int stringWidth = fm.stringWidth(positionDataString);
 				g2d.drawString(positionDataString, xCoord - (stringWidth / 2), 18);
 
 				nextPositionMarker += majorGraduationSpacing;
 			}
-			if(zoomedOut){
+			if (zoomedOut) {
 				position += zoom;
 			} else {
 				position += (1.0 / zoom);
@@ -188,16 +187,16 @@ public class GraphPositionPanel extends JPanel {
 		}
 	}
 
-	private final double getFirstPositionMarkerPlacement(){
+	private double getFirstPositionMarkerPlacement() {
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 
 		double nextPositionMarker = 0d;
-		if(graphPosition < 0d){
-			while (nextPositionMarker - graphPosition >= majorGraduationSpacing){
+		if (graphPosition < 0d) {
+			while (nextPositionMarker - graphPosition >= majorGraduationSpacing) {
 				nextPositionMarker -= majorGraduationSpacing;
 			}
 		} else {
-			while (nextPositionMarker - graphPosition < 0.0){
+			while (nextPositionMarker - graphPosition < 0.0) {
 				nextPositionMarker += majorGraduationSpacing;
 			}
 		}
@@ -237,15 +236,15 @@ public class GraphPositionPanel extends JPanel {
 		}
 
 		majorGraduationSpacing = 100.0;
-		int count = (int)(Math.log((double)zoom) / Math.log(2.0));  // Base-2 logarithm of zoom
+		int count = (int) (Math.log((double) zoom) / Math.log(2.0));  // Base-2 logarithm of zoom
 
 		if (zoomedOut){
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				majorGraduationSpacing *= graduationSpacingMultiplier[i % 3];
 
 			}
 		} else {
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				majorGraduationSpacing /= graduationSpacingMultiplier[i % 3];
 			}
 		}
@@ -290,21 +289,22 @@ public class GraphPositionPanel extends JPanel {
 
 		// Find out if negative or not.
 		result = input.toPlainString();
-		if(result.substring(0, 1).equalsIgnoreCase("-")){
+		if (result.substring(0, 1).equalsIgnoreCase("-")) {
 			indexOfMostSignificantDigit++;
 		}
 
+		// Fred says: LOL @ this! :-)
 		// If there are decimals, then count the number of whole integers and leading zeros
 		// to find out what rounding precision is needed to end up with two significant
 		// figures for the decimal portion only.
 		int amountOfIntegerDigits = 0;
 		int amountOfLeadingZerosInDecimalPortion = 0;
 		final int indexOfDecimalPoint = result.indexOf('.');
-		if (indexOfDecimalPoint != -1){
+		if (indexOfDecimalPoint != -1) {
 			amountOfIntegerDigits = result.substring(indexOfMostSignificantDigit, indexOfDecimalPoint).length();
 			boolean done = false;
-			for (int i = indexOfDecimalPoint + 1; i < result.length() && !done; i++){
-				if (result.substring(i, i).equalsIgnoreCase("0")){
+			for (int i = indexOfDecimalPoint + 1; i < result.length() && !done; i++) {
+				if (result.substring(i, i).equalsIgnoreCase("0")) {
 					amountOfLeadingZerosInDecimalPortion++;
 				} else {
 					done = true;
@@ -322,12 +322,12 @@ public class GraphPositionPanel extends JPanel {
 		result = roundedInput.toPlainString();
 
 		// Add on decimal point and trailing zero if doesn't exist.
-		if (result.indexOf('.') == -1){
+		if (result.indexOf('.') == -1) {
 			result = result + ".0";
 		}
 
 		// Check for result extremely close to zero.
-		if(result.length() > 16){
+		if (result.length() > 16) {
 			if (result.substring(0, 16).equalsIgnoreCase("-0.0000000000000")
 					|| result.substring(0, 15).equalsIgnoreCase("0.0000000000000")){
 				result = "0.0";

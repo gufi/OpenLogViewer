@@ -134,8 +134,8 @@ public class PropertiesPane extends JFrame {
 		addProp.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent evt) {
-				String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
+			public void actionPerformed(final ActionEvent evt) {
+				final String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
 				if ((s != null) && !"".equals(s) ) { // TODO Bad need of stringUtils here...
 					SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
@@ -163,13 +163,13 @@ public class PropertiesPane extends JFrame {
 		aPanel.setPreferredSize(new Dimension(500, 32));
 		aPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
 
-		JButton okButton = new JButton("OK");
-		JButton cancel = new JButton("Cancel");
+		final JButton okButton = new JButton("OK");
+		final JButton cancel = new JButton("Cancel");
 
 		okButton.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				OpenLogViewer.getInstance().getPropertyPane().save();
 				OpenLogViewer.getInstance().getPropertyPane().setVisible(false);
 			}
@@ -178,7 +178,7 @@ public class PropertiesPane extends JFrame {
 		cancel.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 
 				OpenLogViewer.getInstance().getPropertyPane().resetProperties();
 				OpenLogViewer.getInstance().getPropertyPane().setVisible(false);
@@ -193,12 +193,12 @@ public class PropertiesPane extends JFrame {
 
 	private void loadProperties() {
 		try {
-			Scanner scan = new Scanner(new FileReader(OLVProperties));
+			final Scanner scan = new Scanner(new FileReader(OLVProperties));
 
 			while (scan.hasNext()) {
-				String[] propLine = scan.nextLine().split("=");
-				SingleProperty sp = new SingleProperty();
-				String[] prop = propLine[1].split(",");
+				final String[] propLine = scan.nextLine().split("=");
+				final SingleProperty sp = new SingleProperty();
+				final String[] prop = propLine[1].split(",");
 				sp.setHeader(propLine[0]);
 				sp.setColor(new Color(
 						Integer.parseInt(prop[0]),
@@ -319,13 +319,13 @@ public class PropertiesPane extends JFrame {
 
 	private final class PropertyPanel extends JPanel implements Comparable<PropertyPanel> {
 		private static final long serialVersionUID = 1L;
-		SingleProperty sp;
-		JCheckBox check;
-		JPanel colorBox;
-		JTextField minBox;
-		JTextField maxBox;
-		JTextField splitBox;
-		JComboBox activeBox;
+		private SingleProperty sp;
+		private JCheckBox check;
+		private JPanel colorBox;
+		private JTextField minBox;
+		private JTextField maxBox;
+		private JTextField splitBox;
+		private JComboBox activeBox;
 
 		public PropertyPanel(final SingleProperty sp) {
 			super();
@@ -363,7 +363,7 @@ public class PropertiesPane extends JFrame {
 			colorBox.addMouseListener(new MouseListener() {
 
 				@Override
-				public void mouseReleased(MouseEvent e) {
+				public void mouseReleased(final MouseEvent e) {
 					final Color newColor = JColorChooser.showDialog(
 							OpenLogViewer.getInstance().getOptionFrame(),
 							"Choose New Color", colorBox.getBackground());
@@ -374,19 +374,19 @@ public class PropertiesPane extends JFrame {
 				}
 
 				@Override
-				public void mouseClicked(MouseEvent e) {
+				public void mouseClicked(final MouseEvent e) {
 				}
 
 				@Override
-				public void mouseEntered(MouseEvent e) {
+				public void mouseEntered(final MouseEvent e) {
 				}
 
 				@Override
-				public void mouseExited(MouseEvent e) {
+				public void mouseExited(final MouseEvent e) {
 				}
 
 				@Override
-				public void mousePressed(MouseEvent e) {
+				public void mousePressed(final MouseEvent e) {
 				}
 			});
 
@@ -411,7 +411,7 @@ public class PropertiesPane extends JFrame {
 			return sp;
 		}
 
-		public void setSp(SingleProperty sp) {
+		public void setSp(final SingleProperty sp) {
 			this.sp = sp;
 		}
 
@@ -420,7 +420,7 @@ public class PropertiesPane extends JFrame {
 			sp.setMax(Double.parseDouble(maxBox.getText()));
 			sp.setColor(colorBox.getBackground());
 			sp.setSplit(Integer.parseInt(splitBox.getText()));
-			String active = (String) activeBox.getSelectedItem();
+			final String active = (String) activeBox.getSelectedItem();
 			sp.setActive(Boolean.parseBoolean(active));
 		}
 
@@ -433,7 +433,7 @@ public class PropertiesPane extends JFrame {
 		}
 
 		@Override
-		public int compareTo(PropertyPanel pp) {
+		public int compareTo(final PropertyPanel pp) {
 			return this.sp.getHeader().compareToIgnoreCase(pp.getSp().getHeader());
 		}
 	}
