@@ -113,12 +113,12 @@ public class GraphPositionPanel extends JPanel {
 			if (position >= nextPositionMarker - margin) {
 				int xCoord = i;
 				if (xCoord >= 0 && xCoord < validSnappingPositions.length) {
-					if (validSnappingPositions[xCoord]) {
-						// TODO Ugly, restructure! Check this first to see if there is no need to modify xCoord.
-					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]) {
-						xCoord++;
-					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]) {
-						xCoord--;
+					if (!validSnappingPositions[xCoord]) {
+						if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]) {
+							xCoord++;
+						} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]) {
+							xCoord--;
+						}
 					}
 				}
 				g2d.drawLine(xCoord, 0, xCoord, 6);

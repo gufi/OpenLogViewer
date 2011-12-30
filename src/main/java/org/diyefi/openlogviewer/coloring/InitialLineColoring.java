@@ -73,7 +73,8 @@ public enum InitialLineColoring {
 		Color nextColor = Color.gray;
 		final ListIterator<MarkedColor> i = colorList.listIterator();
 
-		for (boolean found = false; i.hasNext() && !found;) {
+		boolean found = false;
+		while (i.hasNext() && !found) {
 			final MarkedColor c = i.next();
 
 			if (c.isAvailable()) {

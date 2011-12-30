@@ -97,12 +97,13 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	}
 
 	private void removeAllGraphs() {
-		for (int i = 0; this.getComponentCount() > 1;) { // Leave InfoPanel in component count
-			if (this.getComponent(i) instanceof SingleGraphPanel) {
-				this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(i));
-				this.remove(getComponent(i));
+		int componentIndex = 0;
+		while (this.getComponentCount() > 1) {  // Leave InfoPanel in component count
+			if (this.getComponent(componentIndex) instanceof SingleGraphPanel) {
+				this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(componentIndex));
+				this.remove(getComponent(componentIndex));
 			} else {
-				i++;
+				componentIndex++;
 			}
 		}
 		repaint();

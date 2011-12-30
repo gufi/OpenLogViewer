@@ -136,7 +136,7 @@ public class PropertiesPane extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent evt) {
 				final String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-				if ((s != null) && !"".equals(s)) { // TODO Bad need of stringUtils here...
+				if ((s != null) && !s.equals("")) { // TODO Bad need of stringUtils here...
 					final SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
 					addProperty(newprop);
@@ -299,19 +299,20 @@ public class PropertiesPane extends JFrame {
 	}
 
 	private void removePropertyPanels() {
-		for (int i = 0; i < propertyView.getComponentCount();) {
-			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
+		int componentIndex = 0;
+		while (componentIndex < propertyView.getComponentCount()) {
+			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(componentIndex);
 			if (pp.getCheck().isSelected()) {
 				if (!removeProperties.contains(pp.getSp())) {
 					removeProperties.add(pp.getSp());
 				}
 
-				removeProperty(pp.getSp()); // Move this to add to a queue of things to remove, incase of cancel
-				propertyView.remove(propertyView.getComponent(i));
+				removeProperty(pp.getSp()); // Move this to add to a queue of things to remove, in case of cancel
+				propertyView.remove(propertyView.getComponent(componentIndex));
 				propertyView.setPreferredSize(new Dimension(propertyView.getPreferredSize().width, propertyView.getPreferredSize().height - 60));
 				propertyView.revalidate();
 			} else {
-				i++;
+				componentIndex++;
 			}
 		}
 		propertyView.repaint();
