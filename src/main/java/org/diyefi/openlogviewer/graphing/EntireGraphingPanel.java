@@ -370,8 +370,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void setGraphSize(final int newGraphSize) {
 		graphSize = newGraphSize;
 		if (graphSize > 0) {
-			centerGraphPosition(0, graphSize);
 			zoomGraphToFit(graphSize);
+			centerGraphPosition(0, graphSize);
 		}
 	}
 
@@ -396,10 +396,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		if (zoomedOutBeyondOneToOne) {
 			pointsThatFitInHalfScreen = halfScreen * zoom;
 		} else {
-			pointsThatFitInHalfScreen = halfScreen / zoom;
+			pointsThatFitInHalfScreen = halfScreen / (double)zoom;
 		}
 		final int distanceBetweenPositions = endPosition - beginPosition;
-		final double halfwayBetweenTwoPositions = distanceBetweenPositions / 2;
+		final double halfwayBetweenTwoPositions = distanceBetweenPositions / 2d;
 		final double centerPosition = (beginPosition + halfwayBetweenTwoPositions) - pointsThatFitInHalfScreen;
 		setGraphPosition(centerPosition);
 	}
