@@ -210,11 +210,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	private int getScreenPositionYCoord(final Double traceData, final double minValue, final double maxValue) {
-		int point = 0;
+		int point = -1;
 		final int height = (int) (this.getHeight() * GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE);
 		if (maxValue != minValue) {
 			point = (int) (height - (height * ((traceData - minValue) / (maxValue - minValue))));
+		} else {
+			if(traceData == maxValue){
+				point = height;
+			}
 		}
+
 		return point;
 	}
 
