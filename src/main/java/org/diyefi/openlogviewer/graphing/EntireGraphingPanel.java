@@ -108,11 +108,15 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
-		if (playing && graphPosition < getGraphPositionMax()) {
-			if (zoomedOutBeyondOneToOne) {
-				moveGraphPosition(zoom);
+		if (playing) {
+			if(graphPosition < getGraphPositionMax()){
+				if (zoomedOutBeyondOneToOne) {
+					moveGraphPosition(zoom);
+				} else {
+					moveGraphPosition(1);
+				}
 			} else {
-				moveGraphPosition(1);
+				pause();
 			}
 		} else if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
 			if (flingInertia == 0) {
