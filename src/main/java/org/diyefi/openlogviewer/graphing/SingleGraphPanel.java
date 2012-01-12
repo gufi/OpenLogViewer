@@ -169,8 +169,19 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw data point
 			if (!zoomedOut && zoom > 5) {
+
 				// Draw fat data point
-				if (atTraceBeginning) {
+				if(atTraceBeginning && atTraceEnd){
+					// Special case to determine if fat dot is needed if scrolled to the end
+					if(availableDataRecords >= 2 && GDE.get(availableDataRecords - 2) != traceData){
+						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+					} else {
+						// Draw small data point
+						// drawLine() is 33% faster than fillRect() for a single pixel on Ben's dev machine
+						g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord, screenPositionYCoord);
+					}
+				} else if (atTraceBeginning) {
 					if (traceData != rightOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
 						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
