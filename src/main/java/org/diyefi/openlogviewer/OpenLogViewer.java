@@ -30,8 +30,10 @@ package org.diyefi.openlogviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -116,6 +118,10 @@ public final class OpenLogViewer extends JFrame {
 	private JMenuBar menuBar;
 	private boolean fullscreen;
 
+	private int extendedState;
+	private Point location;
+	private Dimension size;
+
 	public OpenLogViewer() {
 		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
 		properties = new ArrayList<SingleProperty>();
@@ -188,7 +194,10 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		/* 1 November 2011 Migrated Gufi's menu from the pointless class it's in to here.
+		/*
+		 * 13 January 2012 Had Chick-fil-A #1 meal with no pickle and Dr Pepper for lunch.
+		 * 		Dr Pepper with no period. "Dude didn't even get his degree." Either that or he is British.
+		 * 1 November 2011 Migrated Gufi's menu from the pointless class it's in to here.
 		 * 22 October 2011 Left Gufi's menu in place for future dev's enjoyment.
 		 *
 		 * 5 February 2011 meal for the night DO NOT EDIT MENU!
@@ -430,6 +439,8 @@ public final class OpenLogViewer extends JFrame {
 
 			if (gd.isFullScreenSupported()) {
 				try {
+
+					saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
 					setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
 					removeNotify();       // without this we can't do the next thing
 					setUndecorated(true); // remove the window frame!
@@ -460,6 +471,7 @@ public final class OpenLogViewer extends JFrame {
 			setJMenuBar(menuBar);
 			setResizable(true);
 			pack();
+			restoreScreenState();
 			fullscreen = false;
 		}
 	}
@@ -470,6 +482,24 @@ public final class OpenLogViewer extends JFrame {
 		} else {
 			enterFullScreen();
 		}
+	}
+
+
+	private void saveScreenState(){
+		extendedState = getExtendedState();
+		location = getLocation();
+		size = getSize();
+		if((extendedState & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH){
+			System.out.println("Maximized! :-)");
+		} else {
+			System.out.println("Restored down. :-(");
+		}
+	}
+
+	private void restoreScreenState(){
+		setExtendedState(extendedState);
+		setLocation(location);
+		setSize(size);
 	}
 
 	public void setLog(final GenericLog genericLog) {
