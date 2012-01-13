@@ -33,6 +33,7 @@ import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -120,6 +121,7 @@ public final class OpenLogViewer extends JFrame {
 	private int extendedState;
 	private Point location;
 	private Dimension size;
+	private int containingDevice;
 
 	public OpenLogViewer() {
 		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
@@ -433,26 +435,34 @@ public final class OpenLogViewer extends JFrame {
 	public void enterFullScreen() {
 		if (!fullscreen) {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			final GraphicsDevice[] gs = ge.getScreenDevices();
-			final GraphicsDevice gd = gs[0];
+			final GraphicsDevice[] device = ge.getScreenDevices();
 
-			if (gd.isFullScreenSupported()) {
-				try {
-					saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
-					setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
-					removeNotify();       // without this we can't do the next thing
-					setUndecorated(true); // remove the window frame!
-					addNotify();          // turn things back on again!
-					setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
-					gd.setFullScreenWindow(this);
-					validate();           // required after rearranging component hierarchy
-					fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));
+			for (int i = 0; i < device.length; i++){
+				Rectangle bounds = device[i].getDefaultConfiguration().getBounds();
+				int centerX = (int)Math.round(this.getBounds().getCenterX());
+				int centerY = (int)Math.round(this.getBounds().getCenterY());
+				Point center = new Point(centerX, centerY);
+				if (bounds.contains(center)){
+					containingDevice = i;
+					if (device[i].isFullScreenSupported()) {
+						try {
+							saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
+							setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
+							removeNotify();       // without this we can't do the next thing
+							setUndecorated(true); // remove the window frame!
+							addNotify();          // turn things back on again!
+							setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
+							device[i].setFullScreenWindow(this);
+							validate();           // required after rearranging component hierarchy
+							fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
+						} catch (Exception e) {
+							e.printStackTrace();
+							System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));
+						}
+					} else {
+						System.out.println(labels.getObject(CANT_GO_FULLSCREEN_MESSAGE_KEY));
+					}
 				}
-			} else {
-				System.out.println(labels.getObject(CANT_GO_FULLSCREEN_MESSAGE_KEY));
 			}
 		}
 	}
@@ -460,9 +470,9 @@ public final class OpenLogViewer extends JFrame {
 	public void exitFullScreen() {
 		if (fullscreen) {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			final GraphicsDevice[] gs = ge.getScreenDevices();
+			final GraphicsDevice[] device = ge.getScreenDevices();
 			// Do the reverse of what we did to put it into full screen!
-			gs[0].setFullScreenWindow(null);
+			device[containingDevice].setFullScreenWindow(null);
 			removeNotify();
 			setUndecorated(false);
 			addNotify();
