@@ -30,7 +30,6 @@ package org.diyefi.openlogviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -439,7 +438,6 @@ public final class OpenLogViewer extends JFrame {
 
 			if (gd.isFullScreenSupported()) {
 				try {
-
 					saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
 					setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
 					removeNotify();       // without this we can't do the next thing
@@ -484,16 +482,10 @@ public final class OpenLogViewer extends JFrame {
 		}
 	}
 
-
 	private void saveScreenState(){
 		extendedState = getExtendedState();
 		location = getLocation();
 		size = getSize();
-		if((extendedState & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH){
-			System.out.println("Maximized! :-)");
-		} else {
-			System.out.println("Restored down. :-(");
-		}
 	}
 
 	private void restoreScreenState(){
