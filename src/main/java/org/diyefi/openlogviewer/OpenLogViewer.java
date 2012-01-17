@@ -454,6 +454,8 @@ public final class OpenLogViewer extends JFrame {
 							setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
 							device[i].setFullScreenWindow(this);
 							validate();           // required after rearranging component hierarchy
+							graphingPanel.grabFocus(); // Place focus on the graphing panel. No reason except it makes the next call work.
+							requestFocusInWindow(); // Place keyboard focus on JFrame so toggling fullscreen works properly.
 							fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -480,6 +482,8 @@ public final class OpenLogViewer extends JFrame {
 			setResizable(true);
 			pack();
 			restoreScreenState();
+			graphingPanel.grabFocus();
+			requestFocusInWindow();
 			fullscreen = false;
 		}
 	}
