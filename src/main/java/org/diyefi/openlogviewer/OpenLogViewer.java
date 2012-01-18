@@ -480,8 +480,7 @@ public final class OpenLogViewer extends JFrame {
 			addNotify();
 			setJMenuBar(menuBar);
 			setResizable(true);
-			pack();
-			restoreScreenState();
+			restoreScreenState();  // Does the job of pack() and more.
 			graphingPanel.grabFocus();
 			requestFocusInWindow();
 			fullscreen = false;
