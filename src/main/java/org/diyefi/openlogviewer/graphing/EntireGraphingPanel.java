@@ -23,11 +23,11 @@
 package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -35,6 +35,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -582,6 +583,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	@Override
 	public final void keyPressed(final KeyEvent e) {
 		switch (e.getKeyCode()) {
+			//Close entire application key binding
+			case KeyEvent.VK_Q: {
+				if (e.isControlDown()){
+					final WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
+					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+				}
+			}
+
 			// Play key binding
 			case KeyEvent.VK_SPACE: {
 				play();
@@ -590,8 +599,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			// Enter full screen key binding
 			case KeyEvent.VK_ENTER: {
-				if (e.getModifiers() == InputEvent.ALT_MASK
-						&& e.getKeyLocation() == KeyEvent.KEY_LOCATION_STANDARD) {
+				if (e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_STANDARD) {
 					OpenLogViewer.getInstance().enterFullScreen();
 				}
 				break;
@@ -634,7 +642,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				if (zoomedOutBeyondOneToOne) {
 					localZoom = 1;
 				}
-				if (e.getModifiers() == InputEvent.CTRL_MASK) {
+				if (e.isControlDown()) {
 					//Big scroll
 					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 				} else {
@@ -665,7 +673,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				if (zoomedOutBeyondOneToOne) {
 					localZoom = 1;
 				}
-				if (e.getModifiers() == InputEvent.CTRL_MASK) {
+				if (e.isControlDown()) {
 					//Big scroll
 					moveEntireGraphingPanel(this.getWidth() * 0.75);
 				} else {
@@ -691,7 +699,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 
 			case KeyEvent.VK_ADD: {
-				if (e.getModifiers() == InputEvent.CTRL_MASK) {
+				if (e.isControlDown()) {
 					zoomInCoarse();
 				}
 				break;
@@ -705,7 +713,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 
 			case KeyEvent.VK_SUBTRACT: {
-				if (e.getModifiers() == InputEvent.CTRL_MASK) {
+				if (e.isControlDown()) {
 					zoomOutCoarse();
 				}
 				break;
