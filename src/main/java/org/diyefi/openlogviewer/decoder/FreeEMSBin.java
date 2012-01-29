@@ -63,6 +63,10 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 	private int firstPayloadIDFound = -1;
 
 	private long startTime;
+	private int clockInMilliSecondsIndex;
+	private int lastClockValue;
+	private long accurateClock;
+	private boolean firstClockStored = false;
 
 	private static String[] coreStatusAFlagNames = {
 		"CS-FuelPumpPrime",
@@ -205,6 +209,9 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 				}
 			} else {
 				headers[headersPosition] = fields[i].getID();
+				if(fields[i].getID().equals("clockInMilliSeconds")){
+					clockInMilliSecondsIndex = i;
+				}
 				headersPosition++;
 			}
 		}
@@ -407,6 +414,23 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			for (int j = 0; j < field.getType().getWidth(); j++) {
 				rawValue = (rawValue * 256) + packet[position];
 				position++;
+			}
+
+			if(i == clockInMilliSecondsIndex){
+				if(firstClockStored){
+					final int increase = rawValue - lastClockValue;
+					if(increase < 0){
+						final int actualIncrease = rawValue + (65536 - lastClockValue);
+						accurateClock += actualIncrease;
+					}else{
+						accurateClock += increase;
+					}
+					final double currentClock = (double) accurateClock / 1000d;
+					decodedLog.addValue(GenericLog.elapsedTimeKey, currentClock);
+				}else{
+					firstClockStored = true;
+				}
+				lastClockValue = rawValue;
 			}
 
 			if ((field.getType() == types.UINT8) || (field.getType() == types.UINT16) || (field.getType() == types.UINT32)) {
