@@ -160,7 +160,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * The widest the user should be allowed to zoom out.
 	 */
 	private int getWidestZoom() {
-		return (multiGraph.graphSize() / 2);
+		return (graphSize / 2);
 	}
 
 	/**
