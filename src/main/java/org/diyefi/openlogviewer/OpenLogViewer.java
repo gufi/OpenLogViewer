@@ -32,6 +32,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -62,6 +63,7 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.decoder.AbstractDecoder;
 import org.diyefi.openlogviewer.decoder.CSVTypeLog;
 import org.diyefi.openlogviewer.decoder.FreeEMSBin;
+import org.diyefi.openlogviewer.eventlisteners.KeyboardFocusController;
 import org.diyefi.openlogviewer.filefilters.CSVFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSBinFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
@@ -78,6 +80,7 @@ import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewer extends JFrame {
 	public static final String NEWLINE = System.getProperty("line.separator");
+	public static final String APP_NAME = "OpenLogViewer";
 
 	private static final long serialVersionUID = 1L;
 
@@ -112,6 +115,7 @@ public final class OpenLogViewer extends JFrame {
 	private PlayBarPanel playBar;
 	private OptionFrameV2 optionFrame;
 	private PropertiesPane prefFrame;
+	private KeyboardFocusController keyboardFocusController;
 
 	private List<SingleProperty> properties;
 	private AbstractDecoder decoderInUse;
@@ -124,6 +128,7 @@ public final class OpenLogViewer extends JFrame {
 	private int containingDevice;
 
 	public OpenLogViewer() {
+
 		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
 		properties = new ArrayList<SingleProperty>();
 		prefFrame.setProperties(properties);
@@ -144,6 +149,8 @@ public final class OpenLogViewer extends JFrame {
 		mainPanel.add(graphingPanel, BorderLayout.CENTER);
 		mainPanel.add(playBar, BorderLayout.SOUTH);
 		this.add(mainPanel, BorderLayout.CENTER);
+
+		keyboardFocusController = new KeyboardFocusController();
 
 		final JMenuItem openFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_OPEN_KEY));
 		openFileMenuItem.setName(FILE_MENU_ITEM_OPEN_KEY);
@@ -226,10 +233,12 @@ public final class OpenLogViewer extends JFrame {
 
 		this.addKeyListener(graphingPanel);
 		this.addComponentListener(graphingPanel);
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
 
 		pack();
-
-		this.setVisible(true);
+		setName(APP_NAME);
+		requestFocusInWindow();
+		setVisible(true);
 	}
 
 	/**
@@ -446,6 +455,7 @@ public final class OpenLogViewer extends JFrame {
 					containingDevice = i;
 					if (device[i].isFullScreenSupported()) {
 						try {
+							fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
 							saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
 							setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
 							removeNotify();       // without this we can't do the next thing
@@ -454,12 +464,11 @@ public final class OpenLogViewer extends JFrame {
 							setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
 							device[i].setFullScreenWindow(this);
 							validate();           // required after rearranging component hierarchy
-							graphingPanel.grabFocus(); // Place focus on the graphing panel. No reason except it makes the next call work.
-							requestFocusInWindow(); // Place keyboard focus on JFrame so toggling fullscreen works properly.
-							fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
+							requestFocusInWindow(); // Put keyboard focus here to toggling fullscreen works
 						} catch (Exception e) {
 							e.printStackTrace();
 							System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));
+							fullscreen = false;
 						}
 					} else {
 						System.out.println(labels.getObject(CANT_GO_FULLSCREEN_MESSAGE_KEY));
@@ -471,6 +480,7 @@ public final class OpenLogViewer extends JFrame {
 
 	public void exitFullScreen() {
 		if (fullscreen) {
+			fullscreen = false;
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			final GraphicsDevice[] device = ge.getScreenDevices();
 			// Do the reverse of what we did to put it into full screen!
@@ -484,9 +494,7 @@ public final class OpenLogViewer extends JFrame {
 			pack();
 			restoreScreenState();
 			setVisible(true);
-			graphingPanel.grabFocus();
 			requestFocusInWindow();
-			fullscreen = false;
 		}
 	}
 
@@ -496,6 +504,10 @@ public final class OpenLogViewer extends JFrame {
 		} else {
 			enterFullScreen();
 		}
+	}
+
+	public boolean isFullscreen(){
+		return fullscreen;
 	}
 
 	private void saveScreenState(){
