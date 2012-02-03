@@ -455,11 +455,11 @@ public final class OpenLogViewer extends JFrame {
 					containingDevice = i;
 					if (device[containingDevice].isFullScreenSupported()) {
 						try {
-							fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
+							fullscreen = true;    // Remember so that we can react accordingly.
 							saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
 							setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
-							removeNotify();       // without this we can't do the next thing
-							setUndecorated(true); // remove the window frame!
+							removeNotify();       // Without this we can't do setUndecorated(true)!
+							setUndecorated(true); // Remove the window frame/bezel!
 							addNotify();          // turn things back on again!
 							//setResizable(false);// Fred: doesn't make sense and could be dangerous, according to oracle.
 							                      // Ben: Removed setResizable(false) because it causes GNOME menu bar and task bar to show in front of the app!
