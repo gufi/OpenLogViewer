@@ -446,14 +446,14 @@ public final class OpenLogViewer extends JFrame {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			final GraphicsDevice[] device = ge.getScreenDevices();
 
-			for (int i = 0; i < device.length; i++){
+			for (int i = 0; i < device.length; i++){ // Cycle through available devices (monitors) looking for device that has center of app
 				Rectangle bounds = device[i].getDefaultConfiguration().getBounds();
 				int centerX = (int)Math.round(this.getBounds().getCenterX());
 				int centerY = (int)Math.round(this.getBounds().getCenterY());
 				Point center = new Point(centerX, centerY);
-				if (bounds.contains(center)){
+				if (bounds.contains(center)){ // Found the device (monitor) that contains the center of the app
 					containingDevice = i;
-					if (device[i].isFullScreenSupported()) {
+					if (device[containingDevice].isFullScreenSupported()) {
 						try {
 							fullscreen = true;    // remember so that we don't do random things when escape is pushed at other times...
 							saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
@@ -461,10 +461,11 @@ public final class OpenLogViewer extends JFrame {
 							removeNotify();       // without this we can't do the next thing
 							setUndecorated(true); // remove the window frame!
 							addNotify();          // turn things back on again!
-							setResizable(false);  // doesn't make sense and could be dangerous, according to oracle.
-							device[i].setFullScreenWindow(this);
+							//setResizable(false);// Fred: doesn't make sense and could be dangerous, according to oracle.
+							                      // Ben: Removed setResizable(false) because it causes GNOME menu bar and task bar to show in front of the app!
+							device[containingDevice].setFullScreenWindow(this);
 							validate();           // required after rearranging component hierarchy
-							requestFocusInWindow(); // Put keyboard focus here to toggling fullscreen works
+							requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 							graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -490,12 +491,11 @@ public final class OpenLogViewer extends JFrame {
 			setUndecorated(false);
 			addNotify();
 			setJMenuBar(menuBar);
-			setResizable(true);
 			setVisible(false); // Hide while packing and restoring to avoid showing window resize
 			pack();
 			restoreScreenState();
 			setVisible(true);
-			requestFocusInWindow();
+			requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 			graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 		}
 	}
