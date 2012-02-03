@@ -425,6 +425,25 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
+	 * When the windows is resized, the graph needs to move to maintain the centering.
+	 */
+	public void moveGraphDueToResize() {
+		final int newWidth = this.getWidth();
+		if (newWidth != oldComponentWidth) {
+			double move = 0.0;
+			final int amount = newWidth - oldComponentWidth;
+			if (zoomedOutBeyondOneToOne) {
+				move = -(amount * zoom);
+			} else {
+				move = -((double) amount / (double) zoom);
+			}
+			move /= 2.0;
+			oldComponentWidth = newWidth;
+			moveGraphPosition(move);
+		}
+	}
+
+	/**
 	 * Take the current graph position and move amount positions forward.
 	 */
 	private void moveGraphPosition(final double amount) {
@@ -743,24 +762,12 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	// Call resize event handler because the Mac sort of treats resizing as a move
 	@Override
 	public final void componentMoved(final ComponentEvent e) {
-		componentResized(e);
+		moveGraphDueToResize();
 	}
 
 	@Override
 	public final void componentResized(final ComponentEvent e) {
-		final int newWidth = this.getWidth();
-		if (newWidth != oldComponentWidth) {
-			double move = 0.0;
-			final int amount = newWidth - oldComponentWidth;
-			if (zoomedOutBeyondOneToOne) {
-				move = -(amount * zoom);
-			} else {
-				move = -((double) amount / (double) zoom);
-			}
-			move /= 2.0;
-			oldComponentWidth = newWidth;
-			moveGraphPosition(move);
-		}
+		moveGraphDueToResize();
 	}
 
 	@Override

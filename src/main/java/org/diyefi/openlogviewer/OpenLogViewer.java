@@ -465,6 +465,7 @@ public final class OpenLogViewer extends JFrame {
 							device[i].setFullScreenWindow(this);
 							validate();           // required after rearranging component hierarchy
 							requestFocusInWindow(); // Put keyboard focus here to toggling fullscreen works
+							graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 						} catch (Exception e) {
 							e.printStackTrace();
 							System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));
@@ -495,6 +496,7 @@ public final class OpenLogViewer extends JFrame {
 			restoreScreenState();
 			setVisible(true);
 			requestFocusInWindow();
+			graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 		}
 	}
 
