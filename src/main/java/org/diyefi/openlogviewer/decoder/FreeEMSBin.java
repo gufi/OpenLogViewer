@@ -62,11 +62,18 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 	private int packetLength; // Track packet length
 	private int firstPayloadIDFound = -1;
 
-	private long startTime;
+	private long startTime; // Low tech profiling var
+
+	// Sequential number for reset detection
+	private int tempClockIndex;
+	private int lastTempClockValue;
+	private boolean firstTempClockStored = false;
+
+	// Medium-high resolution time counter with good accuracy
 	private int clockInMilliSecondsIndex;
-	private int lastClockValue;
-	private long accurateClock;
-	private boolean firstClockStored = false;
+	private int lastClockInMilliSecondsValue;
+	private boolean firstClockInMilliSecondsStored = false;
+	private long accurateClock; // Convert to floating point just before storing.
 
 	private static String[] coreStatusAFlagNames = {
 		"CS-FuelPumpPrime",
@@ -208,9 +215,12 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 					headersPosition++;
 				}
 			} else {
-				headers[headersPosition] = fields[i].getID();
-				if(fields[i].getID().equals("clockInMilliSeconds")){
+				final String fieldID = fields[i].getID();
+				headers[headersPosition] = fieldID;
+				if("clockInMilliSeconds".equals(fieldID)){
 					clockInMilliSecondsIndex = i;
+				}else if("tempClock".equals(fieldID)){
+					tempClockIndex = i;
 				}
 				headersPosition++;
 			}
@@ -416,21 +426,42 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 				position++;
 			}
 
-			if(i == clockInMilliSecondsIndex){
-				if(firstClockStored){
-					final int increase = rawValue - lastClockValue;
-					if(increase < 0){
-						final int actualIncrease = rawValue + (65536 - lastClockValue);
+			if (i == clockInMilliSecondsIndex) {
+				if (firstClockInMilliSecondsStored) {
+					final int increase = rawValue - lastClockInMilliSecondsValue;
+
+					if(increase < 0) {
+						final int actualIncrease = rawValue + (65536 - lastClockInMilliSecondsValue);
 						accurateClock += actualIncrease;
-					}else{
+					} else {
 						accurateClock += increase;
 					}
+
 					final double currentClock = (double) accurateClock / 1000d;
 					decodedLog.addValue(GenericLog.elapsedTimeKey, currentClock);
-				}else{
-					firstClockStored = true;
+				} else {
+					firstClockInMilliSecondsStored = true;
 				}
-				lastClockValue = rawValue;
+
+				lastClockInMilliSecondsValue = rawValue;
+			} else if (i == tempClockIndex) {
+				if (firstTempClockStored) {
+					if (rawValue == 0) {
+						if (lastTempClockValue != 255) {
+							decodedLog.addValue(GenericLog.tempResetKey, 1); // 1 = reset
+						} // Else all is well.
+					} else {
+						final int dropOutLength = (rawValue - lastTempClockValue);
+						if (dropOutLength != 1) {
+							final double resetValue = (double) (1000 + dropOutLength) / -1000d;
+							decodedLog.addValue(GenericLog.tempResetKey, resetValue); // -1 to -1.254 = lost comms
+						} // Else all is well.
+					}
+				} else {
+					firstTempClockStored = true;
+				}
+
+				lastTempClockValue = rawValue;
 			}
 
 			if ((field.getType() == types.UINT8) || (field.getType() == types.UINT16) || (field.getType() == types.UINT32)) {
