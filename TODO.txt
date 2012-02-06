@@ -9,7 +9,3 @@ Fix modified control vars...
 Fix modified parameters...
 And more! :-)
 
-Functional changes
-Bug fixes
-Get Ben setup with mvn plugin and good .classpath and .project files.
-
