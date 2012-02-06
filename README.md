@@ -28,6 +28,21 @@ install instructions further down the page.
 
 http://maven.apache.org/download.html
 
+You can get the source from one of the following repositories; use the network
+function to figure out whose is newest (though not necessarily best!):
+
+https://github.com/FreeEMS/OpenLogViewer - Tested commits
+https://github.com/fredcooke/OpenLogViewer - Latest from Fred
+https://github.com/BenFenner/OpenLogViewer - Latest from Ben
+
+A direct link to the network function:
+
+https://github.com/FreeEMS/OpenLogViewer/network
+
+Use git to obtain the source in an efficient way, for example:
+
+git clone git://github.com/FreeEMS/OpenLogViewer.git
+
 #### Using Ant
 
 Ant is deprecated in the professional development world, for good reasons, and
