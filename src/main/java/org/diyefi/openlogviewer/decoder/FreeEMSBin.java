@@ -199,7 +199,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 		startTime = System.currentTimeMillis(); // Let's profile this bitch! OS style :-)
 		logFile = f;
 		startFound = false;
-		packetBuffer = new short[6000];
+		packetBuffer = new short[MAXIMUM_PACKET_LENGTH];
 		packetLength = 0;
 
 		// TODO put matching name grabber here
@@ -304,8 +304,13 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 							}
 						}
 					} else {
-						packetBuffer[packetLength] = uByte; // Store the data as-is for processing later
-						packetLength++;
+						if (packetLength < MAXIMUM_PACKET_LENGTH) {
+							packetBuffer[packetLength] = uByte; // Store the data as-is for processing later
+							packetLength++;
+						} else {
+							startFound = false;
+							packetsOverLength++;
+						}
 					}
 				} else {
 					strayBytesLost++;
