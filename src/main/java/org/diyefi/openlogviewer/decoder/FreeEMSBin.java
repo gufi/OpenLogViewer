@@ -97,6 +97,28 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 		"DF-Spare-7"
 	};
 
+	private static String[] ignitionLimiterFlagsNames = {
+		"LIG-RPM",
+		"LIG-OverBoost",
+		"LIG-Spare0",
+		"LIG-Spare1",
+		"LIG-Spare2",
+		"LIG-Spare3",
+		"LIG-Spare4",
+		"LIG-Spare5"
+	};
+
+	private static String[] injectionLimiterFlagsNames = {
+		"LIN-RPM",
+		"LIN-OverBoost",
+		"LIN-Spare0",
+		"LIN-Spare1",
+		"LIN-Spare2",
+		"LIN-Spare3",
+		"LIN-Spare4",
+		"LIN-Spare5"
+	};
+
 	private static String[] flaggableFlagsNames = {
 		"FF-callsToUISRs",               // to ensure we aren't accidentally triggering unused ISRs.
 		"FF-lowVoltageConditions",       // low voltage conditions.
@@ -177,7 +199,9 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 		new LogField("zsp4"),  // Spare US variable
 		new LogField("zsp3"),  // Spare US variable
 		new LogField("clockInMilliSeconds"),       // Migrate to start of all large datalogs once analysed
-		new LogField("clock8thMSsInMillis", 8) // Migrate to start of all large datalogs once analysed
+		new LogField("clock8thMSsInMillis", 8), // Migrate to start of all large datalogs once analysed
+		new LogField("ignitionLimiterFlags", types.BITS8, ignitionLimiterFlagsNames),
+		new LogField("injectionLimiterFlags", types.BITS8, injectionLimiterFlagsNames)
 	};
 
 	// NO default constructor, a file or path to a file MUST be given
