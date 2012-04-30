@@ -31,14 +31,14 @@
 	</scm>
 
 	<distributionManagement>
-		<downloadUrl>http://beaver.fastcrypt.com:8080/nexus/content/repositories/releases/org/diyefi/openlogviewer/OpenLogViewer/</downloadUrl>
+		<downloadUrl>http://mvn.diyefi.org/nexus/content/repositories/releases/org/diyefi/openlogviewer/OpenLogViewer/</downloadUrl>
 		<repository>
 			<id>freeemsreleases</id>
-			<url>http://beaver.fastcrypt.com:8080/nexus/content/repositories/releases</url>
+			<url>http://mvn.diyefi.org/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>freeemssnapshots</id>
-			<url>http://beaver.fastcrypt.com:8080/nexus/content/repositories/snapshots</url>
+			<url>http://mvn.diyefi.org/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<site>
 	 		<id>olvsite</id>
