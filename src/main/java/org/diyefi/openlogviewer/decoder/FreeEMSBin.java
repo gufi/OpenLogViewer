@@ -141,14 +141,14 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 	// This should be read from a file at some point, as it's going to be flexible. See FreeEMS/src/inc/structs.h for definitive answers.
 	private static LogField[] fields = {
 		// CoreVars struct contents:
-		new LogField("IAT",  100),   // Inlet Air Temperature           : 0.0 -   655.35       (0.01 Kelvin (/100))
-		new LogField("CHT",  100),   // Coolant / Head Temperature      : 0.0 -   655.35       (0.01 Kelvin (/100))
+		new LogField("IAT",  100, -273.15),   // Inlet Air Temperature           : 0.0 -   655.35       (0.01 Kelvin (/100))
+		new LogField("CHT",  100, -273.15),   // Coolant / Head Temperature      : 0.0 -   655.35       (0.01 Kelvin (/100))
 		new LogField("TPS",  640),   // Throttle Position Sensor        : 0.0 -   102.398438   (0.0015625 % (/640))
 		new LogField("EGO",  32768), // Exhaust Gas Oxygen              : 0.0 -     1.99996948 (0.0000305175781 lambda (/32768))
 		new LogField("MAP",  100),   // Manifold Absolute Pressure      : 0.0 -   655.35       (0.01 kPa (/100))
 		new LogField("AAP",  100),   // Atmospheric Absolute Pressure   : 0.0 -   655.35       (0.01 kPa (/100))
 		new LogField("BRV",  1000),  // Battery Reference Voltage       : 0.0 -    65.535      (0.001 Volts (/1000))
-		new LogField("MAT",  100),   // Manifold Air Temperature        : 0.0 -   655.35       (0.01 Kelvin (/100))
+		new LogField("MAT",  100, -273.15),   // Manifold Air Temperature        : 0.0 -   655.35       (0.01 Kelvin (/100))
 		new LogField("EGO2", 32768), // Exhaust Gas Oxygen              : 0.0 -     1.99996948 (0.0000305175781 lambda (/32768))
 		new LogField("IAP",  100),   // Intercooler Absolute Pressure   : 0.0 -   655.35       (0.01 kPa (/100))
 		new LogField("MAF"),         // Mass Air Flow                   : 0.0 - 65535.0        (raw units from lookup)
