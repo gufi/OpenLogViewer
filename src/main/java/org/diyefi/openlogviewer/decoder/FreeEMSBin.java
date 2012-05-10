@@ -165,7 +165,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 		new LogField("AirFlow"),                // raw intermediate, remove
 		new LogField("densityAndFuel"),         // raw intermediate, remove
 		new LogField("BasePW", 1250),           // Raw PW before corrections 0 - ~52ms
-		new LogField("ETE", (100.0 / 32768.0)), // Engine Temperature Enrichment percentage correction 0 - 200%
+		new LogField("ETE", (100.0 / 16384.0)), // Engine Temperature Enrichment percentage correction 0 - 400%
 		new LogField("TFCTotal", 1250),         // Transient fuel correction PW (+/-)  0 - ~52ms
 		new LogField("EffectivePW", 1250),      // Actual PW of fuel delivery 0 - ~52ms
 		new LogField("IDT", 1250),              // PW duration before fuel flow begins 0 - ~52ms
