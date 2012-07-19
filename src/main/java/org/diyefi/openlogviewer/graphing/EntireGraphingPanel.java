@@ -109,26 +109,39 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
-		if (playing) {
-			if(graphPosition < getGraphPositionMax()){
-				if (zoomedOutBeyondOneToOne) {
-					moveGraphPosition(zoom);
+		
+		//Play timer event fires
+		if (e.getSource().equals(playTimer)) {
+			if (playing) {
+				if(graphPosition < getGraphPositionMax()){
+					if (zoomedOutBeyondOneToOne) {
+						moveGraphPosition(zoom);
+					} else {
+						moveGraphPosition(1);
+					}
 				} else {
-					moveGraphPosition(1);
+					pause();
 				}
-			} else {
-				pause();
 			}
-		} else if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
-			if (flingInertia == 0) {
-				stopFlinging();
-			} else {
-				moveEntireGraphingPanel(flingInertia);
-				if (flingInertia > 0) {
-					flingInertia--;
+		}
+		
+		//Fling timer event fires
+		if (e.getSource().equals(flingTimer)) {
+			if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
+				if (flingInertia == 0) {
+					stopFlinging();
 				} else {
-					flingInertia++;
+					moveEntireGraphingPanel(flingInertia);
+					if (flingInertia > 0) {
+						flingInertia--;
+					} else if (flingInertia < 0) {
+						flingInertia++;
+					} else {
+						stopFlinging();
+					}
 				}
+			} else {
+				stopFlinging();
 			}
 		}
 	}
@@ -291,8 +304,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			pause();
 		} else {
 			playing = true;
-			stopDragging();
-			stopFlinging();
 			playTimer.start();
 		}
 	}
@@ -300,18 +311,18 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public final void pause() {
 		playing = false;
 		playTimer.stop();
-		stopDragging();
-		stopFlinging();
 	}
 
 	/**
-	 * Increases the speed of the graph by 1 ms until 0, at which speed cannot be advanced any further and will essentially update as fast as possible.
+	 * Increases the speed of the graph exponentially until the delay is zero, at which speed cannot be advanced any further and will essentially update as fast as possible.
 	 */
 	public final void fastForward() {
 		final int currentDelay = playTimer.getDelay();
-		if (currentDelay > 0) {
-			playTimer.setDelay(currentDelay - 1);
+		int newDelay = currentDelay - (currentDelay/6) - 1;
+		if(newDelay < 0){
+			newDelay = 0;
 		}
+		playTimer.setDelay(newDelay);
 	}
 
 	public final void eject() {
@@ -326,11 +337,15 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
-	 * Slows the speed of playback by 1 ms
+	 * Slows the speed of playback (exponentially)
 	 */
 	public final void slowDown() {
 		final int currentDelay = playTimer.getDelay();
-		playTimer.setDelay(currentDelay + 1);
+		int newDelay = currentDelay + (currentDelay/6) + 1;
+		if(newDelay > Integer.MAX_VALUE){
+			newDelay = Integer.MAX_VALUE;
+		}
+		playTimer.setDelay(newDelay);
 	}
 
 	public final void fling() {
@@ -487,6 +502,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private void stopFlinging() {
 		flinging = false;
 		flingInertia = 0;
+		flingTimer.stop();
 	}
 
 	// Mouse listener functionality

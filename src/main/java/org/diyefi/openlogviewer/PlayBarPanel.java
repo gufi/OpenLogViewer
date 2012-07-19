@@ -129,7 +129,7 @@ public class PlayBarPanel extends JPanel {
 		slowDownButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				reverseButtonMouseReleased(e);
+				slowDownButtonMouseReleased(e);
 			}
 		});
 		this.add(slowDownButton);
@@ -281,7 +281,7 @@ public class PlayBarPanel extends JPanel {
 	 * Slows down the play back speed of the Playable Log
 	 * @param evt
 	 */
-	private void reverseButtonMouseReleased(final MouseEvent e) {
+	private void slowDownButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().slowDown();
 	}
 
