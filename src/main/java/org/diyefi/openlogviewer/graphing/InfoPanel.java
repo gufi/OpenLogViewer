@@ -42,10 +42,6 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 	private static final int LEFT_MARGIN_OFFSET = 10;
 	private static final int ONE_TEXTUAL_HEIGHT = 20;
-	private int FPScounter = 0;
-	private int FPS = 0;
-	private long currentTime;
-	private long builtTime;
 	private GenericLog genLog;
 	private Color vertBar = new Color(255, 255, 255, 100);
 	private Color textBackground = new Color(0, 0, 0, 170);
@@ -62,18 +58,6 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 	@Override
 	public final void paint(final Graphics g) { // override paint because there will be no components in this pane
-		builtTime += System.currentTimeMillis() - currentTime;
-		currentTime = System.currentTimeMillis();
-		if (builtTime <= 1000) {
-			FPScounter++;
-		} else {
-			FPS = FPScounter;
-			if (FPScounter != 0) {
-				FPS += (1000 % FPScounter) * 0.001;
-			}
-			FPScounter = 0;
-			builtTime = 0;
-		}
 
 		if (!this.getSize().equals(this.getParent().getSize())) {
 			this.setSize(this.getParent().getSize());
@@ -88,22 +72,16 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				g.setColor(Color.red);
 				g.drawString("Loading log, please wait...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
-				int fpsHeight = 0;
 				if (genLog.getLogStatusMessage() != null) {
 					g.setColor(Color.RED);
 					g.drawString(":-( The very sad decoder crashed! Last words: ", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 					g.drawString(genLog.getLogStatusMessage(), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 2);
 					g.drawString("Displaying what we managed to read in before the catastrophy anyway...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 3);
-					fpsHeight = ONE_TEXTUAL_HEIGHT * 4;
-				} else {
-					fpsHeight = ONE_TEXTUAL_HEIGHT;
 				}
 
 				final Dimension d = this.getSize();
 				final MultiGraphLayeredPane multigGraph = OpenLogViewer.getInstance().getMultiGraphLayeredPane();
 				final Graphics2D g2d = (Graphics2D) g;
-				g.setColor(Color.GRAY);
-				g2d.drawString("FPS: " + Double.toString(FPS), LEFT_MARGIN_OFFSET, fpsHeight);
 
 				if (mouseOver) {
 					final FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width

@@ -112,7 +112,7 @@ public final class OpenLogViewer extends JFrame {
 
 	private JPanel mainPanel;
 	private EntireGraphingPanel graphingPanel;
-	private PlayBarPanel playBar;
+	private FooterPanel footerPanel;
 	private OptionFrameV2 optionFrame;
 	private PropertiesPane prefFrame;
 	private KeyboardFocusController keyboardFocusController;
@@ -133,7 +133,7 @@ public final class OpenLogViewer extends JFrame {
 		properties = new ArrayList<SingleProperty>();
 		prefFrame.setProperties(properties);
 
-		playBar = new PlayBarPanel();
+		footerPanel = new FooterPanel();
 		optionFrame = new OptionFrameV2();
 		graphingPanel = new EntireGraphingPanel();
 		graphingPanel.setPreferredSize(new Dimension(600, 420));
@@ -147,7 +147,7 @@ public final class OpenLogViewer extends JFrame {
 		mainPanel.setName("mainPanel");
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(graphingPanel, BorderLayout.CENTER);
-		mainPanel.add(playBar, BorderLayout.SOUTH);
+		mainPanel.add(footerPanel, BorderLayout.SOUTH);
 		this.add(mainPanel, BorderLayout.CENTER);
 
 		keyboardFocusController = new KeyboardFocusController();

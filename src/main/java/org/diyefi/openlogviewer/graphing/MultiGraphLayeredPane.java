@@ -35,6 +35,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	private GenericLog genLog;
 	private InfoPanel infoPanel;
 	private int totalSplits;
+	private int layer;
 
 	public MultiGraphLayeredPane() {
 		super();
@@ -42,10 +43,12 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	}
 
 	private void init() {
+		layer = 0;
 		totalSplits = 1;
+
 		infoPanel = new InfoPanel();
 		infoPanel.setSize(400, 600);
-		this.setLayer(infoPanel, 99);
+		this.setLayer(infoPanel, layer++);
 		this.setBackground(Color.BLACK);
 		this.setOpaque(true);
 		this.add(infoPanel);
@@ -70,6 +73,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			final SingleGraphPanel graph = new SingleGraphPanel();
 			graph.setSize(this.getSize());
 			graph.setName(header);
+			this.setLayer(graph, layer++);
 			this.add(graph);
 			this.addHierarchyBoundsListener(graph); // updates graph size automatically
 			genLog.get(header).addPropertyChangeListener("Split", graph);
@@ -98,7 +102,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 
 	private void removeAllGraphs() {
 		int componentIndex = 0;
-		while (this.getComponentCount() > 1) {  // Leave InfoPanel in component count
+		while (this.getComponentCount() > 2) {  // Leave InfoPanel and FramesPerSecondPanel in component count
 			if (this.getComponent(componentIndex) instanceof SingleGraphPanel) {
 				this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(componentIndex));
 				this.remove(getComponent(componentIndex));
