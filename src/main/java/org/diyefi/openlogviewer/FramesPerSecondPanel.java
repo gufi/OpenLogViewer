@@ -36,15 +36,15 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final int PREFERRED_WIDTH = 80;
 	private static final int PPREFERRED_HEIGHT = 40;
-	private static final int SAMPLE_WINDOW = 250; //milliseconds - changes display/update speed
+	private static final int TIMER_RATE = 250; //milliseconds - changes display/update speed
 	private static final DecimalFormat df = new DecimalFormat("#,##0.0");
 
 	private JLabel output;
 	private Timer sampleTimer;
-	private static long frames;
+	private static long frameCount;
 	private Double FPS;
-	private double samplesPerSecond;
-	private long thePast;
+	private long sampleWindow;
+	private static long thePast;
 	private static long currentTime;
 
 	public FramesPerSecondPanel() {
@@ -53,12 +53,15 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	}
 
 	private void init() {
-		frames = 0;
-		sampleTimer = new Timer(SAMPLE_WINDOW, this);
+		frameCount = 0L;
+		sampleWindow = 0L;
+		FPS = 0d;
+		
+		sampleTimer = new Timer(TIMER_RATE, this);
 		sampleTimer.setInitialDelay(0);
 		sampleTimer.start();
-		thePast = System.currentTimeMillis();
-		currentTime = thePast;
+		currentTime = System.currentTimeMillis();
+		thePast = currentTime;
 
 		this.setName("fpsPanel");
 		this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PPREFERRED_HEIGHT));
@@ -71,21 +74,23 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	}
 
 	public static void increaseFrameCount(){
-		frames++;
 		currentTime = System.currentTimeMillis();
+		frameCount++;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		samplesPerSecond = 1000.0 / (currentTime - thePast);
-		FPS = frames * samplesPerSecond;
-		if(FPS.isNaN() || FPS.isInfinite() || frames == 0){
-			output.setText("FPS: 0.0");
-		} else {
+		if (e.getSource().equals(sampleTimer)) {
+			sampleWindow = currentTime - thePast;
+			if (sampleWindow == 0L) { // Avoid division by zero
+				FPS = 0d;
+			} else {
+				FPS = ((double)frameCount / (double)sampleWindow) * 1000d;
+			}
 			output.setText("FPS: " + df.format(FPS));
+			frameCount = 0L;
+			thePast = currentTime;
 		}
-		frames = 0;
-		thePast = System.currentTimeMillis();
 	}
 
 }
