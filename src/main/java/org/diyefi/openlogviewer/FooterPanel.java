@@ -41,7 +41,6 @@ public class FooterPanel extends JPanel {
 		setName("footerPanel");
 		setLayout(new BorderLayout());
 		fpsPanel = new FramesPerSecondPanel();
-		fpsPanel.setSize(60, 40);
 		this.add(fpsPanel, BorderLayout.WEST);
 		playBarPanel = new PlayBarPanel();
 		this.add(playBarPanel, BorderLayout.EAST);

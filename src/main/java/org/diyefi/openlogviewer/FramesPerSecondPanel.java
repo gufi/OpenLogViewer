@@ -34,14 +34,15 @@ import javax.swing.Timer;
 
 public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private static final int PREFERRED_WIDTH = 60;
+	private static final int PREFERRED_WIDTH = 80;
 	private static final int PPREFERRED_HEIGHT = 40;
 	private static final int SAMPLE_WINDOW = 250; //milliseconds - changes display/update speed
+	private static final DecimalFormat df = new DecimalFormat("#,##0.0");
 
 	private JLabel output;
 	private Timer sampleTimer;
 	private static long frames;
-	private double FPS;
+	private Double FPS;
 	private double samplesPerSecond;
 	private long thePast;
 	private static long currentTime;
@@ -59,11 +60,11 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 		thePast = System.currentTimeMillis();
 		currentTime = thePast;
 
-		this.setName("this");
+		this.setName("fpsPanel");
 		this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PPREFERRED_HEIGHT));
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-		output = new JLabel("FPS: ");
+		output = new JLabel("FPS: 0.0");
 		output.setVerticalTextPosition(JLabel.CENTER);
 		output.setHorizontalTextPosition(JLabel.CENTER);
 		this.add(output);
@@ -78,11 +79,13 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		samplesPerSecond = 1000.0 / (currentTime - thePast);
 		FPS = frames * samplesPerSecond;
+		if(FPS.isNaN() || FPS.isInfinite() || frames == 0){
+			output.setText("FPS: 0.0");
+		} else {
+			output.setText("FPS: " + df.format(FPS));
+		}
 		frames = 0;
 		thePast = System.currentTimeMillis();
-
-		DecimalFormat df = new DecimalFormat("#.0");
-		output.setText("FPS: " + df.format(FPS));
 	}
 
 }
