@@ -252,7 +252,7 @@ public class GraphPositionPanel extends JPanel {
 
 	public final int getBestSnappingPosition(final int xMouseCoord) {
 		int bestPosition = xMouseCoord;
-		if (!validSnappingPositions[xMouseCoord]) {
+		if (xMouseCoord < validSnappingPositions.length && !validSnappingPositions[xMouseCoord]) {
 			boolean found = false;
 			final int startPosition = xMouseCoord;
 			for (int distance = 1; !found; distance++) {
