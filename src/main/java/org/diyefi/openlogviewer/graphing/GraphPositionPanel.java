@@ -31,6 +31,7 @@ import java.math.MathContext;
 
 import javax.swing.JPanel;
 
+import org.diyefi.openlogviewer.FramesPerSecondPanel;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -85,6 +86,7 @@ public class GraphPositionPanel extends JPanel {
 				paintPositionData(g2d, zoomedOut);
 			}
 		}
+		FramesPerSecondPanel.increaseFrameCount();
 	}
 
 	private void paintPositionBar(final Graphics2D g2d, final boolean zoomedOut) {

@@ -40,7 +40,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import org.diyefi.openlogviewer.FramesPerSecondPanel;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -381,7 +380,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	public final void setGraphPosition(final double newPos) {
 		graphPosition = newPos;
-		FramesPerSecondPanel.increaseFrameCount();
 		repaint();
 	}
 
@@ -793,4 +791,5 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
 		// Fred says thanks! :-)
 	}
+
 }
