@@ -36,27 +36,19 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final int PREFERRED_WIDTH = 80;
 	private static final int PPREFERRED_HEIGHT = 40;
-	private static final int TIMER_RATE = 250; //milliseconds - changes display/update speed
+	private static final int TIMER_RATE = 1234; //milliseconds - changes display/update speed
 	private static final DecimalFormat df = new DecimalFormat("#,##0.0");
 
 	private JLabel output;
 	private Timer sampleTimer;
 	private static long frameCount;
 	private Double FPS;
-	private long sampleWindow;
 	private static long thePast;
 	private static long currentTime;
+	private static long previousCount;
 
 	public FramesPerSecondPanel() {
 		super();
-		init();
-	}
-
-	private void init() {
-		frameCount = 0L;
-		sampleWindow = 0L;
-		FPS = 0d;
-		
 		sampleTimer = new Timer(TIMER_RATE, this);
 		sampleTimer.setInitialDelay(0);
 		sampleTimer.start();
@@ -81,14 +73,15 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(sampleTimer)) {
-			sampleWindow = currentTime - thePast;
+			final long sampleWindow = currentTime - thePast;
+			final long sampleCount = frameCount - previousCount;
 			if (sampleWindow == 0L) { // Avoid division by zero
 				FPS = 0d;
 			} else {
-				FPS = ((double)frameCount / (double)sampleWindow) * 1000d;
+				FPS = ((double)sampleCount / (double)sampleWindow) * 1000d;
 			}
 			output.setText("FPS: " + df.format(FPS));
-			frameCount = 0L;
+			previousCount = frameCount;
 			thePast = currentTime;
 		}
 	}
