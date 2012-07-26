@@ -186,7 +186,7 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				prefFrame.setVisible(true);
-				prefFrame.setAlwaysOnTop(true);
+				prefFrame.setAlwaysOnTop(true);  //Used to bring panel to top
 				prefFrame.setAlwaysOnTop(false);
 			}
 		});
@@ -197,7 +197,7 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				optionFrame.setVisible(true);
-				optionFrame.setAlwaysOnTop(true);
+				optionFrame.setAlwaysOnTop(true); //Used to bring panel to top
 				optionFrame.setAlwaysOnTop(false);
 			}
 		});
@@ -229,16 +229,17 @@ public final class OpenLogViewer extends JFrame {
 		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
-		setJMenuBar(menuBar);
+		this.setJMenuBar(menuBar);
 
 		this.addKeyListener(graphingPanel);
 		this.addComponentListener(graphingPanel);
+
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
 
-		pack();
-		setName(APP_NAME);
-		requestFocusInWindow();
-		setVisible(true);
+		this.pack();
+		this.setName(APP_NAME);
+		this.requestFocusInWindow();
+		this.setVisible(true);
 	}
 
 	/**

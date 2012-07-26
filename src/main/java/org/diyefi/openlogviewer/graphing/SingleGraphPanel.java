@@ -55,8 +55,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private int graphEndingIndex;
 
 	public SingleGraphPanel() {
+		super();
 		this.setOpaque(false);
 		this.setLayout(null);
+
 		this.GDE = null;
 		dataPointsToDisplay = null;
 		dataPointRangeInfo = null;
@@ -83,7 +85,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	@Override
-	public final void paint(final Graphics g) { // overridden paint because there will be no other painting other than this
+	public final void paintComponent(final Graphics g) {
+		super.paintComponent(g);
+
+		if (!this.getSize().equals(this.getParent().getSize())) {
+			this.setSize(this.getParent().getSize());
+		}
+
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		if (zoomedOut) {
 			initGraphZoomedOut();

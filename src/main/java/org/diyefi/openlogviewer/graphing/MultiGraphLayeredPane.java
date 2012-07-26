@@ -23,6 +23,7 @@
 package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
+
 import javax.swing.JLayeredPane;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
@@ -43,14 +44,16 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	}
 
 	private void init() {
-		layer = 0;
+		this.setOpaque(true);
+		this.setLayout(null);
+		this.setBackground(Color.BLACK);
+
+		layer = 999;
 		totalSplits = 1;
 
 		infoPanel = new InfoPanel();
-		infoPanel.setSize(400, 600);
-		this.setLayer(infoPanel, layer++);
-		this.setBackground(Color.BLACK);
-		this.setOpaque(true);
+		infoPanel.setSize(600, 400);
+		this.setLayer(infoPanel, new Integer(layer--));
 		this.add(infoPanel);
 	}
 
@@ -73,19 +76,23 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			final SingleGraphPanel graph = new SingleGraphPanel();
 			graph.setSize(this.getSize());
 			graph.setName(header);
-			this.setLayer(graph, layer++);
+			this.setLayer(graph, new Integer(layer--));
 			this.add(graph);
 			this.addHierarchyBoundsListener(graph); // updates graph size automatically
 			genLog.get(header).addPropertyChangeListener("Split", graph);
 			graph.setData(genLog.get(header));
+			graph.repaint();
 		}
+
+		this.revalidate();
+		this.repaint();
 
 		if (p) {
 			OpenLogViewer.getInstance().getEntireGraphingPanel().play();
 		}
 	}
 
-	public final boolean removeGraph(final String header) {
+	public final void removeGraph(final String header) {
 		final GenericDataElement temp = genLog.get(header);
 		for (int i = 0; i < this.getComponentCount(); i++) {
 			if (this.getComponent(i) instanceof SingleGraphPanel) {
@@ -93,11 +100,11 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 				if (t.getData() == temp) {
 					this.remove(t);
 					this.removeHierarchyBoundsListener(t);
-					return true;
+					this.revalidate();
+					this.repaint();
 				}
 			}
 		}
-		return false;
 	}
 
 	private void removeAllGraphs() {

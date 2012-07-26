@@ -50,14 +50,17 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private boolean mouseOver;
 
 	public InfoPanel() {
+		super();
+		this.setOpaque(false);
+
 		xMouseCoord = -100;
 		yMouseCoord = -100;
 		mouseOver = false;
-		this.setOpaque(false);
 	}
 
 	@Override
-	public final void paint(final Graphics g) { // override paint because there will be no components in this pane
+	public final void paintComponent(final Graphics g) {
+		super.paintComponent(g);
 
 		if (!this.getSize().equals(this.getParent().getSize())) {
 			this.setSize(this.getParent().getSize());
@@ -115,7 +118,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 	public final void setLog(final GenericLog log) {
 		genLog = log;
-		repaint();
+		this.repaint();
 	}
 
 	@Override
@@ -126,14 +129,14 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	@Override
 	public final void mouseExited(final MouseEvent e) {
 		mouseOver = false;
-		repaint();
+		this.repaint();
 	}
 
 	@Override
 	public final void mouseMoved(final MouseEvent e) {
 		xMouseCoord = e.getX();
 		yMouseCoord = e.getY();
-		repaint();
+		this.repaint();
 	}
 
 	@Override

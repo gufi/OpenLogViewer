@@ -54,19 +54,23 @@ public class GraphPositionPanel extends JPanel {
 	private void init() {
 		this.setOpaque(true);
 		this.setLayout(null);
+		backgroundColor = Color.BLACK;
+
 		majorGraduationColor = Color.GRAY;
 		positionDataColor = majorGraduationColor;
-		backgroundColor = Color.BLACK;
 		validSnappingPositions = new boolean[this.getWidth()];
 		graduationSpacingMultiplier = new double[] {2.0, 2.5, 2.0};
 		setGraduationSpacing();
 	}
 
 	@Override
-	public final void paint(final Graphics g) { // override paint because there will be no components in this pane
+	public final void paintComponent(final Graphics g) {
+		super.paintComponent(g);
+
 		if (!this.getSize().equals(this.getParent().getSize())) {
 			this.setSize(this.getParent().getSize());
 		}
+
 		setGraduationSpacing();
 		final Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(backgroundColor);

@@ -22,6 +22,7 @@
  */
 package org.diyefi.openlogviewer.graphing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -76,14 +77,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	private void init() {
-		this.setName("Graphing Panel");
-		this.setLayout(new java.awt.BorderLayout());
+		this.setName("graphinPanel");
+		this.setLayout(new BorderLayout());
 		multiGraph = new MultiGraphLayeredPane();
 		multiGraph.setPreferredSize(new Dimension(600, 400));
-		this.add(multiGraph, java.awt.BorderLayout.CENTER);
+		this.add(multiGraph, BorderLayout.CENTER);
 		graphPositionPanel = new GraphPositionPanel();
 		graphPositionPanel.setPreferredSize(new Dimension(600, 20));
-		this.add(graphPositionPanel, java.awt.BorderLayout.SOUTH);
+		this.add(graphPositionPanel, BorderLayout.SOUTH);
 		zoom = 1;
 		zoomedOutBeyondOneToOne = false;
 		oldComponentWidth = this.getWidth();

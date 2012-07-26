@@ -645,13 +645,12 @@ public class OptionFrameV2 extends JFrame {
 		private void addRemGraph() {
 			if (selected) {
 				this.setForeground(GDE.getDisplayColor());
-				this.repaint();
 				OpenLogViewer.getInstance().getMultiGraphLayeredPane().addGraph(this.getName());
+				this.repaint();
 			} else {
 				this.setForeground(GDE.getDisplayColor().darker().darker());
-				if (OpenLogViewer.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName())) {
-					OpenLogViewer.getInstance().getMultiGraphLayeredPane().repaint();
-				}
+				OpenLogViewer.getInstance().getMultiGraphLayeredPane().removeGraph(this.getName());
+				this.repaint();
 			}
 		}
 
