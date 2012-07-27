@@ -537,6 +537,10 @@ public final class OpenLogViewer extends JFrame {
 		return mainAppRef;
 	}
 
+	public NavBarPanel getNavBarPanel() {
+		return footerPanel.getNavBarPanel();
+	}
+
 	public EntireGraphingPanel getEntireGraphingPanel() {
 		return graphingPanel;
 	}

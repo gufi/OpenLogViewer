@@ -41,12 +41,10 @@ public class NavBarPanel extends JPanel {
 	private JButton zoomInButton;
 	private JButton zoomResetButton;
 	private JButton zoomOutButton;
-	private JButton playButton;
+	private JButton pausePlayButton;
 	private JButton slowDownButton;
-	private JButton stopButton;
 	private JButton ejectButton;
 	private JButton speedUpButton;
-	private JButton pauseButton;
 
 	public NavBarPanel() {
 		super();
@@ -54,9 +52,7 @@ public class NavBarPanel extends JPanel {
 		zoomResetButton = new JButton();
 		zoomOutButton = new JButton();
 		slowDownButton = new JButton();
-		playButton = new JButton();
-		pauseButton = new JButton();
-		stopButton = new JButton();
+		pausePlayButton = new JButton();
 		speedUpButton = new JButton();
 		ejectButton = new JButton();
 		initComponents();
@@ -128,50 +124,20 @@ public class NavBarPanel extends JPanel {
 		});
 		this.add(slowDownButton);
 
-		playButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
-		playButton.setAlignmentY(0.0F);
-		playButton.setBorder(null);
-		playButton.setBorderPainted(false);
-		playButton.setContentAreaFilled(false);
-		playButton.setName("playButton");
-		playButton.setRequestFocusEnabled(false);
-		playButton.addMouseListener(new MouseAdapter() {
+		pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
+		pausePlayButton.setAlignmentY(0.0F);
+		pausePlayButton.setBorder(null);
+		pausePlayButton.setBorderPainted(false);
+		pausePlayButton.setContentAreaFilled(false);
+		pausePlayButton.setName("pausePlayButton");
+		pausePlayButton.setRequestFocusEnabled(false);
+		pausePlayButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				playButtonMouseReleased(e);
+				pausePlayButtonMouseReleased(e);
 			}
 		});
-		this.add(playButton);
-
-		pauseButton.setIcon(new ImageIcon(getClass().getResource("pause.png"))); // NOI18N
-		pauseButton.setAlignmentY(0.0F);
-		pauseButton.setBorder(null);
-		pauseButton.setBorderPainted(false);
-		pauseButton.setContentAreaFilled(false);
-		pauseButton.setName("pauseButton");
-		pauseButton.setRequestFocusEnabled(false);
-		pauseButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				pauseButtonMouseReleased(e);
-			}
-		});
-		this.add(pauseButton);
-
-		stopButton.setIcon(new ImageIcon(getClass().getResource("stop.png"))); // NOI18N
-		stopButton.setAlignmentY(0.0F);
-		stopButton.setBorder(null);
-		stopButton.setBorderPainted(false);
-		stopButton.setContentAreaFilled(false);
-		stopButton.setName("stopButton"); // NOI18N
-		stopButton.setRequestFocusEnabled(false);
-		stopButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				stopButtonMouseReleased(e);
-			}
-		});
-		this.add(stopButton);
+		this.add(pausePlayButton);
 
 		speedUpButton.setIcon(new ImageIcon(getClass().getResource("speedUp.png"))); // NOI18N
 		speedUpButton.setAlignmentY(0.0F);
@@ -202,6 +168,15 @@ public class NavBarPanel extends JPanel {
 			}
 		});
 		this.add(ejectButton);
+	}
+
+	public void updatePausePlayButton(){
+		boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
+		if (playing) {
+			pausePlayButton.setIcon(new ImageIcon(getClass().getResource("pause.png"))); // NOI18N
+		} else {
+			pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
+		}
 	}
 
 	/**
@@ -239,28 +214,17 @@ public class NavBarPanel extends JPanel {
 	}
 
 	/**
-	 * modifys the state of the PlayableLog to begin playing
+	 * Modifies the state of the PlayableLog to begin playing if paused, or pause if playing
 	 * @param evt
 	 */
-	private void playButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().play();
-		OpenLogViewer.getInstance().getEntireGraphingPanel();
-	}
-
-	/**
-	 * Modifys the state of the PlayableLog to pause
-	 * @param evt
-	 */
-	private void pauseButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().pause();
-	}
-
-	/**
-	 * Modifys the state of the PlayableLog to stop and reset to the beginning
-	 * @param evt
-	 */
-	private void stopButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().stop();
+	private void pausePlayButtonMouseReleased(final MouseEvent e) {
+		boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
+		if (playing) {
+			OpenLogViewer.getInstance().getEntireGraphingPanel().pause();
+		} else {
+			OpenLogViewer.getInstance().getEntireGraphingPanel().play();
+		}
+		this.updatePausePlayButton();
 	}
 
 	/**

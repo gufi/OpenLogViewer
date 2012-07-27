@@ -307,11 +307,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			playing = true;
 			playTimer.start();
 		}
+		OpenLogViewer.getInstance().getNavBarPanel().updatePausePlayButton();
 	}
 
 	public final void pause() {
 		playing = false;
 		playTimer.stop();
+		OpenLogViewer.getInstance().getNavBarPanel().updatePausePlayButton();
 	}
 
 	/**
