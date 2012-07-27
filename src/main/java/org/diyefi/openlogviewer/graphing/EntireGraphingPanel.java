@@ -47,10 +47,12 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
 	private static final int BASE_PLAY_SPEED = 10;
+	private static final double COARSE_MOVEMENT_PERCENTAGE = 0.50;
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
+
 
 	private MultiGraphLayeredPane multiGraph;
 	private GraphPositionPanel graphPositionPanel;
@@ -417,7 +419,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph to the right almost an entire display's worth.
 	 */
 	public void moveBackwardCoarse(){
-		moveEntireGraphingPanel(-(this.getWidth() * 0.75));
+		moveEntireGraphingPanel(-(this.getWidth() * COARSE_MOVEMENT_PERCENTAGE));
 	}
 
 	/**
@@ -452,7 +454,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph to the left almost an entire display's worth.
 	 */
 	public void moveForwardCoarse(){
-		moveEntireGraphingPanel(this.getWidth() * 0.75);
+		moveEntireGraphingPanel(this.getWidth() * COARSE_MOVEMENT_PERCENTAGE);
 	}
 
 	/**
