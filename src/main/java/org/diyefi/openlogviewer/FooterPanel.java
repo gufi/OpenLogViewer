@@ -30,7 +30,7 @@ public class FooterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private FramesPerSecondPanel fpsPanel;
-	private PlayBarPanel playBarPanel;
+	private NavBarPanel playBarPanel;
 
 	public FooterPanel() {
 		super();
@@ -42,7 +42,7 @@ public class FooterPanel extends JPanel {
 		setLayout(new BorderLayout());
 		fpsPanel = new FramesPerSecondPanel();
 		this.add(fpsPanel, BorderLayout.WEST);
-		playBarPanel = new PlayBarPanel();
+		playBarPanel = new NavBarPanel();
 		this.add(playBarPanel, BorderLayout.EAST);
 	}
 

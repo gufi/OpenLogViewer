@@ -317,7 +317,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Increases the speed of the graph exponentially until the delay is zero, at which speed cannot be advanced any further and will essentially update as fast as possible.
 	 */
-	public final void fastForward() {
+	public final void speedUp() {
 		final int currentDelay = playTimer.getDelay();
 		int newDelay = currentDelay - (currentDelay/6) - 1;
 		if(newDelay < 0){

@@ -32,11 +32,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class PlayBarPanel extends JPanel {
+public class NavBarPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private static final int PLAY_BAR_PREFERRED_WIDTH = 888;
-	private static final int PLAY_BAR_PREFERRED_HEIGHT = 40;
+	private static final int PREFERRED_WIDTH = 800;
+	private static final int PREFERRED_HEIGHT = 18;
 
 	private JButton zoomInButton;
 	private JButton zoomResetButton;
@@ -45,13 +45,10 @@ public class PlayBarPanel extends JPanel {
 	private JButton slowDownButton;
 	private JButton stopButton;
 	private JButton ejectButton;
-	private JButton fastForwardButton;
+	private JButton speedUpButton;
 	private JButton pauseButton;
 
-	/**
-	 * Default JPanel constructor initializing the playbar buttons
-	 */
-	public PlayBarPanel() {
+	public NavBarPanel() {
 		super();
 		zoomInButton = new JButton();
 		zoomResetButton = new JButton();
@@ -60,20 +57,17 @@ public class PlayBarPanel extends JPanel {
 		playButton = new JButton();
 		pauseButton = new JButton();
 		stopButton = new JButton();
-		fastForwardButton = new JButton();
+		speedUpButton = new JButton();
 		ejectButton = new JButton();
 		initComponents();
 	}
 
-	/**
-	 * Method to control and setup the components of the playbar
-	 */
 	private void initComponents() {
 		this.setName("this");
-		this.setPreferredSize(new Dimension(PLAY_BAR_PREFERRED_WIDTH, PLAY_BAR_PREFERRED_HEIGHT));
+		this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
 		this.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
-		zoomInButton.setIcon(new ImageIcon(getClass().getResource("Playbar_+.png"))); // NOI18N
+		zoomInButton.setIcon(new ImageIcon(getClass().getResource("zoomIn.png"))); // NOI18N
 		zoomInButton.setAlignmentY(0.0F);
 		zoomInButton.setBorder(null);
 		zoomInButton.setBorderPainted(false);
@@ -89,12 +83,12 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(zoomInButton);
 
-		zoomResetButton.setIcon(new ImageIcon(getClass().getResource("Playbar_o.png")));
+		zoomResetButton.setIcon(new ImageIcon(getClass().getResource("zoomReset.png"))); // NOI18N
 		zoomResetButton.setAlignmentY(0.0F);
 		zoomResetButton.setBorder(null);
 		zoomResetButton.setBorderPainted(false);
 		zoomResetButton.setContentAreaFilled(false);
-		zoomResetButton.setName("zoomResetButton");
+		zoomResetButton.setName("zoomResetButton"); // NOI18N
 		zoomResetButton.setRequestFocusEnabled(false);
 		zoomResetButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -104,7 +98,7 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(zoomResetButton);
 
-		zoomOutButton.setIcon(new ImageIcon(getClass().getResource("Playbar_-.png"))); // NOI18N
+		zoomOutButton.setIcon(new ImageIcon(getClass().getResource("zoomOut.png"))); // NOI18N
 		zoomOutButton.setAlignmentY(0.0F);
 		zoomOutButton.setBorder(null);
 		zoomOutButton.setBorderPainted(false);
@@ -119,7 +113,7 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(zoomOutButton);
 
-		slowDownButton.setIcon(new ImageIcon(getClass().getResource("Playbar_01.png"))); // NOI18N
+		slowDownButton.setIcon(new ImageIcon(getClass().getResource("slowDown.png"))); // NOI18N
 		slowDownButton.setAlignmentY(0.0F);
 		slowDownButton.setBorder(null);
 		slowDownButton.setBorderPainted(false);
@@ -134,7 +128,7 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(slowDownButton);
 
-		playButton.setIcon(new ImageIcon(getClass().getResource("Playbar_02.png"))); // NOI18N
+		playButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
 		playButton.setAlignmentY(0.0F);
 		playButton.setBorder(null);
 		playButton.setBorderPainted(false);
@@ -149,7 +143,7 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(playButton);
 
-		pauseButton.setIcon(new ImageIcon(getClass().getResource("Playbar_03.png"))); // NOI18N
+		pauseButton.setIcon(new ImageIcon(getClass().getResource("pause.png"))); // NOI18N
 		pauseButton.setAlignmentY(0.0F);
 		pauseButton.setBorder(null);
 		pauseButton.setBorderPainted(false);
@@ -164,7 +158,7 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(pauseButton);
 
-		stopButton.setIcon(new ImageIcon(getClass().getResource("Playbar_04.png"))); // NOI18N
+		stopButton.setIcon(new ImageIcon(getClass().getResource("stop.png"))); // NOI18N
 		stopButton.setAlignmentY(0.0F);
 		stopButton.setBorder(null);
 		stopButton.setBorderPainted(false);
@@ -179,22 +173,22 @@ public class PlayBarPanel extends JPanel {
 		});
 		this.add(stopButton);
 
-		fastForwardButton.setIcon(new ImageIcon(getClass().getResource("Playbar_05.png"))); // NOI18N
-		fastForwardButton.setAlignmentY(0.0F);
-		fastForwardButton.setBorder(null);
-		fastForwardButton.setBorderPainted(false);
-		fastForwardButton.setContentAreaFilled(false);
-		fastForwardButton.setName("fastForwardButton"); // NOI18N
-		fastForwardButton.setRequestFocusEnabled(false);
-		fastForwardButton.addMouseListener(new MouseAdapter() {
+		speedUpButton.setIcon(new ImageIcon(getClass().getResource("speedUp.png"))); // NOI18N
+		speedUpButton.setAlignmentY(0.0F);
+		speedUpButton.setBorder(null);
+		speedUpButton.setBorderPainted(false);
+		speedUpButton.setContentAreaFilled(false);
+		speedUpButton.setName("speedUpButton"); // NOI18N
+		speedUpButton.setRequestFocusEnabled(false);
+		speedUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				fastForwardButtonMouseReleased(e);
+				speedUpButtonMouseReleased(e);
 			}
 		});
-		this.add(fastForwardButton);
+		this.add(speedUpButton);
 
-		ejectButton.setIcon(new ImageIcon(getClass().getResource("Playbar_06.png"))); // NOI18N
+		ejectButton.setIcon(new ImageIcon(getClass().getResource("eject.png"))); // NOI18N
 		ejectButton.setAlignmentY(0.0F);
 		ejectButton.setBorder(null);
 		ejectButton.setBorderPainted(false);
@@ -273,8 +267,8 @@ public class PlayBarPanel extends JPanel {
 	 * Speeds up the play back speed of the PlayableLog
 	 * @param evt
 	 */
-	private void fastForwardButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().fastForward();
+	private void speedUpButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().speedUp();
 	}
 
 	/**
