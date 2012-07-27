@@ -42,7 +42,8 @@ public class NavBarPanel extends JPanel {
 	private static final int HALF_SPACER_WIDTH = SPACER_WIDTH / 2;
 
 	private JButton zoomInButton;
-	private JButton zoomResetButton;
+	private JButton zoomResetRatioButton;
+	private JButton zoomResetFitButton;
 	private JButton zoomOutButton;
 	private JButton pausePlayButton;
 	private JButton slowDownButton;
@@ -59,7 +60,8 @@ public class NavBarPanel extends JPanel {
 	public NavBarPanel() {
 		super();
 		zoomInButton = new JButton();
-		zoomResetButton = new JButton();
+		zoomResetRatioButton = new JButton();
+		zoomResetFitButton = new JButton();
 		zoomOutButton = new JButton();
 		pausePlayButton = new JButton();
 		slowDownButton = new JButton();
@@ -95,20 +97,35 @@ public class NavBarPanel extends JPanel {
 		});
 		this.add(zoomInButton);
 
-		zoomResetButton.setIcon(new ImageIcon(getClass().getResource("zoomReset.png"))); // NOI18N
-		zoomResetButton.setAlignmentY(0.0F);
-		zoomResetButton.setBorder(null);
-		zoomResetButton.setBorderPainted(false);
-		zoomResetButton.setContentAreaFilled(false);
-		zoomResetButton.setName("zoomResetButton"); // NOI18N
-		zoomResetButton.setRequestFocusEnabled(false);
-		zoomResetButton.addMouseListener(new MouseAdapter() {
+		zoomResetRatioButton.setIcon(new ImageIcon(getClass().getResource("zoomResetRatio.png"))); // NOI18N
+		zoomResetRatioButton.setAlignmentY(0.0F);
+		zoomResetRatioButton.setBorder(null);
+		zoomResetRatioButton.setBorderPainted(false);
+		zoomResetRatioButton.setContentAreaFilled(false);
+		zoomResetRatioButton.setName("zoomResetRatioButton"); // NOI18N
+		zoomResetRatioButton.setRequestFocusEnabled(false);
+		zoomResetRatioButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomResetButtonMouseReleased(e);
+				zoomResetRatioButtonMouseReleased(e);
 			}
 		});
-		this.add(zoomResetButton);
+		this.add(zoomResetRatioButton);
+
+		zoomResetFitButton.setIcon(new ImageIcon(getClass().getResource("zoomResetFit.png"))); // NOI18N
+		zoomResetFitButton.setAlignmentY(0.0F);
+		zoomResetFitButton.setBorder(null);
+		zoomResetFitButton.setBorderPainted(false);
+		zoomResetFitButton.setContentAreaFilled(false);
+		zoomResetFitButton.setName("zoomResetFitButton"); // NOI18N
+		zoomResetFitButton.setRequestFocusEnabled(false);
+		zoomResetFitButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				zoomResetFitButtonMouseReleased(e);
+			}
+		});
+		this.add(zoomResetFitButton);
 
 		zoomOutButton.setIcon(new ImageIcon(getClass().getResource("zoomOut.png"))); // NOI18N
 		zoomOutButton.setAlignmentY(0.0F);
@@ -313,7 +330,7 @@ public class NavBarPanel extends JPanel {
 	 * Modify the state of the PlayableLog zoom to exactly 1
 	 * @param evt
 	 */
-	private void zoomResetButtonMouseReleased(final MouseEvent e) {
+	private void zoomResetRatioButtonMouseReleased(final MouseEvent e) {
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		if (zoomedOut) {
@@ -325,6 +342,14 @@ public class NavBarPanel extends JPanel {
 				OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOut();
 			}
 		}
+	}
+
+	/**
+	 * Modify the state of the PlayableLog zoom to exactly 1
+	 * @param evt
+	 */
+	private void zoomResetFitButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomGraphToFit();
 	}
 
 	/**

@@ -269,7 +269,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * the left and right of the graph so the user will
 	 * know they are seeing the entire graph trace.
 	 */
-	private void zoomGraphToFit(final int dataPointsToFit) {
+	public void zoomGraphToFit(final int dataPointsToFit) {
 		final int graphWindowWidth = this.getWidth() - 8; //Remove 4 pixels per side.
 		int dataPointsThatFitInDisplay = 0;
 		if (zoomedOutBeyondOneToOne) {
@@ -297,6 +297,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				dataPointsThatFitInDisplay =  graphWindowWidth / zoom;
 			}
 		}
+	}
+
+	/**
+	 * Used by external sources that don't know or care about the size of the graph.
+	 */
+	public void zoomGraphToFit() {
+		zoomGraphToFit(graphSize);
 	}
 
 	public final boolean isZoomedOutBeyondOneToOne() {
