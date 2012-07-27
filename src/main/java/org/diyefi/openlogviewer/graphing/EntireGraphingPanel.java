@@ -46,6 +46,7 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, ComponentListener {
 	private static final long serialVersionUID = 1L;
+	private static final int BASE_PLAY_SPEED = 10;
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
@@ -92,7 +93,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		setGraphSize(0);
 		playing = false;
 		wasPlaying = false;
-		playTimer = new Timer(10, this);
+		playTimer = new Timer(BASE_PLAY_SPEED, this);
 		playTimer.setInitialDelay(0);
 		flingTimer = new Timer(10, this);
 		flingTimer.setInitialDelay(0);
@@ -329,7 +330,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void eject() {
-		resetGraphPosition();
+		//resetGraphPosition();
 	}
 
 	public final void stop() {
@@ -349,6 +350,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			newDelay = Integer.MAX_VALUE;
 		}
 		playTimer.setDelay(newDelay);
+	}
+
+	/**
+	 * Resets the speed of playback to the original speed
+	 */
+	public final void resetPlaySpeed() {
+		playTimer.setDelay(BASE_PLAY_SPEED);
 	}
 
 	public final void fling() {
@@ -401,8 +409,15 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph to the right so that only one valid
 	 * data point shows on the right-most part of the display.
 	 */
-	private void resetGraphPosition() {
+	public void resetGraphPosition() {
 		setGraphPosition(getGraphPositionMin());
+	}
+
+	/**
+	 * Move the graph to the right almost an entire display's worth.
+	 */
+	public void moveBackwardCoarse(){
+		moveEntireGraphingPanel(-(this.getWidth() * 0.75));
 	}
 
 	/**
@@ -427,10 +442,24 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
+	 * Used by external sources that don't know or care about the size of the graph.
+	 */
+	public void centerGraphPosition(){
+		centerGraphPosition(0, graphSize);
+	}
+	
+	/**
+	 * Move the graph to the left almost an entire display's worth.
+	 */
+	public void moveForwardCoarse(){
+		moveEntireGraphingPanel(this.getWidth() * 0.75);
+	}
+
+	/**
 	 * Move the graph to the left so that only one valid
 	 * data point shows on the left-most part of the display.
 	 */
-	private void goToLastGraphPosition() {
+	public void goToLastGraphPosition() {
 		setGraphPosition(getGraphPositionMax());
 	}
 
@@ -668,8 +697,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			// Scroll left key bindings
 			case KeyEvent.VK_PAGE_UP: {
-				//Big scroll
-				moveEntireGraphingPanel(-(this.getWidth() * 0.75));
+				moveBackwardCoarse();
 				break;
 			}
 
@@ -680,8 +708,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					localZoom = 1;
 				}
 				if (e.isControlDown()) {
-					//Big scroll
-					moveEntireGraphingPanel(-(this.getWidth() * 0.75));
+					moveBackwardCoarse();
 				} else {
 					final long now = System.currentTimeMillis();
 					final long delay = now - thePastLeftArrow;
@@ -699,8 +726,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			// Scroll right key bindings
 			case KeyEvent.VK_PAGE_DOWN: {
-				//Big scroll
-				moveEntireGraphingPanel(this.getWidth() * 0.75);
+				moveForwardCoarse();
 				break;
 			}
 
@@ -711,8 +737,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					localZoom = 1;
 				}
 				if (e.isControlDown()) {
-					//Big scroll
-					moveEntireGraphingPanel(this.getWidth() * 0.75);
+					moveForwardCoarse();
 				} else {
 					final long now = System.currentTimeMillis();
 					final long delay = now - thePastRightArrow;

@@ -28,6 +28,7 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -37,29 +38,44 @@ public class NavBarPanel extends JPanel {
 
 	private static final int PREFERRED_WIDTH = 800;
 	private static final int PREFERRED_HEIGHT = 18;
+	private static final int SPACER_WIDTH = 16;
+	private static final int HALF_SPACER_WIDTH = SPACER_WIDTH / 2;
 
 	private JButton zoomInButton;
 	private JButton zoomResetButton;
 	private JButton zoomOutButton;
 	private JButton pausePlayButton;
 	private JButton slowDownButton;
-	private JButton ejectButton;
+	private JButton resetPlaySpeedButton;
 	private JButton speedUpButton;
+	private JButton moveToBeginningButton;
+	private JButton moveBackwardCoarseButton;
+	private JButton moveToCenterButton;
+	private JButton moveForwardCoarseButton;
+	private JButton moveToEndButton;
+	private JButton ejectButton;
+
 
 	public NavBarPanel() {
 		super();
 		zoomInButton = new JButton();
 		zoomResetButton = new JButton();
 		zoomOutButton = new JButton();
-		slowDownButton = new JButton();
 		pausePlayButton = new JButton();
+		slowDownButton = new JButton();
+		resetPlaySpeedButton = new JButton();
 		speedUpButton = new JButton();
+		moveToBeginningButton = new JButton();
+		moveBackwardCoarseButton = new JButton();
+		moveToCenterButton = new JButton();
+		moveForwardCoarseButton = new JButton();
+		moveToEndButton = new JButton();
 		ejectButton = new JButton();
 		initComponents();
 	}
 
 	private void initComponents() {
-		this.setName("this");
+		this.setName("navBarPanel");
 		this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
 		this.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
@@ -109,20 +125,7 @@ public class NavBarPanel extends JPanel {
 		});
 		this.add(zoomOutButton);
 
-		slowDownButton.setIcon(new ImageIcon(getClass().getResource("slowDown.png"))); // NOI18N
-		slowDownButton.setAlignmentY(0.0F);
-		slowDownButton.setBorder(null);
-		slowDownButton.setBorderPainted(false);
-		slowDownButton.setContentAreaFilled(false);
-		slowDownButton.setName("slowDownButton");
-		slowDownButton.setRequestFocusEnabled(false);
-		slowDownButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				slowDownButtonMouseReleased(e);
-			}
-		});
-		this.add(slowDownButton);
+		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
 
 		pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
 		pausePlayButton.setAlignmentY(0.0F);
@@ -139,6 +142,38 @@ public class NavBarPanel extends JPanel {
 		});
 		this.add(pausePlayButton);
 
+		this.add(Box.createHorizontalStrut(HALF_SPACER_WIDTH));
+
+		slowDownButton.setIcon(new ImageIcon(getClass().getResource("slowDown.png"))); // NOI18N
+		slowDownButton.setAlignmentY(0.0F);
+		slowDownButton.setBorder(null);
+		slowDownButton.setBorderPainted(false);
+		slowDownButton.setContentAreaFilled(false);
+		slowDownButton.setName("slowDownButton");
+		slowDownButton.setRequestFocusEnabled(false);
+		slowDownButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				slowDownButtonMouseReleased(e);
+			}
+		});
+		this.add(slowDownButton);
+
+		resetPlaySpeedButton.setIcon(new ImageIcon(getClass().getResource("resetPlaySpeed.png"))); // NOI18N
+		resetPlaySpeedButton.setAlignmentY(0.0F);
+		resetPlaySpeedButton.setBorder(null);
+		resetPlaySpeedButton.setBorderPainted(false);
+		resetPlaySpeedButton.setContentAreaFilled(false);
+		resetPlaySpeedButton.setName("resetPlaySpeedButton");
+		resetPlaySpeedButton.setRequestFocusEnabled(false);
+		resetPlaySpeedButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				resetPlaySpeedButtonMouseReleased(e);
+			}
+		});
+		this.add(resetPlaySpeedButton);
+
 		speedUpButton.setIcon(new ImageIcon(getClass().getResource("speedUp.png"))); // NOI18N
 		speedUpButton.setAlignmentY(0.0F);
 		speedUpButton.setBorder(null);
@@ -153,6 +188,85 @@ public class NavBarPanel extends JPanel {
 			}
 		});
 		this.add(speedUpButton);
+
+		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
+
+		moveToBeginningButton.setIcon(new ImageIcon(getClass().getResource("moveToBeginning.png"))); // NOI18N
+		moveToBeginningButton.setAlignmentY(0.0F);
+		moveToBeginningButton.setBorder(null);
+		moveToBeginningButton.setBorderPainted(false);
+		moveToBeginningButton.setContentAreaFilled(false);
+		moveToBeginningButton.setName("moveToBeginningButton"); // NOI18N
+		moveToBeginningButton.setRequestFocusEnabled(false);
+		moveToBeginningButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				moveToBeginningButtonMouseReleased(e);
+			}
+		});
+		this.add(moveToBeginningButton);
+
+		moveBackwardCoarseButton.setIcon(new ImageIcon(getClass().getResource("moveBackwardCoarse.png"))); // NOI18N
+		moveBackwardCoarseButton.setAlignmentY(0.0F);
+		moveBackwardCoarseButton.setBorder(null);
+		moveBackwardCoarseButton.setBorderPainted(false);
+		moveBackwardCoarseButton.setContentAreaFilled(false);
+		moveBackwardCoarseButton.setName("moveBackwardCoarseButton"); // NOI18N
+		moveBackwardCoarseButton.setRequestFocusEnabled(false);
+		moveBackwardCoarseButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				moveBackwardCoarseButtonMouseReleased(e);
+			}
+		});
+		this.add(moveBackwardCoarseButton);
+
+		moveToCenterButton.setIcon(new ImageIcon(getClass().getResource("moveToCenter.png"))); // NOI18N
+		moveToCenterButton.setAlignmentY(0.0F);
+		moveToCenterButton.setBorder(null);
+		moveToCenterButton.setBorderPainted(false);
+		moveToCenterButton.setContentAreaFilled(false);
+		moveToCenterButton.setName("moveToCenterButton"); // NOI18N
+		moveToCenterButton.setRequestFocusEnabled(false);
+		moveToCenterButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				moveToCenterButtonMouseReleased(e);
+			}
+		});
+		this.add(moveToCenterButton);
+
+		moveForwardCoarseButton.setIcon(new ImageIcon(getClass().getResource("moveForwardCoarse.png"))); // NOI18N
+		moveForwardCoarseButton.setAlignmentY(0.0F);
+		moveForwardCoarseButton.setBorder(null);
+		moveForwardCoarseButton.setBorderPainted(false);
+		moveForwardCoarseButton.setContentAreaFilled(false);
+		moveForwardCoarseButton.setName("moveForwardCoarseButton"); // NOI18N
+		moveForwardCoarseButton.setRequestFocusEnabled(false);
+		moveForwardCoarseButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				moveForwardCoarseButtonMouseReleased(e);
+			}
+		});
+		this.add(moveForwardCoarseButton);
+
+		moveToEndButton.setIcon(new ImageIcon(getClass().getResource("moveToEnd.png"))); // NOI18N
+		moveToEndButton.setAlignmentY(0.0F);
+		moveToEndButton.setBorder(null);
+		moveToEndButton.setBorderPainted(false);
+		moveToEndButton.setContentAreaFilled(false);
+		moveToEndButton.setName("moveToEndButton"); // NOI18N
+		moveToEndButton.setRequestFocusEnabled(false);
+		moveToEndButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				moveToEndButtonMouseReleased(e);
+			}
+		});
+		this.add(moveToEndButton);
+
+		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
 
 		ejectButton.setIcon(new ImageIcon(getClass().getResource("eject.png"))); // NOI18N
 		ejectButton.setAlignmentY(0.0F);
@@ -241,6 +355,54 @@ public class NavBarPanel extends JPanel {
 	 */
 	private void slowDownButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().slowDown();
+	}
+
+	/**
+	 * Sets the play back speed of the Playable Log to the original base speed
+	 * @param evt
+	 */
+	private void resetPlaySpeedButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().resetPlaySpeed();
+	}
+
+	/**
+	 * Moves the Playable Log to the beginning position
+	 * @param evt
+	 */
+	private void moveToBeginningButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().resetGraphPosition();
+	}
+
+	/**
+	 * Moves the Playable Log backward almost and entire display's worth
+	 * @param evt
+	 */
+	private void moveBackwardCoarseButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().moveBackwardCoarse();
+	}
+
+	/**
+	 * Centers the Playable Log in the display
+	 * @param evt
+	 */
+	private void moveToCenterButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().centerGraphPosition();
+	}
+
+	/**
+	 * Moves the Playable Log backward almost and entire display's worth
+	 * @param evt
+	 */
+	private void moveForwardCoarseButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().moveForwardCoarse();
+	}
+
+	/**
+	 * Moves the Playable Log to the ending position
+	 * @param evt
+	 */
+	private void moveToEndButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().goToLastGraphPosition();
 	}
 
 	/**
