@@ -180,6 +180,19 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
+	 * Zoom in using steps larger the further away from 1:1 you are.
+	 * This assumes you are zooming in on the data centered in the screen.
+	 * If you need to zoom in on a different location then you must use
+	 * zoomIn() repeatedly coupled with a move each time.
+	 */
+	public final void zoomInCoarse() {
+		final int zoomAmount = (int) Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++) {
+			zoomIn();
+		}
+	}
+
+	/**
 	 * Zoom in by one. This control zooms finer than the coarse zoom control.
 	 * This assumes you are zooming in on the data centered in the screen.
 	 * If you need to zoom in on a different location then you must move
@@ -204,58 +217,20 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
-	 * Zoom in using steps larger the further away from 1:1 you are.
-	 * This assumes you are zooming in on the data centered in the screen.
-	 * If you need to zoom in on a different location then you must use
-	 * zoomIn() repeatedly coupled with a move each time.
+	 * Zoom the graph to a 1:1 pixel-to-data-point ratio.
 	 */
-	public final void zoomInCoarse() {
-		final int zoomAmount = (int) Math.sqrt(zoom);
-		for (int i = 0; i < zoomAmount; i++) {
-			zoomIn();
-		}
-	}
-
-	/**
-	 * Zoom out by one. This control zooms finer than the coarse zoom control.
-	 * This assumes you are zooming out from the data centered in the screen.
-	 * If you need to zoom out from a different location then you must move
-	 * the graph accordingly.
-	 */
-	public final void zoomOut() {
-		final double graphWidth = this.getWidth();
-		double move = 0;
-
-		if (!zoomedOutBeyondOneToOne) {
-			if (zoom == 1) {
-				zoomedOutBeyondOneToOne = true;
-				zoom = 2;
-				move = graphWidth / (double) (zoom * 2);
-			} else {
-				move = graphWidth / (double) (zoom * 2);
-				zoom--;
+	public final void zoomResetRatio(){
+		if (zoomedOutBeyondOneToOne) {
+			for (int i = zoom; i > 1; i--) {
+				zoomIn();
 			}
-		} else if (zoom < getWidestZoom()) {
-			zoom++;
-			move = graphWidth / (double) (zoom * 2);
-		}
-
-		moveEntireGraphingPanel(-move);
-	}
-
-	/**
-	 * Zoom out using steps larger the further away from 1:1 you are.
-	 * This assumes you are zooming out with the data centered in the screen.
-	 * If you need to zoom out on a different location then you must use
-	 * zoomOut() repeatedly coupled with a move each time.
-	 */
-	public final void zoomOutCoarse() {
-		final int zoomAmount = (int) Math.sqrt(zoom);
-		for (int i = 0; i < zoomAmount; i++) {
-			zoomOut();
+		} else {
+			for (int i = zoom; i > 1; i--) {
+				zoomOut();
+			}
 		}
 	}
-
+	
 	/**
 	 * Zoom the graph so that if it is centered, then the
 	 * entire graph will fit within the display. Usually
@@ -306,6 +281,46 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		zoomGraphToFit(graphSize);
 	}
 
+	/**
+	 * Zoom out by one. This control zooms finer than the coarse zoom control.
+	 * This assumes you are zooming out from the data centered in the screen.
+	 * If you need to zoom out from a different location then you must move
+	 * the graph accordingly.
+	 */
+	public final void zoomOut() {
+		final double graphWidth = this.getWidth();
+		double move = 0;
+
+		if (!zoomedOutBeyondOneToOne) {
+			if (zoom == 1) {
+				zoomedOutBeyondOneToOne = true;
+				zoom = 2;
+				move = graphWidth / (double) (zoom * 2);
+			} else {
+				move = graphWidth / (double) (zoom * 2);
+				zoom--;
+			}
+		} else if (zoom < getWidestZoom()) {
+			zoom++;
+			move = graphWidth / (double) (zoom * 2);
+		}
+
+		moveEntireGraphingPanel(-move);
+	}
+
+	/**
+	 * Zoom out using steps larger the further away from 1:1 you are.
+	 * This assumes you are zooming out with the data centered in the screen.
+	 * If you need to zoom out on a different location then you must use
+	 * zoomOut() repeatedly coupled with a move each time.
+	 */
+	public final void zoomOutCoarse() {
+		final int zoomAmount = (int) Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++) {
+			zoomOut();
+		}
+	}
+
 	public final boolean isZoomedOutBeyondOneToOne() {
 		return zoomedOutBeyondOneToOne;
 	}
@@ -336,17 +351,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			newDelay = 0;
 		}
 		playTimer.setDelay(newDelay);
-	}
-
-	public final void eject() {
-		//resetGraphPosition();
-	}
-
-	public final void stop() {
-		playing = false;
-		wasPlaying = false;
-		playTimer.stop();
-		resetGraphPosition();
 	}
 
 	/**
@@ -418,15 +422,51 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph to the right so that only one valid
 	 * data point shows on the right-most part of the display.
 	 */
-	public void resetGraphPosition() {
+	private void resetGraphPosition() {
 		setGraphPosition(getGraphPositionMin());
 	}
 
 	/**
-	 * Move the graph to the right almost an entire display's worth.
+	 * Move the graph to the beginning with the first data point centered.
+	 */
+	public void moveToBeginning() {
+		resetGraphPosition();
+		moveForwardPercentage(0.50);
+	}
+
+	/**
+	 * Move the graph backward a small amount (with acceleration).
+	 */
+	public void moveBackward(){
+		int localZoom = zoom;
+		if (zoomedOutBeyondOneToOne) {
+			localZoom = 1;
+		}
+		final long now = System.currentTimeMillis();
+		final long delay = now - thePastLeftArrow;
+		if (delay < 50) {
+			scrollAcceleration++;
+			moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
+		} else {
+			scrollAcceleration = 0;
+			moveEntireGraphingPanel(-localZoom);
+		}
+		thePastLeftArrow = System.currentTimeMillis();
+	}
+
+	/**
+	 * Move the graph backward a large amount.
 	 */
 	public void moveBackwardCoarse(){
-		moveEntireGraphingPanel(-(this.getWidth() * COARSE_MOVEMENT_PERCENTAGE));
+		moveBackwardPercentage(COARSE_MOVEMENT_PERCENTAGE);
+	}
+
+	/**
+	 * Move the graph backward by a percentage (amount) of the screen width.
+	 * Percentages are expected in decimal form. For example, 0.50 for 50%.
+	 */
+	public void moveBackwardPercentage(double amount){
+		moveEntireGraphingPanel(-(this.getWidth() * amount));
 	}
 
 	/**
@@ -458,17 +498,53 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 	
 	/**
-	 * Move the graph to the left almost an entire display's worth.
+	 * Move the graph forward a small amount (with acceleration).
+	 */
+	public void moveForward(){
+		int localZoom = zoom;
+		if (zoomedOutBeyondOneToOne) {
+			localZoom = 1;
+		}
+		final long now = System.currentTimeMillis();
+		final long delay = now - thePastRightArrow;
+		if (delay < 50) {
+			scrollAcceleration++;
+			moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
+		} else {
+			scrollAcceleration = 0;
+			moveEntireGraphingPanel(localZoom);
+		}
+		thePastRightArrow = System.currentTimeMillis();
+	}
+
+	/**
+	 * Move the graph forward by a percentage (amount) of the screen width.
+	 * Percentages are expected in decimal form. For example, 0.50 for 50%.
+	 */
+	private void moveForwardPercentage(double amount){
+		moveEntireGraphingPanel(this.getWidth() * amount);
+	}
+
+	/**
+	 * Move the graph forward a large amount.
 	 */
 	public void moveForwardCoarse(){
-		moveEntireGraphingPanel(this.getWidth() * COARSE_MOVEMENT_PERCENTAGE);
+		moveForwardPercentage(COARSE_MOVEMENT_PERCENTAGE);
+	}
+
+	/**
+	 * Move the graph to the end with the last data point centered.
+	 */
+	public void moveToEnd() {
+		goToLastGraphPosition();
+		moveBackwardPercentage(0.50);
 	}
 
 	/**
 	 * Move the graph to the left so that only one valid
 	 * data point shows on the left-most part of the display.
 	 */
-	public void goToLastGraphPosition() {
+	private void goToLastGraphPosition() {
 		setGraphPosition(getGraphPositionMax());
 	}
 
@@ -694,13 +770,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			// Home key binding
 			case KeyEvent.VK_HOME: {
-				resetGraphPosition();
+				moveToBeginning();
 				break;
 			}
 
 			// End key binding
 			case KeyEvent.VK_END: {
-				goToLastGraphPosition();
+				moveToEnd();
 				break;
 			}
 
@@ -712,23 +788,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_KP_LEFT: {
-				int localZoom = zoom;
-				if (zoomedOutBeyondOneToOne) {
-					localZoom = 1;
-				}
 				if (e.isControlDown()) {
 					moveBackwardCoarse();
 				} else {
-					final long now = System.currentTimeMillis();
-					final long delay = now - thePastLeftArrow;
-					if (delay < 50) {
-						scrollAcceleration++;
-						moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
-					} else {
-						scrollAcceleration = 0;
-						moveEntireGraphingPanel(-localZoom);
-					}
-					thePastLeftArrow = System.currentTimeMillis();
+					moveBackward();
 				}
 				break;
 			}
@@ -741,23 +804,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 			case KeyEvent.VK_RIGHT:
 			case KeyEvent.VK_KP_RIGHT: {
-				int localZoom = zoom;
-				if (zoomedOutBeyondOneToOne) {
-					localZoom = 1;
-				}
 				if (e.isControlDown()) {
 					moveForwardCoarse();
 				} else {
-					final long now = System.currentTimeMillis();
-					final long delay = now - thePastRightArrow;
-					if (delay < 50) {
-						scrollAcceleration++;
-						moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
-					} else {
-						scrollAcceleration = 0;
-						moveEntireGraphingPanel(localZoom);
-					}
-					thePastRightArrow = System.currentTimeMillis();
+					moveForward();
 				}
 				break;
 			}
