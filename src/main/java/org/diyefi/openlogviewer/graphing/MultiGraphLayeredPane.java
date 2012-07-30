@@ -109,7 +109,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 
 	private void removeAllGraphs() {
 		int componentIndex = 0;
-		while (this.getComponentCount() > 2) {  // Leave InfoPanel and FramesPerSecondPanel in component count
+		while (this.getComponentCount() > 1) {  // Leave InfoPanel in component count
 			if (this.getComponent(componentIndex) instanceof SingleGraphPanel) {
 				this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(componentIndex));
 				this.remove(getComponent(componentIndex));
