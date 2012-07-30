@@ -159,7 +159,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void setLog(final GenericLog genLog) {
-		playing = false;
+		pause();
 		multiGraph.setLog(genLog);
 		graphPositionPanel.setLog(genLog);
 	}
