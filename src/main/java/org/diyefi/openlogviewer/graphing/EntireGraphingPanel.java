@@ -325,6 +325,25 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		return zoomedOutBeyondOneToOne;
 	}
 
+	/**
+	 * Slows the speed of playback (exponentially)
+	 */
+	public final void slowDown() {
+		final int currentDelay = playTimer.getDelay();
+		int newDelay = currentDelay + (currentDelay/6) + 1;
+		if(newDelay > Integer.MAX_VALUE){
+			newDelay = Integer.MAX_VALUE;
+		}
+		playTimer.setDelay(newDelay);
+	}
+
+	/**
+	 * Resets the speed of playback to the original speed
+	 */
+	public final void resetPlaySpeed() {
+		playTimer.setDelay(BASE_PLAY_SPEED);
+	}
+
 	public final void play() {
 		if (playing) {
 			pause();
@@ -351,25 +370,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			newDelay = 0;
 		}
 		playTimer.setDelay(newDelay);
-	}
-
-	/**
-	 * Slows the speed of playback (exponentially)
-	 */
-	public final void slowDown() {
-		final int currentDelay = playTimer.getDelay();
-		int newDelay = currentDelay + (currentDelay/6) + 1;
-		if(newDelay > Integer.MAX_VALUE){
-			newDelay = Integer.MAX_VALUE;
-		}
-		playTimer.setDelay(newDelay);
-	}
-
-	/**
-	 * Resets the speed of playback to the original speed
-	 */
-	public final void resetPlaySpeed() {
-		playTimer.setDelay(BASE_PLAY_SPEED);
 	}
 
 	public final void fling() {

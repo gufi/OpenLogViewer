@@ -162,21 +162,6 @@ public class NavBarPanel extends JPanel {
 		});
 		this.add(slowDownButton);
 
-		pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
-		pausePlayButton.setAlignmentY(0.0F);
-		pausePlayButton.setBorder(null);
-		pausePlayButton.setBorderPainted(false);
-		pausePlayButton.setContentAreaFilled(false);
-		pausePlayButton.setName("pausePlayButton");
-		pausePlayButton.setRequestFocusEnabled(false);
-		pausePlayButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				pausePlayButtonMouseReleased(e);
-			}
-		});
-		this.add(pausePlayButton);
-
 		resetPlaySpeedButton.setIcon(new ImageIcon(getClass().getResource("resetPlaySpeed.png"))); // NOI18N
 		resetPlaySpeedButton.setAlignmentY(0.0F);
 		resetPlaySpeedButton.setBorder(null);
@@ -191,6 +176,21 @@ public class NavBarPanel extends JPanel {
 			}
 		});
 		this.add(resetPlaySpeedButton);
+
+		pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
+		pausePlayButton.setAlignmentY(0.0F);
+		pausePlayButton.setBorder(null);
+		pausePlayButton.setBorderPainted(false);
+		pausePlayButton.setContentAreaFilled(false);
+		pausePlayButton.setName("pausePlayButton");
+		pausePlayButton.setRequestFocusEnabled(false);
+		pausePlayButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				pausePlayButtonMouseReleased(e);
+			}
+		});
+		this.add(pausePlayButton);
 
 		speedUpButton.setIcon(new ImageIcon(getClass().getResource("speedUp.png"))); // NOI18N
 		speedUpButton.setAlignmentY(0.0F);
@@ -382,6 +382,14 @@ public class NavBarPanel extends JPanel {
 	}
 
 	/**
+	 * Sets the play back speed of the Playable Log to the original base speed
+	 * @param evt
+	 */
+	private void resetPlaySpeedButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().getEntireGraphingPanel().resetPlaySpeed();
+	}
+
+	/**
 	 * Modifies the state of the PlayableLog to begin playing if paused, or pause if playing
 	 * @param evt
 	 */
@@ -393,14 +401,6 @@ public class NavBarPanel extends JPanel {
 			OpenLogViewer.getInstance().getEntireGraphingPanel().play();
 		}
 		this.updatePausePlayButton();
-	}
-
-	/**
-	 * Sets the play back speed of the Playable Log to the original base speed
-	 * @param evt
-	 */
-	private void resetPlaySpeedButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().getEntireGraphingPanel().resetPlaySpeed();
 	}
 
 	/**
