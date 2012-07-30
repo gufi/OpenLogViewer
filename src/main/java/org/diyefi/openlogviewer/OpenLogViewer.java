@@ -89,6 +89,7 @@ public final class OpenLogViewer extends JFrame {
 
 	private static final String FILE_MENU_KEY = "FileMenuName";
 	private static final String FILE_MENU_ITEM_OPEN_KEY = "FileMenuItemOpenName";
+	private static final String FILE_MENU_ITEM_RELOAD_KEY = "FileMenuItemReloadName";
 	private static final String FILE_MENU_ITEM_QUIT_KEY = "FileMenuItemQuitName";
 
 	private static final String VIEW_MENU_KEY = "ViewMenuName";
@@ -161,6 +162,15 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
+		final JMenuItem reloadFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_RELOAD_KEY));
+		reloadFileMenuItem.setName(FILE_MENU_ITEM_RELOAD_KEY);
+		reloadFileMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				reloadFile();
+			}
+		});
+
 		final JMenuItem quitFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_QUIT_KEY));
 		quitFileMenuItem.setName(FILE_MENU_ITEM_QUIT_KEY);
 		quitFileMenuItem.addActionListener(new ActionListener() {
@@ -217,6 +227,7 @@ public final class OpenLogViewer extends JFrame {
 		final JMenu fileMenu = new JMenu(labels.getString(FILE_MENU_KEY));
 		fileMenu.setName(FILE_MENU_KEY);
 		fileMenu.add(openFileMenuItem);
+		fileMenu.add(reloadFileMenuItem);
 		fileMenu.add(quitFileMenuItem);
 
 		final JMenu viewMenu = new JMenu(labels.getString(VIEW_MENU_KEY));
@@ -359,6 +370,38 @@ public final class OpenLogViewer extends JFrame {
 				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
 				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
 			}
+		}
+	}
+
+	private void reloadFile() {
+		final JFileChooser fileChooser = new JFileChooser();
+		final String lastFingFile = getApplicationWideProperty(NAME_OF_LAST_FILE_KEY);
+		if (lastFingFile != null) {
+			final File openFile = new File(lastFingFile);
+			if (decoderInUse != null) {
+				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
+				final GenericLog logInUse = decoderInUse.getDecodedLog();
+				if (logInUse != null) {
+					logInUse.clearOut(); // This is the wrong approach. The correct approach is to reuse the object, try that next...
+				}
+				decoderInUse = null;
+				setLog(null);
+			} // else haven't read in a log yet.
+
+			if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
+				decoderInUse = new FreeEMSBin(openFile);
+			} else {
+				decoderInUse = new CSVTypeLog(openFile);
+			}
+
+			if (openFile != null) {
+				OpenLogViewer.getInstance().setTitle(APPLICATION_NAME + " - " + openFile.getName());
+				saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, openFile.getParent());
+				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
+				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
+			}
+		} else {
+			// uh oh
 		}
 	}
 
