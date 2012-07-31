@@ -36,59 +36,59 @@ public enum InitialLineColoring {
 
 	INSTANCE;
 
-	private final List<MarkedColor> colorList;
+	private final List<Color> colorList;
 
 	private InitialLineColoring() {
-		colorList = new LinkedList<MarkedColor>();
-
-		colorList.add(new MarkedColor(Color.getHSBColor(1.0F, 1.0F, 1.0F), true, 0.0));
-		colorList.add(new MarkedColor(Color.getHSBColor(0.25F, 1.0F, 1.0F), true, 0.0));
-		colorList.add(new MarkedColor(Color.getHSBColor(0.5F, 1.0F, 1.0F), true, 0.0));
-		colorList.add(new MarkedColor(Color.getHSBColor(0.75F, 1.0F, 1.0F), true, 0.0));
-
-		for (long i = 8; i < 128; i *= 2) {
-			this.addColors(i);
-		}
-	}
-
-	private void addColors(final long hueOffsetDinominator) {
-		final long numColors = hueOffsetDinominator / 2;
-		final double hueOffset = 1.0 / hueOffsetDinominator;
-
-		for (long i = 0; i < (numColors - 1); i++) {
-			double hue = 0.0;
-			hue += hueOffset; // Always skip pure red and go to the next hue.
-
-			for (int j = 0; j < 4; j++) {
-				final MarkedColor newColor = new MarkedColor(Color.getHSBColor((float) hue, 1.0F, 1.0F), true, hue);
-				if (!colorList.contains(newColor)) {
-					colorList.add(newColor);
-				}
-				hue += 0.25;
-			}
-		}
+		colorList = new LinkedList<Color>();
 	}
 
 	public Color getBestAvailableColor() {
-		Color nextColor = Color.gray;
-		final ListIterator<MarkedColor> i = colorList.listIterator();
+		Color newColor = Color.GRAY;
+		int index = 0;
 
-		boolean found = false;
-		while (i.hasNext() && !found) {
-			final MarkedColor c = i.next();
+		if(colorList.size() == 0){
+			newColor = Color.getHSBColor(0.0F, 1.0F, 1.0F); //Seed with low value red
+			index = 0;
+		} else if(colorList.size() == 1){
+			newColor = Color.getHSBColor(0.333F, 1.0F, 1.0F); //Seed with green
+			index = 1;
+		} else if(colorList.size() == 2){
+			index = 2;
+			Color bookEndRed = Color.getHSBColor(0.999F, 1.0F, 1.0F); //Seed with high value red
+			colorList.add(index, bookEndRed);
+			newColor = Color.getHSBColor(0.666F, 1.0F, 1.0F); //Seed with blue
+		} else {
 
-			if (c.isAvailable()) {
-				c.setAvailability(false);
-				nextColor = c.getColor();
-				found = true;
+			float hue = 0.0F;
+			float maxDistance = 0.0F;
+			final ListIterator<Color> i = colorList.listIterator();
+			Color c2 = Color.RED;
+
+			while (i.hasNext()) {
+				final Color c1 = i.next();
+
+				if(i.hasNext()) {
+					c2 = i.next();
+					i.previous();
+				} else {
+					c2 = colorList.get(colorList.size() - 1);
+				}
+				float[] hsbValues1 = Color.RGBtoHSB(c1.getRed(), c1.getGreen(), c1.getBlue(), null);
+				float[] hsbValues2 = Color.RGBtoHSB(c2.getRed(), c2.getGreen(), c2.getBlue(), null);
+				float distance = hsbValues2[0] - hsbValues1[0];
+				if (distance > maxDistance) {
+					maxDistance = distance;
+					index = colorList.indexOf(c2);
+					hue = hsbValues1[0] + (distance / 2.0F);
+				}
 			}
+			newColor = Color.getHSBColor(hue, 1.0F, 1.0F);
 		}
-		return nextColor;
+		colorList.add(index, newColor);
+		return newColor;
 	}
 
-	public void giveBackColor(final Color c) {
-		if (colorList.contains(c)) {
-			colorList.get(colorList.indexOf(c)).setAvailability(true);
-		}
+	public boolean giveBackColor(final Color c) {
+		return colorList.remove(c);
 	}
 }
