@@ -54,6 +54,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -99,6 +100,11 @@ public final class OpenLogViewer extends JFrame {
 
 	private static final String FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY = "FailedToGoFullScreenMessage";
 	private static final String CANT_GO_FULLSCREEN_MESSAGE_KEY = "CantGoFullScreenMessage";
+
+	private static final String OPEN_FILE_ERROR_TITLE_KEY = "OpenFileErrorTitle";
+	private static final String OPEN_FILE_ERROR_MESSAGE_KEY = "OpenFileErrorMessage";
+	private static final String OPEN_LAST_FILE_ERROR_TITLE_KEY = "OpenLastFileErrorTitle";
+	private static final String OPEN_LAST_FILE_ERROR_MESSAGE_KEY = "OpenLastFileErrorMessage";
 
 	// TODO localise and refactor these:
 	private static final String PROPERTIES_FILENAME = "OLVAllProperties.olv";
@@ -167,7 +173,7 @@ public final class OpenLogViewer extends JFrame {
 		reloadFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				reloadFile();
+				openLastFile();
 			}
 		});
 
@@ -358,10 +364,14 @@ public final class OpenLogViewer extends JFrame {
 			} // else haven't read in a log yet.
 
 			final File openFile = fileChooser.getSelectedFile();
-			if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
-				decoderInUse = new FreeEMSBin(openFile);
+			if(openFile.exists()){
+				if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
+					decoderInUse = new FreeEMSBin(openFile);
+				} else {
+					decoderInUse = new CSVTypeLog(openFile);
+				}
 			} else {
-				decoderInUse = new CSVTypeLog(openFile);
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY) + "\n" + openFile.getAbsolutePath(), labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
 			}
 
 			if (openFile != null) {
@@ -373,7 +383,7 @@ public final class OpenLogViewer extends JFrame {
 		}
 	}
 
-	private void reloadFile() {
+	public void openLastFile() {
 		final JFileChooser fileChooser = new JFileChooser();
 		final String lastFingFile = getApplicationWideProperty(NAME_OF_LAST_FILE_KEY);
 		if (lastFingFile != null) {
@@ -388,10 +398,14 @@ public final class OpenLogViewer extends JFrame {
 				setLog(null);
 			} // else haven't read in a log yet.
 
-			if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
-				decoderInUse = new FreeEMSBin(openFile);
+			if(openFile.exists()){
+				if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
+					decoderInUse = new FreeEMSBin(openFile);
+				} else {
+					decoderInUse = new CSVTypeLog(openFile);
+				}
 			} else {
-				decoderInUse = new CSVTypeLog(openFile);
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY) + "\n" + openFile.getAbsolutePath(), labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
 			}
 
 			if (openFile != null) {

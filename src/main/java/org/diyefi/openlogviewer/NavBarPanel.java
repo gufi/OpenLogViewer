@@ -55,7 +55,8 @@ public class NavBarPanel extends JPanel {
 	private JButton moveForwardButton;
 	private JButton moveForwardCoarseButton;
 	private JButton moveToEndButton;
-	private JButton ejectButton;
+	private JButton openButton;
+	private JButton openLastButton;
 
 
 	public NavBarPanel() {
@@ -75,7 +76,8 @@ public class NavBarPanel extends JPanel {
 		moveForwardButton = new JButton();
 		moveForwardCoarseButton = new JButton();
 		moveToEndButton = new JButton();
-		ejectButton = new JButton();
+		openButton = new JButton();
+		openLastButton = new JButton();
 		initComponents();
 	}
 
@@ -316,20 +318,35 @@ public class NavBarPanel extends JPanel {
 
 		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
 
-		ejectButton.setIcon(new ImageIcon(getClass().getResource("eject.png"))); // NOI18N
-		ejectButton.setAlignmentY(0.0F);
-		ejectButton.setBorder(null);
-		ejectButton.setBorderPainted(false);
-		ejectButton.setContentAreaFilled(false);
-		ejectButton.setName("ejectButton"); // NOI18N
-		ejectButton.setRequestFocusEnabled(false);
-		ejectButton.addMouseListener(new MouseAdapter() {
+		openButton.setIcon(new ImageIcon(getClass().getResource("open.png"))); // NOI18N
+		openButton.setAlignmentY(0.0F);
+		openButton.setBorder(null);
+		openButton.setBorderPainted(false);
+		openButton.setContentAreaFilled(false);
+		openButton.setName("openButton"); // NOI18N
+		openButton.setRequestFocusEnabled(false);
+		openButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				ejectButtonMouseReleased(e);
+				openButtonMouseReleased(e);
 			}
 		});
-		this.add(ejectButton);
+		this.add(openButton);
+
+		openLastButton.setIcon(new ImageIcon(getClass().getResource("openLast.png"))); // NOI18N
+		openLastButton.setAlignmentY(0.0F);
+		openLastButton.setBorder(null);
+		openLastButton.setBorderPainted(false);
+		openLastButton.setContentAreaFilled(false);
+		openLastButton.setName("openLastButton"); // NOI18N
+		openLastButton.setRequestFocusEnabled(false);
+		openLastButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				openLastButtonMouseReleased(e);
+			}
+		});
+		this.add(openLastButton);
 	}
 
 	public void updatePausePlayButton(){
@@ -471,7 +488,15 @@ public class NavBarPanel extends JPanel {
 	 * Allow the user to choose a new log to open
 	 * @param evt
 	 */
-	private void ejectButtonMouseReleased(final MouseEvent e) {
+	private void openButtonMouseReleased(final MouseEvent e) {
 		OpenLogViewer.getInstance().openFile();
+	}
+
+	/**
+	 * Re-open the last log file that was opened/loaded
+	 * @param evt
+	 */
+	private void openLastButtonMouseReleased(final MouseEvent e) {
+		OpenLogViewer.getInstance().openLastFile();
 	}
 }
