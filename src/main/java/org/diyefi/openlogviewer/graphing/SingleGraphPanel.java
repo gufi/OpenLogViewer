@@ -92,12 +92,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			this.setSize(this.getParent().getSize());
 		}
 
-		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		if (zoomedOut) {
-			initGraphZoomedOut();
-		} else {
-			initGraphZoomed();
-		}
+		initGraph();
 
 		if (hasDataPointToDisplay()) {
 			paintDataPointsAndTraces(g);
@@ -228,18 +223,32 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		}
 	}
 
+	/**
+	 * Cases:
+	 *
+	 * data > max = don't display
+	 * data < min = don't display
+	 * data ==- min == max = top
+	 * otherwise = proportional
+	 *
+	 * @param traceData The value of the actual data at this point.
+	 * @param minValue The minimum value to display before being cut off.
+	 * @param maxValue The maximum value to display before being cut off.
+	 * @return
+	 */
 	private int getScreenPositionYCoord(final Double traceData, final double minValue, final double maxValue) {
-		int point = -1;
-		final int height = (int) (this.getHeight() * GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE);
-		if (maxValue != minValue) {
-			point = (int) (height - (height * ((traceData - minValue) / (maxValue - minValue))));
-		} else {
-			if(traceData == maxValue){
-				point = height;
-			}
-		}
+		final int divs = OpenLogViewer.getInstance().getMultiGraphLayeredPane().getTotalSplits();
+		final int height = (int) ((getHeight() / divs) * GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE);
 
-		return point;
+		if (traceData >= minValue && traceData <= maxValue) {
+			if (maxValue == minValue) {
+				return height; // min/max/data all equal
+			} else {
+				return (int) (height - (height * ((traceData - minValue) / (maxValue - minValue))));
+			}
+		} else {
+			return -1; // data outside min/max range
+		}
 	}
 
 	private boolean hasDataPointToDisplay() {
@@ -356,6 +365,14 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		GDE.setDisplayColor(c);
 	}
 
+	public final void initGraph() {
+		if (OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne()) {
+			initGraphZoomedOut();
+		} else {
+			initGraphZoomed();
+		}
+	}
+
 	/**
 	 * initialize the graph any time you need to paint
 	 */
@@ -401,9 +418,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	public final void initGraphZoomedOut() {
 		if (GDE != null) {
-			final int graphPosition = (int)OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
-			int graphWindowWidth = OpenLogViewer.getInstance().getEntireGraphingPanel().getWidth();
-			final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
+			final EntireGraphingPanel egp = OpenLogViewer.getInstance().getEntireGraphingPanel();
+			final int graphPosition = (int)egp.getGraphPosition();
+			int graphWindowWidth = egp.getWidth();
+			final int zoom = egp.getZoom();
 			final int position = graphPosition - (EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT * zoom);
 			dataPointsToDisplay = new double[graphWindowWidth + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT + EntireGraphingPanel.RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT];
 			dataPointRangeInfo = new double[dataPointsToDisplay.length][3];
@@ -567,22 +585,12 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	public final void sizeGraph() {
 		final MultiGraphLayeredPane lg = OpenLogViewer.getInstance().getMultiGraphLayeredPane();
-		int wherePixel = 0;
-		if (lg.getTotalSplits() > 1) {
-			if (GDE.getSplitNumber() <= lg.getTotalSplits()) {
-				wherePixel += lg.getHeight() / lg.getTotalSplits() * GDE.getSplitNumber() - (lg.getHeight() / lg.getTotalSplits());
-			} else {
-				wherePixel += lg.getHeight() / lg.getTotalSplits() * lg.getTotalSplits() - (lg.getHeight() / lg.getTotalSplits());
-			}
-		}
-
-		this.setBounds(0, wherePixel, lg.getWidth(), lg.getHeight() / (lg.getTotalSplits()));
-		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		if (zoomedOut) {
-			initGraphZoomedOut();
-		} else {
-			initGraphZoomed();
-		}
+		final double fractionalMargin = (1.0 - GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE) / 2.0;
+		final double size = ((double)lg.getHeight() / lg.getTotalSplits());
+		final double margin = fractionalMargin * size;
+		final int wherePixel = (int)(margin + ((GDE.getSplitNumber() - 1 /* Why not zero indexed? */) * size));
+		setBounds(0, wherePixel, lg.getWidth(), (int)size);
+		initGraph();
 	}
 
 	/**
