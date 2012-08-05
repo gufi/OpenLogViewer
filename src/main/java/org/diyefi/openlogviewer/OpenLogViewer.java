@@ -117,16 +117,16 @@ public final class OpenLogViewer extends JFrame {
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
 
-	private JPanel mainPanel;
-	private EntireGraphingPanel graphingPanel;
-	private FooterPanel footerPanel;
-	private OptionFrameV2 optionFrame;
-	private PropertiesPane prefFrame;
-	private KeyboardFocusController keyboardFocusController;
+	private final JPanel mainPanel;
+	private final EntireGraphingPanel graphingPanel;
+	private final FooterPanel footerPanel;
+	private final OptionFrameV2 optionFrame;
+	private final PropertiesPane prefFrame;
+	private final KeyboardFocusController keyboardFocusController;
 
-	private List<SingleProperty> properties;
+	private final List<SingleProperty> properties;
 	private AbstractDecoder decoderInUse;
-	private JMenuBar menuBar;
+	private final JMenuBar menuBar;
 	private boolean fullscreen;
 
 	private int extendedState;
@@ -164,7 +164,7 @@ public final class OpenLogViewer extends JFrame {
 		openFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				openFile();
+				openChosenFile();
 			}
 		});
 
@@ -300,7 +300,59 @@ public final class OpenLogViewer extends JFrame {
 		});
 	}
 
-	public void openFile() {
+	public void openChosenFile() {
+		final JFileChooser fileChooser = generateChooser();
+		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewer.getInstance());
+		if (acceptValue == JFileChooser.APPROVE_OPTION) {
+			final File fileToOpen = fileChooser.getSelectedFile();
+			if (!openFile(fileToOpen, fileChooser)) {
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY) + "\n" + fileToOpen.getAbsolutePath(), labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void openLastFile() {
+		final String lastFingFile = getApplicationWideProperty(NAME_OF_LAST_FILE_KEY);
+		final String chooserClass = getApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
+		if (chooserClass != null && lastFingFile != null) {
+			final File fileToOpen = new File(lastFingFile);
+			final JFileChooser fileChooser = generateChooser();
+			if (!openFile(fileToOpen, fileChooser)) {
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY) + "\n" + fileToOpen.getAbsolutePath(), labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
+			}
+		} // Silently do nothing.
+	}
+
+	public boolean openFile(File fileToOpen, JFileChooser fileChooser) {
+		if(fileToOpen.exists()){
+			if (decoderInUse != null) {
+				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
+				final GenericLog logInUse = decoderInUse.getDecodedLog();
+				if (logInUse != null) {
+					logInUse.clearOut(); // This is the wrong approach. The correct approach is to reuse the object, try that next...
+				}
+				decoderInUse = null;
+				setLog(null);
+			} // else haven't read in a log yet.
+
+			this.setTitle(APPLICATION_NAME + " - " + fileToOpen.getName());
+			saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, fileToOpen.getParent());
+			saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, fileToOpen.getPath());
+			saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
+
+			if ("bin".equals(Utilities.getExtension(fileToOpen)) || "la".equals(Utilities.getExtension(fileToOpen)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
+				decoderInUse = new FreeEMSBin(fileToOpen);
+			} else {
+				decoderInUse = new CSVTypeLog(fileToOpen);
+			}
+			return true;
+		} else {
+			OpenLogViewer.getInstance().setTitle(APPLICATION_NAME);
+			return false;
+		}
+	}
+
+	public JFileChooser generateChooser() {
 		final JFileChooser fileChooser = new JFileChooser();
 		final String lastFingFile = getApplicationWideProperty(NAME_OF_LAST_FILE_KEY);
 
@@ -350,73 +402,7 @@ public final class OpenLogViewer extends JFrame {
 				System.out.println("Could not access class! chooserClass removed from props!");
 			}
 		}
-
-		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewer.getInstance());
-		if (acceptValue == JFileChooser.APPROVE_OPTION) {
-			if (decoderInUse != null) {
-				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
-				final GenericLog logInUse = decoderInUse.getDecodedLog();
-				if (logInUse != null) {
-					logInUse.clearOut(); // This is the wrong approach. The correct approach is to reuse the object, try that next...
-				}
-				decoderInUse = null;
-				setLog(null);
-			} // else haven't read in a log yet.
-
-			final File openFile = fileChooser.getSelectedFile();
-			if(openFile.exists()){
-				if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
-					decoderInUse = new FreeEMSBin(openFile);
-				} else {
-					decoderInUse = new CSVTypeLog(openFile);
-				}
-			} else {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY) + "\n" + openFile.getAbsolutePath(), labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
-			}
-
-			if (openFile != null) {
-				OpenLogViewer.getInstance().setTitle(APPLICATION_NAME + " - " + openFile.getName());
-				saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, openFile.getParent());
-				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
-				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
-			}
-		}
-	}
-
-	public void openLastFile() {
-		final JFileChooser fileChooser = new JFileChooser();
-		final String lastFingFile = getApplicationWideProperty(NAME_OF_LAST_FILE_KEY);
-		if (lastFingFile != null) {
-			final File openFile = new File(lastFingFile);
-			if (decoderInUse != null) {
-				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
-				final GenericLog logInUse = decoderInUse.getDecodedLog();
-				if (logInUse != null) {
-					logInUse.clearOut(); // This is the wrong approach. The correct approach is to reuse the object, try that next...
-				}
-				decoderInUse = null;
-				setLog(null);
-			} // else haven't read in a log yet.
-
-			if(openFile.exists()){
-				if ("bin".equals(Utilities.getExtension(openFile)) || "la".equals(Utilities.getExtension(openFile)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
-					decoderInUse = new FreeEMSBin(openFile);
-				} else {
-					decoderInUse = new CSVTypeLog(openFile);
-				}
-			} else {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY) + "\n" + openFile.getAbsolutePath(), labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
-			}
-
-			if (openFile != null) {
-				OpenLogViewer.getInstance().setTitle(APPLICATION_NAME + " - " + openFile.getName());
-				saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, openFile.getParent());
-				saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, openFile.getPath());
-				saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
-			}
-		} else {
-			// uh oh
-		}
+		return fileChooser;
 	}
 
 	private String getApplicationWideProperty(final String key) {
