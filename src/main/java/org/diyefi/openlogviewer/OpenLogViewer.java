@@ -145,17 +145,17 @@ public final class OpenLogViewer extends JFrame {
 		graphingPanel = new EntireGraphingPanel();
 		graphingPanel.setPreferredSize(new Dimension(600, 420));
 
-		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		this.setTitle(APPLICATION_NAME);
-		this.setLayout(new BorderLayout());
-		this.setFocusable(true);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setTitle(APPLICATION_NAME);
+		setLayout(new BorderLayout());
+		setFocusable(true);
 
 		mainPanel = new JPanel();
 		mainPanel.setName("mainPanel");
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(graphingPanel, BorderLayout.CENTER);
 		mainPanel.add(footerPanel, BorderLayout.SOUTH);
-		this.add(mainPanel, BorderLayout.CENTER);
+		add(mainPanel, BorderLayout.CENTER);
 
 		keyboardFocusController = new KeyboardFocusController();
 
@@ -246,17 +246,17 @@ public final class OpenLogViewer extends JFrame {
 		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
-		this.setJMenuBar(menuBar);
+		setJMenuBar(menuBar);
 
-		this.addKeyListener(graphingPanel);
-		this.addComponentListener(graphingPanel);
+		addKeyListener(graphingPanel);
+		addComponentListener(graphingPanel);
 
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
 
-		this.pack();
-		this.setName(APP_NAME);
-		this.requestFocusInWindow();
-		this.setVisible(true);
+		pack();
+		setName(APP_NAME);
+		requestFocusInWindow();
+		setVisible(true);
 	}
 
 	/**
@@ -270,7 +270,7 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void run() {
 				final Locale currentLocale = Locale.getDefault();
-				labels = ResourceBundle.getBundle(this.getClass().getPackage().getName() + ".Labels", currentLocale);
+				labels = ResourceBundle.getBundle(getClass().getPackage().getName() + ".Labels", currentLocale);
 
 				final String lookAndFeel;
 				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
@@ -302,7 +302,7 @@ public final class OpenLogViewer extends JFrame {
 
 	public void openChosenFile() {
 		final JFileChooser fileChooser = generateChooser();
-		final int acceptValue = fileChooser.showOpenDialog(OpenLogViewer.getInstance());
+		final int acceptValue = fileChooser.showOpenDialog(this);
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
 			final File fileToOpen = fileChooser.getSelectedFile();
 			if (!openFile(fileToOpen, fileChooser)) {
@@ -335,7 +335,7 @@ public final class OpenLogViewer extends JFrame {
 				setLog(null);
 			} // else haven't read in a log yet.
 
-			this.setTitle(APPLICATION_NAME + " - " + fileToOpen.getName());
+			setTitle(APPLICATION_NAME + " - " + fileToOpen.getName());
 			saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, fileToOpen.getParent());
 			saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, fileToOpen.getPath());
 			saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
@@ -347,7 +347,7 @@ public final class OpenLogViewer extends JFrame {
 			}
 			return true;
 		} else {
-			OpenLogViewer.getInstance().setTitle(APPLICATION_NAME);
+			setTitle(APPLICATION_NAME);
 			return false;
 		}
 	}
@@ -492,8 +492,8 @@ public final class OpenLogViewer extends JFrame {
 
 			for (int i = 0; i < device.length; i++){ // Cycle through available devices (monitors) looking for device that has center of app
 				Rectangle bounds = device[i].getDefaultConfiguration().getBounds();
-				int centerX = (int)Math.round(this.getBounds().getCenterX());
-				int centerY = (int)Math.round(this.getBounds().getCenterY());
+				int centerX = (int)Math.round(getBounds().getCenterX());
+				int centerY = (int)Math.round(getBounds().getCenterY());
 				Point center = new Point(centerX, centerY);
 				if (bounds.contains(center)){ // Found the device (monitor) that contains the center of the app
 					containingDevice = i;

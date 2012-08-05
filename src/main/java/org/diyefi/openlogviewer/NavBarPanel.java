@@ -40,23 +40,23 @@ public class NavBarPanel extends JPanel {
 	private static final int PREFERRED_HEIGHT = 18;
 	private static final int SPACER_WIDTH = 16;
 
-	private JButton zoomInButton;
-	private JButton zoomResetRatioButton;
-	private JButton zoomResetFitButton;
-	private JButton zoomOutButton;
-	private JButton pausePlayButton;
-	private JButton slowDownButton;
-	private JButton resetPlaySpeedButton;
-	private JButton speedUpButton;
-	private JButton moveToBeginningButton;
-	private JButton moveBackwardCoarseButton;
-	private JButton moveBackwardButton;
-	private JButton moveToCenterButton;
-	private JButton moveForwardButton;
-	private JButton moveForwardCoarseButton;
-	private JButton moveToEndButton;
-	private JButton openButton;
-	private JButton openLastButton;
+	private final JButton zoomInButton;
+	private final JButton zoomResetRatioButton;
+	private final JButton zoomResetFitButton;
+	private final JButton zoomOutButton;
+	private final JButton pausePlayButton;
+	private final JButton slowDownButton;
+	private final JButton resetPlaySpeedButton;
+	private final JButton speedUpButton;
+	private final JButton moveToBeginningButton;
+	private final JButton moveBackwardCoarseButton;
+	private final JButton moveBackwardButton;
+	private final JButton moveToCenterButton;
+	private final JButton moveForwardButton;
+	private final JButton moveForwardCoarseButton;
+	private final JButton moveToEndButton;
+	private final JButton openButton;
+	private final JButton openLastButton;
 
 
 	public NavBarPanel() {
@@ -489,7 +489,7 @@ public class NavBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void openButtonMouseReleased(final MouseEvent e) {
-		OpenLogViewer.getInstance().openFile();
+		OpenLogViewer.getInstance().openChosenFile();
 	}
 
 	/**
