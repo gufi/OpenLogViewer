@@ -81,11 +81,10 @@ import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewer extends JFrame {
 	public static final String NEWLINE = System.getProperty("line.separator");
-	public static final String APP_NAME = "OpenLogViewer";
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String APPLICATION_NAME = OpenLogViewer.class.getSimpleName();
+	public static final String APPLICATION_NAME = OpenLogViewer.class.getSimpleName();
 	private static final String SETTINGS_DIRECTORY = "." + APPLICATION_NAME;
 
 	private static final String FILE_MENU_KEY = "FileMenuName";
@@ -254,7 +253,7 @@ public final class OpenLogViewer extends JFrame {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
 
 		pack();
-		setName(APP_NAME);
+		setName(APPLICATION_NAME);
 		requestFocusInWindow();
 		setVisible(true);
 	}
