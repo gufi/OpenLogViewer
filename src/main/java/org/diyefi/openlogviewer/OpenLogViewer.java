@@ -233,7 +233,10 @@ public final class OpenLogViewer extends JFrame {
 		fileMenu.setName(FILE_MENU_KEY);
 		fileMenu.add(openFileMenuItem);
 		fileMenu.add(reloadFileMenuItem);
-		fileMenu.add(quitFileMenuItem);
+
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac os") == -1) { // If not Mac!
+			fileMenu.add(quitFileMenuItem);
+		}
 
 		final JMenu viewMenu = new JMenu(labels.getString(VIEW_MENU_KEY));
 		viewMenu.setName(VIEW_MENU_KEY);
@@ -273,7 +276,7 @@ public final class OpenLogViewer extends JFrame {
 
 				final String lookAndFeel;
 				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
-				if ("com.apple.laf.AquaLookAndFeel".equals(systemLookAndFeel)) { // If Mac!
+				if (System.getProperty("os.name").toLowerCase().indexOf("mac os") != -1) { // If Mac!
 					System.setProperty("apple.laf.useScreenMenuBar", "true");
 				}
 				lookAndFeel = systemLookAndFeel;
