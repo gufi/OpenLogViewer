@@ -34,26 +34,22 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = 1L;
 
 	private GenericLog genLog;
-	private InfoPanel infoPanel;
+	private final InfoPanel infoPanel;
 	private int totalSplits;
 	private int layer;
 
 	public MultiGraphLayeredPane() {
-		super();
-		init();
-	}
-
-	private void init() {
 		this.setOpaque(true);
 		this.setLayout(null);
 		this.setBackground(Color.BLACK);
 
-		layer = 999;
+		layer = 999; // Black magic lies here!
 		totalSplits = 1;
 
 		infoPanel = new InfoPanel();
 		infoPanel.setSize(600, 400);
-		this.setLayer(infoPanel, new Integer(layer--));
+		this.setLayer(infoPanel, layer);
+		layer--;
 		this.add(infoPanel);
 	}
 
@@ -76,7 +72,8 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			final SingleGraphPanel graph = new SingleGraphPanel();
 			graph.setSize(this.getSize());
 			graph.setName(header);
-			this.setLayer(graph, new Integer(layer--));
+			this.setLayer(graph, layer);
+			layer--;
 			this.add(graph);
 			this.addHierarchyBoundsListener(graph); // updates graph size automatically
 			genLog.get(header).addPropertyChangeListener("Split", graph);
