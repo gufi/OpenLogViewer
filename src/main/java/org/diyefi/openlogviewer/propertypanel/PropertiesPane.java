@@ -326,7 +326,7 @@ public class PropertiesPane extends JFrame {
 		private final JTextField minBox;
 		private final JTextField maxBox;
 		private final JTextField splitBox;
-		private final JComboBox<String> activeBox;
+		private final JComboBox activeBox;
 
 		public PropertyPanel(final SingleProperty sp) {
 			this.sp = sp;
@@ -351,7 +351,7 @@ public class PropertiesPane extends JFrame {
 			colorBox.setBackground(sp.getColor());
 			colorBox.setPreferredSize(new Dimension(30, 20));
 			final String[] tf = {"False", "True"};
-			activeBox = new JComboBox<String>(tf);
+			activeBox = new JComboBox(tf);
 
 			if (sp.isActive()) {
 				activeBox.setSelectedIndex(1);
