@@ -112,6 +112,13 @@
 				<configuration>
 					<configLocation>src/site/fredsChecks.xml</configLocation>
 				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
