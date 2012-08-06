@@ -87,7 +87,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
 
-		displayColor = Color.GRAY;
+		displayColor = null;
 		splitNumber = 1;
 		addFlavors();
 	}
@@ -271,13 +271,13 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	}
 
 	public Color getDisplayColor() {
-		if (displayColor.equals(Color.GRAY)){
+		if (displayColor == null){
 			displayColor = InitialLineColoring.INSTANCE.getBestAvailableColor();
 		}
 		return displayColor;
 	}
 	public void setDisplayColor(final Color c) {
-		if (c.equals(Color.GRAY)){
+		if (c == null){
 			InitialLineColoring.INSTANCE.giveBackColor(displayColor);
 		}
 		displayColor = c;

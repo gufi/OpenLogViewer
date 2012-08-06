@@ -110,7 +110,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			if (this.getComponent(componentIndex) instanceof SingleGraphPanel) {
 				SingleGraphPanel SGP = (SingleGraphPanel)getComponent(componentIndex);
 				this.removeHierarchyBoundsListener(SGP);
-				SGP.getData().setDisplayColor(Color.GRAY);
+				SGP.getData().setDisplayColor(null);
 				this.remove(SGP);
 			} else {
 				componentIndex++;
@@ -128,15 +128,6 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 
 	public final InfoPanel getInfoPanel() {
 		return infoPanel;
-	}
-
-	public final void setColor(final String header, final Color newColor) {
-		for (int i = 0; i < this.getComponentCount(); i++) {
-			if (this.getComponent(i) instanceof SingleGraphPanel && this.getComponent(i).getName().equals(header)) {
-				final SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
-				gl.setColor(newColor);
-			}
-		}
 	}
 
 	public final int getTotalSplits() {

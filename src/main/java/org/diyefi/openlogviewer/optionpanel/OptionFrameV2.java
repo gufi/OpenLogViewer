@@ -203,7 +203,7 @@ public class OptionFrameV2 extends JFrame {
 				GCB.getInactivePanel().add(GCB);
 				GCB.setLocation(GCB.getInactiveLocation());
 				GCB.setSelected(false);
-				GCB.getGDE().setDisplayColor(Color.GRAY);
+				GCB.getGDE().setDisplayColor(null);
 			} else if (panel.getComponent(i) instanceof JButton) {
 				panel.remove(panel.getComponent(i)); // removes the button
 			} else {
@@ -535,7 +535,7 @@ public class OptionFrameV2 extends JFrame {
 						GCB.setLocation(GCB.getInactiveLocation());
 						GCB.setSelected(false);
 						GCB.setEnabled(false);
-						GCB.getGDE().setDisplayColor(Color.GRAY);
+						GCB.getGDE().setDisplayColor(null);
 					} else { // moving to
 						if (!place(GCB)) {
 							if (GCB.getPreviousPanel() != GCB.getParent()) { // if it moved
