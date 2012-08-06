@@ -115,12 +115,11 @@
 		<!-- <module name="JavadocType"/>--><!--Checks the Javadoc of a type.-->
 		<!-- <module name="JavadocVariable"/>--><!--Checks that a variable has Javadoc comment.-->
 
-		<!-- The following are not in version of checkstyle used by older maven plugin. -->
-		<!-- <module name="InnerTypeLast"/> Check nested (internal) classes/interfaces are declared at the bottom of the class after all method and field declarations.-->
-		<!-- <module name="MethodCount"/> Checks the number of methods declared in each type. -->
-		<!-- <module name="NestedForDepth"/> Restricts nested for blocks to a specified depth (default = 1). -->
-		<!-- <module name="OneStatementPerLine"/> Checks there is only one statement per line. -->
-		<!-- <module name="OuterTypeFilename"/> Checks that the outer type name and the file name match. -->
+		<module name="InnerTypeLast"/><!-- Check nested (internal) classes/interfaces are declared at the bottom of the class after all method and field declarations.-->
+		<module name="MethodCount"/><!-- Checks the number of methods declared in each type. -->
+		<module name="NestedForDepth"/><!-- Restricts nested for blocks to a specified depth (default = 1). -->
+		<module name="OneStatementPerLine"/><!-- Checks there is only one statement per line. -->
+		<module name="OuterTypeFilename"/><!-- Checks that the outer type name and the file name match. -->
 
 		<module name="MagicNumber"/>
 		<module name="UnusedImports"/>
