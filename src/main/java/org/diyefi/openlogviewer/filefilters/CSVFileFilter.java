@@ -27,11 +27,6 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class CSVFileFilter extends FileFilter {
-
-	public CSVFileFilter() {
-		super();
-	}
-
 	@Override
 	public final String getDescription() {
 		return "*.csv";

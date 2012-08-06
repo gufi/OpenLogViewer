@@ -29,25 +29,19 @@ import javax.swing.JPanel;
 public class FooterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private FramesPerSecondPanel fpsPanel;
-	private NavBarPanel navBarPanel;
+	private final FramesPerSecondPanel fpsPanel;
+	private final NavBarPanel navBarPanel;
 
 	public FooterPanel() {
-		super();
-		init();
-	}
-
-	private void init() {
 		setName("footerPanel");
 		setLayout(new BorderLayout());
 		fpsPanel = new FramesPerSecondPanel();
-		this.add(fpsPanel, BorderLayout.WEST);
+		add(fpsPanel, BorderLayout.WEST);
 		navBarPanel = new NavBarPanel();
-		this.add(navBarPanel, BorderLayout.EAST);
+		add(navBarPanel, BorderLayout.EAST);
 	}
 
 	public NavBarPanel getNavBarPanel(){
 		return navBarPanel;
 	}
-
 }

@@ -60,7 +60,6 @@ public class NavBarPanel extends JPanel {
 
 
 	public NavBarPanel() {
-		super();
 		zoomInButton = new JButton();
 		zoomResetRatioButton = new JButton();
 		zoomResetFitButton = new JButton();

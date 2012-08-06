@@ -39,21 +39,16 @@ public class GraphPositionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private GenericLog genLog;
-	private Color majorGraduationColor;
-	private Color positionDataColor;
-	private Color backgroundColor;
+	private final Color majorGraduationColor;
+	private final Color positionDataColor;
+	private final Color backgroundColor;
 	private boolean[] validSnappingPositions;
-	private double[] graduationSpacingMultiplier;
+	private final double[] graduationSpacingMultiplier;
 	private double majorGraduationSpacing;
 
 	public GraphPositionPanel() {
-		super();
-		init();
-	}
-
-	private void init() {
-		this.setOpaque(true);
-		this.setLayout(null);
+		setOpaque(true);
+		setLayout(null);
 		backgroundColor = Color.BLACK;
 
 		majorGraduationColor = Color.GRAY;

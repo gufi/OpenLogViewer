@@ -28,10 +28,6 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class FreeEMSBinFileFilter extends FileFilter {
-	public FreeEMSBinFileFilter() {
-		super();
-	}
-
 	@Override
 	public final String getDescription() {
 		return "*.bin";

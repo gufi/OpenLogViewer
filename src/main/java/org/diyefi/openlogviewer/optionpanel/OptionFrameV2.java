@@ -79,20 +79,20 @@ public class OptionFrameV2 extends JFrame {
 	private static final int WIDTH_OF_WINDOW = (NUMBER_OF_COLS_OF_FREEEMS_FIELDS * PANEL_WIDTH);
 	private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
 
-	private JFrame thisRef;
-	private JPanel inactiveHeaders;
-	private ModifyGraphPane infoPanel;
+	private final JFrame thisRef;
+	private final JPanel inactiveHeaders;
+	private final ModifyGraphPane infoPanel;
 	private JButton addDivisionButton;
 
-	private JLayeredPane layeredPane;
-	private List<JPanel> activePanelList;
+	private final JLayeredPane layeredPane;
+	private final List<JPanel> activePanelList;
 
 	public OptionFrameV2() {
 		super("Graphing Option Pane");
-		this.setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
-		this.setPreferredSize(this.getSize());
+		setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
+		setPreferredSize(this.getSize());
 
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		thisRef = this;
 		activePanelList = new ArrayList<JPanel>();
 		layeredPane = new JLayeredPane();
@@ -103,7 +103,7 @@ public class OptionFrameV2 extends JFrame {
 		inactiveHeaders = initHeaderPanel();
 		layeredPane.add(inactiveHeaders);
 		infoPanel = new ModifyGraphPane();
-		this.add(infoPanel);
+		add(infoPanel);
 
 		this.add(scroll);
 		addActiveHeaderPanel();
@@ -113,7 +113,7 @@ public class OptionFrameV2 extends JFrame {
 		final JPanel ih = new JPanel();
 		ih.setLayout(null);
 		ih.setName("Drop InactiveHeaderPanel");
-		this.addDivisionButton = new JButton("Add Division");
+		addDivisionButton = new JButton("Add Division");
 		addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
 		addDivisionButton.addActionListener(addDivisionListener);
 		ih.add(addDivisionButton);
@@ -121,21 +121,21 @@ public class OptionFrameV2 extends JFrame {
 		return ih;
 	}
 
-	private ActionListener addDivisionListener = new ActionListener() {
+	private final ActionListener addDivisionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			addActiveHeaderPanel();
 		}
 	};
 
-	private ActionListener remDivisionListener = new ActionListener() {
+	private final ActionListener remDivisionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			remActiveHeaderPanel(e);
 		}
 	};
 
-	private ContainerListener addRemoveListener = new ContainerListener() {
+	private final ContainerListener addRemoveListener = new ContainerListener() {
 		@Override
 		public void componentAdded(final ContainerEvent e) {
 
@@ -242,7 +242,7 @@ public class OptionFrameV2 extends JFrame {
 		this.repaint();
 	}
 
-	private MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
+	private final MouseMotionAdapter labelAdapter = new MouseMotionAdapter() {
 
 		@Override
 		public void mouseDragged(final MouseEvent e) {
@@ -363,16 +363,16 @@ public class OptionFrameV2 extends JFrame {
 
 		private GenericDataElement GDE;
 		private ActiveHeaderLabel AHL;
-		private JLabel minLabel;
-		private JLabel maxLabel;
-		private JTextField minField;
-		private JTextField maxField;
-		private JButton resetButton;
-		private JButton applyButton;
-		private JButton saveButton;
-		private JButton colorButton;
+		private final JLabel minLabel;
+		private final JLabel maxLabel;
+		private final JTextField minField;
+		private final JTextField maxField;
+		private final JButton resetButton;
+		private final JButton applyButton;
+		private final JButton saveButton;
+		private final JButton colorButton;
 
-		private ActionListener resetButtonListener = new ActionListener() {
+		private final ActionListener resetButtonListener = new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (GDE != null) {
@@ -383,7 +383,7 @@ public class OptionFrameV2 extends JFrame {
 			}
 		};
 
-		private ActionListener applyButtonListener = new ActionListener() {
+		private final ActionListener applyButtonListener = new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (GDE != null) {
@@ -392,7 +392,7 @@ public class OptionFrameV2 extends JFrame {
 			}
 		};
 
-		private ActionListener saveButtonListener = new ActionListener() {
+		private final ActionListener saveButtonListener = new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -403,7 +403,7 @@ public class OptionFrameV2 extends JFrame {
 			}
 		};
 
-		private ActionListener colorButtonListener = new ActionListener() {
+		private final ActionListener colorButtonListener = new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -495,10 +495,10 @@ public class OptionFrameV2 extends JFrame {
 		private GenericDataElement GDE;
 		private Point inactiveLocation;
 		private JPanel previousPanel;
-		private JPanel inactivePanel;
+		private final JPanel inactivePanel;
 		private boolean dragging;
 		private boolean selected;
-		private MouseListener selectedListener = new MouseListener() {
+		private final MouseListener selectedListener = new MouseListener() {
 
 			@Override
 			public void mouseClicked(final MouseEvent e) {
@@ -556,13 +556,12 @@ public class OptionFrameV2 extends JFrame {
 		};
 
 		public ActiveHeaderLabel() {
-			super();
 			addMouseListener(selectedListener);
-			super.setOpaque(false);
+			setOpaque(false);
 			inactivePanel = inactiveHeaders;
 			dragging = false;
 			selected = false;
-			super.setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.white));
+			setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.white));
 		}
 
 		@Override

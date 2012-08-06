@@ -39,8 +39,8 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static final int TIMER_RATE = 250; //milliseconds - changes display/update speed
 	private static final DecimalFormat df = new DecimalFormat("#,##0.0");
 
-	private JLabel output;
-	private Timer sampleTimer;
+	private final JLabel output;
+	private final Timer sampleTimer;
 	private static long frameCount;
 	private Double FPS;
 	private static long thePast;
@@ -48,16 +48,15 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static long previousCount;
 
 	public FramesPerSecondPanel() {
-		super();
 		sampleTimer = new Timer(TIMER_RATE, this);
 		sampleTimer.setInitialDelay(0);
 		sampleTimer.start();
 		currentTime = System.currentTimeMillis();
 		thePast = currentTime;
 
-		this.setName("fpsPanel");
-		this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PPREFERRED_HEIGHT));
-		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		setName("fpsPanel");
+		setPreferredSize(new Dimension(PREFERRED_WIDTH, PPREFERRED_HEIGHT));
+		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
 		output = new JLabel("FPS: 0.0");
 		output.setVerticalTextPosition(JLabel.CENTER);

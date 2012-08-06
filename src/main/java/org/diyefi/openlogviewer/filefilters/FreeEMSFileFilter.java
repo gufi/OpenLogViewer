@@ -28,10 +28,6 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class FreeEMSFileFilter extends FileFilter {
-	public FreeEMSFileFilter() {
-		super();
-	}
-
 	@Override
 	public final String getDescription() {
 		return "FreeEMS Binary Logs";

@@ -28,10 +28,6 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class FreeEMSLAFileFilter extends FileFilter {
-	public FreeEMSLAFileFilter() {
-		super();
-	}
-
 	@Override
 	public final String getDescription() {
 		return "*.la";

@@ -39,18 +39,18 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	private int layer;
 
 	public MultiGraphLayeredPane() {
-		this.setOpaque(true);
-		this.setLayout(null);
-		this.setBackground(Color.BLACK);
+		setOpaque(true);
+		setLayout(null);
+		setBackground(Color.BLACK);
 
 		layer = 999; // Black magic lies here!
 		totalSplits = 1;
 
 		infoPanel = new InfoPanel();
 		infoPanel.setSize(600, 400);
-		this.setLayer(infoPanel, layer);
+		setLayer(infoPanel, layer);
 		layer--;
-		this.add(infoPanel);
+		add(infoPanel);
 	}
 
 	public final void addGraph(final String header) {

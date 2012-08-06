@@ -62,15 +62,15 @@ public class PropertiesPane extends JFrame {
 	private File OLVProperties;
 	private List<SingleProperty> properties;
 	private List<SingleProperty> removeProperties;
-	private JPanel propertyPanel;
-	private JPanel propertyView;
+	private final JPanel propertyPanel;
+	private final JPanel propertyView;
 
 	public PropertiesPane(final String title) {
 		super(title);
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setPreferredSize(new Dimension(350, 500));
-		this.setSize(new Dimension(550, 500));
-		this.setJMenuBar(createMenuBar());
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setPreferredSize(new Dimension(350, 500));
+		setSize(new Dimension(550, 500));
+		setJMenuBar(createMenuBar());
 
 		propertyPanel = new JPanel();
 		propertyPanel.setLayout(new BorderLayout());
@@ -81,7 +81,7 @@ public class PropertiesPane extends JFrame {
 		final JScrollPane jsp = new JScrollPane(propertyView);
 		propertyPanel.add(jsp, BorderLayout.CENTER);
 		propertyPanel.add(createAcceptPanel(), BorderLayout.SOUTH);
-		this.add(propertyPanel);
+		add(propertyPanel);
 	}
 
 	public final void setProperties(final List<SingleProperty> p) {
@@ -321,18 +321,17 @@ public class PropertiesPane extends JFrame {
 	private final class PropertyPanel extends JPanel implements Comparable<PropertyPanel> {
 		private static final long serialVersionUID = 1L;
 		private SingleProperty sp;
-		private JCheckBox check;
-		private JPanel colorBox;
-		private JTextField minBox;
-		private JTextField maxBox;
-		private JTextField splitBox;
-		private JComboBox activeBox;
+		private final JCheckBox check;
+		private final JPanel colorBox;
+		private final JTextField minBox;
+		private final JTextField maxBox;
+		private final JTextField splitBox;
+		private final JComboBox activeBox;
 
 		public PropertyPanel(final SingleProperty sp) {
-			super();
 			this.sp = sp;
-			this.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
-			this.setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
+			setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
+			setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
 			setPreferredSize(new Dimension(500, 50));
 			final JLabel minLabel = new JLabel("Min:");
 			final JLabel maxLabel = new JLabel("Max:");

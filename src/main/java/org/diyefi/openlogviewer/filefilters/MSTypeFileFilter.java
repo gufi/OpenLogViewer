@@ -27,11 +27,6 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class MSTypeFileFilter extends FileFilter {
-
-	public MSTypeFileFilter() {
-		super();
-	}
-
 	@Override
 	public final String getDescription() {
 		return "MegaSquirt Compatable DataLogs";

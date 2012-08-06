@@ -54,14 +54,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
 
 
-	private MultiGraphLayeredPane multiGraph;
-	private GraphPositionPanel graphPositionPanel;
+	private final MultiGraphLayeredPane multiGraph;
+	private final GraphPositionPanel graphPositionPanel;
 	private double graphPosition;
 	private int graphSize;
 	private boolean playing;
 	private boolean wasPlaying;
-	private Timer playTimer;
-	private Timer flingTimer;
+	private final Timer playTimer;
+	private final Timer flingTimer;
 	private boolean dragging;
 	private boolean flinging;
 	private long thePastMouseDragged;
@@ -75,19 +75,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	private int oldComponentWidth;
 
 	public EntireGraphingPanel() {
-		super();
-		init();
-	}
-
-	private void init() {
-		this.setName("graphinPanel");
-		this.setLayout(new BorderLayout());
+		setName("graphinPanel");
+		setLayout(new BorderLayout());
 		multiGraph = new MultiGraphLayeredPane();
 		multiGraph.setPreferredSize(new Dimension(600, 400));
-		this.add(multiGraph, BorderLayout.CENTER);
+		add(multiGraph, BorderLayout.CENTER);
 		graphPositionPanel = new GraphPositionPanel();
 		graphPositionPanel.setPreferredSize(new Dimension(600, 20));
-		this.add(graphPositionPanel, BorderLayout.SOUTH);
+		add(graphPositionPanel, BorderLayout.SOUTH);
 		zoom = 1;
 		zoomedOutBeyondOneToOne = false;
 		oldComponentWidth = this.getWidth();
@@ -113,7 +108,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
-		
+
 		//Play timer event fires
 		if (e.getSource().equals(playTimer)) {
 			if (playing) {
@@ -128,7 +123,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 			}
 		}
-		
+
 		//Fling timer event fires
 		if (e.getSource().equals(flingTimer)) {
 			if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
@@ -230,7 +225,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 			}
 		}
 	}
-	
+
 	/**
 	 * Zoom the graph so that if it is centered, then the
 	 * entire graph will fit within the display. Usually
@@ -496,7 +491,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	public void centerGraphPosition(){
 		centerGraphPosition(0, graphSize);
 	}
-	
+
 	/**
 	 * Move the graph forward a small amount (with acceleration).
 	 */
