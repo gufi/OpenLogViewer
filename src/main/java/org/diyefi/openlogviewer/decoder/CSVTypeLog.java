@@ -78,7 +78,7 @@ public class CSVTypeLog extends AbstractDecoder {
 		final Scanner scan = new Scanner(new BufferedReader(new FileReader(getLogFile())));
 		final String delimiter = scanForDelimiter();
 
-		String[] splitLine = new String[1];
+		String[] splitLine;
 		String[] headers = new String[1];
 
 		String line = "";
@@ -118,7 +118,7 @@ public class CSVTypeLog extends AbstractDecoder {
 
 		final int magicNumber = 10; // Remove the MAGIC!
 		String delimiterFind = "";
-		String[] split = new String[1];
+		String[] split;
 		int delimNum = -1;
 
 		for (int i = 0; i < magicNumber && scan.hasNext(); i++) {
