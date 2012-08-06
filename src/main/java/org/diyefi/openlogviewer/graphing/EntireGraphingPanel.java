@@ -735,6 +735,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 					final WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
 					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 				}
+				break;
 			}
 
 			// Play key binding
