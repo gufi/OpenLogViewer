@@ -237,7 +237,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return
 	 */
 	private int getScreenPositionYCoord(final Double traceData, final double minValue, final double maxValue) {
-		final int divs = OpenLogViewer.getInstance().getMultiGraphLayeredPane().getTotalSplits();
+		final double divs = OpenLogViewer.getInstance().getMultiGraphLayeredPane().getTotalSplits();
 		final int height = (int) ((getHeight() / divs) * GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE);
 
 		if (traceData >= minValue && traceData <= maxValue) {
