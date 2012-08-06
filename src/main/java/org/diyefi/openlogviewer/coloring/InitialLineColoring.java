@@ -40,23 +40,26 @@ public enum InitialLineColoring {
 
 	private InitialLineColoring() {
 		colorList = new LinkedList<Color>();
+		Color bookEndRed = Color.getHSBColor(0.999F, 1.0F, 1.0F); //Seed with high value red
+		colorList.add(0, bookEndRed);
 	}
 
 	public Color getBestAvailableColor() {
 		Color newColor = Color.GRAY;
 		int index = 0;
 
-		if(colorList.size() == 0){
-			newColor = Color.getHSBColor(0.0F, 1.0F, 1.0F); //Seed with low value red
+		Color seedRed = Color.getHSBColor(0.0F, 1.0F, 1.0F);
+		Color seedGreen = Color.getHSBColor(0.3333F, 1.0F, 1.0F);
+		Color seedBlue = Color.getHSBColor(0.6666F, 1.0F, 1.0F);
+		if (!colorList.contains(seedRed)){ //Seed with low value red
+			newColor = seedRed;
 			index = 0;
-		} else if(colorList.size() == 1){
-			newColor = Color.getHSBColor(0.333F, 1.0F, 1.0F); //Seed with green
+		} else if (!colorList.contains(seedGreen)) {  //Seed with green
+			newColor = seedGreen;
 			index = 1;
-		} else if(colorList.size() == 2){
+		} else if (!colorList.contains(seedBlue)) {  //Seed with blue
+			newColor = seedBlue;
 			index = 2;
-			Color bookEndRed = Color.getHSBColor(0.999F, 1.0F, 1.0F); //Seed with high value red
-			colorList.add(index, bookEndRed);
-			newColor = Color.getHSBColor(0.666F, 1.0F, 1.0F); //Seed with blue
 		} else {
 
 			float hue = 0.0F;

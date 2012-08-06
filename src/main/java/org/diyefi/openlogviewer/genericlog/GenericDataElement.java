@@ -87,8 +87,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
 
-		// this should just be white and should become something at drop time. Drop has an event, let's use it.
-		displayColor = InitialLineColoring.INSTANCE.getBestAvailableColor();
+		displayColor = Color.GRAY;
 		splitNumber = 1;
 		addFlavors();
 	}
@@ -272,9 +271,15 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	}
 
 	public Color getDisplayColor() {
+		if (displayColor.equals(Color.GRAY)){
+			displayColor = InitialLineColoring.INSTANCE.getBestAvailableColor();
+		}
 		return displayColor;
 	}
 	public void setDisplayColor(final Color c) {
+		if (c.equals(Color.GRAY)){
+			InitialLineColoring.INSTANCE.giveBackColor(displayColor);
+		}
 		displayColor = c;
 	}
 	public int getSplitNumber() {

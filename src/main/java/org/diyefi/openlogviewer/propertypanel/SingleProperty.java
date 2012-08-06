@@ -34,7 +34,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 	private boolean active;
 
 	public SingleProperty() {
-		color = Color.RED;
+		color = Color.GRAY;
 		header = "";
 		min = 0;
 		max = 0;

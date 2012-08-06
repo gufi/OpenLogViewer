@@ -108,8 +108,10 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		int componentIndex = 0;
 		while (this.getComponentCount() > 1) {  // Leave InfoPanel in component count
 			if (this.getComponent(componentIndex) instanceof SingleGraphPanel) {
-				this.removeHierarchyBoundsListener((SingleGraphPanel) getComponent(componentIndex));
-				this.remove(getComponent(componentIndex));
+				SingleGraphPanel SGP = (SingleGraphPanel)getComponent(componentIndex);
+				this.removeHierarchyBoundsListener(SGP);
+				SGP.getData().setDisplayColor(Color.GRAY);
+				this.remove(SGP);
 			} else {
 				componentIndex++;
 			}
