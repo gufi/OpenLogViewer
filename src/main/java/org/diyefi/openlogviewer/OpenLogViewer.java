@@ -116,6 +116,10 @@ public final class OpenLogViewer extends JFrame {
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
 
+	private static boolean isMac;
+	private static boolean isWindows;
+	private static boolean isLinux;
+
 	private final JPanel mainPanel;
 	private final EntireGraphingPanel graphingPanel;
 	private final FooterPanel footerPanel;
@@ -233,8 +237,7 @@ public final class OpenLogViewer extends JFrame {
 		fileMenu.setName(FILE_MENU_KEY);
 		fileMenu.add(openFileMenuItem);
 		fileMenu.add(reloadFileMenuItem);
-
-		if (System.getProperty("os.name").toLowerCase().indexOf("mac os") == -1) { // If not Mac!
+		if (!isMac) {
 			fileMenu.add(quitFileMenuItem);
 		}
 
@@ -272,11 +275,25 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void run() {
 				final Locale currentLocale = Locale.getDefault();
+				if (System.getProperty("os.name").toLowerCase().indexOf("mac os") != -1) { // If Mac
+					isMac = true;
+					isWindows = false;
+					isLinux = false;
+				} else if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) { // If Windows
+					isMac = false;
+					isWindows = true;
+					isLinux = false;
+				} else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1) { // If Linux
+					isMac = false;
+					isWindows = false;
+					isLinux = true;
+				}
+
 				labels = ResourceBundle.getBundle(getClass().getPackage().getName() + ".Labels", currentLocale);
 
 				final String lookAndFeel;
 				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
-				if (System.getProperty("os.name").toLowerCase().indexOf("mac os") != -1) { // If Mac!
+				if (isMac) {
 					System.setProperty("apple.laf.useScreenMenuBar", "true");
 				}
 				lookAndFeel = systemLookAndFeel;
