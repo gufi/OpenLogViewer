@@ -117,8 +117,8 @@ public final class OpenLogViewer extends JFrame {
 	private static ResourceBundle labels;
 
 	private static boolean isMac;
-	private static boolean isWindows;
-	private static boolean isLinux;
+	//private static boolean isWindows;
+	//private static boolean isLinux;
 
 	private final JPanel mainPanel;
 	private final EntireGraphingPanel graphingPanel;
@@ -253,9 +253,9 @@ public final class OpenLogViewer extends JFrame {
 		menuBar.add(viewMenu);
 		setJMenuBar(menuBar);
 
+		//Listener stuff
 		addKeyListener(graphingPanel);
 		addComponentListener(graphingPanel);
-
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
 
 		pack();
@@ -277,16 +277,16 @@ public final class OpenLogViewer extends JFrame {
 				final Locale currentLocale = Locale.getDefault();
 				if (System.getProperty("os.name").toLowerCase().indexOf("mac os") != -1) { // If Mac
 					isMac = true;
-					isWindows = false;
-					isLinux = false;
+					//isWindows = false;
+					//isLinux = false;
 				} else if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) { // If Windows
 					isMac = false;
-					isWindows = true;
-					isLinux = false;
+					//isWindows = true;
+					//isLinux = false;
 				} else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1) { // If Linux
 					isMac = false;
-					isWindows = false;
-					isLinux = true;
+					//isWindows = false;
+					//isLinux = true;
 				}
 
 				labels = ResourceBundle.getBundle(getClass().getPackage().getName() + ".Labels", currentLocale);
@@ -518,16 +518,18 @@ public final class OpenLogViewer extends JFrame {
 					containingDevice = i;
 					if (device[containingDevice].isFullScreenSupported()) {
 						try {
-							fullscreen = true;    // Remember so that we can react accordingly.
-							saveScreenState();    // Save the current state of things to restore later when exiting fullscreen mode.
-							setJMenuBar(null);    // remove the menu bar for maximum space, load files in non fullscreen mode! :-p
-							removeNotify();       // Without this we can't do setUndecorated(true)!
-							setUndecorated(true); // Remove the window frame/bezel!
-							addNotify();          // turn things back on again!
-							//setResizable(false);// Fred: doesn't make sense and could be dangerous, according to oracle.
-							                      // Ben: Removed setResizable(false) because it causes GNOME menu bar and task bar to show in front of the app!
+							fullscreen = true;		// Remember so that we can react accordingly.
+							saveScreenState();		// Save the current state of things to restore later when exiting fullscreen mode.
+							setVisible(false);		// Hide how the sausage is made!
+							setJMenuBar(null);		// Remove the menu bar for maximum space, load files with the buttons! :-p
+							dispose();				// Make the JFrame undisplayable so setUndecorated(true) will work!
+							setUndecorated(true);	// Remove the window frame/bezel!
+							setVisible(true);		// Make the JFrame displayable again!
+							//setResizable(false);	// Fred: doesn't make sense and could be dangerous, according to oracle.
+							                      	// Ben: Removed setResizable(false) because it causes GNOME menu bar and task bar to show in front of the app!
 							device[containingDevice].setFullScreenWindow(this);
-							validate();           // required after rearranging component hierarchy
+							validate();				// Required after rearranging component hierarchy
+							toFront();				// Might as well
 							requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 							graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 						} catch (Exception e) {

@@ -38,7 +38,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
@@ -105,6 +108,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		thePastLeftArrow = System.currentTimeMillis();
 		thePastRightArrow = System.currentTimeMillis();
 		scrollAcceleration = 0;
+
+		initKeyBindings();
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
@@ -737,104 +742,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 				}
 				break;
 			}
-
-			// Play key binding
-			case KeyEvent.VK_SPACE: {
-				play();
-				break;
-			}
-
-			// Enter full screen key binding
-			case KeyEvent.VK_ENTER: {
-				if (e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_STANDARD) {
-					OpenLogViewer.getInstance().enterFullScreen();
-				}
-				break;
-			}
-
-			// Exit full screen key binding
-			case KeyEvent.VK_ESCAPE: {
-				OpenLogViewer.getInstance().exitFullScreen();
-				break;
-			}
-
-			// Toggle full screen key binding
-			case KeyEvent.VK_F11: {
-				OpenLogViewer.getInstance().toggleFullScreen();
-				break;
-			}
-
-			// Home key binding
-			case KeyEvent.VK_HOME: {
-				moveToBeginning();
-				break;
-			}
-
-			// End key binding
-			case KeyEvent.VK_END: {
-				moveToEnd();
-				break;
-			}
-
-			// Scroll left key bindings
-			case KeyEvent.VK_PAGE_UP: {
-				moveBackwardCoarse();
-				break;
-			}
-
-			case KeyEvent.VK_LEFT:
-			case KeyEvent.VK_KP_LEFT: {
-				if (e.isControlDown()) {
-					moveBackwardCoarse();
-				} else {
-					moveBackward();
-				}
-				break;
-			}
-
-			// Scroll right key bindings
-			case KeyEvent.VK_PAGE_DOWN: {
-				moveForwardCoarse();
-				break;
-			}
-
-			case KeyEvent.VK_RIGHT:
-			case KeyEvent.VK_KP_RIGHT: {
-				if (e.isControlDown()) {
-					moveForwardCoarse();
-				} else {
-					moveForward();
-				}
-				break;
-			}
-
-			// Zoom in key bindings
-			case KeyEvent.VK_UP:
-			case KeyEvent.VK_KP_UP: {
-				zoomInCoarse();
-				break;
-			}
-
-			case KeyEvent.VK_ADD: {
-				if (e.isControlDown()) {
-					zoomInCoarse();
-				}
-				break;
-			}
-
-			// Zoom out key bindings
-			case KeyEvent.VK_DOWN:
-			case KeyEvent.VK_KP_DOWN: {
-				zoomOutCoarse();
-				break;
-			}
-
-			case KeyEvent.VK_SUBTRACT: {
-				if (e.isControlDown()) {
-					zoomOutCoarse();
-				}
-				break;
-			}
 		}
 	}
 
@@ -874,5 +781,141 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		// Ben says eventually there might be stuff here, and it is required implementation for the ComponentListener interface.
 		// Fred says thanks! :-)
 	}
+
+	private void initKeyBindings(){
+		// Play key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "play");
+		getActionMap().put("play", play);
+
+		// Enter full screen key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt ENTER"), "enterFullScreen");
+		getActionMap().put("enterFullScreen", enterFullScreen);
+
+		// Exit full screen key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "exitFullScreen");
+		getActionMap().put("exitFullScreen", exitFullScreen);
+
+		// Toggle full screen key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F11"), "toggleFullScreen");
+		getActionMap().put("toggleFullScreen", toggleFullScreen);
+
+		// Move to beginning key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("HOME"), "moveToBeginning");
+		getActionMap().put("moveToBeginning", moveToBeginning);
+
+		// Move to end key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("END"), "moveToEnd");
+		getActionMap().put("moveToEnd", moveToEnd);
+
+		// Move backward key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "moveBackward");
+		getActionMap().put("moveBackward", moveBackward);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("PAGE_UP"), "moveBackwardCoarse");
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl LEFT"), "moveBackwardCoarse");
+		getActionMap().put("moveBackwardCoarse", moveBackwardCoarse);
+
+		// Move forward key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "moveForward");
+		getActionMap().put("moveForward", moveForward);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("PAGE_DOWN"), "moveForwardCoarse");
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl RIGHT"), "moveForwardCoarse");
+		getActionMap().put("moveForwardCoarse", moveForwardCoarse);
+
+		// Zoom in key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "zoomInCoarse");
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl ADD"), "zoomInCoarse");
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl EQUALS"), "zoomInCoarse");
+		getActionMap().put("zoomInCoarse", zoomInCoarse);
+
+		// Zoom out key bindings
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "zoomOutCoarse");
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl MINUS"), "zoomOutCoarse");
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SUBTRACT"), "zoomOutCoarse");
+		getActionMap().put("zoomOutCoarse", zoomOutCoarse);
+	}
+
+	private final Action play = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+	       play();
+	    }
+	};
+
+	private final Action enterFullScreen = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			OpenLogViewer.getInstance().enterFullScreen();
+	    }
+	};
+
+	private final Action exitFullScreen = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			OpenLogViewer.getInstance().exitFullScreen();
+	    }
+	};
+
+	private final Action toggleFullScreen = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			OpenLogViewer.getInstance().toggleFullScreen();
+	    }
+	};
+
+	private final Action moveToBeginning = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			moveToBeginning();
+	    }
+	};
+
+	private final Action moveToEnd = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			moveToEnd();
+	    }
+	};
+
+	private final Action moveBackward = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			moveBackward();
+	    }
+	};
+
+	private final Action moveBackwardCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			moveBackwardCoarse();
+	    }
+	};
+
+	private final Action moveForward = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			moveForward();
+	    }
+	};
+
+	private final Action moveForwardCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			moveForwardCoarse();
+	    }
+	};
+
+	private final Action zoomInCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			zoomInCoarse();
+	    }
+	};
+
+	private final Action zoomOutCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(ActionEvent e) {
+			zoomOutCoarse();
+	    }
+	};
 
 }
