@@ -96,7 +96,7 @@ public class NavBarPanel extends JPanel {
 		zoomInButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomInButtonMouseReleased(e);
+				zoomInButtonMouseReleased();
 			}
 		});
 		this.add(zoomInButton);
@@ -111,7 +111,7 @@ public class NavBarPanel extends JPanel {
 		zoomResetRatioButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomResetRatioButtonMouseReleased(e);
+				zoomResetRatioButtonMouseReleased();
 			}
 		});
 		this.add(zoomResetRatioButton);
@@ -126,7 +126,7 @@ public class NavBarPanel extends JPanel {
 		zoomResetFitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomResetFitButtonMouseReleased(e);
+				zoomResetFitButtonMouseReleased();
 			}
 		});
 		this.add(zoomResetFitButton);
@@ -141,7 +141,7 @@ public class NavBarPanel extends JPanel {
 		zoomOutButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomOutButtonMouseReleased(e);
+				zoomOutButtonMouseReleased();
 			}
 		});
 		this.add(zoomOutButton);
@@ -158,7 +158,7 @@ public class NavBarPanel extends JPanel {
 		slowDownButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				slowDownButtonMouseReleased(e);
+				slowDownButtonMouseReleased();
 			}
 		});
 		this.add(slowDownButton);
@@ -173,7 +173,7 @@ public class NavBarPanel extends JPanel {
 		resetPlaySpeedButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				resetPlaySpeedButtonMouseReleased(e);
+				resetPlaySpeedButtonMouseReleased();
 			}
 		});
 		this.add(resetPlaySpeedButton);
@@ -188,7 +188,7 @@ public class NavBarPanel extends JPanel {
 		pausePlayButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				pausePlayButtonMouseReleased(e);
+				pausePlayButtonMouseReleased();
 			}
 		});
 		this.add(pausePlayButton);
@@ -203,7 +203,7 @@ public class NavBarPanel extends JPanel {
 		speedUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				speedUpButtonMouseReleased(e);
+				speedUpButtonMouseReleased();
 			}
 		});
 		this.add(speedUpButton);
@@ -220,7 +220,7 @@ public class NavBarPanel extends JPanel {
 		moveToBeginningButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveToBeginningButtonMouseReleased(e);
+				moveToBeginningButtonMouseReleased();
 			}
 		});
 		this.add(moveToBeginningButton);
@@ -235,7 +235,7 @@ public class NavBarPanel extends JPanel {
 		moveBackwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveBackwardCoarseButtonMouseReleased(e);
+				moveBackwardCoarseButtonMouseReleased();
 			}
 		});
 		this.add(moveBackwardCoarseButton);
@@ -250,7 +250,7 @@ public class NavBarPanel extends JPanel {
 		moveBackwardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveBackwardButtonMouseReleased(e);
+				moveBackwardButtonMouseReleased();
 			}
 		});
 		this.add(moveBackwardButton);
@@ -265,7 +265,7 @@ public class NavBarPanel extends JPanel {
 		moveToCenterButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveToCenterButtonMouseReleased(e);
+				moveToCenterButtonMouseReleased();
 			}
 		});
 		this.add(moveToCenterButton);
@@ -280,7 +280,7 @@ public class NavBarPanel extends JPanel {
 		moveForwardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveForwardButtonMouseReleased(e);
+				moveForwardButtonMouseReleased();
 			}
 		});
 		this.add(moveForwardButton);
@@ -295,7 +295,7 @@ public class NavBarPanel extends JPanel {
 		moveForwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveForwardCoarseButtonMouseReleased(e);
+				moveForwardCoarseButtonMouseReleased();
 			}
 		});
 		this.add(moveForwardCoarseButton);
@@ -310,7 +310,7 @@ public class NavBarPanel extends JPanel {
 		moveToEndButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveToEndButtonMouseReleased(e);
+				moveToEndButtonMouseReleased();
 			}
 		});
 		this.add(moveToEndButton);
@@ -327,7 +327,7 @@ public class NavBarPanel extends JPanel {
 		openButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				openButtonMouseReleased(e);
+				openButtonMouseReleased();
 			}
 		});
 		this.add(openButton);
@@ -342,14 +342,14 @@ public class NavBarPanel extends JPanel {
 		openLastButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				openLastButtonMouseReleased(e);
+				openLastButtonMouseReleased();
 			}
 		});
 		this.add(openLastButton);
 	}
 
-	public void updatePausePlayButton(){
-		boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
+	public final void updatePausePlayButton() {
+		final boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
 		if (playing) {
 			pausePlayButton.setIcon(new ImageIcon(getClass().getResource("pause.png"))); // NOI18N
 		} else {
@@ -361,7 +361,7 @@ public class NavBarPanel extends JPanel {
 	 * Modify the state of the PlayableLog zoom in 1 pixel up to 512 pixels
 	 * @param evt
 	 */
-	private void zoomInButtonMouseReleased(final MouseEvent e) {
+	private void zoomInButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomInCoarse();
 	}
 
@@ -369,7 +369,7 @@ public class NavBarPanel extends JPanel {
 	 * Modify the state of the PlayableLog zoom in 1 pixel down to -1024 pixels
 	 * @param evt
 	 */
-	private void zoomOutButtonMouseReleased(final MouseEvent e) {
+	private void zoomOutButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomOutCoarse();
 	}
 
@@ -377,7 +377,7 @@ public class NavBarPanel extends JPanel {
 	 * Modify the state of the PlayableLog zoom to exactly 1
 	 * @param evt
 	 */
-	private void zoomResetRatioButtonMouseReleased(final MouseEvent e) {
+	private void zoomResetRatioButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomResetRatio();
 	}
 
@@ -385,7 +385,7 @@ public class NavBarPanel extends JPanel {
 	 * Modify the state of the PlayableLog zoom to exactly 1
 	 * @param evt
 	 */
-	private void zoomResetFitButtonMouseReleased(final MouseEvent e) {
+	private void zoomResetFitButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().zoomGraphToFit();
 	}
 
@@ -393,7 +393,7 @@ public class NavBarPanel extends JPanel {
 	 * Slows down the play back speed of the Playable Log
 	 * @param evt
 	 */
-	private void slowDownButtonMouseReleased(final MouseEvent e) {
+	private void slowDownButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().slowDown();
 	}
 
@@ -401,7 +401,7 @@ public class NavBarPanel extends JPanel {
 	 * Sets the play back speed of the Playable Log to the original base speed
 	 * @param evt
 	 */
-	private void resetPlaySpeedButtonMouseReleased(final MouseEvent e) {
+	private void resetPlaySpeedButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().resetPlaySpeed();
 	}
 
@@ -409,8 +409,8 @@ public class NavBarPanel extends JPanel {
 	 * Modifies the state of the PlayableLog to begin playing if paused, or pause if playing
 	 * @param evt
 	 */
-	private void pausePlayButtonMouseReleased(final MouseEvent e) {
-		boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
+	private void pausePlayButtonMouseReleased() {
+		final boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
 		if (playing) {
 			OpenLogViewer.getInstance().getEntireGraphingPanel().pause();
 		} else {
@@ -423,7 +423,7 @@ public class NavBarPanel extends JPanel {
 	 * Speeds up the play back speed of the PlayableLog
 	 * @param evt
 	 */
-	private void speedUpButtonMouseReleased(final MouseEvent e) {
+	private void speedUpButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().speedUp();
 	}
 
@@ -431,7 +431,7 @@ public class NavBarPanel extends JPanel {
 	 * Moves the Playable Log to the beginning position
 	 * @param evt
 	 */
-	private void moveToBeginningButtonMouseReleased(final MouseEvent e) {
+	private void moveToBeginningButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().moveToBeginning();
 	}
 
@@ -439,7 +439,7 @@ public class NavBarPanel extends JPanel {
 	 * Moves the Playable Log backward a large amount
 	 * @param evt
 	 */
-	private void moveBackwardCoarseButtonMouseReleased(final MouseEvent e) {
+	private void moveBackwardCoarseButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().moveBackwardCoarse();
 	}
 
@@ -447,7 +447,7 @@ public class NavBarPanel extends JPanel {
 	 * Moves the Playable Log backward a small amount
 	 * @param evt
 	 */
-	private void moveBackwardButtonMouseReleased(final MouseEvent e) {
+	private void moveBackwardButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().moveBackward();
 	}
 
@@ -455,7 +455,7 @@ public class NavBarPanel extends JPanel {
 	 * Centers the Playable Log in the display
 	 * @param evt
 	 */
-	private void moveToCenterButtonMouseReleased(final MouseEvent e) {
+	private void moveToCenterButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().centerGraphPosition();
 	}
 
@@ -463,7 +463,7 @@ public class NavBarPanel extends JPanel {
 	 * Moves the Playable Log forward a small amount
 	 * @param evt
 	 */
-	private void moveForwardButtonMouseReleased(final MouseEvent e) {
+	private void moveForwardButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().moveForward();
 	}
 
@@ -471,7 +471,7 @@ public class NavBarPanel extends JPanel {
 	 * Moves the Playable Log forward a large amount
 	 * @param evt
 	 */
-	private void moveForwardCoarseButtonMouseReleased(final MouseEvent e) {
+	private void moveForwardCoarseButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().moveForwardCoarse();
 	}
 
@@ -479,7 +479,7 @@ public class NavBarPanel extends JPanel {
 	 * Moves the Playable Log to the ending position
 	 * @param evt
 	 */
-	private void moveToEndButtonMouseReleased(final MouseEvent e) {
+	private void moveToEndButtonMouseReleased() {
 		OpenLogViewer.getInstance().getEntireGraphingPanel().moveToEnd();
 	}
 
@@ -487,7 +487,7 @@ public class NavBarPanel extends JPanel {
 	 * Allow the user to choose a new log to open
 	 * @param evt
 	 */
-	private void openButtonMouseReleased(final MouseEvent e) {
+	private void openButtonMouseReleased() {
 		OpenLogViewer.getInstance().openChosenFile();
 	}
 
@@ -495,7 +495,7 @@ public class NavBarPanel extends JPanel {
 	 * Re-open the last log file that was opened/loaded
 	 * @param evt
 	 */
-	private void openLastButtonMouseReleased(final MouseEvent e) {
+	private void openLastButtonMouseReleased() {
 		OpenLogViewer.getInstance().openLastFile();
 	}
 }

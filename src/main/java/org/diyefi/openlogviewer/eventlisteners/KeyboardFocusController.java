@@ -4,10 +4,10 @@ import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class KeyboardFocusController implements PropertyChangeListener{
-	public void propertyChange(PropertyChangeEvent e) {
-        Component oldComp = (Component)e.getOldValue();
-        //Component newComp = (Component)e.getNewValue();
+public class KeyboardFocusController implements PropertyChangeListener {
+	public final void propertyChange(final PropertyChangeEvent e) {
+        final Component oldComp = (Component) e.getOldValue();
+        //final Component newComp = (Component) e.getNewValue();
 
         if ("focusOwner".equals(e.getPropertyName())) {
             if (oldComp == null) {

@@ -112,15 +112,15 @@ public class PropertiesPane extends JFrame {
 					} else {
 						throw new RuntimeException("Couldn't create directory for props..."); // find somewhere else
 					}
-				} catch (IOException IOE) {
-					System.out.print(IOE.getMessage());
+				} catch (IOException ioe) {
+					System.out.print(ioe.getMessage());
 				}
 			} else {
 				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
 				loadProperties();
 			}
-		} catch (Exception E) {
-			System.out.print(E.getMessage());
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
 		}
 	}
 
@@ -136,7 +136,7 @@ public class PropertiesPane extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent evt) {
 				final String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-				if ((s != null) && !s.equals("")) { // TODO Bad need of stringUtils here...
+				if ((s != null) && !"".equals(s)) { // TODO Bad need of stringUtils here...
 					final SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
 					addProperty(newprop);
@@ -212,9 +212,9 @@ public class PropertiesPane extends JFrame {
 			}
 
 			scan.close();
-		} catch (FileNotFoundException FNF) {
-			System.out.print(FNF.toString());
-			throw new RuntimeException(FNF);
+		} catch (FileNotFoundException fnf) {
+			System.out.print(fnf.toString());
+			throw new RuntimeException(fnf);
 		}
 	}
 

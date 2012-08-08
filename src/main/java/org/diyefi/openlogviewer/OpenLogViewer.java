@@ -113,6 +113,8 @@ public final class OpenLogViewer extends JFrame {
 	private static final String NAME_OF_LAST_CHOOSER_CLASS = "chooserClass";
 
 	// Real vars start here, many will probably get ripped out later
+	private static final int GRAPH_PANEL_WIDTH = 600;
+	private static final int GRAPH_PANEL_HEIGHT = 420;
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
 
@@ -146,7 +148,7 @@ public final class OpenLogViewer extends JFrame {
 		footerPanel = new FooterPanel();
 		optionFrame = new OptionFrameV2();
 		graphingPanel = new EntireGraphingPanel();
-		graphingPanel.setPreferredSize(new Dimension(600, 420));
+		graphingPanel.setPreferredSize(new Dimension(GRAPH_PANEL_WIDTH, GRAPH_PANEL_HEIGHT));
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle(APPLICATION_NAME);
@@ -275,15 +277,16 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void run() {
 				final Locale currentLocale = Locale.getDefault();
-				if (System.getProperty("os.name").toLowerCase().indexOf("mac os") != -1) { // If Mac
+				final String operatingSystem = "os.name";
+				if (System.getProperty(operatingSystem).toLowerCase().indexOf("mac os") != -1) { // If Mac
 					isMac = true;
 					//isWindows = false;
 					//isLinux = false;
-				} else if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) { // If Windows
+				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("windows") != -1) { // If Windows
 					isMac = false;
 					//isWindows = true;
 					//isLinux = false;
-				} else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1) { // If Linux
+				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("linux") != -1) { // If Linux
 					isMac = false;
 					//isWindows = false;
 					//isLinux = true;
@@ -325,7 +328,10 @@ public final class OpenLogViewer extends JFrame {
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
 			final File fileToOpen = fileChooser.getSelectedFile();
 			if (!openFile(fileToOpen, fileChooser)) {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY) + "\n" + fileToOpen.getAbsolutePath(), labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY) 
+						+ "\n" + fileToOpen.getAbsolutePath(),
+						labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(), 
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -337,13 +343,16 @@ public final class OpenLogViewer extends JFrame {
 			final File fileToOpen = new File(lastFingFile);
 			final JFileChooser fileChooser = generateChooser();
 			if (!openFile(fileToOpen, fileChooser)) {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY) + "\n" + fileToOpen.getAbsolutePath(), labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY) 
+						+ "\n" + fileToOpen.getAbsolutePath(),
+						labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(),
+						JOptionPane.ERROR_MESSAGE);
 			}
 		} // Silently do nothing.
 	}
 
-	public boolean openFile(File fileToOpen, JFileChooser fileChooser) {
-		if(fileToOpen.exists()){
+	public boolean openFile(final File fileToOpen, final JFileChooser fileChooser) {
+		if (fileToOpen.exists()) {
 			if (decoderInUse != null) {
 				// Clear out all references to data that we don't need and thereby ensure that we have lots of memory free for data we're about to gather!
 				final GenericLog logInUse = decoderInUse.getDecodedLog();
@@ -359,7 +368,9 @@ public final class OpenLogViewer extends JFrame {
 			saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, fileToOpen.getPath());
 			saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
 
-			if ("bin".equals(Utilities.getExtension(fileToOpen)) || "la".equals(Utilities.getExtension(fileToOpen)) || (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
+			if ("bin".equals(Utilities.getExtension(fileToOpen))
+					|| "la".equals(Utilities.getExtension(fileToOpen)) 
+					|| (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
 				decoderInUse = new FreeEMSBin(fileToOpen);
 			} else {
 				decoderInUse = new CSVTypeLog(fileToOpen);
@@ -426,10 +437,10 @@ public final class OpenLogViewer extends JFrame {
 
 	private String getApplicationWideProperty(final String key) {
 		try {
-			final Properties AppWide = new Properties();
-			final File AppWideFile = openAppWideProps(AppWide);
-			if (AppWideFile != null) {
-				return AppWide.getProperty(key);
+			final Properties appWide = new Properties();
+			final File appWideFile = openAppWideProps(appWide);
+			if (appWideFile != null) {
+				return appWide.getProperty(key);
 			} else {
 				throw new IllegalArgumentException("Problem getting property, got null instead of file!");
 			}
@@ -441,11 +452,11 @@ public final class OpenLogViewer extends JFrame {
 
 	private void saveApplicationWideProperty(final String key, final String value) {
 		try {
-			final Properties AppWide = new Properties();
-			final File AppWideFile = openAppWideProps(AppWide);
-			if (AppWideFile != null) {
-				AppWide.setProperty(key, value);
-				AppWide.store(new FileOutputStream(AppWideFile), "saved");
+			final Properties appWide = new Properties();
+			final File appWideFile = openAppWideProps(appWide);
+			if (appWideFile != null) {
+				appWide.setProperty(key, value);
+				appWide.store(new FileOutputStream(appWideFile), "saved");
 			} else {
 				throw new IllegalArgumentException("Problem saving property, got null instead of file!");
 			}
@@ -457,11 +468,11 @@ public final class OpenLogViewer extends JFrame {
 
 	private void removeApplicationWideProperty(final String key) {
 		try {
-			final Properties AppWide = new Properties();
-			final File AppWideFile = openAppWideProps(AppWide);
-			if (AppWideFile != null) {
-				AppWide.remove(key);
-				AppWide.store(new FileOutputStream(AppWideFile), "removed");
+			final Properties appWide = new Properties();
+			final File appWideFile = openAppWideProps(appWide);
+			if (appWideFile != null) {
+				appWide.remove(key);
+				appWide.store(new FileOutputStream(appWideFile), "removed");
 			} else {
 				throw new IllegalArgumentException("Problem removing property, got null instead of file!");
 			}
@@ -471,37 +482,37 @@ public final class OpenLogViewer extends JFrame {
 		}
 	}
 
-	private File openAppWideProps(final Properties AppWide) throws IOException {
-		File AppWideFile;
-		AppWideFile = new File(System.getProperty("user.home"));
+	private File openAppWideProps(final Properties appWide) throws IOException {
+		File appWideFile;
+		appWideFile = new File(System.getProperty("user.home"));
 
-		if (!AppWideFile.exists() || !AppWideFile.canRead() || !AppWideFile.canWrite()) {
+		if (!appWideFile.exists() || !appWideFile.canRead() || !appWideFile.canWrite()) {
 			System.out.println("Either you dont have a home director, or it isnt read/writeable... fix it!");
 		} else {
-			AppWideFile = new File(AppWideFile, SETTINGS_DIRECTORY);
+			appWideFile = new File(appWideFile, SETTINGS_DIRECTORY);
 		}
 
-		if (!AppWideFile.exists()) {
+		if (!appWideFile.exists()) {
 			try {
-				if (AppWideFile.mkdir()) {
-					AppWideFile = new File(AppWideFile, PROPERTIES_FILENAME);
-					if (AppWideFile.createNewFile()) {
-						AppWide.load(new FileInputStream(AppWideFile));
+				if (appWideFile.mkdir()) {
+					appWideFile = new File(appWideFile, PROPERTIES_FILENAME);
+					if (appWideFile.createNewFile()) {
+						appWide.load(new FileInputStream(appWideFile));
 					}
 				} else {
 					throw new RuntimeException("Failed to create directory, no code to handle this at this time.");
 					// This should be passed up to the GUI as a dialog that tells you it can't do what it has to be able to...
 				}
-			} catch (IOException IOE) {
-				System.out.print(IOE.getMessage());
+			} catch (IOException e) {
+				System.out.print(e.getMessage());
 			}
 		} else {
-			AppWideFile = new File(AppWideFile, PROPERTIES_FILENAME);
-			if (!AppWideFile.createNewFile()) {
-				AppWide.load(new FileInputStream(AppWideFile));
+			appWideFile = new File(appWideFile, PROPERTIES_FILENAME);
+			if (!appWideFile.createNewFile()) {
+				appWide.load(new FileInputStream(appWideFile));
 			}
 		}
-		return AppWideFile;
+		return appWideFile;
 	}
 
 	public void enterFullScreen() {
@@ -509,24 +520,25 @@ public final class OpenLogViewer extends JFrame {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			final GraphicsDevice[] device = ge.getScreenDevices();
 
-			for (int i = 0; i < device.length; i++){ // Cycle through available devices (monitors) looking for device that has center of app
-				Rectangle bounds = device[i].getDefaultConfiguration().getBounds();
-				int centerX = (int)Math.round(getBounds().getCenterX());
-				int centerY = (int)Math.round(getBounds().getCenterY());
-				Point center = new Point(centerX, centerY);
-				if (bounds.contains(center)){ // Found the device (monitor) that contains the center of the app
+			for (int i = 0; i < device.length; i++) { // Cycle through available devices (monitors) looking for device that has center of app
+				final Rectangle bounds = device[i].getDefaultConfiguration().getBounds();
+				final int centerX = (int) Math.round(getBounds().getCenterX());
+				final int centerY = (int) Math.round(getBounds().getCenterY());
+				final Point center = new Point(centerX, centerY);
+				if (bounds.contains(center)) { // Found the device (monitor) that contains the center of the app
 					containingDevice = i;
 					if (device[containingDevice].isFullScreenSupported()) {
 						try {
 							fullscreen = true;		// Remember so that we can react accordingly.
 							saveScreenState();		// Save the current state of things to restore later when exiting fullscreen mode.
 							setVisible(false);		// Hide how the sausage is made!
-							setJMenuBar(null);		// Remove the menu bar for maximum space, load files with the buttons! :-p
+							setJMenuBar(null);		// Remove the menu bar for maximum space, load files with the buttons?
 							dispose();				// Make the JFrame undisplayable so setUndecorated(true) will work!
 							setUndecorated(true);	// Remove the window frame/bezel!
 							setVisible(true);		// Make the JFrame displayable again!
 							//setResizable(false);	// Fred: doesn't make sense and could be dangerous, according to oracle.
-							                      	// Ben: Removed setResizable(false) because it causes GNOME menu bar and task bar to show in front of the app!
+							                      	// Ben: Removed setResizable(false) because it causes GNOME menu bar
+													// and GNOME task bar to show in front of the app!
 							device[containingDevice].setFullScreenWindow(this);
 							validate();				// Required after rearranging component hierarchy
 							toFront();				// Might as well
@@ -573,17 +585,17 @@ public final class OpenLogViewer extends JFrame {
 		}
 	}
 
-	public boolean isFullscreen(){
+	public boolean isFullscreen() {
 		return fullscreen;
 	}
 
-	private void saveScreenState(){
+	private void saveScreenState() {
 		extendedState = getExtendedState();
 		location = getLocation();
 		size = getSize();
 	}
 
-	private void restoreScreenState(){
+	private void restoreScreenState() {
 		setExtendedState(extendedState);
 		setLocation(location);
 		setSize(size);

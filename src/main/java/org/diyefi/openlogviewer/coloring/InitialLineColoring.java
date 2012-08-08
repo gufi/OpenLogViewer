@@ -35,12 +35,14 @@ import java.util.ListIterator;
 public enum InitialLineColoring {
 
 	INSTANCE;
-
+	private static final float ALMOST_ONE = 0.999F;
+	private static final float ONE_THIRD = 0.3333F;
+	private static final float TWO_THIRDS = 0.6666F;
 	private final List<Color> colorList;
 
 	private InitialLineColoring() {
 		colorList = new LinkedList<Color>();
-		Color bookEndRed = Color.getHSBColor(0.999F, 1.0F, 1.0F); //Seed with high value red
+		final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F); //Seed with high value red
 		colorList.add(0, bookEndRed);
 	}
 
@@ -48,10 +50,10 @@ public enum InitialLineColoring {
 		Color newColor = Color.GRAY;
 		int index = 0;
 
-		Color seedRed = Color.getHSBColor(0.0F, 1.0F, 1.0F);
-		Color seedGreen = Color.getHSBColor(0.3333F, 1.0F, 1.0F);
-		Color seedBlue = Color.getHSBColor(0.6666F, 1.0F, 1.0F);
-		if (!colorList.contains(seedRed)){ //Seed with low value red
+		final Color seedRed = Color.getHSBColor(0.0F, 1.0F, 1.0F);
+		final Color seedGreen = Color.getHSBColor(ONE_THIRD, 1.0F, 1.0F);
+		final Color seedBlue = Color.getHSBColor(TWO_THIRDS, 1.0F, 1.0F);
+		if (!colorList.contains(seedRed)) { //Seed with low value red
 			newColor = seedRed;
 			index = 0;
 		} else if (!colorList.contains(seedGreen)) {  //Seed with green
@@ -70,15 +72,15 @@ public enum InitialLineColoring {
 			while (i.hasNext()) {
 				final Color c1 = i.next();
 
-				if(i.hasNext()) {
+				if (i.hasNext()) {
 					c2 = i.next();
 					i.previous();
 				} else {
 					c2 = colorList.get(colorList.size() - 1);
 				}
-				float[] hsbValues1 = Color.RGBtoHSB(c1.getRed(), c1.getGreen(), c1.getBlue(), null);
-				float[] hsbValues2 = Color.RGBtoHSB(c2.getRed(), c2.getGreen(), c2.getBlue(), null);
-				float distance = hsbValues2[0] - hsbValues1[0];
+				final float[] hsbValues1 = Color.RGBtoHSB(c1.getRed(), c1.getGreen(), c1.getBlue(), null);
+				final float[] hsbValues2 = Color.RGBtoHSB(c2.getRed(), c2.getGreen(), c2.getBlue(), null);
+				final float distance = hsbValues2[0] - hsbValues1[0];
 				if (distance > maxDistance) {
 					maxDistance = distance;
 					index = colorList.indexOf(c2);

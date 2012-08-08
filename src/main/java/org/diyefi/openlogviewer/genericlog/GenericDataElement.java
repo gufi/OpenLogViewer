@@ -54,13 +54,13 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	// These two fields belong here:
 	private double minValue;
 	private double maxValue;
-	private boolean realMinAndMaxFound = false;
+	private boolean realMinAndMaxFound;
 
 	// These three do not - move them into some graphics object and keep the data separated from the look...
 	private double displayMinValue;
 	private double displayMaxValue;
 	private Color displayColor;
-	private boolean displayMinAndMaxSet = false;
+	private boolean displayMinAndMaxSet;
 
 	/**
 	 * GDE Header name
@@ -71,7 +71,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * Division on the Graphing layer
 	 */
 	private int splitNumber;
-	private PropertyChangeSupport PCS;
+	private PropertyChangeSupport pcs;
 	private DataFlavor[] dataFlavor;
 
 	/**
@@ -82,7 +82,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	protected GenericDataElement(final int initialLength) {
 		values = new double[initialLength];
 
-		PCS = new PropertyChangeSupport(this);
+		pcs = new PropertyChangeSupport(this);
 
 		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
@@ -145,7 +145,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 
 		final int old = this.splitNumber;
 		this.splitNumber = newSplitNumber;
-		PCS.firePropertyChange("Split", old, this.splitNumber);
+		pcs.firePropertyChange("Split", old, this.splitNumber);
 	}
 
 	/**
@@ -156,12 +156,12 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		displayMaxValue = getMaxValue();
 	}
 
-	public void addPropertyChangeListener(final String property, final PropertyChangeListener PCL) {
-		PCS.addPropertyChangeListener(property, PCL);
+	public void addPropertyChangeListener(final String property, final PropertyChangeListener pcl) {
+		pcs.addPropertyChangeListener(property, pcl);
 	}
 
-	public void removePropertyChangeListener(final String property, final PropertyChangeListener PCL) {
-		PCS.removePropertyChangeListener(property, PCL);
+	public void removePropertyChangeListener(final String property, final PropertyChangeListener pcl) {
+		pcs.removePropertyChangeListener(property, pcl);
 	}
 
 	@Override
@@ -189,7 +189,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 
 	@Override
 	public DataFlavor[] getTransferDataFlavors() {
-		return dataFlavor;
+		return dataFlavor.clone();
 	}
 
 	@Override
@@ -271,13 +271,13 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	}
 
 	public Color getDisplayColor() {
-		if (displayColor == null){
+		if (displayColor == null) {
 			displayColor = InitialLineColoring.INSTANCE.getBestAvailableColor();
 		}
 		return displayColor;
 	}
 	public void setDisplayColor(final Color c) {
-		if (c == null){
+		if (c == null) {
 			InitialLineColoring.INSTANCE.giveBackColor(displayColor);
 		}
 		displayColor = c;

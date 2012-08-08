@@ -47,15 +47,108 @@ import javax.swing.Timer;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
-public class EntireGraphingPanel extends JPanel implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, KeyListener, ComponentListener {
-	private static final long serialVersionUID = 1L;
-	private static final int BASE_PLAY_SPEED = 10;
-	private static final double COARSE_MOVEMENT_PERCENTAGE = 0.50;
+public class EntireGraphingPanel extends JPanel implements ActionListener,
+		MouseMotionListener,
+		MouseListener,
+		MouseWheelListener,
+		KeyListener,
+		ComponentListener {
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_OUT = 2;
+	private static final long serialVersionUID = 1L;
+	private static final int BASE_PLAY_SPEED = 10;
+	private static final int BASE_FLING_SPEED = 10;
+	private static final double COARSE_MOVEMENT_PERCENTAGE = 0.50;
+	private static final int GRAPH_DISPLAY_WIDTH = 600;
+	private static final int GRAPH_DISPLAY_HEIGHT = 400;
+	private static final int BUTTON_DISPLAY_HEIGHT = 20;
 
+
+	private final Action play = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			play();
+	    }
+	};
+
+	private final Action enterFullScreen = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			OpenLogViewer.getInstance().enterFullScreen();
+	    }
+	};
+
+	private final Action exitFullScreen = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			OpenLogViewer.getInstance().exitFullScreen();
+	    }
+	};
+
+	private final Action toggleFullScreen = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			OpenLogViewer.getInstance().toggleFullScreen();
+	    }
+	};
+
+	private final Action moveToBeginning = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			moveToBeginning();
+	    }
+	};
+
+	private final Action moveToEnd = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			moveToEnd();
+	    }
+	};
+
+	private final Action moveBackward = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			moveBackward();
+	    }
+	};
+
+	private final Action moveBackwardCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			moveBackwardCoarse();
+	    }
+	};
+
+	private final Action moveForward = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			moveForward();
+	    }
+	};
+
+	private final Action moveForwardCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			moveForwardCoarse();
+	    }
+	};
+
+	private final Action zoomInCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			zoomInCoarse();
+	    }
+	};
+
+	private final Action zoomOutCoarse = new AbstractAction() {
+		private static final long serialVersionUID = 1L;
+		public void actionPerformed(final ActionEvent e) {
+			zoomOutCoarse();
+	    }
+	};
 
 	private final MultiGraphLayeredPane multiGraph;
 	private final GraphPositionPanel graphPositionPanel;
@@ -81,10 +174,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		setName("graphinPanel");
 		setLayout(new BorderLayout());
 		multiGraph = new MultiGraphLayeredPane();
-		multiGraph.setPreferredSize(new Dimension(600, 400));
+		multiGraph.setPreferredSize(new Dimension(GRAPH_DISPLAY_WIDTH, GRAPH_DISPLAY_HEIGHT));
 		add(multiGraph, BorderLayout.CENTER);
 		graphPositionPanel = new GraphPositionPanel();
-		graphPositionPanel.setPreferredSize(new Dimension(600, 20));
+		graphPositionPanel.setPreferredSize(new Dimension(GRAPH_DISPLAY_WIDTH, BUTTON_DISPLAY_HEIGHT));
 		add(graphPositionPanel, BorderLayout.SOUTH);
 		zoom = 1;
 		zoomedOutBeyondOneToOne = false;
@@ -95,7 +188,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		wasPlaying = false;
 		playTimer = new Timer(BASE_PLAY_SPEED, this);
 		playTimer.setInitialDelay(0);
-		flingTimer = new Timer(10, this);
+		flingTimer = new Timer(BASE_FLING_SPEED, this);
 		flingTimer.setInitialDelay(0);
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -116,37 +209,43 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 		//Play timer event fires
 		if (e.getSource().equals(playTimer)) {
-			if (playing) {
-				if(graphPosition < getGraphPositionMax()){
-					if (zoomedOutBeyondOneToOne) {
-						moveGraphPosition(zoom);
-					} else {
-						moveGraphPosition(1);
-					}
-				} else {
-					pause();
-				}
-			}
+			doPlayAction();
 		}
 
 		//Fling timer event fires
 		if (e.getSource().equals(flingTimer)) {
-			if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
-				if (flingInertia == 0) {
-					stopFlinging();
-				} else {
-					moveEntireGraphingPanel(flingInertia);
-					if (flingInertia > 0) {
-						flingInertia--;
-					} else if (flingInertia < 0) {
-						flingInertia++;
-					} else {
-						stopFlinging();
-					}
-				}
+			doFlingAction();
+		}
+	}
+
+	private void doPlayAction() {
+		if (playing && graphPosition < getGraphPositionMax()) {
+			if (zoomedOutBeyondOneToOne) {
+				moveGraphPosition(zoom);
 			} else {
-				stopFlinging();
+				moveGraphPosition(1);
 			}
+		} else {
+			pause();
+		}
+	}
+
+	private void doFlingAction() {
+		if ((flinging && graphPosition < getGraphPositionMax()) && (graphPosition > getGraphPositionMin())) {
+			if (flingInertia == 0) {
+				stopFlinging();
+			} else {
+				moveEntireGraphingPanel(flingInertia);
+				if (flingInertia > 0) {
+					flingInertia--;
+				} else if (flingInertia < 0) {
+					flingInertia++;
+				} else {
+					stopFlinging();
+				}
+			}
+		} else {
+			stopFlinging();
 		}
 	}
 
@@ -219,7 +318,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Zoom the graph to a 1:1 pixel-to-data-point ratio.
 	 */
-	public final void zoomResetRatio(){
+	public final void zoomResetRatio() {
 		if (zoomedOutBeyondOneToOne) {
 			for (int i = zoom; i > 1; i--) {
 				zoomIn();
@@ -244,7 +343,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * the left and right of the graph so the user will
 	 * know they are seeing the entire graph trace.
 	 */
-	public void zoomGraphToFit(final int dataPointsToFit) {
+	public final void zoomGraphToFit(final int dataPointsToFit) {
 		final int graphWindowWidth = this.getWidth() - 8; //Remove 4 pixels per side.
 		int dataPointsThatFitInDisplay = 0;
 		if (zoomedOutBeyondOneToOne) {
@@ -277,7 +376,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Used by external sources that don't know or care about the size of the graph.
 	 */
-	public void zoomGraphToFit() {
+	public final void zoomGraphToFit() {
 		zoomGraphToFit(graphSize);
 	}
 
@@ -330,11 +429,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 */
 	public final void slowDown() {
 		final int currentDelay = playTimer.getDelay();
-		int newDelay = currentDelay + (currentDelay/6) + 1;
-		if(newDelay > Integer.MAX_VALUE){
+		long newDelay = currentDelay + (currentDelay / 6) + 1;
+		if (newDelay > Integer.MAX_VALUE) {
 			newDelay = Integer.MAX_VALUE;
 		}
-		playTimer.setDelay(newDelay);
+		playTimer.setDelay((int) newDelay);
 	}
 
 	/**
@@ -361,12 +460,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	}
 
 	/**
-	 * Increases the speed of the graph exponentially until the delay is zero, at which speed cannot be advanced any further and will essentially update as fast as possible.
+	 * Increases the speed of the graph exponentially until the delay is zero,
+	 * at which speed cannot be advanced any further and will essentially update
+	 * as fast as possible.
 	 */
 	public final void speedUp() {
 		final int currentDelay = playTimer.getDelay();
-		int newDelay = currentDelay - (currentDelay/6) - 1;
-		if(newDelay < 0){
+		int newDelay = currentDelay - (currentDelay / 6) - 1;
+		if (newDelay < 0) {
 			newDelay = 0;
 		}
 		playTimer.setDelay(newDelay);
@@ -429,7 +530,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Move the graph to the beginning with the first data point centered.
 	 */
-	public void moveToBeginning() {
+	public final void moveToBeginning() {
 		resetGraphPosition();
 		moveForwardPercentage(0.50);
 	}
@@ -437,7 +538,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Move the graph backward a small amount (with acceleration).
 	 */
-	public void moveBackward(){
+	public final void moveBackward() {
 		int localZoom = zoom;
 		if (zoomedOutBeyondOneToOne) {
 			localZoom = 1;
@@ -457,7 +558,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Move the graph backward a large amount.
 	 */
-	public void moveBackwardCoarse(){
+	public final void moveBackwardCoarse() {
 		moveBackwardPercentage(COARSE_MOVEMENT_PERCENTAGE);
 	}
 
@@ -465,7 +566,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph backward by a percentage (amount) of the screen width.
 	 * Percentages are expected in decimal form. For example, 0.50 for 50%.
 	 */
-	public void moveBackwardPercentage(double amount){
+	public final void moveBackwardPercentage(final double amount) {
 		moveEntireGraphingPanel(-(this.getWidth() * amount));
 	}
 
@@ -482,7 +583,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		if (zoomedOutBeyondOneToOne) {
 			pointsThatFitInHalfScreen = halfScreen * zoom;
 		} else {
-			pointsThatFitInHalfScreen = halfScreen / (double)zoom;
+			pointsThatFitInHalfScreen = halfScreen / (double) zoom;
 		}
 		final int distanceBetweenPositions = endPosition - beginPosition;
 		final double halfwayBetweenTwoPositions = distanceBetweenPositions / 2d;
@@ -493,14 +594,14 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * Used by external sources that don't know or care about the size of the graph.
 	 */
-	public void centerGraphPosition(){
+	public final void centerGraphPosition() {
 		centerGraphPosition(0, graphSize);
 	}
 
 	/**
 	 * Move the graph forward a small amount (with acceleration).
 	 */
-	public void moveForward(){
+	public final void moveForward() {
 		int localZoom = zoom;
 		if (zoomedOutBeyondOneToOne) {
 			localZoom = 1;
@@ -521,21 +622,21 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	 * Move the graph forward by a percentage (amount) of the screen width.
 	 * Percentages are expected in decimal form. For example, 0.50 for 50%.
 	 */
-	private void moveForwardPercentage(double amount){
+	private void moveForwardPercentage(final double amount) {
 		moveEntireGraphingPanel(this.getWidth() * amount);
 	}
 
 	/**
 	 * Move the graph forward a large amount.
 	 */
-	public void moveForwardCoarse(){
+	public final void moveForwardCoarse() {
 		moveForwardPercentage(COARSE_MOVEMENT_PERCENTAGE);
 	}
 
 	/**
 	 * Move the graph to the end with the last data point centered.
 	 */
-	public void moveToEnd() {
+	public final void moveToEnd() {
 		goToLastGraphPosition();
 		moveBackwardPercentage(0.50);
 	}
@@ -559,7 +660,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 	/**
 	 * When the windows is resized, the graph needs to move to maintain the centering.
 	 */
-	public void moveGraphDueToResize() {
+	public final void moveGraphDueToResize() {
 		final int newWidth = this.getWidth();
 		if (newWidth != oldComponentWidth) {
 			double move = 0.0;
@@ -698,34 +799,44 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 
 	@Override
 	public final void mouseWheelMoved(final MouseWheelEvent e) {
-		final int xMouseCoord = e.getX();
-		final double center = this.getWidth() / 2.0;
 		final int notches = e.getWheelRotation();
+		if (notches < 0) {
+			mouseWheelMovedForward(e.getX());
+		} else {
+			mouseWheelMovedBackward(e.getX());
+		}
+	}
+
+	private void mouseWheelMovedForward(final int xMouseCoord) {
+		final double center = this.getWidth() / 2.0;
 		double move = 0;
 		final int zoomAmount = (int) Math.sqrt(zoom);
-		if (notches < 0) {
-			for (int i = 0; i < zoomAmount; i++) {
-				if (zoomedOutBeyondOneToOne) {
-					move = (xMouseCoord - center) / (zoom - 1.0);
-				} else {
-					move = (xMouseCoord - center) / zoom;
-				}
-				if (!(!zoomedOutBeyondOneToOne && zoom == getTightestZoom())) {
-					zoomIn();
-					moveEntireGraphingPanel(move);
-				}
+		for (int i = 0; i < zoomAmount; i++) {
+			if (zoomedOutBeyondOneToOne) {
+				move = (xMouseCoord - center) / (zoom - 1.0);
+			} else {
+				move = (xMouseCoord - center) / zoom;
 			}
-		} else {
-			for (int i = 0; i < zoomAmount; i++) {
-				if (zoomedOutBeyondOneToOne || zoom == 1) {
-					move = -(xMouseCoord - center) / (zoom + 1.0);
-				} else {
-					move = -(xMouseCoord - center) / zoom;
-				}
-				if (!(zoomedOutBeyondOneToOne && zoom == getWidestZoom())) {
-					zoomOut();
-					moveEntireGraphingPanel(move);
-				}
+			if (!(!zoomedOutBeyondOneToOne && zoom == getTightestZoom())) {
+				zoomIn();
+				moveEntireGraphingPanel(move);
+			}
+		}
+	}
+
+	private void mouseWheelMovedBackward(final int xMouseCoord) {
+		final double center = this.getWidth() / 2.0;
+		double move = 0;
+		final int zoomAmount = (int) Math.sqrt(zoom);
+		for (int i = 0; i < zoomAmount; i++) {
+			if (zoomedOutBeyondOneToOne || zoom == 1) {
+				move = -(xMouseCoord - center) / (zoom + 1.0);
+			} else {
+				move = -(xMouseCoord - center) / zoom;
+			}
+			if (!(zoomedOutBeyondOneToOne && zoom == getWidestZoom())) {
+				zoomOut();
+				moveEntireGraphingPanel(move);
 			}
 		}
 	}
@@ -736,10 +847,15 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		switch (e.getKeyCode()) {
 			//Close entire application key binding
 			case KeyEvent.VK_Q: {
-				if (e.isControlDown()){
+				if (e.isControlDown()) {
 					final WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
 					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 				}
+				break;
+			}
+
+			default: {
+				//do nothing
 				break;
 			}
 		}
@@ -782,7 +898,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		// Fred says thanks! :-)
 	}
 
-	private void initKeyBindings(){
+	private void initKeyBindings() {
 		// Play key bindings
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "play");
 		getActionMap().put("play", play);
@@ -833,89 +949,4 @@ public class EntireGraphingPanel extends JPanel implements ActionListener, Mouse
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SUBTRACT"), "zoomOutCoarse");
 		getActionMap().put("zoomOutCoarse", zoomOutCoarse);
 	}
-
-	private final Action play = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-	       play();
-	    }
-	};
-
-	private final Action enterFullScreen = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			OpenLogViewer.getInstance().enterFullScreen();
-	    }
-	};
-
-	private final Action exitFullScreen = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			OpenLogViewer.getInstance().exitFullScreen();
-	    }
-	};
-
-	private final Action toggleFullScreen = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			OpenLogViewer.getInstance().toggleFullScreen();
-	    }
-	};
-
-	private final Action moveToBeginning = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			moveToBeginning();
-	    }
-	};
-
-	private final Action moveToEnd = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			moveToEnd();
-	    }
-	};
-
-	private final Action moveBackward = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			moveBackward();
-	    }
-	};
-
-	private final Action moveBackwardCoarse = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			moveBackwardCoarse();
-	    }
-	};
-
-	private final Action moveForward = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			moveForward();
-	    }
-	};
-
-	private final Action moveForwardCoarse = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			moveForwardCoarse();
-	    }
-	};
-
-	private final Action zoomInCoarse = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			zoomInCoarse();
-	    }
-	};
-
-	private final Action zoomOutCoarse = new AbstractAction() {
-		private static final long serialVersionUID = 1L;
-		public void actionPerformed(ActionEvent e) {
-			zoomOutCoarse();
-	    }
-	};
-
 }

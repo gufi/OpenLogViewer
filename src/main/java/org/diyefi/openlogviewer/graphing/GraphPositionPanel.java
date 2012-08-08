@@ -110,7 +110,11 @@ public class GraphPositionPanel extends JPanel {
 
 		//Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
-		for (int i = -(int) offset; i < this.getWidth() + (int) offset; i++) { // TODO It's ugly having the - on the left side of the cast, but moving it *could* change behaviour, so leaving it alone and adding this instead!
+
+		// TODO It's ugly having the - on the left side of the cast,
+		// but moving it *could* change behavior, so leaving it alone and
+		// adding this instead!
+		for (int i = -(int) offset; i < this.getWidth() + (int) offset; i++) {
 			if (position >= nextPositionMarker - margin) {
 				int xCoord = i;
 				if (xCoord >= 0 && xCoord < validSnappingPositions.length) {
@@ -290,7 +294,7 @@ public class GraphPositionPanel extends JPanel {
 
 		// Find out if negative or not.
 		result = input.toPlainString();
-		if (result.substring(0, 1).equalsIgnoreCase("-")) {
+		if ("-".equalsIgnoreCase(result.substring(0, 1))) {
 			indexOfMostSignificantDigit++;
 		}
 
@@ -305,7 +309,7 @@ public class GraphPositionPanel extends JPanel {
 			amountOfIntegerDigits = result.substring(indexOfMostSignificantDigit, indexOfDecimalPoint).length();
 			boolean done = false;
 			for (int i = indexOfDecimalPoint + 1; i < result.length() && !done; i++) {
-				if (result.substring(i, i).equalsIgnoreCase("0")) {
+				if ("0".equalsIgnoreCase(result.substring(i, i))) {
 					amountOfLeadingZerosInDecimalPortion++;
 				} else {
 					done = true;
@@ -329,8 +333,8 @@ public class GraphPositionPanel extends JPanel {
 
 		// Check for result extremely close to zero.
 		if (result.length() > 16) {
-			if (result.substring(0, 16).equalsIgnoreCase("-0.0000000000000")
-					|| result.substring(0, 15).equalsIgnoreCase("0.0000000000000")) {
+			if ("-0.0000000000000".equalsIgnoreCase(result.substring(0, 16))
+					|| "0.0000000000000".equalsIgnoreCase(result.substring(0, 15))) {
 				result = "0.0";
 			}
 		}

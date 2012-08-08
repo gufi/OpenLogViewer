@@ -32,6 +32,9 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class MultiGraphLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = 1L;
+	private static final int BOTTOM_LAYER = 999;  //Not really the bottom, but plenty far enough
+	private static final int PANEL_WIDTH = 600;
+	private static final int PANEL_HEIGHT = 400;
 
 	private GenericLog genLog;
 	private final InfoPanel infoPanel;
@@ -43,11 +46,11 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		setLayout(null);
 		setBackground(Color.BLACK);
 
-		layer = 999; // Black magic lies here!
+		layer = BOTTOM_LAYER;
 		totalSplits = 1;
 
 		infoPanel = new InfoPanel();
-		infoPanel.setSize(600, 400);
+		infoPanel.setSize(PANEL_WIDTH, PANEL_HEIGHT);
 		setLayer(infoPanel, layer);
 		layer--;
 		add(infoPanel);
@@ -108,10 +111,10 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		int componentIndex = 0;
 		while (this.getComponentCount() > 1) {  // Leave InfoPanel in component count
 			if (this.getComponent(componentIndex) instanceof SingleGraphPanel) {
-				SingleGraphPanel SGP = (SingleGraphPanel)getComponent(componentIndex);
-				this.removeHierarchyBoundsListener(SGP);
-				SGP.getData().setDisplayColor(null);
-				this.remove(SGP);
+				final SingleGraphPanel sgp = (SingleGraphPanel) getComponent(componentIndex);
+				this.removeHierarchyBoundsListener(sgp);
+				sgp.getData().setDisplayColor(null);
+				this.remove(sgp);
 			} else {
 				componentIndex++;
 			}

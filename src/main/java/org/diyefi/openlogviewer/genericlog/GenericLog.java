@@ -38,19 +38,19 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	public static enum LogState { LOG_NOT_LOADED, LOG_LOADING, LOG_LOADED }
 
 	// Info to populate built-in fields efficiently, likely to be done differently in future, but if not, put this in some structure.
-	public static final String recordCountKey = "OLV Record Count";
-	public static final String tempResetKey = "OLV Temp Resets";
-	public static final String elapsedTimeKey = "OLV Elapsed Time";
 	private static final int NUMBER_OF_BUILTIN_FIELDS = 3; // See below:
 	private static final int RECORD_COUNT_OFFSET = 0;
 	private static final int TEMP_RESET_OFFSET   = 1;
 	private static final int ELAPSED_TIME_OFFSET = 2;
 	private static final int SIZE_OF_DOUBLE = 8;
 	private static final int NUMBER_OF_BYTES_IN_A_MEG = 1000000;
+	public static final String RECORD_COUNT_KEY = "OLV Record Count";
+	public static final String tempResetKey = "OLV Temp Resets";
+	public static final String elapsedTimeKey = "OLV Elapsed Time";
 	private GenericDataElement recordCountElement;
 
 	private String metaData;
-	private final PropertyChangeSupport PCS;
+	private final PropertyChangeSupport pcs;
 	private LogState logStatus;
 	private String logStatusMessage;
 
@@ -86,7 +86,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 
 		GenericDataElement.resetPosition(); // Kinda ugly, but...
 		logStatus = LogState.LOG_NOT_LOADED;
-		PCS = new PropertyChangeSupport(this);
+		pcs = new PropertyChangeSupport(this);
 		addPropertyChangeListener(LOG_LOADED_TEXT, autoLoad);
 		metaData = "";
 
@@ -101,17 +101,17 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 		}
 
 		// If this stays like this, move it to a structure and small loop...
-		internalHeaders[headers.length + RECORD_COUNT_OFFSET] = recordCountKey;
+		internalHeaders[headers.length + RECORD_COUNT_OFFSET] = RECORD_COUNT_KEY;
 		internalHeaders[headers.length + TEMP_RESET_OFFSET] = tempResetKey;
 		internalHeaders[headers.length + ELAPSED_TIME_OFFSET] = elapsedTimeKey;
 
 		for (int x = 0; x < internalHeaders.length; x++) {
-			GenericDataElement GDE = new GenericDataElement(initialCapacity);
-			GDE.setName(internalHeaders[x]);
-			this.put(internalHeaders[x], GDE);
+			final GenericDataElement gde = new GenericDataElement(initialCapacity);
+			gde.setName(internalHeaders[x]);
+			this.put(internalHeaders[x], gde);
 		}
 
-		recordCountElement = this.get(recordCountKey);
+		recordCountElement = this.get(RECORD_COUNT_KEY);
 	}
 
 	/**
@@ -133,7 +133,12 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 			System.out.println("Old capacity = " + currentCapacity);
 			final Runtime ourRuntime = Runtime.getRuntime();
 
-			System.out.println("Memory Before = Max: " + ourRuntime.maxMemory() + ", Free: " + ourRuntime.freeMemory() + ", Total: " + ourRuntime.totalMemory());
+			System.out.println("Memory Before = Max: "
+					+ ourRuntime.maxMemory()
+					+ ", Free: "
+					+ ourRuntime.freeMemory()
+					+ ", Total: "
+					+ ourRuntime.totalMemory());
 
 			int numberResized = 0;
 			final Iterator<GenericDataElement> genLogIterator = this.values().iterator();
@@ -151,7 +156,14 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 					currentPosition--; // Back out the change because we never achieved it for all fields!
 					final String jvmHelp = "Get more with -Xms and -Xmx JVM options!";
 					System.out.println("Detected impending out-of-memory doom! Details below! :-(");
-					System.out.println("Total" + "Available: " + availableMemory + " Required: " + requiredMemory + " Increase: " + increaseInMemory + " Overhead: " + overheadInMemory);
+					System.out.println("Total Available: "
+							+ availableMemory
+							+ " Required: "
+							+ requiredMemory
+							+ " Increase: "
+							+ increaseInMemory
+							+ " Overhead: "
+							+ overheadInMemory);
 					System.out.println(jvmHelp);
 					final long allocatedMemory = (ourRuntime.maxMemory() / NUMBER_OF_BYTES_IN_A_MEG);
 					throw new RuntimeException(allocatedMemory + "MB is insufficent memory to increase log size! " + jvmHelp + OpenLogViewer.NEWLINE
@@ -182,7 +194,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	public final void setLogStatus(final LogState newLogStatus) {
 		final LogState oldLogStatus = this.logStatus;
 		this.logStatus = newLogStatus;
-		PCS.firePropertyChange(LOG_LOADED_TEXT, oldLogStatus, newLogStatus);
+		pcs.firePropertyChange(LOG_LOADED_TEXT, oldLogStatus, newLogStatus);
 	}
 
 	/**
@@ -224,7 +236,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 *   });</code>
 	 */
 	public final void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
-		PCS.addPropertyChangeListener(name, listener);
+		pcs.addPropertyChangeListener(name, listener);
 	}
 
 	/**
@@ -233,7 +245,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 * @param listener listener
 	 */
 	public final void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-		PCS.removePropertyChangeListener(propertyName, listener);
+		pcs.removePropertyChangeListener(propertyName, listener);
 	}
 
 	public final String getLogStatusMessage() {

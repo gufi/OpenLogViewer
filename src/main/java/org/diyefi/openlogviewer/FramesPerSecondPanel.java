@@ -37,15 +37,18 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static final int PREFERRED_WIDTH = 80;
 	private static final int PPREFERRED_HEIGHT = 16;
 	private static final int TIMER_RATE = 250; //milliseconds - changes display/update speed
-	private static final DecimalFormat df = new DecimalFormat("#,##0.0");
+	private static final double MILLISECONDS_PER_SECOND = 1000d;
+	private static final DecimalFormat DF = new DecimalFormat("#,##0.0");
 
-	private final JLabel output;
-	private final Timer sampleTimer;
 	private static long frameCount;
-	private Double FPS;
 	private static long thePast;
 	private static long currentTime;
 	private static long previousCount;
+
+	private final JLabel output;
+	private final Timer sampleTimer;
+
+	private Double fps;
 
 	public FramesPerSecondPanel() {
 		sampleTimer = new Timer(TIMER_RATE, this);
@@ -64,22 +67,22 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 		this.add(output);
 	}
 
-	public static void increaseFrameCount(){
+	public static void increaseFrameCount() {
 		currentTime = System.currentTimeMillis();
 		frameCount++;
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public final void actionPerformed(final ActionEvent e) {
 		if (e.getSource().equals(sampleTimer)) {
 			final long sampleWindow = currentTime - thePast;
 			final long sampleCount = frameCount - previousCount;
 			if (sampleWindow == 0L) { // Avoid division by zero
-				FPS = 0d;
+				fps = 0d;
 			} else {
-				FPS = ((double)sampleCount / (double)sampleWindow) * 1000d;
+				fps = ((double) sampleCount / (double) sampleWindow) * MILLISECONDS_PER_SECOND;
 			}
-			output.setText("FPS: " + df.format(FPS));
+			output.setText("FPS: " + DF.format(fps));
 			previousCount = frameCount;
 			thePast = currentTime;
 		}

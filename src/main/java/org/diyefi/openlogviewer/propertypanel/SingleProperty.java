@@ -42,12 +42,12 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		active = false;
 	}
 
-	public SingleProperty(final GenericDataElement GDE) {
-		color = GDE.getDisplayColor();
-		header = GDE.getName();
-		min = GDE.getDisplayMinValue();
-		max = GDE.getDisplayMaxValue();
-		split = GDE.getSplitNumber();
+	public SingleProperty(final GenericDataElement gde) {
+		color = gde.getDisplayColor();
+		header = gde.getName();
+		min = gde.getDisplayMinValue();
+		max = gde.getDisplayMaxValue();
+		split = gde.getSplitNumber();
 		active = false;
 	}
 

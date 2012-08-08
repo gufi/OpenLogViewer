@@ -41,7 +41,7 @@ public class FooterPanel extends JPanel {
 		add(navBarPanel, BorderLayout.EAST);
 	}
 
-	public NavBarPanel getNavBarPanel(){
+	public final NavBarPanel getNavBarPanel() {
 		return navBarPanel;
 	}
 }

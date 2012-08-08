@@ -42,6 +42,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 	private static final int LEFT_MARGIN_OFFSET = 10;
 	private static final int ONE_TEXTUAL_HEIGHT = 20;
+	private static final int OFF_SCREEN_COORD = -100;
 	private GenericLog genLog;
 	private final Color vertBar = new Color(255, 255, 255, 100);
 	private final Color textBackground = new Color(0, 0, 0, 170);
@@ -52,8 +53,8 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	public InfoPanel() {
 		setOpaque(false);
 
-		xMouseCoord = -100;
-		yMouseCoord = -100;
+		xMouseCoord = OFF_SCREEN_COORD;
+		yMouseCoord = OFF_SCREEN_COORD;
 		mouseOver = false;
 	}
 
