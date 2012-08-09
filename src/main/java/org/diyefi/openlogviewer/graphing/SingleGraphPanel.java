@@ -288,7 +288,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			info = getMouseInfoZoomed(cursorPosition);
 		}
 
-		return info;
+		return info + "  " + gde.getName();
 	}
 
 	/**
