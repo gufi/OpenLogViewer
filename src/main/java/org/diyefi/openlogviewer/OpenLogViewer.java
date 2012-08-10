@@ -49,6 +49,9 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -56,6 +59,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -115,12 +119,13 @@ public final class OpenLogViewer extends JFrame {
 	// Real vars start here, many will probably get ripped out later
 	private static final int GRAPH_PANEL_WIDTH = 600;
 	private static final int GRAPH_PANEL_HEIGHT = 420;
+
+	public static boolean isMac;
+	public static boolean isWindows;
+	public static boolean isLinux;
+
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
-
-	private static boolean isMac;
-	//private static boolean isWindows;
-	//private static boolean isLinux;
 
 	private final JPanel mainPanel;
 	private final EntireGraphingPanel graphingPanel;
@@ -256,9 +261,9 @@ public final class OpenLogViewer extends JFrame {
 		setJMenuBar(menuBar);
 
 		//Listener stuff
-		addKeyListener(graphingPanel);
 		addComponentListener(graphingPanel);
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
+		setupWindowKeyBindings(this);
 
 		pack();
 		setName(APPLICATION_NAME);
@@ -277,20 +282,7 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void run() {
 				final Locale currentLocale = Locale.getDefault();
-				final String operatingSystem = "os.name";
-				if (System.getProperty(operatingSystem).toLowerCase().indexOf("mac os") != -1) { // If Mac
-					isMac = true;
-					//isWindows = false;
-					//isLinux = false;
-				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("windows") != -1) { // If Windows
-					isMac = false;
-					//isWindows = true;
-					//isLinux = false;
-				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("linux") != -1) { // If Linux
-					isMac = false;
-					//isWindows = false;
-					//isLinux = true;
-				}
+				runOSDetection();
 
 				labels = ResourceBundle.getBundle(getClass().getPackage().getName() + ".Labels", currentLocale);
 
@@ -318,6 +310,23 @@ public final class OpenLogViewer extends JFrame {
 				}
 
 				mainAppRef = new OpenLogViewer();
+			}
+
+			private final void runOSDetection(){
+				final String operatingSystem = "os.name";
+				if (System.getProperty(operatingSystem).toLowerCase().indexOf("mac os") != -1) { // If Mac
+					isMac = true;
+					isWindows = false;
+					isLinux = false;
+				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("windows") != -1) { // If Windows
+					isMac = false;
+					isWindows = true;
+					isLinux = false;
+				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("linux") != -1) { // If Linux
+					isMac = false;
+					isWindows = false;
+					isLinux = true;
+				}
 			}
 		});
 	}
@@ -513,6 +522,35 @@ public final class OpenLogViewer extends JFrame {
 			}
 		}
 		return appWideFile;
+	}
+
+	public static void setupWindowKeyBindings(final JFrame window) {
+		final Action closeWindow = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(final ActionEvent e) {
+				final WindowEvent wev = new WindowEvent(window, WindowEvent.WINDOW_CLOSING);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+		    }
+		};
+
+		boolean isMainApp = false;
+		if (window instanceof OpenLogViewer){
+			isMainApp = true;
+		}
+
+		// Close any window
+		if (isWindows || isLinux) {
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl W"), "closeWindow");
+		} else if (isMac) {
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("meta W"), "closeWindow");
+		}
+
+		// Just close the main app window
+		if (isLinux && isMainApp) {
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl Q"), "closeWindow");
+		}
+
+		window.getRootPane().getActionMap().put("closeWindow", closeWindow);
 	}
 
 	public void enterFullScreen() {

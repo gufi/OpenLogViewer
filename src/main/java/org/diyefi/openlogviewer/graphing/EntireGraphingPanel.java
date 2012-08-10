@@ -24,19 +24,15 @@ package org.diyefi.openlogviewer.graphing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -51,7 +47,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		MouseMotionListener,
 		MouseListener,
 		MouseWheelListener,
-		KeyListener,
 		ComponentListener {
 	public static final int LEFT_OFFSCREEN_POINTS_ZOOMED_IN = 0;
 	public static final int RIGHT_OFFSCREEN_POINTS_ZOOMED_IN = 3;
@@ -64,7 +59,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	private static final int GRAPH_DISPLAY_WIDTH = 600;
 	private static final int GRAPH_DISPLAY_HEIGHT = 400;
 	private static final int BUTTON_DISPLAY_HEIGHT = 20;
-
 
 	private final Action play = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
@@ -839,40 +833,6 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 				moveEntireGraphingPanel(move);
 			}
 		}
-	}
-
-	// Key listener functionality
-	@Override
-	public final void keyPressed(final KeyEvent e) {
-		switch (e.getKeyCode()) {
-			//Close entire application key binding
-			case KeyEvent.VK_Q: {
-				if (e.isControlDown()) {
-					final WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
-					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
-				}
-				break;
-			}
-
-			default: {
-				//do nothing
-				break;
-			}
-		}
-	}
-
-	@Override
-	public final void keyReleased(final KeyEvent e) {
-		// What should be here?
-		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
-		// Fred says thanks! :-)
-	}
-
-	@Override
-	public final void keyTyped(final KeyEvent e) {
-		// What should be here?
-		// Ben says eventually there might be stuff here, and it is required implementation for the KeyListener interface.
-		// Fred says thanks! :-)
 	}
 
 	@Override

@@ -97,6 +97,7 @@ public class OptionFrameV2 extends JFrame {
 		activePanelList = new ArrayList<JPanel>();
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
+		OpenLogViewer.setupWindowKeyBindings(this);
 
 		final JScrollPane scroll = new JScrollPane(layeredPane);
 

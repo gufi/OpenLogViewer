@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -54,19 +55,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
 import org.diyefi.openlogviewer.OpenLogViewer;
 
 public class PropertiesPane extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private File OLVProperties;
-	private List<SingleProperty> properties;
-	private List<SingleProperty> removeProperties;
 	private final JPanel propertyPanel;
 	private final JPanel propertyView;
 
+	private File OLVProperties;
+	private List<SingleProperty> properties;
+	private List<SingleProperty> removeProperties;
+
 	public PropertiesPane(final String title) {
 		super(title);
+
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setPreferredSize(new Dimension(350, 500));
 		setSize(new Dimension(550, 500));
@@ -74,6 +78,8 @@ public class PropertiesPane extends JFrame {
 
 		propertyPanel = new JPanel();
 		propertyPanel.setLayout(new BorderLayout());
+		OpenLogViewer.setupWindowKeyBindings(this);
+
 		propertyView = new JPanel();
 		propertyView.setPreferredSize(new Dimension(400, 0));
 		propertyView.setLayout(new FlowLayout(FlowLayout.LEFT));
