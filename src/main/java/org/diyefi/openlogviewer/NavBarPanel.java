@@ -355,6 +355,7 @@ public class NavBarPanel extends JPanel {
 		} else {
 			pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
 		}
+		pausePlayButton.setBorder(null);
 	}
 
 	/**
@@ -416,7 +417,6 @@ public class NavBarPanel extends JPanel {
 		} else {
 			OpenLogViewer.getInstance().getEntireGraphingPanel().play();
 		}
-		this.updatePausePlayButton();
 	}
 
 	/**
