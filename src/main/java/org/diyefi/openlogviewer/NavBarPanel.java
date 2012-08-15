@@ -89,11 +89,12 @@ public class NavBarPanel extends JPanel {
 		zoomInButton.setBorder(null);
 		zoomInButton.setName("zoomInButton");
 		zoomInButton.setRequestFocusEnabled(false);
-
 		zoomInButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomInButtonMouseReleased();
+				if (zoomInButton.contains(e.getPoint())) {
+					zoomInButtonMouseReleased();
+				}
 			}
 		});
 		this.add(zoomInButton);
@@ -105,7 +106,9 @@ public class NavBarPanel extends JPanel {
 		zoomResetRatioButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomResetRatioButtonMouseReleased();
+				if (zoomResetRatioButton.contains(e.getPoint())) {
+					zoomResetRatioButtonMouseReleased();
+				}
 			}
 		});
 		this.add(zoomResetRatioButton);
@@ -117,7 +120,9 @@ public class NavBarPanel extends JPanel {
 		zoomResetFitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomResetFitButtonMouseReleased();
+				if (zoomResetFitButton.contains(e.getPoint())) {
+					zoomResetFitButtonMouseReleased();
+				}
 			}
 		});
 		this.add(zoomResetFitButton);
@@ -129,7 +134,9 @@ public class NavBarPanel extends JPanel {
 		zoomOutButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				zoomOutButtonMouseReleased();
+				if (zoomOutButton.contains(e.getPoint())) {
+					zoomOutButtonMouseReleased();
+				}
 			}
 		});
 		this.add(zoomOutButton);
@@ -143,7 +150,9 @@ public class NavBarPanel extends JPanel {
 		slowDownButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				slowDownButtonMouseReleased();
+				if (slowDownButton.contains(e.getPoint())) {
+					slowDownButtonMouseReleased();
+				}
 			}
 		});
 		this.add(slowDownButton);
@@ -155,7 +164,9 @@ public class NavBarPanel extends JPanel {
 		resetPlaySpeedButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				resetPlaySpeedButtonMouseReleased();
+				if (resetPlaySpeedButton.contains(e.getPoint())) {
+					resetPlaySpeedButtonMouseReleased();
+				}
 			}
 		});
 		this.add(resetPlaySpeedButton);
@@ -167,7 +178,9 @@ public class NavBarPanel extends JPanel {
 		pausePlayButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				pausePlayButtonMouseReleased();
+				if (pausePlayButton.contains(e.getPoint())) {
+					pausePlayButtonMouseReleased();
+				}
 			}
 		});
 		this.add(pausePlayButton);
@@ -179,7 +192,9 @@ public class NavBarPanel extends JPanel {
 		speedUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				speedUpButtonMouseReleased();
+				if (speedUpButton.contains(e.getPoint())) {
+					speedUpButtonMouseReleased();
+				}
 			}
 		});
 		this.add(speedUpButton);
@@ -193,7 +208,9 @@ public class NavBarPanel extends JPanel {
 		moveToBeginningButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveToBeginningButtonMouseReleased();
+				if (moveToBeginningButton.contains(e.getPoint())) {
+					moveToBeginningButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveToBeginningButton);
@@ -205,7 +222,9 @@ public class NavBarPanel extends JPanel {
 		moveBackwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveBackwardCoarseButtonMouseReleased();
+				if (moveBackwardCoarseButton.contains(e.getPoint())) {
+					moveBackwardCoarseButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveBackwardCoarseButton);
@@ -217,7 +236,9 @@ public class NavBarPanel extends JPanel {
 		moveBackwardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveBackwardButtonMouseReleased();
+				if (moveBackwardButton.contains(e.getPoint())) {
+					moveBackwardButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveBackwardButton);
@@ -229,7 +250,9 @@ public class NavBarPanel extends JPanel {
 		moveToCenterButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveToCenterButtonMouseReleased();
+				if (moveToCenterButton.contains(e.getPoint())) {
+					moveToCenterButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveToCenterButton);
@@ -241,7 +264,9 @@ public class NavBarPanel extends JPanel {
 		moveForwardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveForwardButtonMouseReleased();
+				if (moveForwardButton.contains(e.getPoint())) {
+					moveForwardButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveForwardButton);
@@ -253,7 +278,9 @@ public class NavBarPanel extends JPanel {
 		moveForwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveForwardCoarseButtonMouseReleased();
+				if (moveForwardCoarseButton.contains(e.getPoint())) {
+					moveForwardCoarseButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveForwardCoarseButton);
@@ -265,7 +292,9 @@ public class NavBarPanel extends JPanel {
 		moveToEndButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				moveToEndButtonMouseReleased();
+				if (moveToEndButton.contains(e.getPoint())) {
+					moveToEndButtonMouseReleased();
+				}
 			}
 		});
 		this.add(moveToEndButton);
@@ -279,7 +308,9 @@ public class NavBarPanel extends JPanel {
 		openButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				openButtonMouseReleased();
+				if (openButton.contains(e.getPoint())) {
+					openButtonMouseReleased();
+				}
 			}
 		});
 		this.add(openButton);
@@ -291,7 +322,9 @@ public class NavBarPanel extends JPanel {
 		openLastButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				openLastButtonMouseReleased();
+				if (openLastButton.contains(e.getPoint())) {
+					openLastButtonMouseReleased();
+				}
 			}
 		});
 		this.add(openLastButton);
