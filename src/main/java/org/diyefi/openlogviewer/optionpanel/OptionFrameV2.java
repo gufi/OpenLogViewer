@@ -341,6 +341,7 @@ public class OptionFrameV2 extends JFrame {
 
 		this.repaint();
 		this.setDefaultCloseOperation(JFrame.ICONIFIED);
+		OpenLogViewer.getInstance().exitFullScreen();
 		this.setVisible(true);
 	}
 

@@ -32,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -68,7 +67,6 @@ import javax.swing.filechooser.FileFilter;
 import org.diyefi.openlogviewer.decoder.AbstractDecoder;
 import org.diyefi.openlogviewer.decoder.CSVTypeLog;
 import org.diyefi.openlogviewer.decoder.FreeEMSBin;
-import org.diyefi.openlogviewer.eventlisteners.KeyboardFocusController;
 import org.diyefi.openlogviewer.filefilters.CSVFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSBinFileFilter;
 import org.diyefi.openlogviewer.filefilters.FreeEMSLAFileFilter;
@@ -132,7 +130,6 @@ public final class OpenLogViewer extends JFrame {
 	private final FooterPanel footerPanel;
 	private final OptionFrameV2 optionFrame;
 	private final PropertiesPane prefFrame;
-	private final KeyboardFocusController keyboardFocusController;
 
 	private final List<SingleProperty> properties;
 	private AbstractDecoder decoderInUse;
@@ -166,8 +163,6 @@ public final class OpenLogViewer extends JFrame {
 		mainPanel.add(graphingPanel, BorderLayout.CENTER);
 		mainPanel.add(footerPanel, BorderLayout.SOUTH);
 		add(mainPanel, BorderLayout.CENTER);
-
-		keyboardFocusController = new KeyboardFocusController();
 
 		final JMenuItem openFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_OPEN_KEY));
 		openFileMenuItem.setName(FILE_MENU_ITEM_OPEN_KEY);
@@ -212,8 +207,6 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				prefFrame.setVisible(true);
-				prefFrame.setAlwaysOnTop(true);  //Used to bring panel to top
-				prefFrame.setAlwaysOnTop(false);
 			}
 		});
 
@@ -223,8 +216,6 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				optionFrame.setVisible(true);
-				optionFrame.setAlwaysOnTop(true); //Used to bring panel to top
-				optionFrame.setAlwaysOnTop(false);
 			}
 		});
 
@@ -262,12 +253,10 @@ public final class OpenLogViewer extends JFrame {
 
 		//Listener stuff
 		addComponentListener(graphingPanel);
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(keyboardFocusController);
 		setupWindowKeyBindings(this);
 
 		pack();
 		setName(APPLICATION_NAME);
-		requestFocusInWindow();
 		setVisible(true);
 	}
 
@@ -621,10 +610,6 @@ public final class OpenLogViewer extends JFrame {
 		} else {
 			enterFullScreen();
 		}
-	}
-
-	public boolean isFullscreen() {
-		return fullscreen;
 	}
 
 	private void saveScreenState() {

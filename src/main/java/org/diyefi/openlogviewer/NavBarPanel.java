@@ -470,6 +470,7 @@ public class NavBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void openButtonMouseReleased() {
+		OpenLogViewer.getInstance().exitFullScreen();
 		OpenLogViewer.getInstance().openChosenFile();
 	}
 
@@ -478,6 +479,7 @@ public class NavBarPanel extends JPanel {
 	 * @param evt
 	 */
 	private void openLastButtonMouseReleased() {
+		OpenLogViewer.getInstance().exitFullScreen();
 		OpenLogViewer.getInstance().openLastFile();
 	}
 }
