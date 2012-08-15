@@ -1,15 +1,17 @@
 package org.diyefi.openlogviewer.subframes;
 
+import java.util.Properties;
+
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.Application;
 
 public class MacOSAboutHandler {
 
-	private final AboutFrame aboutFrame;
+	private final Properties buildInfo;
 
-	public MacOSAboutHandler(final AboutFrame newAboutFrame) {
-		aboutFrame = newAboutFrame;
+	public MacOSAboutHandler(final Properties buildInfo) {
+		this.buildInfo = buildInfo;
 		final AboutHandler handler = new AboutBoxHandler();
 		Application.getApplication().setAboutHandler(handler);
 	}
@@ -17,7 +19,7 @@ public class MacOSAboutHandler {
 	class AboutBoxHandler implements AboutHandler {
 		@Override
 		public void handleAbout(final AboutEvent e) {
-			aboutFrame.setVisible(true);
+			AboutFrame.show(buildInfo);
 		}
 	}
 }

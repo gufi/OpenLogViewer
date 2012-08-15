@@ -14,10 +14,8 @@
 		<url>http://www.diyefi.org</url>
 	</organization>
 
-	<description>OpenLogViewer is a cross-platform data-log display program that currently
-	supports MegaSquirt style CSV and FreeEMS binary data-log formats. It is currently in
-	its infancy. While in the future it will be amazing, right now it has all of the basics
-	that you need. For free. With no nag screens!</description>
+	<!-- Must be one line, or need to post-process to use effectively. -->
+	<description>OpenLogViewer is a free, open source, cross-platform data-log visualisation application that currently supports many CSV data-log formats (including MegaSquirt style), and FreeEMS binary data-logs. OpenLogViewer is currently in its infancy. While in the future it will be amazing, right now it has all of the basics that you need.</description>
 
 	<issueManagement>
 		<system>MantisBT</system>
@@ -93,6 +91,8 @@
 		<project.initial.heap>-Xms128m</project.initial.heap>
 		<project.maximum.heap>-Xmx1024m</project.maximum.heap>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.forum.url>http://forum.diyefi.org/viewforum.php?f=32</project.forum.url>
+		<project.issues.url>http://issues.freeems.org</project.issues.url>
 	</properties>
 
 	<reporting>
@@ -195,7 +195,45 @@
 
 	<build>
 		<defaultGoal>install exec:exec</defaultGoal>
+		<resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources/build/</directory>
+				<targetPath>build</targetPath>
+				<includes>
+					<include>buildInfo.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<gitDescribe>
+						<skip>false</skip>
+						<always>true</always>
+						<abbrev>7</abbrev>
+						<dirty>-DEV</dirty>
+						<forceLongFormat>false</forceLongFormat>
+					</gitDescribe>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -248,6 +286,19 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>maven-version</id>
+						<goals>
+							<goal>maven-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
@@ -296,6 +347,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.2.1</version>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+				</configuration>
 			</plugin>
 		</plugins>
 		<extensions>
@@ -332,11 +386,13 @@
 		</dependency>
 
 		<!-- DIYEFI.org repo dependencies. The following dependencies requires the included settings.xml file be installed -->
-		<dependency> <!-- To allow the app to compile with Mac behaviour on non-Mac machines -->
+
+		<!-- To allow the app to compile with Mac behaviour on non-Mac machines -->
+		<dependency>
 			<groupId>com.apple.eawt</groupId>
 			<artifactId>ui</artifactId>
 			<version>1.6.0_24</version>
-			<scope>compile</scope>
+			<!-- No maven scope allows compile ONLY, so must be excluded from builds. -->
 		</dependency>
 	</dependencies>
 </project>

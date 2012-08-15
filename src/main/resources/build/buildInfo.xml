@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Maven and Git properties filtered during build and available for use at runtime!</comment>
+
+
+<!-- Maven properties -->
+
+<entry key="project.version">${project.version}</entry>
+<entry key="project.description">${project.description}</entry>
+<entry key="project.url">${project.url}</entry>
+
+<entry key="maven.version">${maven.version}</entry>
+<entry key="maven.build.timestamp">${maven.build.timestamp}</entry>
+
+<entry key="project.forum.url">${project.forum.url}</entry>
+<entry key="project.issueManagement.url">${project.issueManagement.url}</entry>
+
+<entry key="os.name">${os.name}</entry>
+<entry key="os.arch">${os.arch}</entry>
+<entry key="os.version">${os.version}</entry>
+
+<entry key="java.version">${java.version}</entry>
+<entry key="java.vm.version">${java.vm.version}</entry>
+<entry key="java.class.version">${java.class.version}</entry>
+
+<!-- Git properties -->
+
+<entry key="git.commit.user.name">${git.commit.user.name}</entry>
+<entry key="git.commit.user.email">${git.commit.user.email}</entry>
+<entry key="git.commit.time">${git.commit.time}</entry>
+
+<entry key="git.build.user.name">${git.build.user.name}</entry>
+<entry key="git.build.user.email">${git.build.user.email}</entry>
+<entry key="git.build.time">${git.build.time}</entry>
+
+<entry key="git.commit.id.describe">${git.commit.id.describe}</entry>
+<entry key="git.commit.id.abbrev">${git.commit.id.abbrev}</entry>
+<entry key="git.commit.id">${git.commit.id}</entry>
+
+</properties>

@@ -63,7 +63,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 
 import org.diyefi.openlogviewer.decoder.AbstractDecoder;
@@ -90,8 +89,12 @@ public final class OpenLogViewer extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final Properties buildInfo = new Properties();
+
 	private static final String APPLICATION_NAME = OpenLogViewer.class.getSimpleName();
 	private static final String SETTINGS_DIRECTORY = "." + APPLICATION_NAME;
+
+	private static final String GIT_DESCRIBE_KEY = "git.commit.id.describe";
 
 	// TODO localise and refactor these:
 	private static final String PROPERTIES_FILENAME = "OLVAllProperties.olv";
@@ -112,11 +115,12 @@ public final class OpenLogViewer extends JFrame {
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
 
+	private final String applicationTitle;
+	private final String applicationVersion;
 	private final EntireGraphingPanel graphingPanel;
 	private final FooterPanel footerPanel;
 	private final OptionFrameV2 optionFrame;
 	private final PropertiesPane prefFrame;
-	private final AboutFrame aboutFrame;
 
 	private final List<SingleProperty> properties;
 	private AbstractDecoder decoderInUse;
@@ -129,6 +133,24 @@ public final class OpenLogViewer extends JFrame {
 	private int containingDevice;
 
 	public OpenLogViewer() {
+		try {
+			buildInfo.loadFromXML(getClass().getClassLoader().getResourceAsStream("build/buildInfo.xml"));
+		} catch (IOException e) {
+			System.out.println("Uh oh, looks like a hacked copy! UNSUPPORTED VERSION! DO NOT USE!");
+		} finally {
+			String preliminaryVersion = buildInfo.getProperty(GIT_DESCRIBE_KEY);
+			if (preliminaryVersion == null || "".equals(preliminaryVersion.trim())) {
+				System.out.println("Application version not found! UNSUPPORTED VERSION! DO NOT USE!");
+				applicationVersion = "UNSUPPORTED VERSION! DO NOT USE!";
+				buildInfo.setProperty(GIT_DESCRIBE_KEY, applicationVersion);
+			} else {
+				applicationVersion = buildInfo.getProperty(GIT_DESCRIBE_KEY);
+				buildInfo.setProperty(GIT_DESCRIBE_KEY, applicationVersion);
+			}
+		}
+
+		applicationTitle = APPLICATION_NAME + " " + applicationVersion;
+		buildInfo.setProperty("application.title", applicationTitle);
 
 		prefFrame = new PropertiesPane(labels, SETTINGS_DIRECTORY);
 		properties = new ArrayList<SingleProperty>();
@@ -136,12 +158,11 @@ public final class OpenLogViewer extends JFrame {
 
 		footerPanel = new FooterPanel(labels);
 		optionFrame = new OptionFrameV2(labels);
-		aboutFrame = new AboutFrame(APPLICATION_NAME);
 		graphingPanel = new EntireGraphingPanel(labels);
 		graphingPanel.setPreferredSize(new Dimension(GRAPH_PANEL_WIDTH, GRAPH_PANEL_HEIGHT));
 
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setTitle(APPLICATION_NAME);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setTitle(applicationTitle);
 		setLayout(new BorderLayout());
 		setFocusable(true);
 
@@ -210,7 +231,7 @@ public final class OpenLogViewer extends JFrame {
 		aboutMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				aboutFrame.setVisible(true);
+				AboutFrame.show(buildInfo);
 			}
 		});
 
@@ -248,7 +269,7 @@ public final class OpenLogViewer extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
 		if (IS_MAC_OS_X) {
-			new MacOSAboutHandler(aboutFrame);
+			new MacOSAboutHandler(buildInfo);
 		} else {
 			menuBar.add(helpMenu);
 		}
@@ -258,8 +279,10 @@ public final class OpenLogViewer extends JFrame {
 		addComponentListener(graphingPanel);
 		setupWindowKeyBindings(this);
 
+		setName(applicationTitle);
+
 		pack();
-		setName(APPLICATION_NAME);
+
 		setVisible(true);
 	}
 
@@ -377,7 +400,7 @@ public final class OpenLogViewer extends JFrame {
 				setLog(null);
 			} // else haven't read in a log yet.
 
-			setTitle(APPLICATION_NAME + " - " + fileToOpen.getName());
+			setTitle(applicationTitle + " - " + fileToOpen.getName());
 			saveApplicationWideProperty(NAME_OF_LAST_DIR_KEY, fileToOpen.getParent());
 			saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, fileToOpen.getPath());
 			saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
@@ -391,7 +414,7 @@ public final class OpenLogViewer extends JFrame {
 			}
 			return true;
 		} else {
-			setTitle(APPLICATION_NAME);
+			setTitle(applicationTitle);
 			return false;
 		}
 	}

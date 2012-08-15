@@ -4,6 +4,7 @@
 	<activeProfiles>
 		<activeProfile>diyefi.org</activeProfile>
 	</activeProfiles>
+
 	<profiles>
 		<!-- Required repository for DIYEFI.org artifacts! -->
 		<profile>
