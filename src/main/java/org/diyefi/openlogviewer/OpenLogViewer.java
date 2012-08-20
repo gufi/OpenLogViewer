@@ -79,6 +79,8 @@ import org.diyefi.openlogviewer.graphing.MultiGraphLayeredPane;
 import org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
 import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
+import org.diyefi.openlogviewer.subframes.AboutFrame;
+import org.diyefi.openlogviewer.subframes.MacOSAboutHandler;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewer extends JFrame {
@@ -99,6 +101,9 @@ public final class OpenLogViewer extends JFrame {
 	private static final String VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY = "ViewMenuItemScaleAndColorName";
 	private static final String VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY = "ViewMenuItemFieldsAndDivisionsName";
 
+	private static final String HELP_MENU_KEY = "HelpMenuName";
+	private static final String HELP_MENU_ITEM_ABOUT_KEY = "HelpMenuAboutName";
+
 	private static final String FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY = "FailedToGoFullScreenMessage";
 	private static final String CANT_GO_FULLSCREEN_MESSAGE_KEY = "CantGoFullScreenMessage";
 
@@ -106,6 +111,9 @@ public final class OpenLogViewer extends JFrame {
 	private static final String OPEN_FILE_ERROR_MESSAGE_KEY = "OpenFileErrorMessage";
 	private static final String OPEN_LAST_FILE_ERROR_TITLE_KEY = "OpenLastFileErrorTitle";
 	private static final String OPEN_LAST_FILE_ERROR_MESSAGE_KEY = "OpenLastFileErrorMessage";
+
+	private static final String DEFAULT_BROWSER_ERROR_TITLE_KEY = "DefaultBrowserErrorTitle";
+	private static final String DEFAULT_BROWSER_ERROR_MESSAGE_KEY = "DefaultBrowserErrorMessage";
 
 	// TODO localise and refactor these:
 	private static final String PROPERTIES_FILENAME = "OLVAllProperties.olv";
@@ -130,6 +138,7 @@ public final class OpenLogViewer extends JFrame {
 	private final FooterPanel footerPanel;
 	private final OptionFrameV2 optionFrame;
 	private final PropertiesPane prefFrame;
+	private final AboutFrame aboutFrame;
 
 	private final List<SingleProperty> properties;
 	private AbstractDecoder decoderInUse;
@@ -149,6 +158,7 @@ public final class OpenLogViewer extends JFrame {
 
 		footerPanel = new FooterPanel();
 		optionFrame = new OptionFrameV2();
+		aboutFrame = new AboutFrame(APPLICATION_NAME);
 		graphingPanel = new EntireGraphingPanel();
 		graphingPanel.setPreferredSize(new Dimension(GRAPH_PANEL_WIDTH, GRAPH_PANEL_HEIGHT));
 
@@ -219,6 +229,15 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
+		final JMenuItem aboutMenuItem = new JMenuItem(labels.getString(HELP_MENU_ITEM_ABOUT_KEY));
+		aboutMenuItem.setName(HELP_MENU_ITEM_ABOUT_KEY);
+		aboutMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				aboutFrame.setVisible(true);
+			}
+		});
+
 		/*
 		 * 13 January 2012 Had Chick-fil-A #1 meal with no pickle and Dr Pepper for lunch.
 		 * 		Dr Pepper with no period. "Dude didn't even get his degree." Either that or he is British.
@@ -245,10 +264,19 @@ public final class OpenLogViewer extends JFrame {
 		viewMenu.add(scaleAndColorViewMenuItem);
 		viewMenu.add(fieldsAndDivisionsViewMenuItem);
 
+		final JMenu helpMenu = new JMenu(labels.getString(HELP_MENU_KEY));
+		helpMenu.setName(HELP_MENU_KEY);
+		helpMenu.add(aboutMenuItem);
+
 		menuBar = new JMenuBar();
 		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
+		if (isMac) {
+			new MacOSAboutHandler(aboutFrame);
+		} else {
+			menuBar.add(helpMenu);
+		}
 		setJMenuBar(menuBar);
 
 		//Listener stuff
@@ -627,6 +655,12 @@ public final class OpenLogViewer extends JFrame {
 	public void setLog(final GenericLog genericLog) {
 		graphingPanel.setLog(genericLog);
 	}
+
+	 public void defaultBrowserNotFound(){
+		 JOptionPane.showMessageDialog(mainAppRef, labels.getObject(DEFAULT_BROWSER_ERROR_MESSAGE_KEY),
+				 labels.getObject(DEFAULT_BROWSER_ERROR_TITLE_KEY).toString(),
+				 JOptionPane.ERROR_MESSAGE);
+	 }
 
 	/**
 	 * Returns the reference to this instance, it is meant to be a method to make getting the main frame simpler
