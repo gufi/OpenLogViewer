@@ -618,15 +618,13 @@ public final class OpenLogViewer extends JFrame {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			final GraphicsDevice[] device = ge.getScreenDevices();
 			// Do the reverse of what we did to put it into full screen!
-			device[containingDevice].setFullScreenWindow(null);
-			removeNotify();
-			setUndecorated(false);
-			addNotify();
-			setJMenuBar(menuBar);
-			setVisible(false); // Hide while packing and restoring to avoid showing window resize
-			pack();
-			restoreScreenState();
-			setVisible(true);
+			device[containingDevice].setFullScreenWindow(null); //Exit full screen
+			dispose(); 				// Make the JFrame undisplayable so setUndecorated(false) will work
+			setUndecorated(false); 	// Restore the window frame/bezel
+			setJMenuBar(menuBar); 	// Remove the menu bar
+			validate();				// Required after rearranging component hierarchy
+			restoreScreenState();	// Size and place the window where it was before
+			setVisible(true);		// Make the JFrame displayable again
 			requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 			graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 		}
