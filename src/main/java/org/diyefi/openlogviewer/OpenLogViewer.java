@@ -80,7 +80,7 @@ import org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
 import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 import org.diyefi.openlogviewer.subframes.AboutFrame;
-import org.diyefi.openlogviewer.subframes.MacOSAboutHandler;
+//import org.diyefi.openlogviewer.subframes.MacOSAboutHandler;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewer extends JFrame {
@@ -272,11 +272,11 @@ public final class OpenLogViewer extends JFrame {
 		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
-		if (isMac) {
-			new MacOSAboutHandler(aboutFrame);
-		} else {
+		//if (isMac) {
+		//	new MacOSAboutHandler(aboutFrame);
+		//} else {
 			menuBar.add(helpMenu);
-		}
+		//}
 		setJMenuBar(menuBar);
 
 		//Listener stuff

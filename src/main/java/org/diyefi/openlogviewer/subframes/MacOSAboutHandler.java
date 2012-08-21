@@ -1,5 +1,6 @@
 package org.diyefi.openlogviewer.subframes;
 
+/*
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.Application;
@@ -21,3 +22,4 @@ public class MacOSAboutHandler {
 		}
     }
 }
+*/
