@@ -81,14 +81,10 @@ public class NavBarPanel extends JPanel {
 	}
 
 	private void initComponents() {
-		this.setName("navBarPanel");
-		this.setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
-		this.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		setName("navBarPanel");
+		setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
+		setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
-		zoomInButton.setIcon(new ImageIcon(getClass().getResource("zoomIn.png"))); // NOI18N
-		zoomInButton.setBorder(null);
-		zoomInButton.setName("zoomInButton");
-		zoomInButton.setRequestFocusEnabled(false);
 		zoomInButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -97,12 +93,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(zoomInButton);
+		setupAndAddButton(zoomInButton, "zoomIn.png");
 
-		zoomResetRatioButton.setIcon(new ImageIcon(getClass().getResource("zoomResetRatio.png"))); // NOI18N
-		zoomResetRatioButton.setBorder(null);
-		zoomResetRatioButton.setName("zoomResetRatioButton"); // NOI18N
-		zoomResetRatioButton.setRequestFocusEnabled(false);
 		zoomResetRatioButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -111,12 +103,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(zoomResetRatioButton);
+		setupAndAddButton(zoomResetRatioButton, "zoomResetRatio.png");
 
-		zoomResetFitButton.setIcon(new ImageIcon(getClass().getResource("zoomResetFit.png"))); // NOI18N
-		zoomResetFitButton.setBorder(null);
-		zoomResetFitButton.setName("zoomResetFitButton"); // NOI18N
-		zoomResetFitButton.setRequestFocusEnabled(false);
 		zoomResetFitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -125,12 +113,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(zoomResetFitButton);
+		setupAndAddButton(zoomResetFitButton,"zoomResetFit.png");
 
-		zoomOutButton.setIcon(new ImageIcon(getClass().getResource("zoomOut.png"))); // NOI18N
-		zoomOutButton.setBorder(null);
-		zoomOutButton.setName("zoomOutButton");
-		zoomOutButton.setRequestFocusEnabled(false);
 		zoomOutButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -139,14 +123,10 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(zoomOutButton);
+		setupAndAddButton(zoomOutButton, "zoomOut.png");
 
-		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
+		add(Box.createHorizontalStrut(SPACER_WIDTH));
 
-		slowDownButton.setIcon(new ImageIcon(getClass().getResource("slowDown.png"))); // NOI18N
-		slowDownButton.setBorder(null);
-		slowDownButton.setName("slowDownButton");
-		slowDownButton.setRequestFocusEnabled(false);
 		slowDownButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -155,12 +135,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(slowDownButton);
+		setupAndAddButton(slowDownButton, "slowDown.png");
 
-		resetPlaySpeedButton.setIcon(new ImageIcon(getClass().getResource("resetPlaySpeed.png"))); // NOI18N
-		resetPlaySpeedButton.setBorder(null);
-		resetPlaySpeedButton.setName("resetPlaySpeedButton");
-		resetPlaySpeedButton.setRequestFocusEnabled(false);
 		resetPlaySpeedButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -169,12 +145,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(resetPlaySpeedButton);
+		setupAndAddButton(resetPlaySpeedButton, "resetPlaySpeed.png");
 
-		pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
-		pausePlayButton.setBorder(null);
-		pausePlayButton.setName("pausePlayButton");
-		pausePlayButton.setRequestFocusEnabled(false);
 		pausePlayButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -183,12 +155,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(pausePlayButton);
+		setupAndAddButton(pausePlayButton, "play.png");
 
-		speedUpButton.setIcon(new ImageIcon(getClass().getResource("speedUp.png"))); // NOI18N
-		speedUpButton.setBorder(null);
-		speedUpButton.setName("speedUpButton"); // NOI18N
-		speedUpButton.setRequestFocusEnabled(false);
 		speedUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -197,14 +165,10 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(speedUpButton);
+		setupAndAddButton(speedUpButton, "speedUp.png");
 
-		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
+		add(Box.createHorizontalStrut(SPACER_WIDTH));
 
-		moveToBeginningButton.setIcon(new ImageIcon(getClass().getResource("moveToBeginning.png"))); // NOI18N
-		moveToBeginningButton.setBorder(null);
-		moveToBeginningButton.setName("moveToBeginningButton"); // NOI18N
-		moveToBeginningButton.setRequestFocusEnabled(false);
 		moveToBeginningButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -213,12 +177,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveToBeginningButton);
+		setupAndAddButton(moveToBeginningButton,"moveToBeginning.png");
 
-		moveBackwardCoarseButton.setIcon(new ImageIcon(getClass().getResource("moveBackwardCoarse.png"))); // NOI18N
-		moveBackwardCoarseButton.setBorder(null);
-		moveBackwardCoarseButton.setName("moveBackwardCoarseButton"); // NOI18N
-		moveBackwardCoarseButton.setRequestFocusEnabled(false);
 		moveBackwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -227,12 +187,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveBackwardCoarseButton);
+		setupAndAddButton(moveBackwardCoarseButton, "moveBackwardCoarse.png");
 
-		moveBackwardButton.setIcon(new ImageIcon(getClass().getResource("moveBackward.png"))); // NOI18N
-		moveBackwardButton.setBorder(null);
-		moveBackwardButton.setName("moveBackwardButton"); // NOI18N
-		moveBackwardButton.setRequestFocusEnabled(false);
 		moveBackwardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -241,12 +197,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveBackwardButton);
+		setupAndAddButton(moveBackwardButton, "moveBackward.png");
 
-		moveToCenterButton.setIcon(new ImageIcon(getClass().getResource("moveToCenter.png"))); // NOI18N
-		moveToCenterButton.setBorder(null);
-		moveToCenterButton.setName("moveToCenterButton"); // NOI18N
-		moveToCenterButton.setRequestFocusEnabled(false);
 		moveToCenterButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -255,12 +207,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveToCenterButton);
+		setupAndAddButton(moveToCenterButton, "moveToCenter.png");
 
-		moveForwardButton.setIcon(new ImageIcon(getClass().getResource("moveForward.png"))); // NOI18N
-		moveForwardButton.setBorder(null);
-		moveForwardButton.setName("moveForwardButton"); // NOI18N
-		moveForwardButton.setRequestFocusEnabled(false);
 		moveForwardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -269,12 +217,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveForwardButton);
+		setupAndAddButton(moveForwardButton, "moveForward.png");
 
-		moveForwardCoarseButton.setIcon(new ImageIcon(getClass().getResource("moveForwardCoarse.png"))); // NOI18N
-		moveForwardCoarseButton.setBorder(null);
-		moveForwardCoarseButton.setName("moveForwardCoarseButton"); // NOI18N
-		moveForwardCoarseButton.setRequestFocusEnabled(false);
 		moveForwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -283,12 +227,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveForwardCoarseButton);
+		setupAndAddButton(moveForwardCoarseButton, "moveForwardCoarse.png");
 
-		moveToEndButton.setIcon(new ImageIcon(getClass().getResource("moveToEnd.png"))); // NOI18N
-		moveToEndButton.setBorder(null);
-		moveToEndButton.setName("moveToEndButton"); // NOI18N
-		moveToEndButton.setRequestFocusEnabled(false);
 		moveToEndButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -297,14 +237,10 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(moveToEndButton);
+		setupAndAddButton(moveToEndButton, "moveToEnd.png");
 
-		this.add(Box.createHorizontalStrut(SPACER_WIDTH));
+		add(Box.createHorizontalStrut(SPACER_WIDTH));
 
-		openButton.setIcon(new ImageIcon(getClass().getResource("open.png"))); // NOI18N
-		openButton.setBorder(null);
-		openButton.setName("openButton"); // NOI18N
-		openButton.setRequestFocusEnabled(false);
 		openButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -313,12 +249,8 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(openButton);
+		setupAndAddButton(openButton, "open.png");
 
-		openLastButton.setIcon(new ImageIcon(getClass().getResource("openLast.png"))); // NOI18N
-		openLastButton.setBorder(null);
-		openLastButton.setName("openLastButton"); // NOI18N
-		openLastButton.setRequestFocusEnabled(false);
 		openLastButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -327,7 +259,15 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		this.add(openLastButton);
+		setupAndAddButton(openLastButton, "openLast.png");
+	}
+
+	private final void setupAndAddButton(JButton button, String iconLocation){
+		button.setIcon(new ImageIcon(getClass().getResource(iconLocation)));
+		button.setBorder(null);
+		button.setName("moveToEndButton");
+		button.setRequestFocusEnabled(false);
+		add(button);
 	}
 
 	public final void updatePausePlayButton() {
