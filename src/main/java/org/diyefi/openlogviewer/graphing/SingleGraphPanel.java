@@ -46,6 +46,10 @@ import org.diyefi.openlogviewer.utils.MathUtils;
 public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener, PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
 
+	private static final int SHOW_DATA_POINT_ZOOM_THRESHOLD = 5;
+	private static final int DATA_POINT_WIDTH = 3;
+	private static final int DATA_POINT_HEIGHT = DATA_POINT_WIDTH;
+	private static final int SIG_FIGS = 6;
 	private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
 	private GenericDataElement gde;
 	private double[] dataPointsToDisplay;
@@ -170,14 +174,14 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			}
 
 			// Draw data point
-			if (!zoomedOut && zoom > 5) {
+			if (!zoomedOut && zoom > SHOW_DATA_POINT_ZOOM_THRESHOLD) {
 
 				// Draw fat data point
 				if (atTraceBeginning && atTraceEnd) {
 					// Special case to determine if fat dot is needed if scrolled to the end
 					if (availableDataRecords >= 2 && gde.get(availableDataRecords - 2) != traceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
-						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, DATA_POINT_WIDTH, DATA_POINT_HEIGHT);
 					} else {
 						// Draw small data point
 						// drawLine() is 33% faster than fillRect() for a single pixel on Ben's dev machine
@@ -186,17 +190,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				} else if (atTraceBeginning) {
 					if (traceData != rightOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
-						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, DATA_POINT_WIDTH, DATA_POINT_HEIGHT);
 					}
 				} else if (atTraceEnd) {
 					if (traceData != leftOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
-						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, DATA_POINT_WIDTH, DATA_POINT_HEIGHT);
 					}
 				} else if (insideTrace) {
 					if (traceData != leftOfTraceData || traceData != rightOfTraceData) {
 						// fillRect() is 95% faster than fillOval() for a 3x3 square on Ben's dev machine
-						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, 3, 3);
+						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, DATA_POINT_WIDTH, DATA_POINT_HEIGHT);
 					}
 				}
 			} else if (insideTrace) {
@@ -308,10 +312,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		final int dataLocation = (int) graphPosition + (int) numSnapsFromLeft;
 		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
 			double data = gde.get(dataLocation);
-			data = MathUtils.roundToSignificantFigures(data, 6);
+			data = MathUtils.roundToSignificantFigures(data, SIG_FIGS);
 			result = Double.toString(data);
-			if (result.length() > 8) {
-				result = result.substring(0, 8);
+			if (result.length() > SIG_FIGS + 2) {
+				result = result.substring(0, SIG_FIGS + 2);
 			}
 		}
 		return result;
@@ -330,17 +334,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
 			double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
 			if (minData != -Double.MAX_VALUE) {
-				minData = MathUtils.roundToSignificantFigures(minData, 6);
-				maxData = MathUtils.roundToSignificantFigures(maxData, 6);
+				minData = MathUtils.roundToSignificantFigures(minData, SIG_FIGS);
+				maxData = MathUtils.roundToSignificantFigures(maxData, SIG_FIGS);
 				String resultMin = Double.toString(minData);
 				String resultMax = Double.toString(maxData);
-				if (resultMin.length() > 8) {
-					resultMin = resultMin.substring(0, 8);
+				if (resultMin.length() > SIG_FIGS + 2) {
+					resultMin = resultMin.substring(0, SIG_FIGS + 2);
 				}
-				if (resultMax.length() > 8) {
-					resultMax = resultMax.substring(0, 8);
+				if (resultMax.length() > SIG_FIGS + 2) {
+					resultMax = resultMax.substring(0, SIG_FIGS + 2);
 				}
-				meanData = MathUtils.roundToSignificantFigures(meanData, 6);
+				meanData = MathUtils.roundToSignificantFigures(meanData, SIG_FIGS);
 				String resultMean = Double.toString(meanData);
 				if (resultMin.length() > resultMax.length() && resultMin.length() < resultMean.length()) {
 					meanData = MathUtils.roundToSignificantFigures(meanData, resultMin.length() - 2);

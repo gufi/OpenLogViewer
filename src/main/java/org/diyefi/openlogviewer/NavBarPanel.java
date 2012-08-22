@@ -85,6 +85,16 @@ public class NavBarPanel extends JPanel {
 		setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
 		setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
+		setupZoomButtons();
+		add(Box.createHorizontalStrut(SPACER_WIDTH));
+		setupPlayButtons();
+		add(Box.createHorizontalStrut(SPACER_WIDTH));
+		setupNavigationButtons();
+		add(Box.createHorizontalStrut(SPACER_WIDTH));
+		setupFileButtons();
+	}
+
+	private void setupZoomButtons() {
 		zoomInButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -113,7 +123,7 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		setupAndAddButton(zoomResetFitButton,"zoomResetFit.png");
+		setupAndAddButton(zoomResetFitButton, "zoomResetFit.png");
 
 		zoomOutButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -124,9 +134,9 @@ public class NavBarPanel extends JPanel {
 			}
 		});
 		setupAndAddButton(zoomOutButton, "zoomOut.png");
+	}
 
-		add(Box.createHorizontalStrut(SPACER_WIDTH));
-
+	private void setupPlayButtons() {
 		slowDownButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -166,9 +176,9 @@ public class NavBarPanel extends JPanel {
 			}
 		});
 		setupAndAddButton(speedUpButton, "speedUp.png");
+	}
 
-		add(Box.createHorizontalStrut(SPACER_WIDTH));
-
+	private void setupNavigationButtons() {
 		moveToBeginningButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -177,7 +187,7 @@ public class NavBarPanel extends JPanel {
 				}
 			}
 		});
-		setupAndAddButton(moveToBeginningButton,"moveToBeginning.png");
+		setupAndAddButton(moveToBeginningButton, "moveToBeginning.png");
 
 		moveBackwardCoarseButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -238,9 +248,9 @@ public class NavBarPanel extends JPanel {
 			}
 		});
 		setupAndAddButton(moveToEndButton, "moveToEnd.png");
+	}
 
-		add(Box.createHorizontalStrut(SPACER_WIDTH));
-
+	private void setupFileButtons() {
 		openButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
@@ -262,7 +272,7 @@ public class NavBarPanel extends JPanel {
 		setupAndAddButton(openLastButton, "openLast.png");
 	}
 
-	private final void setupAndAddButton(JButton button, String iconLocation){
+	private void setupAndAddButton(final JButton button, final String iconLocation) {
 		button.setIcon(new ImageIcon(getClass().getResource(iconLocation)));
 		button.setBorder(null);
 		button.setName("moveToEndButton");

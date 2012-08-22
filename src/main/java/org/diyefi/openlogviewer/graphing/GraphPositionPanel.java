@@ -38,6 +38,10 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 public class GraphPositionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
+	private static final int TEXT_Y_OFFSET = 18;
+	private static final double DECIMAL_DISPLAY_THRESHOLD = 0.5;
+	private static final double INITIAL_MAJOR_GRADUATION_SPACING = 100.0;
+
 	private GenericLog genLog;
 	private final Color majorGraduationColor;
 	private final Color positionDataColor;
@@ -174,13 +178,13 @@ public class GraphPositionPanel extends JPanel {
 				}
 				String positionDataString = "";
 				final BigDecimal positionData = new BigDecimal(nextPositionMarker);
-				if (majorGraduationSpacing > 0.5) {
+				if (majorGraduationSpacing > DECIMAL_DISPLAY_THRESHOLD) {
 					positionDataString = positionData.toPlainString();
 				} else {
 					positionDataString = roundDecimalsOnlyToTwoSignificantFigures(positionData);
 				}
 				final int stringWidth = fm.stringWidth(positionDataString);
-				g2d.drawString(positionDataString, xCoord - (stringWidth / 2), 18);
+				g2d.drawString(positionDataString, xCoord - (stringWidth / 2), TEXT_Y_OFFSET);
 
 				nextPositionMarker += majorGraduationSpacing;
 			}
@@ -240,13 +244,12 @@ public class GraphPositionPanel extends JPanel {
 			zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		}
 
-		majorGraduationSpacing = 100.0;
+		majorGraduationSpacing = INITIAL_MAJOR_GRADUATION_SPACING;
 		final int count = (int) (Math.log((double) zoom) / Math.log(2.0));  // Base-2 logarithm of zoom
 
 		if (zoomedOut) {
 			for (int i = 0; i < count; i++) {
 				majorGraduationSpacing *= graduationSpacingMultiplier[i % 3];
-
 			}
 		} else {
 			for (int i = 0; i < count; i++) {

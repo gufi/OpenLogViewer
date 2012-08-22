@@ -51,10 +51,8 @@ public class AboutFrame extends JFrame {
 	private static final int FRAME_HEIGHT = 320;
 	private static final int SPACER_HEIGHT = 20;
 
-	private String appName;
-
-	private final HyperlinkListener hll = new HyperlinkListener() {
-		public void hyperlinkUpdate(HyperlinkEvent hle) {  
+	private static final HyperlinkListener HLL = new HyperlinkListener() {
+		public void hyperlinkUpdate(final HyperlinkEvent hle) {
 			if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
 				try {
 					java.awt.Desktop.getDesktop().browse(java.net.URI.create(hle.getDescription()));
@@ -64,8 +62,10 @@ public class AboutFrame extends JFrame {
 			}
 		}
 	};
+
+	private String appName;
 	
-	public AboutFrame(String newAppName) {
+	public AboutFrame(final String newAppName) {
 		appName = newAppName;
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
@@ -79,12 +79,12 @@ public class AboutFrame extends JFrame {
 		pack();
 	}
 	
-	private final void setupNorthPanel() {
+	private void setupNorthPanel() {
 		final JPanel northPanel = new JPanel();
 		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
 
-		ImageIcon icon = createImageIcon("logo64x64.png", appName + " Logo");
-		JLabel logo = new JLabel(icon);
+		final ImageIcon icon = createImageIcon("logo64x64.png", appName + " Logo");
+		final JLabel logo = new JLabel(icon);
 		logo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		northPanel.add(logo);
 
@@ -95,11 +95,11 @@ public class AboutFrame extends JFrame {
 		add(northPanel, BorderLayout.NORTH);
 	}
 
-	private final void setupCenterPanel() {
+	private void setupCenterPanel() {
 		final JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-		JTextPane description = new JTextPane();
-		SimpleAttributeSet simpleAttrib = new SimpleAttributeSet();
+		final JTextPane description = new JTextPane();
+		final SimpleAttributeSet simpleAttrib = new SimpleAttributeSet();
 		StyleConstants.setAlignment(simpleAttrib, StyleConstants.ALIGN_JUSTIFIED);
 		description.setParagraphAttributes(simpleAttrib, false);
 		description.setText("OpenLogViewer is a free, open source, cross-platform"
@@ -123,17 +123,17 @@ public class AboutFrame extends JFrame {
 		add(centerPanel, BorderLayout.CENTER);
 	}
 
-	private final void setupSouthPanel() {
+	private void setupSouthPanel() {
 		final JPanel southPanel = new JPanel();
 		southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.Y_AXIS));
 		addTextToPanel(southPanel, "Built by <a href='http://maven.apache.org/'>Maven</a> 3");
 		add(southPanel, BorderLayout.SOUTH);
 	}
 
-	private void addTextToPanel(JPanel panel, String text){
+	private void addTextToPanel(final JPanel panel, final String text) {
 		JEditorPane newPane = null;
-		Font font = UIManager.getFont("Label.font");
-		String bodyRule = "body { font-family: "
+		final Font font = UIManager.getFont("Label.font");
+		final String bodyRule = "body { font-family: "
 				+ font.getFamily()
 				+ "; "
 				+ "font-size: "
@@ -143,7 +143,7 @@ public class AboutFrame extends JFrame {
 				+ "}";
 		newPane = new JEditorPane("text/html", text);
 		((javax.swing.text.html.HTMLDocument) newPane.getDocument()).getStyleSheet().addRule(bodyRule);
-		newPane.addHyperlinkListener(hll);
+		newPane.addHyperlinkListener(HLL);
 		newPane.setEditable(false);
 		newPane.setBorder(null);
 		newPane.setOpaque(false);
@@ -151,8 +151,8 @@ public class AboutFrame extends JFrame {
 		panel.add(newPane);
 	}
 
-	private ImageIcon createImageIcon(String path, String description) {
-		java.net.URL imgURL = OpenLogViewer.class.getResource(path);
+	private ImageIcon createImageIcon(final String path, final String description) {
+		final java.net.URL imgURL = OpenLogViewer.class.getResource(path);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, description);
 		} else {

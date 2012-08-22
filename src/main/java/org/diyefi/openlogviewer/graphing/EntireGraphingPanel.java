@@ -59,6 +59,11 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	private static final int GRAPH_DISPLAY_WIDTH = 600;
 	private static final int GRAPH_DISPLAY_HEIGHT = 400;
 	private static final int BUTTON_DISPLAY_HEIGHT = 20;
+	private static final int ZOOM_BUFFER = 8; //4 pixels per side.
+	private static final int PLAY_SPEED_DIVISOR = 6;
+	private static final double FIFTY_PERCENT = 0.50;
+	private static final int SCROLL_DELAY_THRESHOLD = 50; //milliseconds
+	private static final int FLING_DELAY_THRESHOLD = 50; //milliseconds
 
 	private final Action play = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
@@ -168,9 +173,17 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		setName("graphinPanel");
 		setLayout(new BorderLayout());
 		multiGraph = new MultiGraphLayeredPane();
+		graphPositionPanel = new GraphPositionPanel();
+		playTimer = new Timer(BASE_PLAY_SPEED, this);
+		flingTimer = new Timer(BASE_FLING_SPEED, this);
+		initVariables();
+		addListeners();
+		initKeyBindings();
+	}
+
+	private void initVariables() {
 		multiGraph.setPreferredSize(new Dimension(GRAPH_DISPLAY_WIDTH, GRAPH_DISPLAY_HEIGHT));
 		add(multiGraph, BorderLayout.CENTER);
-		graphPositionPanel = new GraphPositionPanel();
 		graphPositionPanel.setPreferredSize(new Dimension(GRAPH_DISPLAY_WIDTH, BUTTON_DISPLAY_HEIGHT));
 		add(graphPositionPanel, BorderLayout.SOUTH);
 		zoom = 1;
@@ -180,23 +193,22 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		setGraphSize(0);
 		playing = false;
 		wasPlaying = false;
-		playTimer = new Timer(BASE_PLAY_SPEED, this);
 		playTimer.setInitialDelay(0);
-		flingTimer = new Timer(BASE_FLING_SPEED, this);
 		flingTimer.setInitialDelay(0);
-		addMouseListener(this);
-		addMouseMotionListener(this);
-		addMouseWheelListener(this);
-		addMouseListener(multiGraph.getInfoPanel());
-		addMouseMotionListener(multiGraph.getInfoPanel());
 		stopDragging();
 		stopFlinging();
 		thePastMouseDragged = System.currentTimeMillis();
 		thePastLeftArrow = System.currentTimeMillis();
 		thePastRightArrow = System.currentTimeMillis();
 		scrollAcceleration = 0;
+	}
 
-		initKeyBindings();
+	private void addListeners() {
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		addMouseWheelListener(this);
+		addMouseListener(multiGraph.getInfoPanel());
+		addMouseMotionListener(multiGraph.getInfoPanel());
 	}
 
 	public final void actionPerformed(final ActionEvent e) {
@@ -338,7 +350,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	 * know they are seeing the entire graph trace.
 	 */
 	public final void zoomGraphToFit(final int dataPointsToFit) {
-		final int graphWindowWidth = this.getWidth() - 8; //Remove 4 pixels per side.
+		final int graphWindowWidth = this.getWidth() - ZOOM_BUFFER;
 		int dataPointsThatFitInDisplay = 0;
 		if (zoomedOutBeyondOneToOne) {
 			dataPointsThatFitInDisplay = graphWindowWidth * zoom;
@@ -423,7 +435,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	 */
 	public final void slowDown() {
 		final int currentDelay = playTimer.getDelay();
-		long newDelay = currentDelay + (currentDelay / 6) + 1;
+		long newDelay = currentDelay + (currentDelay / PLAY_SPEED_DIVISOR) + 1;
 		if (newDelay > Integer.MAX_VALUE) {
 			newDelay = Integer.MAX_VALUE;
 		}
@@ -460,7 +472,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	 */
 	public final void speedUp() {
 		final int currentDelay = playTimer.getDelay();
-		int newDelay = currentDelay - (currentDelay / 6) - 1;
+		int newDelay = currentDelay - (currentDelay / PLAY_SPEED_DIVISOR) - 1;
 		if (newDelay < 0) {
 			newDelay = 0;
 		}
@@ -526,7 +538,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	 */
 	public final void moveToBeginning() {
 		resetGraphPosition();
-		moveForwardPercentage(0.50);
+		moveForwardPercentage(FIFTY_PERCENT);
 	}
 
 	/**
@@ -539,7 +551,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		}
 		final long now = System.currentTimeMillis();
 		final long delay = now - thePastLeftArrow;
-		if (delay < 50) {
+		if (delay < SCROLL_DELAY_THRESHOLD) {
 			scrollAcceleration++;
 			moveEntireGraphingPanel(-localZoom - (scrollAcceleration * localZoom));
 		} else {
@@ -602,7 +614,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		}
 		final long now = System.currentTimeMillis();
 		final long delay = now - thePastRightArrow;
-		if (delay < 50) {
+		if (delay < SCROLL_DELAY_THRESHOLD) {
 			scrollAcceleration++;
 			moveEntireGraphingPanel(localZoom + (scrollAcceleration * localZoom));
 		} else {
@@ -632,7 +644,7 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	 */
 	public final void moveToEnd() {
 		goToLastGraphPosition();
-		moveBackwardPercentage(0.50);
+		moveBackwardPercentage(FIFTY_PERCENT);
 	}
 
 	/**
@@ -778,8 +790,8 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		stopDragging();
 
 		final long now = System.currentTimeMillis();
-		if ((now - thePastMouseDragged) > 50) {
-			stopFlinging(); // If over 50 milliseconds since dragging then don't fling
+		if ((now - thePastMouseDragged) > FLING_DELAY_THRESHOLD) {
+			stopFlinging(); // If over FLING_DELAY_THRESHOLD milliseconds since dragging then don't fling
 		}
 
 		if (flingInertia != 0) {

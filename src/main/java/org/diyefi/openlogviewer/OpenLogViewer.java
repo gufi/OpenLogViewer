@@ -126,9 +126,9 @@ public final class OpenLogViewer extends JFrame {
 	private static final int GRAPH_PANEL_WIDTH = 600;
 	private static final int GRAPH_PANEL_HEIGHT = 420;
 
-	public static boolean isMac;
-	public static boolean isWindows;
-	public static boolean isLinux;
+	private static boolean isMac;
+	private static boolean isWindows;
+	private static boolean isLinux;
 
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
@@ -275,7 +275,7 @@ public final class OpenLogViewer extends JFrame {
 		//if (isMac) {
 		//	new MacOSAboutHandler(aboutFrame);
 		//} else {
-			menuBar.add(helpMenu);
+		menuBar.add(helpMenu);
 		//}
 		setJMenuBar(menuBar);
 
@@ -329,7 +329,7 @@ public final class OpenLogViewer extends JFrame {
 				mainAppRef = new OpenLogViewer();
 			}
 
-			private final void runOSDetection(){
+			private void runOSDetection() {
 				final String operatingSystem = "os.name";
 				if (System.getProperty(operatingSystem).toLowerCase().indexOf("mac os") != -1) { // If Mac
 					isMac = true;
@@ -551,23 +551,24 @@ public final class OpenLogViewer extends JFrame {
 		};
 
 		boolean isMainApp = false;
-		if (window instanceof OpenLogViewer){
+		if (window instanceof OpenLogViewer) {
 			isMainApp = true;
 		}
+		final String closeWindowKey = "closeWindow";
 
 		// Close any window
 		if (isWindows || isLinux) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl W"), "closeWindow");
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl W"), closeWindowKey);
 		} else if (isMac) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("meta W"), "closeWindow");
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("meta W"), closeWindowKey);
 		}
 
 		// Just close the main app window
 		if (isLinux && isMainApp) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl Q"), "closeWindow");
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl Q"), closeWindowKey);
 		}
 
-		window.getRootPane().getActionMap().put("closeWindow", closeWindow);
+		window.getRootPane().getActionMap().put(closeWindowKey, closeWindow);
 	}
 
 	public void enterFullScreen() {
@@ -654,11 +655,11 @@ public final class OpenLogViewer extends JFrame {
 		graphingPanel.setLog(genericLog);
 	}
 
-	 public void defaultBrowserNotFound(){
-		 JOptionPane.showMessageDialog(mainAppRef, labels.getObject(DEFAULT_BROWSER_ERROR_MESSAGE_KEY),
-				 labels.getObject(DEFAULT_BROWSER_ERROR_TITLE_KEY).toString(),
-				 JOptionPane.ERROR_MESSAGE);
-	 }
+	public void defaultBrowserNotFound() {
+		JOptionPane.showMessageDialog(mainAppRef, labels.getObject(DEFAULT_BROWSER_ERROR_MESSAGE_KEY),
+				labels.getObject(DEFAULT_BROWSER_ERROR_TITLE_KEY).toString(),
+				JOptionPane.ERROR_MESSAGE);
+	}
 
 	/**
 	 * Returns the reference to this instance, it is meant to be a method to make getting the main frame simpler

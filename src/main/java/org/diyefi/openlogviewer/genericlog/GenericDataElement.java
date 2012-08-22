@@ -43,6 +43,7 @@ import org.diyefi.openlogviewer.coloring.InitialLineColoring;
  */
 public final class GenericDataElement implements Comparable<GenericDataElement>, Serializable, Transferable {
 	private static final long serialVersionUID = 1L;
+	private static final int NUM_DATA_FLAVORS = 3;
 
 	private static int currentRecord;
 
@@ -107,7 +108,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * Data type support for Transferable
 	 */
 	private void addFlavors() {
-		dataFlavor = new DataFlavor[3];
+		dataFlavor = new DataFlavor[NUM_DATA_FLAVORS];
 		final String supportedFlavour = DataFlavor.javaSerializedObjectMimeType + ";class=\"" + GenericDataElement.class.getName() + "\"";
 		dataFlavor[0] = new DataFlavor(supportedFlavour, "OLV GenericDataElement");
 		dataFlavor[1] = DataFlavor.stringFlavor;
