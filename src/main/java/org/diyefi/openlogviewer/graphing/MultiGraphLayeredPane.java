@@ -32,7 +32,7 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
 
 public class MultiGraphLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = 1L;
-	private static final int BOTTOM_LAYER = 999;  //Not really the bottom, but plenty far enough
+	private static final int BOTTOM_LAYER = 999;  // Not really the bottom, but plenty far enough
 	private static final int PANEL_WIDTH = 600;
 	private static final int PANEL_HEIGHT = 400;
 

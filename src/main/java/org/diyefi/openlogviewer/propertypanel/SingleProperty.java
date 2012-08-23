@@ -104,14 +104,23 @@ public class SingleProperty implements Comparable<SingleProperty> {
 	}
 
 	public final String toString() {
-		return header + "="
-			+ color.getRed()
-			+ "," + color.getGreen()
-			+ "," + color.getBlue()
-			+ "," + min
-			+ "," + max
-			+ "," + split
-			+ "," + Boolean.toString(active);
+		final String seperator = ",";
+		StringBuilder output = new StringBuilder(header);
+		output.append("=");
+		output.append(color.getRed());
+		output.append(seperator);
+		output.append(color.getGreen());
+		output.append(seperator);
+		output.append(color.getBlue());
+		output.append(seperator);
+		output.append(min);
+		output.append(seperator);
+		output.append(max);
+		output.append(seperator);
+		output.append(split);
+		output.append(seperator);
+		output.append(Boolean.toString(active));
+		return output.toString();
 	}
 
 	public final int compareTo(final SingleProperty sp) {

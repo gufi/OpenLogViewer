@@ -62,9 +62,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		setOpaque(false);
 		setLayout(null);
 
-		gde = null;
-		dataPointsToDisplay = null;
-		dataPointRangeInfo = null;
 		graphBeginningIndex = Integer.MIN_VALUE;
 		graphEndingIndex = Integer.MIN_VALUE;
 	}

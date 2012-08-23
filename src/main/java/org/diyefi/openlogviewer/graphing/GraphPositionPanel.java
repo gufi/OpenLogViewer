@@ -109,10 +109,10 @@ public class GraphPositionPanel extends JPanel {
 
 		g2d.setColor(majorGraduationColor);
 
-		//Find first position marker placement
+		// Find first position marker placement
 		double nextPositionMarker = getFirstPositionMarkerPlacement();
 
-		//Paint left to right
+		// Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
 
 		// TODO It's ugly having the - on the left side of the cast,
@@ -157,19 +157,19 @@ public class GraphPositionPanel extends JPanel {
 			margin = (1d / zoom) / 2d;
 		}
 		g2d.setColor(positionDataColor);
-		final FontMetrics fm = this.getFontMetrics(this.getFont()); //For getting string width
+		final FontMetrics fm = this.getFontMetrics(this.getFont()); // For getting string width
 
-		//Find first position marker placement
+		// Find first position marker placement
 		double nextPositionMarker = getFirstPositionMarkerPlacement();
 
-		//Paint left to right
+		// Paint left to right
 		double position = graphPosition - majorGraduationSpacing;
 		for (int i = -(int) offset; i < this.getWidth() + (int) offset; i++) { // TODO Ditto!
 			if (position >= nextPositionMarker - margin) {
 				int xCoord = i;
 				if (xCoord >= 0 && xCoord < validSnappingPositions.length) {
 					if (validSnappingPositions[xCoord]) {
-						//Check this first to see if there is no need to modify xCoord.
+						// Check this first to see if there is no need to modify xCoord.
 					} else if (xCoord + 1 < validSnappingPositions.length && validSnappingPositions[xCoord + 1]) {
 						xCoord++;
 					} else if (xCoord > 0 && validSnappingPositions[xCoord - 1]) {

@@ -36,7 +36,7 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final int PREFERRED_WIDTH = 80;
 	private static final int PPREFERRED_HEIGHT = 16;
-	private static final int TIMER_RATE = 250; //milliseconds - changes display/update speed
+	private static final int TIMER_RATE = 250; // milliseconds - changes display/update speed
 	private static final double MILLISECONDS_PER_SECOND = 1000d;
 	private static final DecimalFormat DF = new DecimalFormat("#,##0.0");
 

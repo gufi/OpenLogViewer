@@ -547,7 +547,7 @@ public final class OpenLogViewer extends JFrame {
 			public void actionPerformed(final ActionEvent e) {
 				final WindowEvent wev = new WindowEvent(window, WindowEvent.WINDOW_CLOSING);
 				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
-		    }
+			}
 		};
 
 		boolean isMainApp = false;
@@ -585,19 +585,19 @@ public final class OpenLogViewer extends JFrame {
 					containingDevice = i;
 					if (device[containingDevice].isFullScreenSupported()) {
 						try {
-							fullscreen = true;		// Remember so that we can react accordingly.
-							saveScreenState();		// Save the current state of things to restore later when exiting fullscreen mode.
-							setVisible(false);		// Hide how the sausage is made!
-							setJMenuBar(null);		// Remove the menu bar for maximum space, load files with the buttons?
-							dispose();				// Make the JFrame undisplayable so setUndecorated(true) will work!
-							setUndecorated(true);	// Remove the window frame/bezel!
-							setVisible(true);		// Make the JFrame displayable again!
-							//setResizable(false);	// Fred: doesn't make sense and could be dangerous, according to oracle.
-							                      	// Ben: Removed setResizable(false) because it causes GNOME menu bar
+							fullscreen = true;      // Remember so that we can react accordingly.
+							saveScreenState();      // Save the current state of things to restore later when exiting fullscreen mode.
+							setVisible(false);      // Hide how the sausage is made!
+							setJMenuBar(null);      // Remove the menu bar for maximum space, load files with the buttons?
+							dispose();              // Make the JFrame undisplayable so setUndecorated(true) will work!
+							setUndecorated(true);   // Remove the window frame/bezel!
+							setVisible(true);       // Make the JFrame displayable again!
+//							setResizable(false);    // Fred: doesn't make sense and could be dangerous, according to oracle.
+													// Ben: Removed setResizable(false) because it causes GNOME menu bar
 													// and GNOME task bar to show in front of the app!
 							device[containingDevice].setFullScreenWindow(this);
-							validate();				// Required after rearranging component hierarchy
-							toFront();				// Might as well
+							validate();             // Required after rearranging component hierarchy
+							toFront();              // Might as well
 							requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 							graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 						} catch (Exception e) {
@@ -619,13 +619,13 @@ public final class OpenLogViewer extends JFrame {
 			final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			final GraphicsDevice[] device = ge.getScreenDevices();
 			// Do the reverse of what we did to put it into full screen!
-			device[containingDevice].setFullScreenWindow(null); //Exit full screen
-			dispose(); 				// Make the JFrame undisplayable so setUndecorated(false) will work
-			setUndecorated(false); 	// Restore the window frame/bezel
-			setJMenuBar(menuBar); 	// Remove the menu bar
-			validate();				// Required after rearranging component hierarchy
-			restoreScreenState();	// Size and place the window where it was before
-			setVisible(true);		// Make the JFrame displayable again
+			device[containingDevice].setFullScreenWindow(null); // Exit full screen
+			dispose();              // Make the JFrame undisplayable so setUndecorated(false) will work
+			setUndecorated(false);  // Restore the window frame/bezel
+			setJMenuBar(menuBar);   // Remove the menu bar
+			validate();             // Required after rearranging component hierarchy
+			restoreScreenState();   // Size and place the window where it was before
+			setVisible(true);       // Make the JFrame displayable again
 			requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 			graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
 		}

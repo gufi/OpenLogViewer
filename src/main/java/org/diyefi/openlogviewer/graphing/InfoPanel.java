@@ -88,7 +88,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				final Graphics2D g2d = (Graphics2D) g;
 
 				if (mouseOver) {
-					final FontMetrics fm = this.getFontMetrics(this.getFont());  //For getting string width
+					final FontMetrics fm = this.getFontMetrics(this.getFont());  // For getting string width
 					final int fontHeight = fm.getHeight();
 					final GraphPositionPanel graphPositionPanel = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPositionPanel();
 					final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
@@ -98,8 +98,8 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 						snappedDataPosition = graphPositionPanel.getBestSnappingPosition(xMouseCoord);
 					}
 					g2d.setColor(vertBar);
-					g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  //center position line
-					g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  //mouse cursor line
+					g2d.drawLine(d.width / 2, 0, d.width / 2, d.height);  // center position line
+					g2d.drawLine(snappedDataPosition, 0, snappedDataPosition, d.height);  // mouse cursor line
 
 					for (int i = 0; i < multigGraph.getComponentCount(); i++) {
 						if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {

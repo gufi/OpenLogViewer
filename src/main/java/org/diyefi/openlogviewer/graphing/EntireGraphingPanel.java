@@ -59,94 +59,94 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	private static final int GRAPH_DISPLAY_WIDTH = 600;
 	private static final int GRAPH_DISPLAY_HEIGHT = 400;
 	private static final int BUTTON_DISPLAY_HEIGHT = 20;
-	private static final int ZOOM_BUFFER = 8; //4 pixels per side.
+	private static final int ZOOM_BUFFER = 8; // 4 pixels per side.
 	private static final int PLAY_SPEED_DIVISOR = 6;
 	private static final double FIFTY_PERCENT = 0.50;
-	private static final int SCROLL_DELAY_THRESHOLD = 50; //milliseconds
-	private static final int FLING_DELAY_THRESHOLD = 50; //milliseconds
+	private static final int SCROLL_DELAY_THRESHOLD = 50; // milliseconds
+	private static final int FLING_DELAY_THRESHOLD = 50; // milliseconds
 
 	private final Action play = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			play();
-	    }
+		}
 	};
 
 	private final Action enterFullScreen = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			OpenLogViewer.getInstance().enterFullScreen();
-	    }
+		}
 	};
 
 	private final Action exitFullScreen = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			OpenLogViewer.getInstance().exitFullScreen();
-	    }
+		}
 	};
 
 	private final Action toggleFullScreen = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			OpenLogViewer.getInstance().toggleFullScreen();
-	    }
+		}
 	};
 
 	private final Action moveToBeginning = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			moveToBeginning();
-	    }
+		}
 	};
 
 	private final Action moveToEnd = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			moveToEnd();
-	    }
+		}
 	};
 
 	private final Action moveBackward = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			moveBackward();
-	    }
+		}
 	};
 
 	private final Action moveBackwardCoarse = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			moveBackwardCoarse();
-	    }
+		}
 	};
 
 	private final Action moveForward = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			moveForward();
-	    }
+		}
 	};
 
 	private final Action moveForwardCoarse = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			moveForwardCoarse();
-	    }
+		}
 	};
 
 	private final Action zoomInCoarse = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			zoomInCoarse();
-	    }
+		}
 	};
 
 	private final Action zoomOutCoarse = new AbstractAction() {
 		private static final long serialVersionUID = 1L;
 		public void actionPerformed(final ActionEvent e) {
 			zoomOutCoarse();
-	    }
+		}
 	};
 
 	private final MultiGraphLayeredPane multiGraph;
@@ -197,9 +197,13 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 		flingTimer.setInitialDelay(0);
 		stopDragging();
 		stopFlinging();
-		thePastMouseDragged = System.currentTimeMillis();
-		thePastLeftArrow = System.currentTimeMillis();
-		thePastRightArrow = System.currentTimeMillis();
+
+		// It is not important that all of these times are the same, but
+		// it doesn't hurt anything and prevents unnecessary System calls.
+		final long now = System.currentTimeMillis();
+		thePastMouseDragged = now;
+		thePastLeftArrow = now;
+		thePastRightArrow = now;
 		scrollAcceleration = 0;
 	}
 

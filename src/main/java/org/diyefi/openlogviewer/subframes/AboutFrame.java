@@ -133,16 +133,13 @@ public class AboutFrame extends JFrame {
 	private void addTextToPanel(final JPanel panel, final String text) {
 		JEditorPane newPane = null;
 		final Font font = UIManager.getFont("Label.font");
-		final String bodyRule = "body { font-family: "
-				+ font.getFamily()
-				+ "; "
-				+ "font-size: "
-				+ font.getSize()
-				+ "pt; "
-				+ "text-align: center;"
-				+ "}";
+		StringBuilder bodyRule = new StringBuilder("body { font-family: ");
+		bodyRule.append(font.getFamily());
+		bodyRule.append("; font-size: ");
+		bodyRule.append(font.getSize());
+		bodyRule.append("pt; text-align: center;}");
 		newPane = new JEditorPane("text/html", text);
-		((javax.swing.text.html.HTMLDocument) newPane.getDocument()).getStyleSheet().addRule(bodyRule);
+		((javax.swing.text.html.HTMLDocument) newPane.getDocument()).getStyleSheet().addRule(bodyRule.toString());
 		newPane.addHyperlinkListener(HLL);
 		newPane.setEditable(false);
 		newPane.setBorder(null);

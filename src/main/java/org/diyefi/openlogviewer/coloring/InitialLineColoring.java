@@ -35,14 +35,20 @@ import java.util.ListIterator;
 public enum InitialLineColoring {
 
 	INSTANCE;
+	// ALMOST_ONE is used to seed colorList with a red that will stay at the end of
+	// the list. If you create a Color with a hue of 1F then it actually gets
+	// created as a Color with a hue of 0F which is identical to the red at the
+	// beginning of the list, which prevents it working as a good book-end.
+	// 0.999F must be used instead of 0.9999F or more because it will get rounded
+	// by the Color constructor to 1F.
 	private static final float ALMOST_ONE = 0.999F;
-	private static final float ONE_THIRD = 0.3333F;
-	private static final float TWO_THIRDS = 0.6666F;
+	private static final float ONE_THIRD = 1F/3F;
+	private static final float TWO_THIRDS = 2F/3F;
 	private final List<Color> colorList;
 
 	private InitialLineColoring() {
 		colorList = new LinkedList<Color>();
-		final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F); //Seed with high value red
+		final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F); // Seed with high value red
 		colorList.add(0, bookEndRed);
 	}
 
@@ -53,13 +59,13 @@ public enum InitialLineColoring {
 		final Color seedRed = Color.getHSBColor(0.0F, 1.0F, 1.0F);
 		final Color seedGreen = Color.getHSBColor(ONE_THIRD, 1.0F, 1.0F);
 		final Color seedBlue = Color.getHSBColor(TWO_THIRDS, 1.0F, 1.0F);
-		if (!colorList.contains(seedRed)) { //Seed with low value red
+		if (!colorList.contains(seedRed)) { // Seed with low value red
 			newColor = seedRed;
 			index = 0;
-		} else if (!colorList.contains(seedGreen)) {  //Seed with green
+		} else if (!colorList.contains(seedGreen)) {  // Seed with green
 			newColor = seedGreen;
 			index = 1;
-		} else if (!colorList.contains(seedBlue)) {  //Seed with blue
+		} else if (!colorList.contains(seedBlue)) {  // Seed with blue
 			newColor = seedBlue;
 			index = 2;
 		} else {
