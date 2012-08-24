@@ -49,7 +49,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private static final int SHOW_DATA_POINT_ZOOM_THRESHOLD = 5;
 	private static final int DATA_POINT_WIDTH = 3;
 	private static final int DATA_POINT_HEIGHT = DATA_POINT_WIDTH;
-	private static final int SIG_FIGS = 6;
 	private static final double GRAPH_TRACE_SIZE_AS_PERCENTAGE_OF_TOTAL_GRAPH_SIZE = 0.95;
 	private GenericDataElement gde;
 	private double[] dataPointsToDisplay;
@@ -57,6 +56,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private int availableDataRecords;
 	private int graphBeginningIndex;
 	private int graphEndingIndex;
+
+	public static final int DECIMAL_PLACES = 3;
 
 	public SingleGraphPanel() {
 		setOpaque(false);
@@ -280,16 +281,16 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	public final String getMouseInfo(final int cursorPosition) {
+	public final String getMouseInfo(final int cursorPosition, final int requiredWidth) {
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
 		String info = "-.-";
 		if (zoomedOut) {
-			info = getMouseInfoZoomedOut(cursorPosition);
+			info = getMouseInfoZoomedOut(cursorPosition, requiredWidth);
 		} else {
-			info = getMouseInfoZoomed(cursorPosition);
+			info = getMouseInfoZoomed(cursorPosition, requiredWidth);
 		}
 
-		return info + "  " + gde.getName();
+		return info;
 	}
 
 	/**
@@ -298,7 +299,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private String getMouseInfoZoomed(final int cursorPosition) {
+	private String getMouseInfoZoomed(final int cursorPosition, final int requiredWidth) {
 		String result = "-.-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
@@ -308,12 +309,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		numSnapsFromLeft = Math.round(numSnapsFromLeft);
 		final int dataLocation = (int) graphPosition + (int) numSnapsFromLeft;
 		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
-			double data = gde.get(dataLocation);
-			data = MathUtils.roundToSignificantFigures(data, SIG_FIGS);
-			result = Double.toString(data);
-			if (result.length() > SIG_FIGS + 2) {
-				result = result.substring(0, SIG_FIGS + 2);
-			}
+			result = MathUtils.roundDecimalPlaces(gde.get(dataLocation), DECIMAL_PLACES);
+			result = padWithLeadingSpaces(result, requiredWidth);
+			result = replaceDecimalZerosWithSpaces(result);
 		}
 		return result;
 	}
@@ -324,37 +322,47 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @param pointerDistanceFromCenter
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
-	private String getMouseInfoZoomedOut(final int cursorPosition) {
+	private String getMouseInfoZoomedOut(final int cursorPosition, final int requiredWidth) {
 		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
 			double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
 			double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
 			double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
 			if (minData != -Double.MAX_VALUE) {
-				minData = MathUtils.roundToSignificantFigures(minData, SIG_FIGS);
-				maxData = MathUtils.roundToSignificantFigures(maxData, SIG_FIGS);
-				String resultMin = Double.toString(minData);
-				String resultMax = Double.toString(maxData);
-				if (resultMin.length() > SIG_FIGS + 2) {
-					resultMin = resultMin.substring(0, SIG_FIGS + 2);
-				}
-				if (resultMax.length() > SIG_FIGS + 2) {
-					resultMax = resultMax.substring(0, SIG_FIGS + 2);
-				}
-				meanData = MathUtils.roundToSignificantFigures(meanData, SIG_FIGS);
-				String resultMean = Double.toString(meanData);
-				if (resultMin.length() > resultMax.length() && resultMin.length() < resultMean.length()) {
-					meanData = MathUtils.roundToSignificantFigures(meanData, resultMin.length() - 2);
-					resultMean = resultMean.substring(0, resultMin.length());
-				} else if (resultMax.length() < resultMean.length()) {
-					meanData = MathUtils.roundToSignificantFigures(meanData, resultMax.length() - 2);
-					resultMean = resultMean.substring(0, resultMax.length());
-				}
+				String resultMin = MathUtils.roundDecimalPlaces(minData, DECIMAL_PLACES);
+				String resultMax = MathUtils.roundDecimalPlaces(maxData, DECIMAL_PLACES);
+				String resultMean = MathUtils.roundDecimalPlaces(meanData, DECIMAL_PLACES);
+
+				resultMin = padWithLeadingSpaces(resultMin, requiredWidth);
+				resultMax = padWithLeadingSpaces(resultMax, requiredWidth);
+				resultMean = padWithLeadingSpaces(resultMean, requiredWidth);
+
+				resultMin = replaceDecimalZerosWithSpaces(resultMin);
+				resultMax = replaceDecimalZerosWithSpaces(resultMax);
+				resultMean = replaceDecimalZerosWithSpaces(resultMean);
 
 				result = resultMin + " | " + resultMean + " | " + resultMax;
 			}
 		}
 		return result;
+	}
+
+	private String padWithLeadingSpaces(final String input, final int requiredWidth) {
+		final StringBuilder padded = new StringBuilder(input);
+		while (padded.length() < requiredWidth) {
+			padded.insert(0, ' ');
+		}
+		return padded.toString();
+	}
+
+	private String replaceDecimalZerosWithSpaces(final String input) {
+		final StringBuilder stripped = new StringBuilder(input);
+		for (int i = stripped.length() - 1; stripped.charAt(i - 1) != '.'; i--) {
+			if (stripped.charAt(i) == '0'){
+				stripped.setCharAt(i, ' ');
+			}
+		}
+		return stripped.toString();
 	}
 
 	public final Color getColor() {

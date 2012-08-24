@@ -27,19 +27,20 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.FramesPerSecondPanel;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.utils.MathUtils;
 
 public class GraphPositionPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private static final int TEXT_Y_OFFSET = 18;
-	private static final double DECIMAL_DISPLAY_THRESHOLD = 0.5;
+	private static final double TENTHS_DISPLAY_THRESHOLD = 0.5;
+	private static final double HUNDRETHS_DISPLAY_THRESHOLD = 0.05;
 	private static final double INITIAL_MAJOR_GRADUATION_SPACING = 100.0;
 
 	private GenericLog genLog;
@@ -177,11 +178,13 @@ public class GraphPositionPanel extends JPanel {
 					}
 				}
 				String positionDataString = "";
-				final BigDecimal positionData = new BigDecimal(nextPositionMarker);
-				if (majorGraduationSpacing > DECIMAL_DISPLAY_THRESHOLD) {
+				if (majorGraduationSpacing > TENTHS_DISPLAY_THRESHOLD) {
+					final BigDecimal positionData = new BigDecimal(nextPositionMarker);
 					positionDataString = positionData.toPlainString();
+				} else if (majorGraduationSpacing > HUNDRETHS_DISPLAY_THRESHOLD){
+					positionDataString = MathUtils.roundDecimalPlaces(nextPositionMarker, 1);
 				} else {
-					positionDataString = roundDecimalsOnlyToTwoSignificantFigures(positionData);
+					positionDataString = MathUtils.roundDecimalPlaces(nextPositionMarker, 2);
 				}
 				final int stringWidth = fm.stringWidth(positionDataString);
 				g2d.drawString(positionDataString, xCoord - (stringWidth / 2), TEXT_Y_OFFSET);
@@ -279,69 +282,5 @@ public class GraphPositionPanel extends JPanel {
 			}
 		}
 		return bestPosition;
-	}
-
-	/**
-	* Use this if you want to avoid BigDecimal in the future:
-	* http://stackoverflow.com/questions/202302/rounding-to-an-arbitrary-number-of-significant-digits
-	*
-	* Update: That algorithm has now been implemented in MathUtils.roundToSignificantFigures()
-	*
-	* @param BigDecimal input - The BigDecimal you're interested in rounding.
-	* @return String - A string representation of input rounded to two significant figures to the right of the decimal.
-	*/
-
-	private String roundDecimalsOnlyToTwoSignificantFigures(final BigDecimal input) {
-		String result = "";
-		int indexOfMostSignificantDigit = 0;
-
-		// Find out if negative or not.
-		result = input.toPlainString();
-		if ("-".equalsIgnoreCase(result.substring(0, 1))) {
-			indexOfMostSignificantDigit++;
-		}
-
-		// Fred says: LOL @ this! :-)
-		// If there are decimals, then count the number of whole integers and leading zeros
-		// to find out what rounding precision is needed to end up with two significant
-		// figures for the decimal portion only.
-		int amountOfIntegerDigits = 0;
-		int amountOfLeadingZerosInDecimalPortion = 0;
-		final int indexOfDecimalPoint = result.indexOf('.');
-		if (indexOfDecimalPoint != -1) {
-			amountOfIntegerDigits = result.substring(indexOfMostSignificantDigit, indexOfDecimalPoint).length();
-			boolean done = false;
-			for (int i = indexOfDecimalPoint + 1; i < result.length() && !done; i++) {
-				if ("0".equalsIgnoreCase(result.substring(i, i))) {
-					amountOfLeadingZerosInDecimalPortion++;
-				} else {
-					done = true;
-				}
-			}
-
-		} else {
-			amountOfIntegerDigits = result.substring(indexOfMostSignificantDigit).length();
-
-		}
-		final int amountOfDesiredDecimalDigits = amountOfLeadingZerosInDecimalPortion + 2;
-		final int sigFigs = amountOfIntegerDigits + amountOfDesiredDecimalDigits;
-		BigDecimal roundedInput = input.round(new MathContext(sigFigs));
-		roundedInput = roundedInput.stripTrailingZeros();
-		result = roundedInput.toPlainString();
-
-		// Add on decimal point and trailing zero if doesn't exist.
-		if (result.indexOf('.') == -1) {
-			result = result + ".0";
-		}
-
-		// Check for result extremely close to zero.
-		if (result.length() > 16) {
-			if ("-0.0000000000000".equalsIgnoreCase(result.substring(0, 16))
-					|| "0.0000000000000".equalsIgnoreCase(result.substring(0, 15))) {
-				result = "0.0";
-			}
-		}
-
-		return result;
 	}
 }

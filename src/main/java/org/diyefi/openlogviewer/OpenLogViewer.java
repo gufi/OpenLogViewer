@@ -593,8 +593,8 @@ public final class OpenLogViewer extends JFrame {
 							setUndecorated(true);   // Remove the window frame/bezel!
 							setVisible(true);       // Make the JFrame displayable again!
 //							setResizable(false);    // Fred: doesn't make sense and could be dangerous, according to oracle.
-													// Ben: Removed setResizable(false) because it causes GNOME menu bar
-													// and GNOME task bar to show in front of the app!
+							                        // Ben: Removed setResizable(false) because it causes GNOME menu bar
+							                        // and GNOME task bar to show in front of the app!
 							device[containingDevice].setFullScreenWindow(this);
 							validate();             // Required after rearranging component hierarchy
 							toFront();              // Might as well

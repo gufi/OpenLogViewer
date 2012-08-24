@@ -22,8 +22,10 @@
  */
 package org.diyefi.openlogviewer.utils;
 
+import java.text.DecimalFormat;
+
 /**
- * Math is used to provide math functions specific to the project.
+ * MathUtils is used to provide math functions specific to the project.
  * @author Ben Fenner
  */
 public final class MathUtils {
@@ -31,22 +33,31 @@ public final class MathUtils {
 	private MathUtils() {
 	}
 
-	public static double roundToSignificantFigures(final double input, final int sigFigs) {
-		double absoluteInput = 0;
-		if (input == 0) {
-			return 0;
-		} else if (input < 0) {
-			absoluteInput = -input;
-		} else {
-			absoluteInput = input;
+	/**
+	 *
+	 * @param inputNum - The double you'd like to round the decimal places for
+	 * @param sigDecFigs - The number of decimal places you'd like
+	 * @return
+	 */
+	public static String roundDecimalPlaces(final double inputNum, final int numDecPlaces) {
+		// Deal with zero or negative decimal places requested
+		if (numDecPlaces <= 0){
+			return String.valueOf(Math.round(inputNum));
 		}
 
-		final double d = Math.ceil(Math.log10(absoluteInput));
-		final int power = sigFigs - (int) d;
+		final StringBuilder format = new StringBuilder("###0.");
+		final StringBuilder negativeZero = new StringBuilder("-0.");
+		for (int i = 0; i < numDecPlaces; i++) {
+			format.append('0');
+			negativeZero.append('0');
+		}
+		final DecimalFormat df = new DecimalFormat(format.toString());
+		final StringBuilder output = new StringBuilder(df.format(inputNum));
 
-		final double magnitude = Math.pow(10, power);
-		final long shifted = Math.round(input * magnitude);
-
-		return shifted / magnitude;
+		// Deal with negative zero
+		if (output.toString().equals(negativeZero.toString())){
+			output.deleteCharAt(0);
+		}
+		return output.toString();
 	}
 }
