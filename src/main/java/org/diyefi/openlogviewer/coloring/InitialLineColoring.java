@@ -42,8 +42,8 @@ public enum InitialLineColoring {
 	// 0.999F must be used instead of 0.9999F or more because it will get rounded
 	// by the Color constructor to 1F.
 	private static final float ALMOST_ONE = 0.999F;
-	private static final float ONE_THIRD = 1F/3F;
-	private static final float TWO_THIRDS = 2F/3F;
+	private static final float ONE_THIRD = 1F / 3F;
+	private static final float TWO_THIRDS = 2F / 3F;
 
 	private final List<Color> colorList;
 	private final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F);
@@ -63,10 +63,10 @@ public enum InitialLineColoring {
 		if (!colorList.contains(seedRed)) { // Seed with low value red
 			newColor = seedRed;
 			index = 0;
-		} else if (!colorList.contains(seedGreen)) {  // Seed with green
+		} else if (!colorList.contains(seedGreen)) { // Seed with green
 			newColor = seedGreen;
 			index = 1;
-		} else if (!colorList.contains(seedBlue)) {  // Seed with blue
+		} else if (!colorList.contains(seedBlue)) { // Seed with blue
 			newColor = seedBlue;
 			index = 2;
 		} else {
@@ -104,7 +104,7 @@ public enum InitialLineColoring {
 		return colorList.remove(c);
 	}
 	
-	public void giveBackAllColors(){
+	public void giveBackAllColors() {
 		while (colorList.size() > 0) {
 			colorList.remove(0);
 		}

@@ -325,9 +325,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private String getMouseInfoZoomedOut(final int cursorPosition, final int requiredWidth) {
 		String result = "-.- | -.- | -.-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
-			double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
-			double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
-			double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
+			final double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
+			final double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
+			final double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
 			if (minData != -Double.MAX_VALUE) {
 				String resultMin = MathUtils.roundDecimalPlaces(minData, DECIMAL_PLACES);
 				String resultMax = MathUtils.roundDecimalPlaces(maxData, DECIMAL_PLACES);
@@ -358,7 +358,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private String replaceDecimalZerosWithSpaces(final String input) {
 		final StringBuilder stripped = new StringBuilder(input);
 		for (int i = stripped.length() - 1; stripped.charAt(i - 1) != '.'; i--) {
-			if (stripped.charAt(i) == '0'){
+			if (stripped.charAt(i) == '0') {
 				stripped.setCharAt(i, ' ');
 			}
 		}

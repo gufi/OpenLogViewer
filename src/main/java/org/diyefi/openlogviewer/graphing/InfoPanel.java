@@ -129,7 +129,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 		this.repaint();
 	}
 
-	private final int getWidestDataWidth(){
+	private int getWidestDataWidth() {
 		String widestDataToDisplay = "";
 		final MultiGraphLayeredPane multigGraph = OpenLogViewer.getInstance().getMultiGraphLayeredPane();
 		for (int i = 0; i < multigGraph.getComponentCount(); i++) {
@@ -137,10 +137,10 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
 				final String minValue = MathUtils.roundDecimalPlaces(singleGraph.getData().getMinValue(), SingleGraphPanel.DECIMAL_PLACES);
 				final String maxValue = MathUtils.roundDecimalPlaces(singleGraph.getData().getMaxValue(), SingleGraphPanel.DECIMAL_PLACES);
-				if (minValue.length() > widestDataToDisplay.length()){
+				if (minValue.length() > widestDataToDisplay.length()) {
 					widestDataToDisplay = minValue;
 				}
-				if (maxValue.length() > widestDataToDisplay.length()){
+				if (maxValue.length() > widestDataToDisplay.length()) {
 					widestDataToDisplay = maxValue;
 				}
 			}

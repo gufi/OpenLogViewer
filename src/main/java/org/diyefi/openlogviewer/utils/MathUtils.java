@@ -41,7 +41,7 @@ public final class MathUtils {
 	 */
 	public static String roundDecimalPlaces(final double inputNum, final int numDecPlaces) {
 		// Deal with zero or negative decimal places requested
-		if (numDecPlaces <= 0){
+		if (numDecPlaces <= 0) {
 			return String.valueOf(Math.round(inputNum));
 		}
 
@@ -55,7 +55,7 @@ public final class MathUtils {
 		final StringBuilder output = new StringBuilder(df.format(inputNum));
 
 		// Deal with negative zero
-		if (output.toString().equals(negativeZero.toString())){
+		if (output.toString().equals(negativeZero.toString())) {
 			output.deleteCharAt(0);
 		}
 		return output.toString();
