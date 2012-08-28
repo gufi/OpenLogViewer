@@ -28,6 +28,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
 import org.diyefi.openlogviewer.OpenLogViewer;
+import org.diyefi.openlogviewer.coloring.InitialLineColoring;
 
 public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private static final long serialVersionUID = 1L;
@@ -72,6 +73,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 				genLog.setLogStatus(LogState.LOG_LOADED);
 				OpenLogViewer.getInstance().setLog(genLog);
 				OpenLogViewer.getInstance().getOptionFrame().updateFromLog(genLog);
+				InitialLineColoring.INSTANCE.giveBackAllColors();
 			}
 		}
 	};

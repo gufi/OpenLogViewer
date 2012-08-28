@@ -44,12 +44,13 @@ public enum InitialLineColoring {
 	private static final float ALMOST_ONE = 0.999F;
 	private static final float ONE_THIRD = 1F/3F;
 	private static final float TWO_THIRDS = 2F/3F;
+
 	private final List<Color> colorList;
+	private final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F);
 
 	private InitialLineColoring() {
 		colorList = new LinkedList<Color>();
-		final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F); // Seed with high value red
-		colorList.add(0, bookEndRed);
+		colorList.add(0, bookEndRed); // Seed with high value red
 	}
 
 	public Color getBestAvailableColor() {
@@ -101,5 +102,12 @@ public enum InitialLineColoring {
 
 	public boolean giveBackColor(final Color c) {
 		return colorList.remove(c);
+	}
+	
+	public void giveBackAllColors(){
+		while (colorList.size() > 0) {
+			colorList.remove(0);
+		}
+		colorList.add(0, bookEndRed);
 	}
 }
