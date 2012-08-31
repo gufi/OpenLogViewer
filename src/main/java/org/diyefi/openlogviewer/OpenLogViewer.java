@@ -111,6 +111,8 @@ public final class OpenLogViewer extends JFrame {
 	private static final String OPEN_FILE_ERROR_MESSAGE_KEY = "OpenFileErrorMessage";
 	private static final String OPEN_LAST_FILE_ERROR_TITLE_KEY = "OpenLastFileErrorTitle";
 	private static final String OPEN_LAST_FILE_ERROR_MESSAGE_KEY = "OpenLastFileErrorMessage";
+	private static final String OPEN_LAST_FILE_MISSING_PROPERTY_TITLE_KEY = "OpenLastFileMissingPropertyTitle";
+	private static final String OPEN_LAST_FILE_MISSING_PROPERTY_MESSAGE_KEY = "OpenLastFileMissingPropertyMessage";
 
 	private static final String DEFAULT_BROWSER_ERROR_TITLE_KEY = "DefaultBrowserErrorTitle";
 	private static final String DEFAULT_BROWSER_ERROR_MESSAGE_KEY = "DefaultBrowserErrorMessage";
@@ -374,7 +376,11 @@ public final class OpenLogViewer extends JFrame {
 						labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(),
 						JOptionPane.ERROR_MESSAGE);
 			}
-		} // Silently do nothing.
+		} else {
+			JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_MISSING_PROPERTY_MESSAGE_KEY),
+					labels.getObject(OPEN_LAST_FILE_MISSING_PROPERTY_TITLE_KEY).toString(),
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public boolean openFile(final File fileToOpen, final JFileChooser fileChooser) {
