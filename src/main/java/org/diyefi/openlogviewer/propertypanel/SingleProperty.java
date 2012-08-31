@@ -30,7 +30,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 	private String header;
 	private double min;
 	private double max;
-	private int split;
+	private int trackIndex;
 	private boolean active;
 
 	public SingleProperty() {
@@ -38,7 +38,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		header = "";
 		min = 0;
 		max = 0;
-		split = 1;
+		trackIndex = 0;
 		active = false;
 	}
 
@@ -47,7 +47,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		header = gde.getName();
 		min = gde.getDisplayMinValue();
 		max = gde.getDisplayMaxValue();
-		split = gde.getSplitNumber();
+		trackIndex = gde.getTrackIndex();
 		active = false;
 	}
 
@@ -83,15 +83,15 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		this.min = min;
 	}
 
-	public final int getSplit() {
-		return split;
+	public final int getTrackIndex() {
+		return trackIndex;
 	}
 
-	public final void setSplit(final int split) {
-		if (split < 1) {
-			this.split = 1;
+	public final void setTrackIndex(final int newIndex) {
+		if (newIndex < 0) {
+			trackIndex = 0;
 		} else {
-			this.split = split;
+			trackIndex = newIndex;
 		}
 	}
 
@@ -117,7 +117,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 		output.append(seperator);
 		output.append(max);
 		output.append(seperator);
-		output.append(split);
+		output.append(trackIndex);
 		output.append(seperator);
 		output.append(Boolean.toString(active));
 		return output.toString();

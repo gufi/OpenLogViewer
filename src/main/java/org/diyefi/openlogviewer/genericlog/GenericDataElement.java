@@ -71,7 +71,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	/**
 	 * Division on the Graphing layer
 	 */
-	private int splitNumber;
+	private int trackIndex;
 	private PropertyChangeSupport pcs;
 	private DataFlavor[] dataFlavor;
 
@@ -89,7 +89,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		minValue = Double.MAX_VALUE;
 
 		displayColor = null;
-		splitNumber = 1;
+		trackIndex = 0;
 		addFlavors();
 	}
 
@@ -136,17 +136,12 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * sets the splitNumber or division of the graph in the graphing screen
 	 * if its the same a property change event is fired called "Split"
 	 *
-	 * @param splitNumber
+	 * @param trackIndex
 	 */
-	public void setSplitNumber(final int splitNumber) {
-		int newSplitNumber = 1;
-		if (splitNumber > 1) {
-			newSplitNumber = splitNumber;
-		}
-
-		final int old = this.splitNumber;
-		this.splitNumber = newSplitNumber;
-		pcs.firePropertyChange("Split", old, this.splitNumber);
+	public void setTrackIndex(final int newIndex) {
+		final int oldIndex = trackIndex;
+		trackIndex = newIndex;
+		pcs.firePropertyChange("Split", oldIndex, trackIndex);
 	}
 
 	/**
@@ -283,8 +278,8 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		}
 		displayColor = c;
 	}
-	public int getSplitNumber() {
-		return splitNumber;
+	public int getTrackIndex() {
+		return trackIndex;
 	}
 
 	public void clearOut() {

@@ -144,7 +144,7 @@ public class OptionFrameV2 extends JFrame {
 				if (e.getChild() instanceof ActiveHeaderLabel) {
 					((ActiveHeaderLabel) e.getChild()).setEnabled(true);
 					((ActiveHeaderLabel) e.getChild()).setSelected(true);
-					((ActiveHeaderLabel) e.getChild()).getGDE().setSplitNumber(activePanelList.indexOf(e.getChild().getParent()) + 1); // Why one?
+					((ActiveHeaderLabel) e.getChild()).getGDE().setTrackIndex(activePanelList.indexOf(e.getChild().getParent()));
 				}
 			}
 		}
@@ -172,10 +172,10 @@ public class OptionFrameV2 extends JFrame {
 			final JPanel activePanel = new JPanel();
 			activePanelList.add(activePanel);
 			if (OpenLogViewer.getInstance() != null) {
-				OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
+				OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTrackCount(activePanelList.size());
 			}
 			activePanel.setLayout(null);
-			activePanel.setName("Drop ActivePanel " + (activePanelList.indexOf(activePanel) + 1));
+			activePanel.setName("Drop ActivePanel " + activePanelList.indexOf(activePanel));
 			activePanel.addContainerListener(addRemoveListener);
 
 			activePanel.setBounds((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row, PANEL_WIDTH, PANEL_HEIGHT);
@@ -196,7 +196,7 @@ public class OptionFrameV2 extends JFrame {
 	private void remActiveHeaderPanel(final ActionEvent e) {
 		final JPanel panel = (JPanel) ((JButton) e.getSource()).getParent();
 		activePanelList.remove(panel);
-		OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTotalSplits(activePanelList.size());
+		OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTrackCount(activePanelList.size());
 
 		for (int i = 0; i < panel.getComponentCount();) {
 			if (panel.getComponent(i) instanceof ActiveHeaderLabel) {
@@ -224,14 +224,12 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		// Move this to events eventually,
-		if (activePanelList.size() > 1) {
-			for (int i = 0; i < activePanelList.size(); i++) {
-				final JPanel active = activePanelList.get(i);
-				if (active.getComponentCount() > 1) {
-					for (int j = 0; j < active.getComponentCount(); j++) {
-						if (active.getComponent(j) instanceof ActiveHeaderLabel) {
-							((ActiveHeaderLabel) active.getComponent(j)).getGDE().setSplitNumber(i + 1);
-						}
+		for (int i = 0; i < activePanelList.size(); i++) {
+			final JPanel active = activePanelList.get(i);
+			if (active.getComponentCount() > 1) {
+				for (int j = 0; j < active.getComponentCount(); j++) {
+					if (active.getComponent(j) instanceof ActiveHeaderLabel) {
+						((ActiveHeaderLabel) active.getComponent(j)).getGDE().setTrackIndex(i);
 					}
 				}
 			}
@@ -351,7 +349,7 @@ public class OptionFrameV2 extends JFrame {
 				GDE.setDisplayColor(OpenLogViewer.getInstance().getProperties().get(i).getColor());
 				GDE.setDisplayMaxValue(OpenLogViewer.getInstance().getProperties().get(i).getMax());
 				GDE.setDisplayMinValue(OpenLogViewer.getInstance().getProperties().get(i).getMin());
-				GDE.setSplitNumber(OpenLogViewer.getInstance().getProperties().get(i).getSplit());
+				GDE.setTrackIndex(OpenLogViewer.getInstance().getProperties().get(i).getTrackIndex());
 
 				if (OpenLogViewer.getInstance().getProperties().get(i).isActive()) {
 					return true;

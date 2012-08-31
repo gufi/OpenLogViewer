@@ -38,7 +38,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 
 	private GenericLog genLog;
 	private final InfoPanel infoPanel;
-	private int totalSplits;
+	private int trackCount;
 	private int layer;
 
 	public MultiGraphLayeredPane() {
@@ -47,7 +47,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		setBackground(Color.BLACK);
 
 		layer = BOTTOM_LAYER;
-		totalSplits = 1;
+		trackCount = 1;
 
 		infoPanel = new InfoPanel();
 		infoPanel.setSize(PANEL_WIDTH, PANEL_HEIGHT);
@@ -133,18 +133,16 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		return infoPanel;
 	}
 
-	public final int getTotalSplits() {
-		return totalSplits;
+	public final int getTrackCount() {
+		return trackCount;
 	}
 
-	public final void setTotalSplits(final int totalSplits) {
-		if (totalSplits > 0) {
-			this.totalSplits = totalSplits;
-			for (int i = 0; i < this.getComponentCount(); i++) {
-				if (this.getComponent(i) instanceof SingleGraphPanel) {
-					final SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
-					gl.sizeGraph();
-				}
+	public final void setTrackCount(final int newTrackCount) {
+		trackCount = newTrackCount;
+		for (int i = 0; i < getComponentCount(); i++) {
+			if (getComponent(i) instanceof SingleGraphPanel) {
+				final SingleGraphPanel gl = (SingleGraphPanel) getComponent(i);
+				gl.sizeGraph();
 			}
 		}
 	}
@@ -155,9 +153,9 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	 */
 	public final int graphSize() {
 		int availableData = 0;
-		for (int i = 0; i < this.getComponentCount(); i++) {
-			if (this.getComponent(i) instanceof SingleGraphPanel) {
-				final SingleGraphPanel singleGraph = (SingleGraphPanel) this.getComponent(i);
+		for (int i = 0; i < getComponentCount(); i++) {
+			if (getComponent(i) instanceof SingleGraphPanel) {
+				final SingleGraphPanel singleGraph = (SingleGraphPanel) getComponent(i);
 				availableData = singleGraph.graphSize();
 			}
 		}

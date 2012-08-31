@@ -213,7 +213,7 @@ public class PropertiesPane extends JFrame {
 						Integer.parseInt(prop[2])));
 				sp.setMin(Double.parseDouble(prop[3]));
 				sp.setMax(Double.parseDouble(prop[4]));
-				sp.setSplit(Integer.parseInt(prop[5]));
+				sp.setTrackIndex(Integer.parseInt(prop[5]));
 				sp.setActive(Boolean.parseBoolean(prop[6]));
 				addProperty(sp);
 			}
@@ -332,7 +332,7 @@ public class PropertiesPane extends JFrame {
 		private final JPanel colorBox;
 		private final JTextField minBox;
 		private final JTextField maxBox;
-		private final JTextField splitBox;
+		private final JTextField trackBox;
 		private final JComboBox activeBox;
 
 		public PropertyPanel(final SingleProperty sp) {
@@ -345,9 +345,9 @@ public class PropertiesPane extends JFrame {
 			final JLabel colorLabel = new JLabel("Color:");
 			final JLabel splitLabel = new JLabel("Split:");
 			final JLabel activeLabel = new JLabel("Active:");
-			splitBox = new JTextField();
-			splitBox.setPreferredSize(new Dimension(15, 20));
-			splitBox.setText(Integer.toString(sp.getSplit()));
+			trackBox = new JTextField();
+			trackBox.setPreferredSize(new Dimension(15, 20));
+			trackBox.setText(Integer.toString(sp.getTrackIndex()));
 			minBox = new JTextField();
 			minBox.setPreferredSize(new Dimension(50, 20));
 			minBox.setText(Double.toString(sp.getMin()));
@@ -404,7 +404,7 @@ public class PropertiesPane extends JFrame {
 			add(maxLabel);
 			add(maxBox);
 			add(splitLabel);
-			add(splitBox);
+			add(trackBox);
 			add(activeLabel);
 			add(activeBox);
 			add(check);
@@ -426,7 +426,7 @@ public class PropertiesPane extends JFrame {
 			sp.setMin(Double.parseDouble(minBox.getText()));
 			sp.setMax(Double.parseDouble(maxBox.getText()));
 			sp.setColor(colorBox.getBackground());
-			sp.setSplit(Integer.parseInt(splitBox.getText()));
+			sp.setTrackIndex(Integer.parseInt(trackBox.getText()));
 			final String active = (String) activeBox.getSelectedItem();
 			sp.setActive(Boolean.parseBoolean(active));
 		}
@@ -435,7 +435,7 @@ public class PropertiesPane extends JFrame {
 			minBox.setText(Double.toString(sp.getMin()));
 			maxBox.setText(Double.toString(sp.getMax()));
 			colorBox.setBackground(sp.getColor());
-			splitBox.setText(Integer.toString(sp.getSplit()));
+			trackBox.setText(Integer.toString(sp.getTrackIndex()));
 			activeBox.setSelectedItem(Boolean.toString(sp.isActive()));
 		}
 
