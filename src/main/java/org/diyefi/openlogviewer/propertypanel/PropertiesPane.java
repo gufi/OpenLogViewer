@@ -123,6 +123,7 @@ public class PropertiesPane extends JFrame {
 				}
 			} else {
 				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+				OLVProperties.createNewFile(); // Just in case the file does not exist yet. This won't overwrite an existing file.
 				loadProperties();
 			}
 		} catch (Exception e) {
