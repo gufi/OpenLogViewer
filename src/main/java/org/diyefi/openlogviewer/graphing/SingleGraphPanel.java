@@ -46,16 +46,18 @@ import org.diyefi.openlogviewer.utils.MathUtils;
 public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener, PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
 
+	private static final int MINIMUM_MARGIN_PIXELS = 3;
 	private static final int SHOW_DATA_POINT_ZOOM_THRESHOLD = 5;
 	private static final int DATA_POINT_WIDTH = 3;
 	private static final int DATA_POINT_HEIGHT = DATA_POINT_WIDTH;
-	private static final double GRAPH_TRACE_HEIGHT_AS_PERCENTAGE_OF_TOTAL_GRAPH_HEIGHT = 0.95;
+	private static final float GRAPH_TRACE_HEIGHT_AS_PERCENTAGE_OF_TOTAL_TRACK_HEIGHT = 0.94F;
 	private GenericDataElement gde;
 	private double[] dataPointsToDisplay;
 	private double[][] dataPointRangeInfo;
 	private int availableDataRecords;
 	private int graphBeginningIndex;
 	private int graphEndingIndex;
+	private int graphTraceMinHeight;
 	private int graphTraceMaxHeight;
 
 	public static final int DECIMAL_PLACES = 3;
@@ -153,7 +155,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			nextScreenPositionYCoord = getScreenPositionYCoord(rightOfTraceData, gde.getDisplayMinValue(), gde.getDisplayMaxValue());
 
 			// Draw beginning and end markers
-			if (screenPositionYCoord >= 0 && screenPositionYCoord <= graphTraceMaxHeight) {
+			if (screenPositionYCoord >= graphTraceMinHeight && screenPositionYCoord <= graphTraceMaxHeight) {
 				if (i == graphBeginningIndex || i == graphEndingIndex) {
 					g2d.drawLine(screenPositionXCoord - 2, screenPositionYCoord - 1, screenPositionXCoord - 2, screenPositionYCoord + 1);
 					g2d.drawLine(screenPositionXCoord - 1, screenPositionYCoord + 2, screenPositionXCoord + 1, screenPositionYCoord + 2);
@@ -175,7 +177,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			}
 
 			// Draw data point
-			if (!zoomedOut && distanceBetweenDataPoints > SHOW_DATA_POINT_ZOOM_THRESHOLD && screenPositionYCoord >= 0 && screenPositionYCoord <= graphTraceMaxHeight) {
+			if (!zoomedOut && distanceBetweenDataPoints > SHOW_DATA_POINT_ZOOM_THRESHOLD && screenPositionYCoord >= graphTraceMinHeight && screenPositionYCoord <= graphTraceMaxHeight) {
 				// Draw fat data point
 				if (atTraceBeginning && atTraceEnd) {
 					// Special case to determine if fat dot is needed if scrolled to the end
@@ -203,7 +205,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 						g2d.fillRect(screenPositionXCoord - 1, screenPositionYCoord - 1, DATA_POINT_WIDTH, DATA_POINT_HEIGHT);
 					}
 				}
-			} else if (insideTrace && screenPositionYCoord >= 0 && screenPositionYCoord <= graphTraceMaxHeight) {
+			} else if (insideTrace && screenPositionYCoord >= graphTraceMinHeight && screenPositionYCoord <= graphTraceMaxHeight) {
 				// Draw small data point
 				// drawLine() is 33% faster than fillRect() for a single pixel on Ben's dev machine
 				g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord, screenPositionYCoord);
@@ -211,33 +213,33 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 			// Draw graph trace line
 			if (insideTrace && !atTraceEnd) {
-				final boolean currentPointWithinTrack = screenPositionYCoord >= 0 && screenPositionYCoord <= graphTraceMaxHeight;
-				final boolean nextPointWithinTrack = nextScreenPositionYCoord >= 0 && nextScreenPositionYCoord <= graphTraceMaxHeight;
+				final boolean currentPointWithinTrack = screenPositionYCoord >= graphTraceMinHeight && screenPositionYCoord <= graphTraceMaxHeight;
+				final boolean nextPointWithinTrack = nextScreenPositionYCoord >= graphTraceMinHeight && nextScreenPositionYCoord <= graphTraceMaxHeight;
 				if (currentPointWithinTrack && nextPointWithinTrack){ // Just draw it!
 					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + distanceBetweenDataPoints, nextScreenPositionYCoord);
 				} else if (currentPointWithinTrack) {
-					if (nextScreenPositionYCoord >= 0) { // Next point is below track
+					if (nextScreenPositionYCoord >= graphTraceMinHeight) { // Next point is below track
 						final float currentDistAboveBottom = graphTraceMaxHeight - screenPositionYCoord;
 						final float nextDistBelowBottom = nextScreenPositionYCoord - graphTraceMaxHeight;
 						final int nextScreenPositionXCoord = screenPositionXCoord + Math.round(distanceBetweenDataPoints * (currentDistAboveBottom / (currentDistAboveBottom + nextDistBelowBottom)));
 						g2d.drawLine(screenPositionXCoord, screenPositionYCoord, nextScreenPositionXCoord, graphTraceMaxHeight);
 					} else if (nextScreenPositionYCoord <= graphTraceMaxHeight) { // Next point is above track
-						final float currentDistBelowTop = screenPositionYCoord;
-						final float nextDistAboveTop = -nextScreenPositionYCoord;
+						final float currentDistBelowTop = screenPositionYCoord - graphTraceMinHeight;
+						final float nextDistAboveTop = graphTraceMinHeight - nextScreenPositionYCoord;
 						final int nextScreenPositionXCoord = screenPositionXCoord + Math.round(distanceBetweenDataPoints * (currentDistBelowTop / (currentDistBelowTop + nextDistAboveTop)));
-						g2d.drawLine(screenPositionXCoord, screenPositionYCoord, nextScreenPositionXCoord, 0);
+						g2d.drawLine(screenPositionXCoord, screenPositionYCoord, nextScreenPositionXCoord, graphTraceMinHeight);
 					}
 				} else if(nextPointWithinTrack) {
-					if (screenPositionYCoord >= 0) { // Current point is below track
+					if (screenPositionYCoord >= graphTraceMinHeight) { // Current point is below track
 						final float currentDistBelowBottom = screenPositionYCoord - graphTraceMaxHeight;
 						final float nextDistAboveBottom = graphTraceMaxHeight - nextScreenPositionYCoord;
 						final int currentScreenPositionXCoord = screenPositionXCoord + Math.round(distanceBetweenDataPoints * (currentDistBelowBottom / (currentDistBelowBottom + nextDistAboveBottom)));
 						g2d.drawLine(currentScreenPositionXCoord, graphTraceMaxHeight, screenPositionXCoord + distanceBetweenDataPoints, nextScreenPositionYCoord);
-					} else if (nextPointWithinTrack && screenPositionYCoord <= graphTraceMaxHeight) { // Current point is above track
-						final float currentDistAboveTop = -screenPositionYCoord;
-						final float nextDistBelowTop = nextScreenPositionYCoord;
+					} else if (screenPositionYCoord <= graphTraceMaxHeight) { // Current point is above track
+						final float currentDistAboveTop = graphTraceMinHeight - screenPositionYCoord;
+						final float nextDistBelowTop = nextScreenPositionYCoord - graphTraceMinHeight;
 						final int currentScreenPositionXCoord = screenPositionXCoord + Math.round(distanceBetweenDataPoints * (currentDistAboveTop / (currentDistAboveTop + nextDistBelowTop)));
-						g2d.drawLine(currentScreenPositionXCoord, 0, screenPositionXCoord + distanceBetweenDataPoints, nextScreenPositionYCoord);
+						g2d.drawLine(currentScreenPositionXCoord, graphTraceMinHeight, screenPositionXCoord + distanceBetweenDataPoints, nextScreenPositionYCoord);
 					}
 				} //  else current and next points are outside of the track so no line is drawn
 			}
@@ -269,10 +271,10 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return
 	 */
 	private int getScreenPositionYCoord(final Double traceData, final double minValue, final double maxValue) {
-		int yCoord = (int) (graphTraceMaxHeight - (graphTraceMaxHeight * ((traceData - minValue) / (maxValue - minValue))));
+		int yCoord = (int) (graphTraceMaxHeight - ((graphTraceMaxHeight - graphTraceMinHeight) * ((traceData - minValue) / (maxValue - minValue))));
 		if (maxValue == minValue) { // Entire trace must all be equal in value for this to happen
 			if (traceData > 0D) {
-				yCoord = 0; // Max and min equal, and data is greater than zero so data is at top
+				yCoord = graphTraceMinHeight; // Max and min equal, and data is greater than zero so data is at top
 			} else {
 				yCoord = graphTraceMaxHeight; // Max and min equal, and data is zero or less so data is at bottom
 			}
@@ -624,11 +626,22 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	public final void sizeGraph() {
 		final MultiGraphLayeredPane multiGraph = OpenLogViewer.getInstance().getMultiGraphLayeredPane();
 		final int trackCount = multiGraph.getTrackCount();
-		final double height = ((double) multiGraph.getHeight() / trackCount);
+		final float height = ((float) multiGraph.getHeight() / trackCount);
 		final int yCoord = (int) (gde.getTrackIndex() * height);
 		setBounds(0, yCoord, multiGraph.getWidth(), (int) height);
+		final float totalMargin = 1F - GRAPH_TRACE_HEIGHT_AS_PERCENTAGE_OF_TOTAL_TRACK_HEIGHT;
+		final float halfMargin = totalMargin / 2F;
 
-		graphTraceMaxHeight = (int) (height * GRAPH_TRACE_HEIGHT_AS_PERCENTAGE_OF_TOTAL_GRAPH_HEIGHT);
+		graphTraceMinHeight = Math.round(height * halfMargin);
+		graphTraceMaxHeight = Math.round(height - (height * halfMargin));
+
+		// Make sure there is always enough space for the start/end points to display
+		if (graphTraceMinHeight < MINIMUM_MARGIN_PIXELS) {
+			graphTraceMinHeight = MINIMUM_MARGIN_PIXELS;
+		} else if (graphTraceMaxHeight > ((Math.ceil(height) - MINIMUM_MARGIN_PIXELS) - 1)) {
+			// The subtraction of one is because the index of the pixel includes the pixel at the bottom
+			graphTraceMaxHeight = (int) ((Math.ceil(height) - MINIMUM_MARGIN_PIXELS) - 1);
+		}
 
 		initGraph();
 	}
