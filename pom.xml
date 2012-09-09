@@ -90,6 +90,8 @@
 	</contributors>
 
 	<properties>
+		<project.initial.heap>-Xms128m</project.initial.heap>
+		<project.maximum.heap>-Xmx1024m</project.maximum.heap>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -237,8 +239,8 @@
 				<configuration>
 					<executable>java</executable>
 					<arguments>
-						<argument>-Xms256m</argument>
-						<argument>-Xmx512m</argument>
+						<argument>${project.initial.heap}</argument>
+						<argument>${project.maximum.heap}</argument>
 						<!--  <argument>-Xdock:name=${project.artifactId}</argument> -->
 						<argument>-jar</argument>
 						<argument>${project.basedir}/target/${project.artifactId}-${project.version}-bin.jar</argument>
