@@ -72,7 +72,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * Division on the Graphing layer
 	 */
 	private int trackIndex;
-	private PropertyChangeSupport pcs;
+	private final PropertyChangeSupport pcs;
 	private DataFlavor[] dataFlavor;
 
 	/**
@@ -117,8 +117,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 
 	/**
 	 * override add(<T> t) of ArrayList to find min and max values before adding to the List
-	 * @param d Double - Double.parseDouble(String) value to add to the array
-	 * @return true on success, false if unable
+	 * @param value value to add to the array
 	 */
 	public void add(final double value) { //  TODO simplify the shit out of this, and/or remove it.
 		values[currentRecord] = value;
@@ -220,7 +219,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 
 	private void findMinAndMaxValues() {
 		if (!realMinAndMaxFound) {
-			for (int i = 0; i < currentRecord; i++) {
+			for (int i = 0; i <= currentRecord; i++) {
 				final double value = values[i];
 				if (maxValue < value) {
 					maxValue = value;
