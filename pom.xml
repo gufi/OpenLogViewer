@@ -212,9 +212,45 @@
 						<argument>-Xmx512m</argument>
 						<!--  <argument>-Xdock:name=${project.artifactId}</argument> -->
 						<argument>-jar</argument>
-						<argument>${project.basedir}/target/${project.artifactId}-${project.version}.jar</argument>
+						<argument>${project.basedir}/target/${project.artifactId}-${project.version}-bin.jar</argument>
 					</arguments>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>bin</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/runnable.xml</descriptor>
+							</descriptors>
+							<archive>
+								<manifest>
+									<mainClass>${project.groupId}.${project.artifactId}</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/linux.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
