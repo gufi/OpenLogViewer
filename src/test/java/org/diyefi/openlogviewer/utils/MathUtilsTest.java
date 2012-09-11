@@ -3,6 +3,8 @@
  */
 package org.diyefi.openlogviewer.utils;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
 
 public class MathUtilsTest extends TestCase {
@@ -16,6 +18,7 @@ public class MathUtilsTest extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		Locale.setDefault(Locale.US); // Ensure tests pass in Europe! :-)
 	}
 
 	/* (non-Javadoc)
