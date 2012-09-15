@@ -23,41 +23,53 @@
 package org.diyefi.openlogviewer.utils;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 
 /**
  * MathUtils is used to provide math functions specific to the project.
  * @author Ben Fenner
  */
 public final class MathUtils {
+	private static final char DS = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+	private static final DecimalFormat custom = (DecimalFormat) NumberFormat.getNumberInstance();
+	private static final DecimalFormat standy = (DecimalFormat) NumberFormat.getNumberInstance();
+	static {
+		custom.setGroupingUsed(false);
+		standy.setGroupingUsed(false);
+	}
 
 	private MathUtils() {
 	}
 
 	/**
 	 *
-	 * @param inputNum - The double you'd like to round the decimal places for
-	 * @param sigDecFigs - The number of decimal places you'd like
+	 * @param input - The double you'd like to round the decimal places for
+	 * @param decimalPlaces - The number of decimal places you'd like
 	 * @return
 	 */
-	public static String roundDecimalPlaces(final double inputNum, final int numDecPlaces) {
+	public static String roundDecimalPlaces(final double input, final int decimalPlaces) {
 		// Deal with zero or negative decimal places requested
-		if (numDecPlaces <= 0) {
-			return String.valueOf(Math.round(inputNum));
+		if (decimalPlaces <= 0) {
+			return standy.format(Math.round(input));
 		}
 
-		final StringBuilder format = new StringBuilder("###0.");
-		final StringBuilder negativeZero = new StringBuilder("-0.");
-		for (int i = 0; i < numDecPlaces; i++) {
+		final StringBuilder format = new StringBuilder("###0" + DS);
+		final StringBuilder negativeZero = new StringBuilder("-0" + DS);
+
+		for (int i = 0; i < decimalPlaces; i++) {
 			format.append('0');
 			negativeZero.append('0');
 		}
-		final DecimalFormat df = new DecimalFormat(format.toString());
-		final StringBuilder output = new StringBuilder(df.format(inputNum));
+
+		custom.applyLocalizedPattern(format.toString());
+		final StringBuilder output = new StringBuilder(custom.format(input));
 
 		// Deal with negative zero
 		if (output.toString().equals(negativeZero.toString())) {
 			output.deleteCharAt(0);
 		}
+
 		return output.toString();
 	}
 }

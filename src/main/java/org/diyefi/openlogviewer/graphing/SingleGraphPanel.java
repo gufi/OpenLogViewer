@@ -29,6 +29,7 @@ import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.JPanel;
 import org.diyefi.openlogviewer.OpenLogViewer;
@@ -51,6 +52,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private static final int DATA_POINT_WIDTH = 3;
 	private static final int DATA_POINT_HEIGHT = DATA_POINT_WIDTH;
 	private static final float GRAPH_TRACE_HEIGHT_AS_PERCENTAGE_OF_TOTAL_TRACK_HEIGHT = 0.94F;
+	private static final char DS = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 	private GenericDataElement gde;
 	private double[] dataPointsToDisplay;
 	private double[][] dataPointRangeInfo;
@@ -313,7 +315,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	public final String getMouseInfo(final int cursorPosition, final int requiredWidth) {
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		String info = "-.-";
+		String info = "-" + DS + "-";
 		if (zoomedOut) {
 			info = getMouseInfoZoomedOut(cursorPosition, requiredWidth);
 		} else {
@@ -330,7 +332,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	private String getMouseInfoZoomed(final int cursorPosition, final int requiredWidth) {
-		String result = "-.-";
+		String result = "-" + DS + "-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
@@ -353,7 +355,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	private String getMouseInfoZoomedOut(final int cursorPosition, final int requiredWidth) {
-		String result = "-.- | -.- | -.-";
+		String result = "-" + DS + "- | -" + DS + "- | -" + DS + "-";
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
 			final double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
 			final double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
@@ -386,13 +388,17 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	}
 
 	private String replaceDecimalZerosWithSpaces(final String input) {
-		final StringBuilder stripped = new StringBuilder(input);
-		for (int i = stripped.length() - 1; stripped.charAt(i - 1) != '.'; i--) {
-			if (stripped.charAt(i) == '0') {
-				stripped.setCharAt(i, ' ');
+		if (input != null && !input.isEmpty()) {
+			final StringBuilder stripped = new StringBuilder(input);
+			for (int i = stripped.length() - 1; stripped.charAt(i - 1) != DS ; i--) {
+				if (stripped.charAt(i) == '0') {
+					stripped.setCharAt(i, ' ');
+				}
 			}
+			return stripped.toString();
+		} else {
+			return input;
 		}
-		return stripped.toString();
 	}
 
 	public final Color getColor() {

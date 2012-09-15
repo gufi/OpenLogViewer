@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -78,6 +79,8 @@ public class OptionFrameV2 extends JFrame {
 	// Both are wrong for scroll bars... probably need an event to handle that?
 	private static final int WIDTH_OF_WINDOW = (NUMBER_OF_COLS_OF_FREEEMS_FIELDS * PANEL_WIDTH);
 	private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
+
+	private static final char DS = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 
 	private final JFrame thisRef;
 	private final JPanel inactiveHeaders;
@@ -599,10 +602,10 @@ public class OptionFrameV2 extends JFrame {
 
 		public void setToolTipTextPreliminary() {
 			this.setToolTipText("<HTML> Data Stream: </b>" + GDE.getName()
-					+ "</b><br>Min Value: <b> -.-"
-					+ "</b><br>Max Value: <b> -.-"
-					+ "</b><br>Min Display: <b> -.-"
-					+ "</b><br>Max Display: <b> -.-"
+					+ "</b><br>Min Value: <b> -" + DS + "-"
+					+ "</b><br>Max Value: <b> -" + DS + "-"
+					+ "</b><br>Min Display: <b> -" + DS + "-"
+					+ "</b><br>Max Display: <b> -" + DS + "-"
 					+ "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
 		}
 
