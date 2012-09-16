@@ -34,8 +34,14 @@ Icon?
 Thumbs.db
 
 # Build related files #
-#####################
+#######################
 build/
 nbproject/private/
 target/
 .settings/*
+
+# Developer files #
+###################
+tmp/
+img/
+
