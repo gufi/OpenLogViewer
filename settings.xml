@@ -1,0 +1,32 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <activeProfiles>
+    <activeProfile>diyefi.org</activeProfile>
+  </activeProfiles>
+  <profiles>
+    <profile>
+      <id>diyefi.org</id>
+      <repositories>
+        <repository>
+          <id>maven.diyefi.org</id>
+          <name>DIYEFI.org Maven Repo</name>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+            <checksumPolicy>fail</checksumPolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+            <checksumPolicy>fail</checksumPolicy>
+          </snapshots>
+          <url>http://maven.diyefi.org/content/groups/DIYEFI.org/</url>
+          <layout>default</layout>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+</settings>
+

@@ -28,6 +28,10 @@ install instructions further down the page.
 
 http://maven.apache.org/download.html
 
+Additionally, you need to install the included settings.xml file in your ~/.m2
+directory. This allows your build to include artifacts that are only available
+from the DIYEFI.org Maven repository.
+
 You can get the source from one of the following repositories; use the network
 function to figure out whose is newest (though not necessarily best!):
 

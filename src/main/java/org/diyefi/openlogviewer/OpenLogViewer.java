@@ -80,7 +80,7 @@ import org.diyefi.openlogviewer.optionpanel.OptionFrameV2;
 import org.diyefi.openlogviewer.propertypanel.PropertiesPane;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 import org.diyefi.openlogviewer.subframes.AboutFrame;
-//import org.diyefi.openlogviewer.subframes.MacOSAboutHandler;
+import org.diyefi.openlogviewer.subframes.MacOSAboutHandler;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewer extends JFrame {
@@ -274,11 +274,11 @@ public final class OpenLogViewer extends JFrame {
 		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
-		//if (isMac) {
-		//	new MacOSAboutHandler(aboutFrame);
-		//} else {
-		menuBar.add(helpMenu);
-		//}
+		if (isMac) {
+			new MacOSAboutHandler(aboutFrame);
+		} else {
+			menuBar.add(helpMenu);
+		}
 		setJMenuBar(menuBar);
 
 		//Listener stuff
@@ -356,9 +356,9 @@ public final class OpenLogViewer extends JFrame {
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
 			final File fileToOpen = fileChooser.getSelectedFile();
 			if (!openFile(fileToOpen, fileChooser)) {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY) 
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY)
 						+ "\n" + fileToOpen.getAbsolutePath(),
-						labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(), 
+						labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(),
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -371,7 +371,7 @@ public final class OpenLogViewer extends JFrame {
 			final File fileToOpen = new File(lastFingFile);
 			final JFileChooser fileChooser = generateChooser();
 			if (!openFile(fileToOpen, fileChooser)) {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY) 
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY)
 						+ "\n" + fileToOpen.getAbsolutePath(),
 						labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(),
 						JOptionPane.ERROR_MESSAGE);
@@ -401,7 +401,7 @@ public final class OpenLogViewer extends JFrame {
 			saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
 
 			if ("bin".equals(Utilities.getExtension(fileToOpen))
-					|| "la".equals(Utilities.getExtension(fileToOpen)) 
+					|| "la".equals(Utilities.getExtension(fileToOpen))
 					|| (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
 				decoderInUse = new FreeEMSBin(fileToOpen);
 			} else {
