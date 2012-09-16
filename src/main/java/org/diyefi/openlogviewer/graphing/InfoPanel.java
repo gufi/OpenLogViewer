@@ -43,22 +43,18 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 	private static final int LEFT_MARGIN_OFFSET = 10;
 	private static final int ONE_TEXTUAL_HEIGHT = 20;
-	private static final int OFF_SCREEN_COORD = -100;
 	private static final int FONT_SIZE = 12;
 	private static final int INFO_DISPLAY_OFFSET = 4;
+	private static final Font hoverFont = new Font(Font.MONOSPACED, Font.PLAIN, FONT_SIZE);
 	private GenericLog genLog;
 	private final Color vertBar = new Color(255, 255, 255, 100);
 	private final Color textBackground = new Color(0, 0, 0, 170);
 	private int xMouseCoord;
 	private int yMouseCoord;
-	private boolean mouseOver;
+	private boolean shouldDraw = false;
 
 	public InfoPanel() {
 		setOpaque(false);
-
-		xMouseCoord = OFF_SCREEN_COORD;
-		yMouseCoord = OFF_SCREEN_COORD;
-		mouseOver = false;
 	}
 
 	@Override
@@ -69,7 +65,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			this.setSize(this.getParent().getSize());
 		}
 
-		g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, FONT_SIZE)); // Required to keep font consistent when using Mac L&F
+		g.setFont(hoverFont); // Required to keep font consistent when using Mac L&F
 		if (genLog == null) {
 			g.setColor(Color.RED);
 			g.drawString("No log loaded, please select a log from the file menu.", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
@@ -84,7 +80,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 					g.drawString(genLog.getLogStatusMessage(), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 2);
 					g.drawString("Displaying what we managed to read in before the catastrophy anyway...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 3);
 				}
-				if (mouseOver) {
+				if (shouldDraw) {
 					final int dataWidth = getWidestDataWidth();
 					final Dimension d = this.getSize();
 					final Graphics2D g2d = (Graphics2D) g;
@@ -109,13 +105,13 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 							String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition, dataWidth);
 							mouseDataString = mouseDataString + "  " + singleGraph.getData().getName();
 							final int stringWidth = fm.stringWidth(mouseDataString.toString());
-							g2d.fillRect(snappedDataPosition - 2 + INFO_DISPLAY_OFFSET, 
+							g2d.fillRect(snappedDataPosition - 2 + INFO_DISPLAY_OFFSET,
 									yMouseCoord + 2 + (fontHeight * i),
 									stringWidth + 4,
 									fontHeight);
 							g2d.setColor(singleGraph.getColor());
 							g2d.drawString(mouseDataString.toString(),
-									snappedDataPosition + INFO_DISPLAY_OFFSET, 
+									snappedDataPosition + INFO_DISPLAY_OFFSET,
 									yMouseCoord + fontHeight + (fontHeight * i));
 						}
 					}
@@ -150,20 +146,25 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 
 	@Override
 	public final void mouseEntered(final MouseEvent e) {
-		mouseOver = true;
+		shouldDraw = true;
 	}
 
 	@Override
 	public final void mouseExited(final MouseEvent e) {
-		mouseOver = false;
-		this.repaint();
+		if (!e.isShiftDown()) {
+			// Old default behaviour
+			shouldDraw = false;
+			repaint();
+		} // else leave coordinates alone
 	}
 
 	@Override
 	public final void mouseMoved(final MouseEvent e) {
-		xMouseCoord = e.getX();
-		yMouseCoord = e.getY();
-		this.repaint();
+		if (!e.isShiftDown()) {
+			xMouseCoord = e.getX();
+			yMouseCoord = e.getY();
+			repaint();
+		} // else hold position
 	}
 
 	@Override
