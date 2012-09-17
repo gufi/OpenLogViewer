@@ -105,7 +105,7 @@ public class SingleProperty implements Comparable<SingleProperty> {
 
 	public final String toString() {
 		final String seperator = ",";
-		StringBuilder output = new StringBuilder(header);
+		final StringBuilder output = new StringBuilder(header);
 		output.append("=");
 		output.append(color.getRed());
 		output.append(seperator);

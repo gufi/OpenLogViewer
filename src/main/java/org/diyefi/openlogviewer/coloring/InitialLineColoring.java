@@ -54,7 +54,7 @@ public enum InitialLineColoring {
 	}
 
 	public Color getBestAvailableColor() {
-		Color newColor = Color.GRAY;
+		Color newColor;
 		int index = 0;
 
 		final Color seedRed = Color.getHSBColor(0.0F, 1.0F, 1.0F);
@@ -74,7 +74,7 @@ public enum InitialLineColoring {
 			float hue = 0.0F;
 			float maxDistance = 0.0F;
 			final ListIterator<Color> i = colorList.listIterator();
-			Color c2 = Color.RED;
+			Color c2;
 
 			while (i.hasNext()) {
 				final Color c1 = i.next();
@@ -105,7 +105,7 @@ public enum InitialLineColoring {
 	}
 	
 	public void giveBackAllColors() {
-		while (colorList.size() > 0) {
+		while (!colorList.isEmpty()) {
 			colorList.remove(0);
 		}
 		colorList.add(0, bookEndRed);

@@ -27,6 +27,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.Arrays;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.coloring.InitialLineColoring;
 
@@ -48,7 +49,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	public static final String RECORD_COUNT_KEY = "OLV Record Count";
 	public static final String tempResetKey = "OLV Temp Resets";
 	public static final String elapsedTimeKey = "OLV Elapsed Time";
-	private GenericDataElement recordCountElement;
+	private final GenericDataElement recordCountElement;
 
 	private String metaData;
 	private final PropertyChangeSupport pcs;
@@ -59,8 +60,8 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private int currentCapacity;
 	private int currentPosition = -1;
 	// ^ TODO if we end up limiting memory usage by some configurable amount and recycling positions, for live streaming, then add count
-	private int ourLoadFactor;
-	private int numberOfInternalHeaders;
+	private final int ourLoadFactor;
+	private final int numberOfInternalHeaders;
 
 	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
@@ -97,10 +98,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 
 		// A bit dirty, but not too bad.
 		numberOfInternalHeaders = headers.length + NUMBER_OF_BUILTIN_FIELDS;
-		final String[] internalHeaders = new String[numberOfInternalHeaders];
-		for (int i = 0; i < headers.length; i++) {
-			internalHeaders[i] = headers[i];
-		}
+		final String[] internalHeaders = Arrays.copyOf(headers, numberOfInternalHeaders);
 
 		// If this stays like this, move it to a structure and small loop...
 		internalHeaders[headers.length + RECORD_COUNT_OFFSET] = RECORD_COUNT_KEY;
@@ -120,10 +118,9 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 * Add a piece of data to the <code>ArrayList</code> associated with the <code>key</code>
 	 * @param key - header
 	 * @param value - data to be added
-	 * @return true or false if it was successfully added
 	 */
 	public final void addValue(final String key, final double value) {
-		this.get(key).add(value);
+		get(key).add(value);
 	}
 
 	public final void incrementPosition() {

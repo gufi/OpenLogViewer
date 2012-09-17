@@ -294,7 +294,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 	/**
 	 * this is where the GDE is referenced and the graph gets initialized for the first time
-	 * @param GDE
+	 * @param newGDE
 	 */
 	public final void setData(final GenericDataElement newGDE) {
 		gde = newGDE;
@@ -310,7 +310,8 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	/**
 	 * Used for InfoLayer to get the data from the single graphs for data under the mouse
 	 *
-	 * @param pointerDistanceFromCenter
+	 * @param cursorPosition
+	 * @param requiredWidth
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	public final String getMouseInfo(final int cursorPosition, final int requiredWidth) {

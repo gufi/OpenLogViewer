@@ -135,7 +135,6 @@ public final class OpenLogViewer extends JFrame {
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
 
-	private final JPanel mainPanel;
 	private final EntireGraphingPanel graphingPanel;
 	private final FooterPanel footerPanel;
 	private final OptionFrameV2 optionFrame;
@@ -169,7 +168,7 @@ public final class OpenLogViewer extends JFrame {
 		setLayout(new BorderLayout());
 		setFocusable(true);
 
-		mainPanel = new JPanel();
+		final JPanel mainPanel = new JPanel();
 		mainPanel.setName("mainPanel");
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(graphingPanel, BorderLayout.CENTER);

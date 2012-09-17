@@ -61,7 +61,6 @@ import org.diyefi.openlogviewer.OpenLogViewer;
 public class PropertiesPane extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private final JPanel propertyPanel;
 	private final JPanel propertyView;
 
 	private File OLVProperties;
@@ -76,7 +75,7 @@ public class PropertiesPane extends JFrame {
 		setSize(new Dimension(550, 500));
 		setJMenuBar(createMenuBar());
 
-		propertyPanel = new JPanel();
+		final JPanel propertyPanel = new JPanel();
 		propertyPanel.setLayout(new BorderLayout());
 		OpenLogViewer.setupWindowKeyBindings(this);
 
@@ -256,7 +255,7 @@ public class PropertiesPane extends JFrame {
 			final PropertyPanel pp = (PropertyPanel) propertyView.getComponent(i);
 			pp.reset();
 		}
-		if (removeProperties.size() > 0) {
+		if (!removeProperties.isEmpty()) {
 			for (int i = 0; i < removeProperties.size(); i++) {
 				addProperty(removeProperties.get(i));
 			}

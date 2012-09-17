@@ -88,7 +88,6 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
 
-		displayColor = null;
 		trackIndex = 0;
 		addFlavors();
 	}
@@ -135,7 +134,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * sets the splitNumber or division of the graph in the graphing screen
 	 * if its the same a property change event is fired called "Split"
 	 *
-	 * @param trackIndex
+	 * @param newIndex
 	 */
 	public void setTrackIndex(final int newIndex) {
 		final int oldIndex = trackIndex;

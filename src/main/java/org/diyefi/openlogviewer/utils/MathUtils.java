@@ -46,7 +46,7 @@ public final class MathUtils {
 	 *
 	 * @param input - The double you'd like to round the decimal places for
 	 * @param decimalPlaces - The number of decimal places you'd like
-	 * @return
+	 * @return the formatted number
 	 */
 	public static String roundDecimalPlaces(final double input, final int decimalPlaces) {
 		// Deal with zero or negative decimal places requested

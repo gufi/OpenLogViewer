@@ -292,7 +292,7 @@ public class OptionFrameV2 extends JFrame {
 
 	public final void updateFromLog(final GenericLog datalog) {
 
-		while (activePanelList.size() > 0) {
+		while (!activePanelList.isEmpty()) {
 			activePanelList.get(0).removeAll();
 			layeredPane.remove(activePanelList.get(0));
 			activePanelList.remove(activePanelList.get(0)); // only did it this way incase things are out of order at any point

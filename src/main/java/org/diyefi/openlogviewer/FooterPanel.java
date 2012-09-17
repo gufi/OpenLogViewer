@@ -29,14 +29,12 @@ import javax.swing.JPanel;
 public class FooterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private final FramesPerSecondPanel fpsPanel;
 	private final NavBarPanel navBarPanel;
 
 	public FooterPanel() {
 		setName("footerPanel");
 		setLayout(new BorderLayout());
-		fpsPanel = new FramesPerSecondPanel();
-		add(fpsPanel, BorderLayout.WEST);
+		add(new FramesPerSecondPanel(), BorderLayout.WEST);
 		navBarPanel = new NavBarPanel();
 		add(navBarPanel, BorderLayout.EAST);
 	}
