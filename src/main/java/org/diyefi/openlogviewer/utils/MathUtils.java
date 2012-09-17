@@ -32,11 +32,11 @@ import java.text.NumberFormat;
  */
 public final class MathUtils {
 	private static final char DS = DecimalFormatSymbols.getInstance().getDecimalSeparator();
-	private static final DecimalFormat custom = (DecimalFormat) NumberFormat.getNumberInstance();
-	private static final DecimalFormat standy = (DecimalFormat) NumberFormat.getNumberInstance();
+	private static final DecimalFormat CUSTOM = (DecimalFormat) NumberFormat.getNumberInstance();
+	private static final DecimalFormat NORMAL = (DecimalFormat) NumberFormat.getNumberInstance();
 	static {
-		custom.setGroupingUsed(false);
-		standy.setGroupingUsed(false);
+		CUSTOM.setGroupingUsed(false);
+		NORMAL.setGroupingUsed(false);
 	}
 
 	private MathUtils() {
@@ -51,7 +51,7 @@ public final class MathUtils {
 	public static String roundDecimalPlaces(final double input, final int decimalPlaces) {
 		// Deal with zero or negative decimal places requested
 		if (decimalPlaces <= 0) {
-			return standy.format(Math.round(input));
+			return NORMAL.format(Math.round(input));
 		}
 
 		final StringBuilder format = new StringBuilder("###0" + DS);
@@ -62,8 +62,8 @@ public final class MathUtils {
 			negativeZero.append('0');
 		}
 
-		custom.applyLocalizedPattern(format.toString());
-		final StringBuilder output = new StringBuilder(custom.format(input));
+		CUSTOM.applyLocalizedPattern(format.toString());
+		final StringBuilder output = new StringBuilder(CUSTOM.format(input));
 
 		// Deal with negative zero
 		if (output.toString().equals(negativeZero.toString())) {

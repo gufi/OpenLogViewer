@@ -45,13 +45,13 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private static final int ONE_TEXTUAL_HEIGHT = 20;
 	private static final int FONT_SIZE = 12;
 	private static final int INFO_DISPLAY_OFFSET = 4;
-	private static final Font hoverFont = new Font(Font.MONOSPACED, Font.PLAIN, FONT_SIZE);
+	private static final Font HOVER_FONT = new Font(Font.MONOSPACED, Font.PLAIN, FONT_SIZE);
 	private GenericLog genLog;
 	private final Color vertBar = new Color(255, 255, 255, 100);
 	private final Color textBackground = new Color(0, 0, 0, 170);
 	private int xMouseCoord;
 	private int yMouseCoord;
-	private boolean shouldDraw = false;
+	private boolean shouldDraw;
 
 	public InfoPanel() {
 		setOpaque(false);
@@ -65,7 +65,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			this.setSize(this.getParent().getSize());
 		}
 
-		g.setFont(hoverFont); // Required to keep font consistent when using Mac L&F
+		g.setFont(HOVER_FONT); // Required to keep font consistent when using Mac L&F
 		if (genLog == null) {
 			g.setColor(Color.RED);
 			g.drawString("No log loaded, please select a log from the file menu.", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);

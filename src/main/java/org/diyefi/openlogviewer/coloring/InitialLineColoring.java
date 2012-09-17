@@ -42,8 +42,9 @@ public enum InitialLineColoring {
 	// 0.999F must be used instead of 0.9999F or more because it will get rounded
 	// by the Color constructor to 1F.
 	private static final float ALMOST_ONE = 0.999F;
-	private static final float ONE_THIRD = 1F / 3F;
-	private static final float TWO_THIRDS = 2F / 3F;
+	private static final float THREE = 3F;
+	private static final float ONE_THIRD = 1F / THREE;
+	private static final float TWO_THIRDS = 2F / THREE;
 
 	private final List<Color> colorList;
 	private final Color bookEndRed = Color.getHSBColor(ALMOST_ONE, 1.0F, 1.0F);
@@ -103,7 +104,7 @@ public enum InitialLineColoring {
 	public boolean giveBackColor(final Color c) {
 		return colorList.remove(c);
 	}
-	
+
 	public void giveBackAllColors() {
 		while (!colorList.isEmpty()) {
 			colorList.remove(0);

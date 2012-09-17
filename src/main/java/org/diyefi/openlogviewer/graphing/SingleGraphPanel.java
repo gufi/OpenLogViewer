@@ -45,6 +45,8 @@ import org.diyefi.openlogviewer.utils.MathUtils;
  * @author Bryan Harris and Ben Fenner
  */
 public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener, PropertyChangeListener {
+	public static final int DECIMAL_PLACES = 3;
+
 	private static final long serialVersionUID = 1L;
 
 	private static final int MINIMUM_MARGIN_PIXELS = 3;
@@ -53,6 +55,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private static final int DATA_POINT_HEIGHT = DATA_POINT_WIDTH;
 	private static final float GRAPH_TRACE_HEIGHT_AS_PERCENTAGE_OF_TOTAL_TRACK_HEIGHT = 0.94F;
 	private static final char DS = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+	private static final String UNKNOWN_DIGIT = "-"; // String, not char, so we can append below
+	private static final String UNKNOWN_NUMBER = UNKNOWN_DIGIT + DS + UNKNOWN_DIGIT;
+	private static final String STAT_SEPARATOR = " | ";
+	private static final String UNKNOWN_STATS = UNKNOWN_NUMBER + STAT_SEPARATOR + UNKNOWN_NUMBER + STAT_SEPARATOR + UNKNOWN_NUMBER;
+
 	private GenericDataElement gde;
 	private double[] dataPointsToDisplay;
 	private double[][] dataPointRangeInfo;
@@ -62,7 +69,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private int graphTraceMinHeight;
 	private int graphTraceMaxHeight;
 
-	public static final int DECIMAL_PLACES = 3;
 
 	public SingleGraphPanel() {
 		setOpaque(false);
@@ -217,7 +223,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 			if (insideTrace && !atTraceEnd) {
 				final boolean currentPointWithinTrack = screenPositionYCoord >= graphTraceMinHeight && screenPositionYCoord <= graphTraceMaxHeight;
 				final boolean nextPointWithinTrack = nextScreenPositionYCoord >= graphTraceMinHeight && nextScreenPositionYCoord <= graphTraceMaxHeight;
-				if (currentPointWithinTrack && nextPointWithinTrack){ // Just draw it!
+				if (currentPointWithinTrack && nextPointWithinTrack) { // Just draw it!
 					g2d.drawLine(screenPositionXCoord, screenPositionYCoord, screenPositionXCoord + distanceBetweenDataPoints, nextScreenPositionYCoord);
 				} else if (currentPointWithinTrack) {
 					if (nextScreenPositionYCoord >= graphTraceMinHeight) { // Next point is below track
@@ -231,7 +237,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 						final int nextScreenPositionXCoord = screenPositionXCoord + Math.round(distanceBetweenDataPoints * (currentDistBelowTop / (currentDistBelowTop + nextDistAboveTop)));
 						g2d.drawLine(screenPositionXCoord, screenPositionYCoord, nextScreenPositionXCoord, graphTraceMinHeight);
 					}
-				} else if(nextPointWithinTrack) {
+				} else if (nextPointWithinTrack) {
 					if (screenPositionYCoord >= graphTraceMinHeight) { // Current point is below track
 						final float currentDistBelowBottom = screenPositionYCoord - graphTraceMaxHeight;
 						final float nextDistAboveBottom = graphTraceMaxHeight - nextScreenPositionYCoord;
@@ -316,7 +322,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	public final String getMouseInfo(final int cursorPosition, final int requiredWidth) {
 		final boolean zoomedOut = OpenLogViewer.getInstance().getEntireGraphingPanel().isZoomedOutBeyondOneToOne();
-		String info = "-" + DS + "-";
+		String info;
 		if (zoomedOut) {
 			info = getMouseInfoZoomedOut(cursorPosition, requiredWidth);
 		} else {
@@ -333,7 +339,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	private String getMouseInfoZoomed(final int cursorPosition, final int requiredWidth) {
-		String result = "-" + DS + "-";
 		final double graphPosition = OpenLogViewer.getInstance().getEntireGraphingPanel().getGraphPosition();
 		final int zoom = OpenLogViewer.getInstance().getEntireGraphingPanel().getZoom();
 		final double offset = (graphPosition % 1) * zoom;
@@ -341,10 +346,13 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 		double numSnapsFromLeft = ((double) cursorPositionPlusOffset / (double) zoom);
 		numSnapsFromLeft = Math.round(numSnapsFromLeft);
 		final int dataLocation = (int) graphPosition + (int) numSnapsFromLeft;
+		String result;
 		if ((dataLocation >= 0) && (dataLocation < availableDataRecords)) {
 			result = MathUtils.roundDecimalPlaces(gde.get(dataLocation), DECIMAL_PLACES);
 			result = padWithLeadingSpaces(result, requiredWidth);
 			result = replaceDecimalZerosWithSpaces(result);
+		} else {
+			result = UNKNOWN_NUMBER;
 		}
 		return result;
 	}
@@ -356,7 +364,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 * @return Double representation of info at the mouse cursor line which snaps to data points or null if no data under cursor
 	 */
 	private String getMouseInfoZoomedOut(final int cursorPosition, final int requiredWidth) {
-		String result = "-" + DS + "- | -" + DS + "- | -" + DS + "-";
+		String result = UNKNOWN_STATS;
 		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
 			final double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
 			final double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
@@ -374,7 +382,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 				resultMax = replaceDecimalZerosWithSpaces(resultMax);
 				resultMean = replaceDecimalZerosWithSpaces(resultMean);
 
-				result = resultMin + " | " + resultMean + " | " + resultMax;
+				result = resultMin + STAT_SEPARATOR + resultMean + STAT_SEPARATOR + resultMax;
 			}
 		}
 		return result;
@@ -391,7 +399,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	private String replaceDecimalZerosWithSpaces(final String input) {
 		if (input != null && !input.isEmpty()) {
 			final StringBuilder stripped = new StringBuilder(input);
-			for (int i = stripped.length() - 1; stripped.charAt(i - 1) != DS ; i--) {
+			for (int i = stripped.length() - 1; stripped.charAt(i - 1) != DS; i--) {
 				if (stripped.charAt(i) == '0') {
 					stripped.setCharAt(i, ' ');
 				}

@@ -16,7 +16,7 @@ public class MacOSAboutHandler {
 
 	class AboutBoxHandler implements AboutHandler {
 		@Override
-		public void handleAbout(AboutEvent e) {
+		public void handleAbout(final AboutEvent e) {
 			aboutFrame.setVisible(true);
 		}
 	}

@@ -69,7 +69,6 @@
 		<module name="MethodName"/><!--Checks that method names conform to a format specified by the format property. -->
 		<module name="MethodParamPad"/><!--Checks the padding between the identifier of a method definition, constructor definition, method call, or constructor invocation; and the left parenthesis of the parameter list. -->
 		<module name="MethodTypeParameterName"/><!--Checks that class type parameter names conform to a format specified by the format property. -->
-		<module name="MissingCtor"/><!--Checks that classes (except abstract one) define a ctor and don't rely on the default one. -->
 		<module name="MissingDeprecated"/><!--This class is used to verify that both the -->
 		<module name="MissingOverride"/><!--This class is used to verify that the -->
 		<module name="ModifierOrder"/><!--Checks that the order of modifiers conforms to the suggestions in the Java Language specification, sections 8.1.1, 8.3.1 and 8.4.3. -->
