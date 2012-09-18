@@ -32,6 +32,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -84,38 +85,12 @@ import org.diyefi.openlogviewer.subframes.MacOSAboutHandler;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public final class OpenLogViewer extends JFrame {
-	public static final String NEWLINE = System.getProperty("line.separator");
+	public static final String NEWLINE = System.getProperty(Keys.LINE_SEPARATOR);
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String APPLICATION_NAME = OpenLogViewer.class.getSimpleName();
 	private static final String SETTINGS_DIRECTORY = "." + APPLICATION_NAME;
-
-	private static final String FILE_MENU_KEY = "FileMenuName";
-	private static final String FILE_MENU_ITEM_OPEN_KEY = "FileMenuItemOpenName";
-	private static final String FILE_MENU_ITEM_RELOAD_KEY = "FileMenuItemReloadName";
-	private static final String FILE_MENU_ITEM_QUIT_KEY = "FileMenuItemQuitName";
-
-	private static final String VIEW_MENU_KEY = "ViewMenuName";
-	private static final String VIEW_MENU_ITEM_FULL_SCREEN_KEY = "ViewMenuItemFullScreenName";
-	private static final String VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY = "ViewMenuItemScaleAndColorName";
-	private static final String VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY = "ViewMenuItemFieldsAndDivisionsName";
-
-	private static final String HELP_MENU_KEY = "HelpMenuName";
-	private static final String HELP_MENU_ITEM_ABOUT_KEY = "HelpMenuAboutName";
-
-	private static final String FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY = "FailedToGoFullScreenMessage";
-	private static final String CANT_GO_FULLSCREEN_MESSAGE_KEY = "CantGoFullScreenMessage";
-
-	private static final String OPEN_FILE_ERROR_TITLE_KEY = "OpenFileErrorTitle";
-	private static final String OPEN_FILE_ERROR_MESSAGE_KEY = "OpenFileErrorMessage";
-	private static final String OPEN_LAST_FILE_ERROR_TITLE_KEY = "OpenLastFileErrorTitle";
-	private static final String OPEN_LAST_FILE_ERROR_MESSAGE_KEY = "OpenLastFileErrorMessage";
-	private static final String OPEN_LAST_FILE_MISSING_PROPERTY_TITLE_KEY = "OpenLastFileMissingPropertyTitle";
-	private static final String OPEN_LAST_FILE_MISSING_PROPERTY_MESSAGE_KEY = "OpenLastFileMissingPropertyMessage";
-
-	private static final String DEFAULT_BROWSER_ERROR_TITLE_KEY = "DefaultBrowserErrorTitle";
-	private static final String DEFAULT_BROWSER_ERROR_MESSAGE_KEY = "DefaultBrowserErrorMessage";
 
 	// TODO localise and refactor these:
 	private static final String PROPERTIES_FILENAME = "OLVAllProperties.olv";
@@ -128,9 +103,10 @@ public final class OpenLogViewer extends JFrame {
 	private static final int GRAPH_PANEL_WIDTH = 600;
 	private static final int GRAPH_PANEL_HEIGHT = 420;
 
-	private static boolean isMac;
-	private static boolean isWindows;
-	private static boolean isLinux;
+	private static final String OS_NAME = System.getProperty(Keys.OS_NAME);
+	private static final boolean IS_MAC_OS_X = OS_NAME.contains("OS X"); // TN2110
+	private static final boolean IS_WINDOWS = OS_NAME.contains("Windows");
+	private static final boolean IS_LINUX = OS_NAME.contains("Linux");
 
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
@@ -153,14 +129,14 @@ public final class OpenLogViewer extends JFrame {
 
 	public OpenLogViewer() {
 
-		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
+		prefFrame = new PropertiesPane(labels, SETTINGS_DIRECTORY);
 		properties = new ArrayList<SingleProperty>();
 		prefFrame.setProperties(properties);
 
-		footerPanel = new FooterPanel();
-		optionFrame = new OptionFrameV2();
+		footerPanel = new FooterPanel(labels);
+		optionFrame = new OptionFrameV2(labels);
 		aboutFrame = new AboutFrame(APPLICATION_NAME);
-		graphingPanel = new EntireGraphingPanel();
+		graphingPanel = new EntireGraphingPanel(labels);
 		graphingPanel.setPreferredSize(new Dimension(GRAPH_PANEL_WIDTH, GRAPH_PANEL_HEIGHT));
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -169,14 +145,13 @@ public final class OpenLogViewer extends JFrame {
 		setFocusable(true);
 
 		final JPanel mainPanel = new JPanel();
-		mainPanel.setName("mainPanel");
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(graphingPanel, BorderLayout.CENTER);
 		mainPanel.add(footerPanel, BorderLayout.SOUTH);
 		add(mainPanel, BorderLayout.CENTER);
 
-		final JMenuItem openFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_OPEN_KEY));
-		openFileMenuItem.setName(FILE_MENU_ITEM_OPEN_KEY);
+		final JMenuItem openFileMenuItem = new JMenuItem(labels.getString(Text.FILE_MENU_ITEM_OPEN_NAME));
+		openFileMenuItem.setName(Text.FILE_MENU_ITEM_OPEN_NAME);
 		openFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -184,8 +159,8 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		final JMenuItem reloadFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_RELOAD_KEY));
-		reloadFileMenuItem.setName(FILE_MENU_ITEM_RELOAD_KEY);
+		final JMenuItem reloadFileMenuItem = new JMenuItem(labels.getString(Text.FILE_MENU_ITEM_RELOAD_NAME));
+		reloadFileMenuItem.setName(Text.FILE_MENU_ITEM_RELOAD_NAME);
 		reloadFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -193,8 +168,8 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		final JMenuItem quitFileMenuItem = new JMenuItem(labels.getString(FILE_MENU_ITEM_QUIT_KEY));
-		quitFileMenuItem.setName(FILE_MENU_ITEM_QUIT_KEY);
+		final JMenuItem quitFileMenuItem = new JMenuItem(labels.getString(Text.FILE_MENU_ITEM_QUIT_NAME));
+		quitFileMenuItem.setName(Text.FILE_MENU_ITEM_QUIT_NAME);
 		quitFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -203,8 +178,8 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		final JMenuItem fullScreenViewMenuItem = new JMenuItem(labels.getString(VIEW_MENU_ITEM_FULL_SCREEN_KEY));
-		fullScreenViewMenuItem.setName(VIEW_MENU_ITEM_FULL_SCREEN_KEY);
+		final JMenuItem fullScreenViewMenuItem = new JMenuItem(labels.getString(Text.VIEW_MENU_ITEM_FULL_SCREEN_NAME));
+		fullScreenViewMenuItem.setName(Text.VIEW_MENU_ITEM_FULL_SCREEN_NAME);
 		fullScreenViewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -212,8 +187,8 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		final JMenuItem scaleAndColorViewMenuItem = new JMenuItem(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
-		scaleAndColorViewMenuItem.setName(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY);
+		final JMenuItem scaleAndColorViewMenuItem = new JMenuItem(labels.getString(Text.VIEW_MENU_ITEM_SCALE_AND_COLOR_NAME));
+		scaleAndColorViewMenuItem.setName(Text.VIEW_MENU_ITEM_SCALE_AND_COLOR_NAME);
 		scaleAndColorViewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -221,8 +196,8 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		final JMenuItem fieldsAndDivisionsViewMenuItem = new JMenuItem(labels.getString(VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY));
-		fieldsAndDivisionsViewMenuItem.setName(VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_KEY);
+		final JMenuItem fieldsAndDivisionsViewMenuItem = new JMenuItem(labels.getString(Text.VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_NAME));
+		fieldsAndDivisionsViewMenuItem.setName(Text.VIEW_MENU_ITEM_FIELDS_AND_DIVISIONS_NAME);
 		fieldsAndDivisionsViewMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -230,8 +205,8 @@ public final class OpenLogViewer extends JFrame {
 			}
 		});
 
-		final JMenuItem aboutMenuItem = new JMenuItem(labels.getString(HELP_MENU_ITEM_ABOUT_KEY));
-		aboutMenuItem.setName(HELP_MENU_ITEM_ABOUT_KEY);
+		final JMenuItem aboutMenuItem = new JMenuItem(labels.getString(Text.HELP_MENU_ITEM_ABOUT_NAME));
+		aboutMenuItem.setName(Text.HELP_MENU_ITEM_ABOUT_NAME);
 		aboutMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -251,29 +226,28 @@ public final class OpenLogViewer extends JFrame {
 		 * orange chicken x2
 		 */
 
-		final JMenu fileMenu = new JMenu(labels.getString(FILE_MENU_KEY));
-		fileMenu.setName(FILE_MENU_KEY);
+		final JMenu fileMenu = new JMenu(labels.getString(Text.FILE_MENU_NAME));
+		fileMenu.setName(Text.FILE_MENU_NAME);
 		fileMenu.add(openFileMenuItem);
 		fileMenu.add(reloadFileMenuItem);
-		if (!isMac) {
+		if (!IS_MAC_OS_X) {
 			fileMenu.add(quitFileMenuItem);
 		}
 
-		final JMenu viewMenu = new JMenu(labels.getString(VIEW_MENU_KEY));
-		viewMenu.setName(VIEW_MENU_KEY);
+		final JMenu viewMenu = new JMenu(labels.getString(Text.VIEW_MENU_NAME));
+		viewMenu.setName(Text.VIEW_MENU_NAME);
 		viewMenu.add(fullScreenViewMenuItem);
 		viewMenu.add(scaleAndColorViewMenuItem);
 		viewMenu.add(fieldsAndDivisionsViewMenuItem);
 
-		final JMenu helpMenu = new JMenu(labels.getString(HELP_MENU_KEY));
-		helpMenu.setName(HELP_MENU_KEY);
+		final JMenu helpMenu = new JMenu(labels.getString(Text.HELP_MENU_NAME));
+		helpMenu.setName(Text.HELP_MENU_NAME);
 		helpMenu.add(aboutMenuItem);
 
 		menuBar = new JMenuBar();
-		menuBar.setName("menuBar");
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
-		if (isMac) {
+		if (IS_MAC_OS_X) {
 			new MacOSAboutHandler(aboutFrame);
 		} else {
 			menuBar.add(helpMenu);
@@ -300,14 +274,13 @@ public final class OpenLogViewer extends JFrame {
 			@Override
 			public void run() {
 				final Locale currentLocale = Locale.getDefault();
-				runOSDetection();
 
 				labels = ResourceBundle.getBundle(getClass().getPackage().getName() + ".Labels", currentLocale);
 
 				final String lookAndFeel;
 				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
-				if (isMac) {
-					System.setProperty("apple.laf.useScreenMenuBar", "true");
+				if (IS_MAC_OS_X) {
+					System.setProperty(Keys.APPLE_LAF_USE_SCREEN_MENU_BAR, Boolean.TRUE.toString());
 				}
 				lookAndFeel = systemLookAndFeel;
 
@@ -315,36 +288,19 @@ public final class OpenLogViewer extends JFrame {
 					UIManager.setLookAndFeel(lookAndFeel);
 				} catch (UnsupportedLookAndFeelException e) {
 					e.printStackTrace();
-					System.out.println(labels.getString("LookAndFeelExceptionMessageOne"));
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_ONE));
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
-					System.out.println(labels.getString("LookAndFeelExceptionMessageTwo"));
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_TWO));
 				} catch (InstantiationException e) {
 					e.printStackTrace();
-					System.out.println(labels.getString("LookAndFeelExceptionMessageThree"));
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_THREE));
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
-					System.out.println(labels.getString("LookAndFeelExceptionMessageFour"));
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
 				}
 
 				mainAppRef = new OpenLogViewer();
-			}
-
-			private void runOSDetection() {
-				final String operatingSystem = "os.name";
-				if (System.getProperty(operatingSystem).toLowerCase().indexOf("mac os") != -1) { // If Mac
-					isMac = true;
-					isWindows = false;
-					isLinux = false;
-				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("windows") != -1) { // If Windows
-					isMac = false;
-					isWindows = true;
-					isLinux = false;
-				} else if (System.getProperty(operatingSystem).toLowerCase().indexOf("linux") != -1) { // If Linux
-					isMac = false;
-					isWindows = false;
-					isLinux = true;
-				}
 			}
 		});
 	}
@@ -355,9 +311,9 @@ public final class OpenLogViewer extends JFrame {
 		if (acceptValue == JFileChooser.APPROVE_OPTION) {
 			final File fileToOpen = fileChooser.getSelectedFile();
 			if (!openFile(fileToOpen, fileChooser)) {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_FILE_ERROR_MESSAGE_KEY)
-						+ "\n" + fileToOpen.getAbsolutePath(),
-						labels.getObject(OPEN_FILE_ERROR_TITLE_KEY).toString(),
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(Text.OPEN_FILE_ERROR_MESSAGE)
+						+ NEWLINE + fileToOpen.getAbsolutePath(),
+						labels.getString(Text.OPEN_FILE_ERROR_TITLE),
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -370,14 +326,14 @@ public final class OpenLogViewer extends JFrame {
 			final File fileToOpen = new File(lastFingFile);
 			final JFileChooser fileChooser = generateChooser();
 			if (!openFile(fileToOpen, fileChooser)) {
-				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_ERROR_MESSAGE_KEY)
-						+ "\n" + fileToOpen.getAbsolutePath(),
-						labels.getObject(OPEN_LAST_FILE_ERROR_TITLE_KEY).toString(),
+				JOptionPane.showMessageDialog(mainAppRef, labels.getObject(Text.OPEN_LAST_FILE_ERROR_MESSAGE)
+						+ NEWLINE + fileToOpen.getAbsolutePath(),
+						labels.getString(Text.OPEN_LAST_FILE_ERROR_TITLE),
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
-			JOptionPane.showMessageDialog(mainAppRef, labels.getObject(OPEN_LAST_FILE_MISSING_PROPERTY_MESSAGE_KEY),
-					labels.getObject(OPEN_LAST_FILE_MISSING_PROPERTY_TITLE_KEY).toString(),
+			JOptionPane.showMessageDialog(mainAppRef, labels.getObject(Text.OPEN_LAST_FILE_MISSING_PROPERTY_MESSAGE),
+					labels.getString(Text.OPEN_LAST_FILE_MISSING_PROPERTY_TITLE),
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -399,12 +355,12 @@ public final class OpenLogViewer extends JFrame {
 			saveApplicationWideProperty(NAME_OF_LAST_FILE_KEY, fileToOpen.getPath());
 			saveApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS, fileChooser.getFileFilter().getClass().getCanonicalName());
 
-			if ("bin".equals(Utilities.getExtension(fileToOpen))
-					|| "la".equals(Utilities.getExtension(fileToOpen))
+			if (FileExtensions.BIN.equals(Utilities.getExtension(fileToOpen))
+					|| FileExtensions.LA.equals(Utilities.getExtension(fileToOpen))
 					|| (fileChooser.getFileFilter() instanceof FreeEMSFileFilter)) {
-				decoderInUse = new FreeEMSBin(fileToOpen);
+				decoderInUse = new FreeEMSBin(fileToOpen, labels);
 			} else {
-				decoderInUse = new CSVTypeLog(fileToOpen);
+				decoderInUse = new CSVTypeLog(fileToOpen, labels);
 			}
 			return true;
 		} else {
@@ -426,12 +382,12 @@ public final class OpenLogViewer extends JFrame {
 			}
 		}
 
-		fileChooser.addChoosableFileFilter(new FreeEMSFileFilter());
+		fileChooser.addChoosableFileFilter(new FreeEMSFileFilter(labels));
 		fileChooser.addChoosableFileFilter(new FreeEMSBinFileFilter());
 		fileChooser.addChoosableFileFilter(new FreeEMSLAFileFilter());
 		fileChooser.addChoosableFileFilter(new CSVFileFilter());
 		fileChooser.addChoosableFileFilter(new LogFileFilter());
-		fileChooser.addChoosableFileFilter(new MSTypeFileFilter());
+		fileChooser.addChoosableFileFilter(new MSTypeFileFilter(labels));
 
 		final String chooserClass = getApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
 
@@ -454,93 +410,120 @@ public final class OpenLogViewer extends JFrame {
 				}
 			} catch (ClassNotFoundException c) {
 				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
-				System.out.println("Class not found! chooserClass removed from props!");
+				System.out.println(labels.getString(Text.CLASS_NOT_FOUND) + NAME_OF_LAST_CHOOSER_CLASS + labels.getString(Text.REMOVED_FROM_PROPS));
 			} catch (InstantiationException i) {
 				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
-				System.out.println("Could not instantiate class! chooserClass removed from props!");
+				System.out.println(labels.getString(Text.COULD_NOT_INSTANTIATE_CLASS) + NAME_OF_LAST_CHOOSER_CLASS + labels.getString(Text.REMOVED_FROM_PROPS));
 			} catch (IllegalAccessException l) {
 				removeApplicationWideProperty(NAME_OF_LAST_CHOOSER_CLASS);
-				System.out.println("Could not access class! chooserClass removed from props!");
+				System.out.println(labels.getString(Text.COULD_NOT_ACCESS_CLASS) + NAME_OF_LAST_CHOOSER_CLASS + labels.getString(Text.REMOVED_FROM_PROPS));
 			}
 		}
 		return fileChooser;
 	}
 
 	private String getApplicationWideProperty(final String key) {
-		try {
-			final Properties appWide = new Properties();
-			final File appWideFile = openAppWideProps(appWide);
-			if (appWideFile != null) {
-				return appWide.getProperty(key);
-			} else {
-				throw new IllegalArgumentException("Problem getting property, got null instead of file!");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("IO issue: " + e.getMessage(), e);
-		}
+		final Properties appWide = new Properties();
+		openAppWideProps(appWide);
+		return appWide.getProperty(key);
 	}
 
 	private void saveApplicationWideProperty(final String key, final String value) {
+		FileOutputStream fos = null;
 		try {
 			final Properties appWide = new Properties();
 			final File appWideFile = openAppWideProps(appWide);
-			if (appWideFile != null) {
-				appWide.setProperty(key, value);
-				appWide.store(new FileOutputStream(appWideFile), "saved");
-			} else {
-				throw new IllegalArgumentException("Problem saving property, got null instead of file!");
-			}
+			appWide.setProperty(key, value);
+			fos = new FileOutputStream(appWideFile);
+			appWide.store(fos, "saved");
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("Another IO issue: " + e.getMessage(), e);
+			throw new RuntimeException(labels.getString(Text.IO_ISSUE_SAVING_PROPERTY) + e.getMessage(), e);
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 	}
 
 	private void removeApplicationWideProperty(final String key) {
+		FileOutputStream fos = null;
 		try {
 			final Properties appWide = new Properties();
 			final File appWideFile = openAppWideProps(appWide);
-			if (appWideFile != null) {
-				appWide.remove(key);
-				appWide.store(new FileOutputStream(appWideFile), "removed");
-			} else {
-				throw new IllegalArgumentException("Problem removing property, got null instead of file!");
-			}
+			appWide.remove(key);
+			fos = new FileOutputStream(appWideFile);
+			appWide.store(fos, "removed");
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("YAIO issue: " + e.getMessage(), e);
+			throw new RuntimeException(labels.getString(Text.IO_ISSUE_REMOVING_PROPERTY) + e.getMessage(), e);
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
 		}
 	}
 
-	private File openAppWideProps(final Properties appWide) throws IOException {
+	private File openAppWideProps(final Properties appWide) {
 		File appWideFile;
-		appWideFile = new File(System.getProperty("user.home"));
+		appWideFile = new File(System.getProperty(Keys.USER_HOME));
 
 		if (!appWideFile.exists() || !appWideFile.canRead() || !appWideFile.canWrite()) {
-			System.out.println("Either you dont have a home director, or it isnt read/writeable... fix it!");
+			System.out.println(labels.getString(Text.HOME_DIRECTORY_NOT_ACCESSIBLE));
 		} else {
 			appWideFile = new File(appWideFile, SETTINGS_DIRECTORY);
 		}
 
 		if (!appWideFile.exists()) {
+			FileInputStream fis = null;
 			try {
 				if (appWideFile.mkdir()) {
 					appWideFile = new File(appWideFile, PROPERTIES_FILENAME);
 					if (appWideFile.createNewFile()) {
-						appWide.load(new FileInputStream(appWideFile));
+						fis = new FileInputStream(appWideFile);
+						appWide.load(fis);
 					}
 				} else {
-					throw new RuntimeException("Failed to create directory, no code to handle this at this time.");
+					throw new RuntimeException(labels.getString(Text.FAILED_TO_CREATE_DIRECTORY_MESSAGE));
 					// This should be passed up to the GUI as a dialog that tells you it can't do what it has to be able to...
 				}
 			} catch (IOException e) {
 				System.out.print(e.getMessage());
+			} finally {
+				try {
+					if (fis != null) {
+						fis.close();
+					}
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 			}
 		} else {
 			appWideFile = new File(appWideFile, PROPERTIES_FILENAME);
-			if (!appWideFile.createNewFile()) {
-				appWide.load(new FileInputStream(appWideFile));
+			FileInputStream fis = null;
+			try {
+				if (!appWideFile.createNewFile()) {
+					fis = new FileInputStream(appWideFile);
+					appWide.load(fis);
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} finally {
+				try {
+					if (fis != null) {
+						fis.close();
+					}
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
 			}
 		}
 		return appWideFile;
@@ -559,21 +542,20 @@ public final class OpenLogViewer extends JFrame {
 		if (window instanceof OpenLogViewer) {
 			isMainApp = true;
 		}
-		final String closeWindowKey = "closeWindow";
 
 		// Close any window
-		if (isWindows || isLinux) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl W"), closeWindowKey);
-		} else if (isMac) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("meta W"), closeWindowKey);
+		if (IS_WINDOWS || IS_LINUX) {
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_W), Keys.CLOSE_WINDOW);
+		} else if (IS_MAC_OS_X) {
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.COMMAND_W), Keys.CLOSE_WINDOW);
 		}
 
 		// Just close the main app window
-		if (isLinux && isMainApp) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl Q"), closeWindowKey);
+		if (IS_LINUX && isMainApp) {
+			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_Q), Keys.CLOSE_WINDOW);
 		}
 
-		window.getRootPane().getActionMap().put(closeWindowKey, closeWindow);
+		window.getRootPane().getActionMap().put(Keys.CLOSE_WINDOW, closeWindow);
 	}
 
 	public void enterFullScreen() {
@@ -605,13 +587,13 @@ public final class OpenLogViewer extends JFrame {
 							toFront();              // Might as well
 							requestFocusInWindow(); // Put keyboard focus here so toggling fullscreen works
 							graphingPanel.moveGraphDueToResize(); // Done so centering still works on Mac
-						} catch (Exception e) {
+						} catch (IllegalComponentStateException e) {
 							e.printStackTrace();
-							System.out.println(labels.getObject(FAILED_TO_GO_FULLSCREEN_MESSAGE_KEY));
+							System.out.println(labels.getString(Text.FAILED_TO_GO_FULLSCREEN_MESSAGE));
 							fullscreen = false;
 						}
 					} else {
-						System.out.println(labels.getObject(CANT_GO_FULLSCREEN_MESSAGE_KEY));
+						System.out.println(labels.getString(Text.CANT_GO_FULLSCREEN_MESSAGE));
 					}
 				}
 			}
@@ -661,10 +643,12 @@ public final class OpenLogViewer extends JFrame {
 	}
 
 	public void defaultBrowserNotFound() {
-		JOptionPane.showMessageDialog(mainAppRef, labels.getObject(DEFAULT_BROWSER_ERROR_MESSAGE_KEY),
-				labels.getObject(DEFAULT_BROWSER_ERROR_TITLE_KEY).toString(),
-				JOptionPane.ERROR_MESSAGE);
+		final Object message = labels.getObject(Text.DEFAULT_BROWSER_ERROR_MESSAGE);
+		final String title = labels.getString(Text.DEFAULT_BROWSER_ERROR_TITLE);
+		JOptionPane.showMessageDialog(mainAppRef, message, title, JOptionPane.ERROR_MESSAGE); // DIRTY
 	}
+
+	// All of the references below are indicators of bad design, marking with DIRTY:
 
 	/**
 	 * Returns the reference to this instance, it is meant to be a method to make getting the main frame simpler

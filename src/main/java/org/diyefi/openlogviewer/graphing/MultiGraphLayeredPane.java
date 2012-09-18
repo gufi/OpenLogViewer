@@ -23,9 +23,11 @@
 package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
+import java.util.ResourceBundle;
 
 import javax.swing.JLayeredPane;
 
+import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
@@ -41,7 +43,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 	private int trackCount;
 	private int layer;
 
-	public MultiGraphLayeredPane() {
+	public MultiGraphLayeredPane(final ResourceBundle labels) {
 		setOpaque(true);
 		setLayout(null);
 		setBackground(Color.BLACK);
@@ -49,7 +51,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		layer = BOTTOM_LAYER;
 		trackCount = 1;
 
-		infoPanel = new InfoPanel();
+		infoPanel = new InfoPanel(labels);
 		infoPanel.setSize(PANEL_WIDTH, PANEL_HEIGHT);
 		setLayer(infoPanel, layer);
 		layer--;
@@ -79,7 +81,7 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			layer--;
 			this.add(graph);
 			this.addHierarchyBoundsListener(graph); // updates graph size automatically
-			genLog.get(header).addPropertyChangeListener("Split", graph);
+			genLog.get(header).addPropertyChangeListener(Keys.SPLIT, graph);
 			graph.setData(genLog.get(header));
 			graph.repaint();
 		}

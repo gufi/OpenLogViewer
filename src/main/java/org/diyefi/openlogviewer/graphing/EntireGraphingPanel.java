@@ -33,6 +33,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -40,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
+import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 
@@ -169,10 +171,10 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 	private boolean zoomedOutBeyondOneToOne;
 	private int oldComponentWidth;
 
-	public EntireGraphingPanel() {
-		setName("graphinPanel");
+	public EntireGraphingPanel(final ResourceBundle labels) {
+		setName(EntireGraphingPanel.class.getSimpleName());
 		setLayout(new BorderLayout());
-		multiGraph = new MultiGraphLayeredPane();
+		multiGraph = new MultiGraphLayeredPane(labels);
 		graphPositionPanel = new GraphPositionPanel();
 		playTimer = new Timer(BASE_PLAY_SPEED, this);
 		flingTimer = new Timer(BASE_FLING_SPEED, this);
@@ -876,53 +878,53 @@ public class EntireGraphingPanel extends JPanel implements ActionListener,
 
 	private void initKeyBindings() {
 		// Play key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "play");
-		getActionMap().put("play", play);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.SPACE), Keys.PLAY);
+		getActionMap().put(Keys.PLAY, play);
 
 		// Enter full screen key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt ENTER"), "enterFullScreen");
-		getActionMap().put("enterFullScreen", enterFullScreen);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.ALT_ENTER), Keys.ENTER_FULL_SCREEN);
+		getActionMap().put(Keys.ENTER_FULL_SCREEN, enterFullScreen);
 
 		// Exit full screen key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "exitFullScreen");
-		getActionMap().put("exitFullScreen", exitFullScreen);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.ESCAPE), Keys.EXIT_FULL_SCREEN);
+		getActionMap().put(Keys.EXIT_FULL_SCREEN, exitFullScreen);
 
 		// Toggle full screen key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F11"), "toggleFullScreen");
-		getActionMap().put("toggleFullScreen", toggleFullScreen);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.F11), Keys.TOGGLE_FULL_SCREEN);
+		getActionMap().put(Keys.TOGGLE_FULL_SCREEN, toggleFullScreen);
 
 		// Move to beginning key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("HOME"), "moveToBeginning");
-		getActionMap().put("moveToBeginning", moveToBeginning);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.HOME), Keys.MOVE_TO_BEGINNING);
+		getActionMap().put(Keys.MOVE_TO_BEGINNING, moveToBeginning);
 
 		// Move to end key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("END"), "moveToEnd");
-		getActionMap().put("moveToEnd", moveToEnd);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.END), Keys.MOVE_TO_END);
+		getActionMap().put(Keys.MOVE_TO_END, moveToEnd);
 
 		// Move backward key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "moveBackward");
-		getActionMap().put("moveBackward", moveBackward);
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("PAGE_UP"), "moveBackwardCoarse");
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl LEFT"), "moveBackwardCoarse");
-		getActionMap().put("moveBackwardCoarse", moveBackwardCoarse);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.LEFT), Keys.MOVE_BACKWARD);
+		getActionMap().put(Keys.MOVE_BACKWARD, moveBackward);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.PAGE_UP), Keys.MOVE_BACKWARD_COARSE);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_LEFT), Keys.MOVE_BACKWARD_COARSE);
+		getActionMap().put(Keys.MOVE_BACKWARD_COARSE, moveBackwardCoarse);
 
 		// Move forward key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "moveForward");
-		getActionMap().put("moveForward", moveForward);
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("PAGE_DOWN"), "moveForwardCoarse");
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl RIGHT"), "moveForwardCoarse");
-		getActionMap().put("moveForwardCoarse", moveForwardCoarse);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.RIGHT), Keys.MOVE_FORWARD);
+		getActionMap().put(Keys.MOVE_FORWARD, moveForward);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.PAGE_DOWN), Keys.MOVE_FORWARD_COARSE);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_RIGHT), Keys.MOVE_FORWARD_COARSE);
+		getActionMap().put(Keys.MOVE_FORWARD_COARSE, moveForwardCoarse);
 
 		// Zoom in key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "zoomInCoarse");
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl ADD"), "zoomInCoarse");
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl EQUALS"), "zoomInCoarse");
-		getActionMap().put("zoomInCoarse", zoomInCoarse);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.UP), Keys.ZOOM_IN_COARSE);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_ADD), Keys.ZOOM_IN_COARSE);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_EQUALS), Keys.ZOOM_IN_COARSE);
+		getActionMap().put(Keys.ZOOM_IN_COARSE, zoomInCoarse);
 
 		// Zoom out key bindings
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "zoomOutCoarse");
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl MINUS"), "zoomOutCoarse");
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl SUBTRACT"), "zoomOutCoarse");
-		getActionMap().put("zoomOutCoarse", zoomOutCoarse);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.DOWN), Keys.ZOOM_OUT_COARSE);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_MINUS), Keys.ZOOM_OUT_COARSE);
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_SUBTRACT), Keys.ZOOM_OUT_COARSE);
+		getActionMap().put(Keys.ZOOM_OUT_COARSE, zoomOutCoarse);
 	}
 }

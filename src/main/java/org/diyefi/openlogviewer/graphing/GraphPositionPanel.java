@@ -176,7 +176,8 @@ public class GraphPositionPanel extends JPanel {
 						}
 					}
 				}
-				String positionDataString = "";
+
+				String positionDataString;
 				if (majorGraduationSpacing > TENTHS_DISPLAY_THRESHOLD) {
 					final BigDecimal positionData = new BigDecimal(nextPositionMarker);
 					positionDataString = positionData.toPlainString();

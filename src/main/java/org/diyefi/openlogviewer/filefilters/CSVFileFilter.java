@@ -24,12 +24,14 @@ package org.diyefi.openlogviewer.filefilters;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+
+import org.diyefi.openlogviewer.FileExtensions;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class CSVFileFilter extends FileFilter {
 	@Override
 	public final String getDescription() {
-		return "*.csv";
+		return FileExtensions.STAR_DOT + FileExtensions.CSV;
 	}
 
 	@Override
@@ -40,6 +42,6 @@ public class CSVFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		return "csv".equals(extension);
+		return FileExtensions.CSV.equals(extension);
 	}
 }

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import javax.swing.BorderFactory;
@@ -56,19 +57,27 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang3.StringUtils;
+import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
+import org.diyefi.openlogviewer.Text;
 
 public class PropertiesPane extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private final JPanel propertyView;
+	private final ResourceBundle labels;
+	private final String settingsDirectory;
 
 	private File OLVProperties;
 	private List<SingleProperty> properties;
 	private List<SingleProperty> removeProperties;
 
-	public PropertiesPane(final String title) {
-		super(title);
+	public PropertiesPane(final ResourceBundle labels, final String settingsDirectory) {
+		super(labels.getString(Text.VIEW_MENU_ITEM_SCALE_AND_COLOR_NAME));
+
+		this.labels = labels;
+		this.settingsDirectory = settingsDirectory;
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setPreferredSize(new Dimension(350, 500));
@@ -98,30 +107,30 @@ public class PropertiesPane extends JFrame {
 	private void setupForLoad() {
 		try {
 			final String systemDelim = File.separator;
-			final File homeDir = new File(System.getProperty("user.home"));
+			final File homeDir = new File(System.getProperty(Keys.USER_HOME));
 
 			if (!homeDir.exists() || !homeDir.canRead() || !homeDir.canWrite()) {
-				System.out.println("Iether you dont have a home director, or it isnt read/writeable... fix it");
+				System.out.println(labels.getString(Text.HOME_DIRECTORY_NOT_ACCESSIBLE));
 
 			} else {
-				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer");
+				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + settingsDirectory);
 			}
 
 			if (!OLVProperties.exists()) {
 				try {
 					if (OLVProperties.mkdir()) {
-						OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+						OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + settingsDirectory + systemDelim + "OLVProperties.olv");
 						if (OLVProperties.createNewFile()) {
 							loadProperties();
 						}
 					} else {
-						throw new RuntimeException("Couldn't create directory for props..."); // find somewhere else
+						throw new RuntimeException(labels.getString(Text.FAILED_TO_CREATE_DIRECTORY_MESSAGE));
 					}
 				} catch (IOException ioe) {
 					System.out.print(ioe.getMessage());
 				}
 			} else {
-				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + ".OpenLogViewer" + systemDelim + "OLVProperties.olv");
+				OLVProperties = new File(homeDir.getAbsolutePath() + systemDelim + settingsDirectory + systemDelim + "OLVProperties.olv");
 				OLVProperties.createNewFile(); // Just in case the file does not exist yet. This won't overwrite an existing file.
 				loadProperties();
 			}
@@ -132,17 +141,17 @@ public class PropertiesPane extends JFrame {
 
 	private JMenuBar createMenuBar() {
 		final JMenuBar propMenuBar = new JMenuBar();
-		final JMenu optionMenu = new JMenu("Options");
-		final JMenuItem addProp = new JMenuItem("Add New Property");
-		final JMenuItem remProp = new JMenuItem("Remove Selected Propertys");
+		final JMenu options = new JMenu(labels.getString(Text.OPTIONS_MENU_NAME));
+		final JMenuItem addProperty = new JMenuItem(labels.getString(Text.OPTIONS_MENU_ITEM_ADD_PROPERTY_NAME));
+		final JMenuItem removeProperty = new JMenuItem(labels.getString(Text.OPTIONS_MENU_ITEM_REMOVE_PROPERTIES_NAME));
 
-		propMenuBar.add(optionMenu);
-		addProp.addActionListener(new ActionListener() {
+		propMenuBar.add(options);
 
+		addProperty.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent evt) {
-				final String s = (String) JOptionPane.showInputDialog(rootPane, "Enter the header for a new property");
-				if ((s != null) && !"".equals(s)) { // TODO Bad need of stringUtils here...
+				final String s = (String) JOptionPane.showInputDialog(rootPane, labels.getString(Text.ENTER_HEADER_FOR_PROPERTY));
+				if (StringUtils.isNotBlank(s)) {
 					final SingleProperty newprop = new SingleProperty();
 					newprop.setHeader(s);
 					addProperty(newprop);
@@ -150,7 +159,7 @@ public class PropertiesPane extends JFrame {
 			}
 		});
 
-		remProp.addActionListener(new ActionListener() {
+		removeProperty.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent evt) {
@@ -158,8 +167,8 @@ public class PropertiesPane extends JFrame {
 			}
 		});
 
-		optionMenu.add(addProp);
-		optionMenu.add(remProp);
+		options.add(addProperty);
+		options.add(removeProperty);
 
 		return propMenuBar;
 	}
@@ -169,10 +178,10 @@ public class PropertiesPane extends JFrame {
 		aPanel.setPreferredSize(new Dimension(500, 32));
 		aPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 2, 2));
 
-		final JButton okButton = new JButton("OK");
-		final JButton cancel = new JButton("Cancel");
+		final JButton ok = new JButton(labels.getString(Text.OK_BUTTON));
+		final JButton cancel = new JButton(labels.getString(Text.CANCEL_BUTTON));
 
-		okButton.addActionListener(new ActionListener() {
+		ok.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -192,7 +201,7 @@ public class PropertiesPane extends JFrame {
 		});
 
 		aPanel.add(cancel);
-		aPanel.add(okButton);
+		aPanel.add(ok);
 
 		return aPanel;
 	}
@@ -237,9 +246,9 @@ public class PropertiesPane extends JFrame {
 			}
 
 			out.close();
-		} catch (Exception e) { // Catch exception if any
-			System.err.println("Error: " + e.getMessage());
-			throw new RuntimeException("Catchall of type Exception is evil!", e);
+		} catch (IOException e) {
+			System.err.println(labels.getString(Text.ERROR) + e.getMessage());
+			throw new RuntimeException(labels.getString(Text.IO_ISSUE_SAVING_PROPERTY), e);
 		}
 	}
 
@@ -339,11 +348,11 @@ public class PropertiesPane extends JFrame {
 			setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
 			setBorder(BorderFactory.createTitledBorder(sp.getHeader()));
 			setPreferredSize(new Dimension(500, 50));
-			final JLabel minLabel = new JLabel("Min:");
-			final JLabel maxLabel = new JLabel("Max:");
-			final JLabel colorLabel = new JLabel("Color:");
-			final JLabel splitLabel = new JLabel("Split:");
-			final JLabel activeLabel = new JLabel("Active:");
+			final JLabel minLabel = new JLabel(labels.getString(Text.MIN_PROPERTY));
+			final JLabel maxLabel = new JLabel(labels.getString(Text.MAX_PROPERTY));
+			final JLabel colorLabel = new JLabel(labels.getString(Text.COLOR_PROPERTY));
+			final JLabel splitLabel = new JLabel(labels.getString(Text.SPLIT_PROPERTY));
+			final JLabel activeLabel = new JLabel(labels.getString(Text.ACTIVE_PROPERTY));
 			trackBox = new JTextField();
 			trackBox.setPreferredSize(new Dimension(15, 20));
 			trackBox.setText(Integer.toString(sp.getTrackIndex()));
@@ -356,7 +365,7 @@ public class PropertiesPane extends JFrame {
 			colorBox = new JPanel();
 			colorBox.setBackground(sp.getColor());
 			colorBox.setPreferredSize(new Dimension(30, 20));
-			final String[] tf = {"False", "True"};
+			final String[] tf = {labels.getString(Text.TRUE), labels.getString(Text.FALSE)};
 			activeBox = new JComboBox(tf);
 
 			if (sp.isActive()) {
@@ -372,10 +381,9 @@ public class PropertiesPane extends JFrame {
 				public void mouseReleased(final MouseEvent e) {
 					final Color newColor = JColorChooser.showDialog(
 							OpenLogViewer.getInstance().getOptionFrame(),
-							"Choose New Color", colorBox.getBackground());
+							labels.getString(Text.CHOOSE_NEW_COLOR), colorBox.getBackground());
 					if (newColor != null) {
 						colorBox.setBackground(newColor);
-
 					}
 				}
 

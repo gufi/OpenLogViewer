@@ -23,13 +23,24 @@
 package org.diyefi.openlogviewer.filefilters;
 
 import java.io.File;
+import java.util.ResourceBundle;
+
 import javax.swing.filechooser.FileFilter;
+
+import org.diyefi.openlogviewer.FileExtensions;
+import org.diyefi.openlogviewer.Text;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class MSTypeFileFilter extends FileFilter {
+	private final ResourceBundle labels;
+
+	public MSTypeFileFilter(final ResourceBundle labels) {
+		this.labels = labels;
+	}
+
 	@Override
 	public final String getDescription() {
-		return "MegaSquirt Compatable DataLogs";
+		return labels.getString(Text.MS_COMPATIBLE_LOGS);
 	}
 
 	@Override
@@ -40,13 +51,13 @@ public class MSTypeFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		if ("log".equals(extension)) {
+		if (FileExtensions.LOG.equals(extension)) {
 			return true;
-		} else if ("csv".equals(extension)) {
+		} else if (FileExtensions.CSV.equals(extension)) {
 			return true;
-		} else if ("xls".equals(extension)) {
+		} else if (FileExtensions.XLS.equals(extension)) {
 			return true;
-		} else if ("msl".equals(extension)) {
+		} else if (FileExtensions.MSL.equals(extension)) {
 			return true;
 		}
 

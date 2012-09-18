@@ -26,23 +26,27 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.Text;
 
 public class CSVTypeLog extends AbstractDecoder {
-	private static final int initialLength = 75000;
-	private static final int loadFactor = 2;
+	private static final int INITIAL_LENGTH = 75000;
+	private static final int LOAD_FACTOR = 2;
+	private static final String[] DELIMITERS = {"\t", ",", ":", "/", "\\\\"};
+	private final ResourceBundle labels;
 	private int fieldCount = -1;
 
 	/**
-	 * This constructor is called when a string path is provided
-	 * @param f
+	 * @param f The CSV file to examine and attempt to load.
 	 */
-	public CSVTypeLog(final File f) {
+	public CSVTypeLog(final File f, final ResourceBundle labels) {
+		this.labels = labels;
 		this.setLogFile(f);
-		this.setT(new Thread(this, "CSV Type Log Loading"));
+		this.setT(new Thread(this, CSVTypeLog.class.getSimpleName()));
 		this.getT().setPriority(Thread.MAX_PRIORITY);
 		this.getT().start();
 	}
@@ -54,8 +58,10 @@ public class CSVTypeLog extends AbstractDecoder {
 			decodeLog();
 			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphSize(this.getDecodedLog().getRecordCount());
 			this.getDecodedLog().setLogStatus(GenericLog.LogState.LOG_LOADED);
-			System.out.println("Loaded " + (this.getDecodedLog().getRecordCount() + 1) + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
-		} catch (Exception e) {
+			System.out.println(labels.getString(Text.CSV_LOADED_MSG_PART1)
+					+ (this.getDecodedLog().getRecordCount() + 1) + labels.getString(Text.CSV_LOADED_MSG_PART2)
+					+ (System.currentTimeMillis() - startTime) + labels.getString(Text.CSV_LOADED_MSG_PART3));
+		} catch (IOException e) {
 			e.printStackTrace();
 			if (this.getDecodedLog() != null) {
 				this.getDecodedLog().setLogStatusMessage(e.getMessage());
@@ -89,7 +95,7 @@ public class CSVTypeLog extends AbstractDecoder {
 
 			if (splitLine.length == fieldCount) {
 				headers = splitLine;
-				this.setDecodedLog(new GenericLog(splitLine, initialLength, loadFactor));
+				this.setDecodedLog(new GenericLog(splitLine, INITIAL_LENGTH, LOAD_FACTOR, labels));
 				headerSet = true;
 			}
 		}
@@ -112,28 +118,27 @@ public class CSVTypeLog extends AbstractDecoder {
 	 * @throws IOException
 	 */
 	private String scanForDelimiter() throws IOException {
-		final String[] delim = {"\t", ",", ":", "/", "\\\\"};
 		final FileReader reader = new FileReader(getLogFile());
 		final Scanner scan = new Scanner(reader);
 
 		final int magicNumber = 10; // Remove the MAGIC!
 		String delimiterFind = "";
 		String[] split;
-		int delimNum = -1;
+		int index = -1;
 
 		for (int i = 0; i < magicNumber && scan.hasNext(); i++) {
 			delimiterFind = scan.nextLine();
-			for (int j = 0; j < delim.length; j++) {
-				split = delimiterFind.split(delim[j]);
+			for (int j = 0; j < DELIMITERS.length; j++) {
+				split = delimiterFind.split(DELIMITERS[j]);
 				if (split.length > fieldCount) {
 					fieldCount = split.length;
-					delimNum = j;
+					index = j;
 				}
 			}
 		}
 
 		scan.close();
 		reader.close();
-		return delim[delimNum];
+		return DELIMITERS[index];
 	}
 }

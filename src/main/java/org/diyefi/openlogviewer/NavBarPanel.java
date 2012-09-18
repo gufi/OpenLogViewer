@@ -29,6 +29,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Box;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -40,48 +41,15 @@ public class NavBarPanel extends JPanel {
 	private static final int PREFERRED_HEIGHT = 18;
 	private static final int SPACER_WIDTH = 16;
 
-	private final JButton zoomInButton;
-	private final JButton zoomResetRatioButton;
-	private final JButton zoomResetFitButton;
-	private final JButton zoomOutButton;
-	private final JButton pausePlayButton;
-	private final JButton slowDownButton;
-	private final JButton resetPlaySpeedButton;
-	private final JButton speedUpButton;
-	private final JButton moveToBeginningButton;
-	private final JButton moveBackwardCoarseButton;
-	private final JButton moveBackwardButton;
-	private final JButton moveToCenterButton;
-	private final JButton moveForwardButton;
-	private final JButton moveForwardCoarseButton;
-	private final JButton moveToEndButton;
-	private final JButton openButton;
-	private final JButton openLastButton;
+	private static final String BUTTON_DIR = "buttons/";
 
+	private static final Icon PLAY_ICON = new ImageIcon(NavBarPanel.class.getResource(BUTTON_DIR + Images.PLAY));
+	private static final Icon PAUSE_ICON = new ImageIcon(NavBarPanel.class.getResource(BUTTON_DIR + Images.PAUSE));
+
+	private final JButton playAndPause = new JButton();
 
 	public NavBarPanel() {
-		zoomInButton = new JButton();
-		zoomResetRatioButton = new JButton();
-		zoomResetFitButton = new JButton();
-		zoomOutButton = new JButton();
-		pausePlayButton = new JButton();
-		slowDownButton = new JButton();
-		resetPlaySpeedButton = new JButton();
-		speedUpButton = new JButton();
-		moveToBeginningButton = new JButton();
-		moveBackwardCoarseButton = new JButton();
-		moveBackwardButton = new JButton();
-		moveToCenterButton = new JButton();
-		moveForwardButton = new JButton();
-		moveForwardCoarseButton = new JButton();
-		moveToEndButton = new JButton();
-		openButton = new JButton();
-		openLastButton = new JButton();
-		initComponents();
-	}
-
-	private void initComponents() {
-		setName("navBarPanel");
+		setName(NavBarPanel.class.getSimpleName());
 		setPreferredSize(new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT));
 		setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
@@ -95,187 +63,202 @@ public class NavBarPanel extends JPanel {
 	}
 
 	private void setupZoomButtons() {
-		zoomInButton.addMouseListener(new MouseAdapter() {
+		final JButton zoomIn = new JButton();
+		zoomIn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (zoomInButton.contains(e.getPoint())) {
+				if (zoomIn.contains(e.getPoint())) {
 					zoomInButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(zoomInButton, "zoomIn.png");
+		setupAndAddButton(zoomIn, Images.ZOOM_IN);
 
-		zoomResetRatioButton.addMouseListener(new MouseAdapter() {
+		final JButton zoomResetRatio = new JButton();
+		zoomResetRatio.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (zoomResetRatioButton.contains(e.getPoint())) {
+				if (zoomResetRatio.contains(e.getPoint())) {
 					zoomResetRatioButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(zoomResetRatioButton, "zoomResetRatio.png");
+		setupAndAddButton(zoomResetRatio, Images.ZOOM_RESET_RATIO);
 
-		zoomResetFitButton.addMouseListener(new MouseAdapter() {
+		final JButton zoomResetFit = new JButton();
+		zoomResetFit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (zoomResetFitButton.contains(e.getPoint())) {
+				if (zoomResetFit.contains(e.getPoint())) {
 					zoomResetFitButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(zoomResetFitButton, "zoomResetFit.png");
+		setupAndAddButton(zoomResetFit, Images.ZOOM_RESET_FIT);
 
-		zoomOutButton.addMouseListener(new MouseAdapter() {
+		final JButton zoomOut = new JButton();
+		zoomOut.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (zoomOutButton.contains(e.getPoint())) {
+				if (zoomOut.contains(e.getPoint())) {
 					zoomOutButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(zoomOutButton, "zoomOut.png");
+		setupAndAddButton(zoomOut, Images.ZOOM_OUT);
 	}
 
 	private void setupPlayButtons() {
-		slowDownButton.addMouseListener(new MouseAdapter() {
+		final JButton slowDown = new JButton();
+		slowDown.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (slowDownButton.contains(e.getPoint())) {
+				if (slowDown.contains(e.getPoint())) {
 					slowDownButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(slowDownButton, "slowDown.png");
+		setupAndAddButton(slowDown, Images.SLOW_DOWN);
 
-		resetPlaySpeedButton.addMouseListener(new MouseAdapter() {
+		final JButton resetPlaySpeed = new JButton();
+		resetPlaySpeed.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (resetPlaySpeedButton.contains(e.getPoint())) {
+				if (resetPlaySpeed.contains(e.getPoint())) {
 					resetPlaySpeedButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(resetPlaySpeedButton, "resetPlaySpeed.png");
+		setupAndAddButton(resetPlaySpeed, Images.RESET_SPEED);
 
-		pausePlayButton.addMouseListener(new MouseAdapter() {
+		playAndPause.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (pausePlayButton.contains(e.getPoint())) {
+				if (playAndPause.contains(e.getPoint())) {
 					pausePlayButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(pausePlayButton, "play.png");
+		setupAndAddButton(playAndPause, Images.PLAY);
 
-		speedUpButton.addMouseListener(new MouseAdapter() {
+		final JButton speedUp = new JButton();
+		speedUp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (speedUpButton.contains(e.getPoint())) {
+				if (speedUp.contains(e.getPoint())) {
 					speedUpButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(speedUpButton, "speedUp.png");
+		setupAndAddButton(speedUp, Images.SPEED_UP);
 	}
 
 	private void setupNavigationButtons() {
-		moveToBeginningButton.addMouseListener(new MouseAdapter() {
+		final JButton moveToBeginning = new JButton();
+		moveToBeginning.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveToBeginningButton.contains(e.getPoint())) {
+				if (moveToBeginning.contains(e.getPoint())) {
 					moveToBeginningButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveToBeginningButton, "moveToBeginning.png");
+		setupAndAddButton(moveToBeginning, Images.MOVE_TO_BEGINNING);
 
-		moveBackwardCoarseButton.addMouseListener(new MouseAdapter() {
+		final JButton moveBackwardCoarse = new JButton();
+		moveBackwardCoarse.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveBackwardCoarseButton.contains(e.getPoint())) {
+				if (moveBackwardCoarse.contains(e.getPoint())) {
 					moveBackwardCoarseButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveBackwardCoarseButton, "moveBackwardCoarse.png");
+		setupAndAddButton(moveBackwardCoarse, Images.MOVE_BACKWARD_COARSE);
 
-		moveBackwardButton.addMouseListener(new MouseAdapter() {
+		final JButton moveBackward = new JButton();
+		moveBackward.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveBackwardButton.contains(e.getPoint())) {
+				if (moveBackward.contains(e.getPoint())) {
 					moveBackwardButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveBackwardButton, "moveBackward.png");
+		setupAndAddButton(moveBackward, Images.MOVE_BACKWARD);
 
-		moveToCenterButton.addMouseListener(new MouseAdapter() {
+		final JButton moveToCenter = new JButton();
+		moveToCenter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveToCenterButton.contains(e.getPoint())) {
+				if (moveToCenter.contains(e.getPoint())) {
 					moveToCenterButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveToCenterButton, "moveToCenter.png");
+		setupAndAddButton(moveToCenter, Images.MOVE_TO_CENTER);
 
-		moveForwardButton.addMouseListener(new MouseAdapter() {
+		final JButton moveForward = new JButton();
+		moveForward.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveForwardButton.contains(e.getPoint())) {
+				if (moveForward.contains(e.getPoint())) {
 					moveForwardButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveForwardButton, "moveForward.png");
+		setupAndAddButton(moveForward, Images.MOVE_FORWARD);
 
-		moveForwardCoarseButton.addMouseListener(new MouseAdapter() {
+		final JButton moveForwardCoarse = new JButton();
+		moveForwardCoarse.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveForwardCoarseButton.contains(e.getPoint())) {
+				if (moveForwardCoarse.contains(e.getPoint())) {
 					moveForwardCoarseButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveForwardCoarseButton, "moveForwardCoarse.png");
+		setupAndAddButton(moveForwardCoarse, Images.MOVE_FORWARD_COARSE);
 
-		moveToEndButton.addMouseListener(new MouseAdapter() {
+		final JButton moveToEnd = new JButton();
+		moveToEnd.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (moveToEndButton.contains(e.getPoint())) {
+				if (moveToEnd.contains(e.getPoint())) {
 					moveToEndButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(moveToEndButton, "moveToEnd.png");
+		setupAndAddButton(moveToEnd, Images.MOVE_TO_END);
 	}
 
 	private void setupFileButtons() {
-		openButton.addMouseListener(new MouseAdapter() {
+		final JButton openFile = new JButton();
+		openFile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (openButton.contains(e.getPoint())) {
+				if (openFile.contains(e.getPoint())) {
 					openButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(openButton, "open.png");
+		setupAndAddButton(openFile, Images.OPEN_FILE);
 
-		openLastButton.addMouseListener(new MouseAdapter() {
+		final JButton openLast = new JButton();
+		openLast.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {
-				if (openLastButton.contains(e.getPoint())) {
+				if (openLast.contains(e.getPoint())) {
 					openLastButtonMouseReleased();
 				}
 			}
 		});
-		setupAndAddButton(openLastButton, "openLast.png");
+		setupAndAddButton(openLast, Images.OPEN_LAST);
 	}
 
-	private void setupAndAddButton(final JButton button, final String iconLocation) {
-		button.setIcon(new ImageIcon(getClass().getResource(iconLocation)));
+	private void setupAndAddButton(final JButton button, final String iconFileName) {
+		button.setIcon(new ImageIcon(getClass().getResource(BUTTON_DIR + iconFileName)));
 		button.setBorder(null);
-		button.setName("moveToEndButton");
 		button.setRequestFocusEnabled(false);
 		add(button);
 	}
@@ -283,11 +266,11 @@ public class NavBarPanel extends JPanel {
 	public final void updatePausePlayButton() {
 		final boolean playing = OpenLogViewer.getInstance().getEntireGraphingPanel().isPlaying();
 		if (playing) {
-			pausePlayButton.setIcon(new ImageIcon(getClass().getResource("pause.png"))); // NOI18N
+			playAndPause.setIcon(PAUSE_ICON);
 		} else {
-			pausePlayButton.setIcon(new ImageIcon(getClass().getResource("play.png"))); // NOI18N
+			playAndPause.setIcon(PLAY_ICON);
 		}
-		pausePlayButton.setBorder(null);
+		playAndPause.setBorder(null);
 	}
 
 	/**

@@ -24,13 +24,24 @@
 package org.diyefi.openlogviewer.filefilters;
 
 import java.io.File;
+import java.util.ResourceBundle;
+
 import javax.swing.filechooser.FileFilter;
+
+import org.diyefi.openlogviewer.FileExtensions;
+import org.diyefi.openlogviewer.Text;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class FreeEMSFileFilter extends FileFilter {
+	private final ResourceBundle labels;
+
+	public FreeEMSFileFilter(final ResourceBundle labels) {
+		this.labels = labels;
+	}
+
 	@Override
 	public final String getDescription() {
-		return "FreeEMS Binary Logs";
+		return labels.getString(Text.FREEEMS_BINARY_LOGS);
 	}
 
 	@Override
@@ -41,9 +52,9 @@ public class FreeEMSFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		if ("bin".equals(extension)) {
+		if (FileExtensions.BIN.equals(extension)) {
 			return true;
-		} else if ("la".equals(extension)) {
+		} else if (FileExtensions.LA.equals(extension)) {
 			return true;
 		}
 

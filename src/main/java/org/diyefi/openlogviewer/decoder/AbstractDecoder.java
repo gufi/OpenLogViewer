@@ -59,28 +59,6 @@ public abstract class AbstractDecoder implements Runnable {
 	private Thread t;
 
 	/**
-	 * Overriden Run from the Runnable Interface to do the work for us in a threaded fashion.
-	 */
-//	@Override
-//	public final void run() {
-//		try {
-//			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADING);
-//			decodeLog();
-//			this.getDecodedLog().setLogStatus(GenericLog.LOG_LOADED);
-//		} catch (IOException IOE) {
-//			this.getDecodedLog().setLogStatus(GenericLog.LOG_NOT_LOADED);
-//			System.out.println("Error Loading Log: " + IOE.getMessage());
-//		}
-//	}
-
-//	/**
-//	 * BaseDecoder.decodeLog() is an abstract method. Override this method write your parsing code within it, when creating an object that
-//	 * extends BaseDecoder the rest will be taken care of automatically
-//	 * @throws IOException
-//	 */
-//	abstract void decodeLog() throws IOException;
-
-	/**
 	 * used for getting the decided log for injection to the main pieces of the program that will use it
 	 * @return GenericLog
 	 */

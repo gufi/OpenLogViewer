@@ -38,6 +38,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -51,6 +52,7 @@ import javax.swing.JColorChooser;
 import javax.swing.BorderFactory;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
+import org.diyefi.openlogviewer.Text;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.propertypanel.SingleProperty;
@@ -81,7 +83,12 @@ public class OptionFrameV2 extends JFrame {
 	private static final int HEIGHT_OF_WINDOW = ((PANEL_HEIGHT * HEIGHT_OF_BOXES) + (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
 
 	private static final char DS = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+	private static final String UNKNOWN_DIGIT = "-"; // String, not char, so we can append below
+	private static final String UNKNOWN_NUMBER = UNKNOWN_DIGIT + DS + UNKNOWN_DIGIT;
 
+	private static final String DROP_PREFIX = "Drop";
+
+	private final ResourceBundle labels;
 	private final JFrame thisRef;
 	private final JPanel inactiveHeaders;
 	private final ModifyGraphPane infoPanel;
@@ -89,41 +96,6 @@ public class OptionFrameV2 extends JFrame {
 
 	private final JLayeredPane layeredPane;
 	private final List<JPanel> activePanelList;
-
-	public OptionFrameV2() {
-		super("Graphing Option Pane");
-		setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
-		setPreferredSize(this.getSize());
-
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		thisRef = this;
-		activePanelList = new ArrayList<JPanel>();
-		layeredPane = new JLayeredPane();
-		layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
-		OpenLogViewer.setupWindowKeyBindings(this);
-
-		final JScrollPane scroll = new JScrollPane(layeredPane);
-
-		inactiveHeaders = initHeaderPanel();
-		layeredPane.add(inactiveHeaders);
-		infoPanel = new ModifyGraphPane();
-		add(infoPanel);
-
-		this.add(scroll);
-		addActiveHeaderPanel();
-	}
-
-	private JPanel initHeaderPanel() {
-		final JPanel ih = new JPanel();
-		ih.setLayout(null);
-		ih.setName("Drop InactiveHeaderPanel");
-		addDivisionButton = new JButton("Add Division");
-		addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
-		addDivisionButton.addActionListener(addDivisionListener);
-		ih.add(addDivisionButton);
-		ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
-		return ih;
-	}
 
 	private final ActionListener addDivisionListener = new ActionListener() {
 		@Override
@@ -168,6 +140,43 @@ public class OptionFrameV2 extends JFrame {
 		}
 	};
 
+	public OptionFrameV2(final ResourceBundle labels) {
+		super(OptionFrameV2.class.getSimpleName());
+		this.labels = labels;
+
+		setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
+		setPreferredSize(this.getSize());
+
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		thisRef = this;
+		activePanelList = new ArrayList<JPanel>();
+		layeredPane = new JLayeredPane();
+		layeredPane.setPreferredSize(new Dimension(WIDTH_OF_WINDOW, HEIGHT_OF_WINDOW));
+		OpenLogViewer.setupWindowKeyBindings(this);
+
+		final JScrollPane scroll = new JScrollPane(layeredPane);
+
+		inactiveHeaders = initHeaderPanel();
+		layeredPane.add(inactiveHeaders);
+		infoPanel = new ModifyGraphPane();
+		add(infoPanel);
+
+		this.add(scroll);
+		addActiveHeaderPanel();
+	}
+
+	private JPanel initHeaderPanel() {
+		final JPanel ih = new JPanel();
+		ih.setLayout(null);
+		ih.setName(DROP_PREFIX + "InactiveHeaderPanel");
+		addDivisionButton = new JButton(labels.getString(Text.ADD_DIVISION_BUTTON));
+		addDivisionButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
+		addDivisionButton.addActionListener(addDivisionListener);
+		ih.add(addDivisionButton);
+		ih.setBounds(0, 0, 1280, (COMP_HEIGHT * (HEIGHT_IN_FIELDS + NUMBER_OF_ADD_BUTTONS)));
+		return ih;
+	}
+
 	private void addActiveHeaderPanel() {
 		if (activePanelList.size() < MAX_NUMBER_OF_BOXES) {
 			final int row = activePanelList.size() / WIDTH_OF_BOXES;
@@ -178,13 +187,13 @@ public class OptionFrameV2 extends JFrame {
 				OpenLogViewer.getInstance().getMultiGraphLayeredPane().setTrackCount(activePanelList.size());
 			}
 			activePanel.setLayout(null);
-			activePanel.setName("Drop ActivePanel " + activePanelList.indexOf(activePanel));
+			activePanel.setName(DROP_PREFIX + " ActivePanel " + activePanelList.indexOf(activePanel));
 			activePanel.addContainerListener(addRemoveListener);
 
 			activePanel.setBounds((col * PANEL_WIDTH), inactiveHeaders.getHeight() + PANEL_HEIGHT * row, PANEL_WIDTH, PANEL_HEIGHT);
 			activePanel.setBackground(Color.DARK_GRAY);
-			final JButton removeButton = new JButton("Remove");
-			removeButton.setToolTipText("Click Here to remove this division and associated Graphs");
+			final JButton removeButton = new JButton(labels.getString(Text.REMOVE_DIVISION_BUTTON));
+			removeButton.setToolTipText(labels.getString(Text.CLICK_TO_REMOVE_DIVISION));
 			removeButton.setBounds(0, 0, PANEL_WIDTH, COMP_HEIGHT);
 			removeButton.addActionListener(remDivisionListener);
 			activePanel.add(removeButton);
@@ -260,7 +269,7 @@ public class OptionFrameV2 extends JFrame {
 					final Component cn = parentsParent.getComponentAt(pointNow);
 					if (cn instanceof JPanel) {
 						final JPanel j = (JPanel) cn;
-						if (j.getName().contains("Drop")) { // implement a better way to do this later
+						if (j.getName().contains(DROP_PREFIX)) { // implement a better way to do this later
 							j.add(c); // components cannot share parents so it is automatically removed
 							// reset the location to where the mouse is, otherwise first pixel when moving to the new jpanel
 							c.setLocation(
@@ -308,11 +317,10 @@ public class OptionFrameV2 extends JFrame {
 
 		final List<ActiveHeaderLabel> tmpList = new ArrayList<ActiveHeaderLabel>();
 		final Iterator<String> headers = datalog.keySet().iterator();
-		String header = "";
 		ActiveHeaderLabel toBeAdded = null;
 
 		while (headers.hasNext()) {
-			header = headers.next();
+			final String header = headers.next();
 			final GenericDataElement GDE = datalog.get(header);
 			toBeAdded = new ActiveHeaderLabel();
 
@@ -367,13 +375,8 @@ public class OptionFrameV2 extends JFrame {
 
 		private GenericDataElement GDE;
 		private ActiveHeaderLabel AHL;
-		private final JLabel minLabel;
-		private final JLabel maxLabel;
 		private final JTextField minField;
 		private final JTextField maxField;
-		private final JButton resetButton;
-		private final JButton applyButton;
-		private final JButton saveButton;
 		private final JButton colorButton;
 
 		private final ActionListener resetButtonListener = new ActionListener() {
@@ -413,7 +416,7 @@ public class OptionFrameV2 extends JFrame {
 			public void actionPerformed(final ActionEvent e) {
 				final Color c = JColorChooser.showDialog(
 						new JFrame(),
-						"Choose Background Color",
+						labels.getString(Text.CHOOSE_BACKGROUND_COLOR),
 						colorButton.getForeground());
 				if (c != null) {
 					colorButton.setForeground(c);
@@ -422,46 +425,49 @@ public class OptionFrameV2 extends JFrame {
 		};
 
 		public ModifyGraphPane() {
-			this.setName("InfoPanel");
-			minLabel = new JLabel("Display Min:");
-			maxLabel = new JLabel("Display Max:");
-			minField = new JTextField(10);
-			maxField = new JTextField(10);
-			resetButton = new JButton("Reset Min/Max");
-			resetButton.addActionListener(resetButtonListener);
-
-			applyButton = new JButton("Apply");
-			applyButton.addActionListener(applyButtonListener);
-
-			saveButton = new JButton("Save");
-			saveButton.addActionListener(saveButtonListener);
-
-			colorButton = new JButton("Color");
-			colorButton.addActionListener(colorButtonListener);
-
+			final JLabel minLabel = new JLabel(labels.getString(Text.DISPLAY_MIN));
 			minLabel.setBounds(0, 0, COMP_WIDTH / 2, COMP_HEIGHT);
+
+			minField = new JTextField(10);
 			minField.setBounds(100, 0, COMP_WIDTH / 2, COMP_HEIGHT);
+
+			final JLabel maxLabel = new JLabel(labels.getString(Text.DISPLAY_MAX));
 			maxLabel.setBounds(0, 20, COMP_WIDTH / 2, COMP_HEIGHT);
+
+			maxField = new JTextField(10);
 			maxField.setBounds(100, 20, COMP_WIDTH / 2, COMP_HEIGHT);
+
+			colorButton = new JButton(labels.getString(Text.COLOR_BUTTON));
+			colorButton.addActionListener(colorButtonListener);
 			colorButton.setBounds(0, 40, COMP_WIDTH, COMP_HEIGHT);
+
+			final JButton applyButton = new JButton(labels.getString(Text.APPLY_BUTTON));
+			applyButton.addActionListener(applyButtonListener);
 			applyButton.setBounds(0, 60, COMP_WIDTH / 2, COMP_HEIGHT);
+
+			final JButton saveButton = new JButton(labels.getString(Text.SAVE_BUTTON));
+			saveButton.addActionListener(saveButtonListener);
 			saveButton.setBounds(100, 60, COMP_WIDTH / 2, COMP_HEIGHT);
+
+			final JButton resetButton = new JButton(labels.getString(Text.RESET_MIN_MAX_BUTTON));
+			resetButton.addActionListener(resetButtonListener);
 			resetButton.setBounds(0, 80, COMP_WIDTH, COMP_HEIGHT);
 
-			this.setLayout(null);
+			setLayout(null);
 
-			this.add(minLabel);
-			this.add(minField);
-			this.add(maxLabel);
-			this.add(maxField);
-			this.add(colorButton);
-			this.add(applyButton);
-			this.add(saveButton);
-			this.add(resetButton);
-			this.setBounds(500, 180, 210, 133);
-			this.setMaximizable(false);
-			this.setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
-			this.setClosable(true);
+			add(minLabel);
+			add(minField);
+			add(maxLabel);
+			add(maxField);
+			add(colorButton);
+			add(applyButton);
+			add(saveButton);
+			add(resetButton);
+
+			setBounds(500, 180, 210, 133);
+			setMaximizable(false);
+			setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+			setClosable(true);
 		}
 
 		public void setGDE(final GenericDataElement gde, final ActiveHeaderLabel ahl) {
@@ -476,14 +482,16 @@ public class OptionFrameV2 extends JFrame {
 		private void changeGDEValues() {
 			try {
 				GDE.setDisplayMaxValue(Double.parseDouble(maxField.getText()));
-			} catch (Exception ex) {
-				throw new RuntimeException("TODO: do something with Auto field"); // TODO
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				throw new RuntimeException(labels.getString(Text.OPV2NFES), e); // TODO
 			}
 
 			try {
 				GDE.setDisplayMinValue(Double.parseDouble(minField.getText()));
-			} catch (Exception ex) {
-				throw new RuntimeException("TODO: do something with Auto field"); // TODO
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				throw new RuntimeException(labels.getString(Text.OPV2NFES), e); // TODO
 			}
 
 			if (!GDE.getDisplayColor().equals(colorButton.getForeground())) {
@@ -582,7 +590,6 @@ public class OptionFrameV2 extends JFrame {
 			// this line is here because if the tool tip is never set no mouse events
 			// will ever be created for tool tips. TODO There HAS to be a better way to do this...
 			this.setToolTipTextPreliminary();
-//			this.setToolTipText("Please come again!"); // Didn't work, unsure why, this class is going bye bye anyway...
 		}
 
 		@Override
@@ -592,21 +599,21 @@ public class OptionFrameV2 extends JFrame {
 		}
 
 		public void setToolTipTextFinal() {
-			this.setToolTipText("<HTML> Data Stream: </b>" + GDE.getName()
-					+ "</b><br>Min Value: <b>" + GDE.getMinValue()
-					+ "</b><br>Min Display: <b>" + GDE.getDisplayMinValue()
-					+ "</b><br>Max Value: <b>" + GDE.getMaxValue()
-					+ "</b><br>Max Display: <b>" + GDE.getDisplayMaxValue()
-					+ "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
+			this.setToolTipText(labels.getString(Text.FIELD_INFORMATION_PART1) + GDE.getName()
+					+ labels.getString(Text.FIELD_INFORMATION_PART2) + GDE.getMinValue()
+					+ labels.getString(Text.FIELD_INFORMATION_PART3) + GDE.getDisplayMinValue()
+					+ labels.getString(Text.FIELD_INFORMATION_PART4) + GDE.getMaxValue()
+					+ labels.getString(Text.FIELD_INFORMATION_PART5) + GDE.getDisplayMaxValue()
+					+ labels.getString(Text.FIELD_INFORMATION_PART6));
 		}
 
 		public void setToolTipTextPreliminary() {
-			this.setToolTipText("<HTML> Data Stream: </b>" + GDE.getName()
-					+ "</b><br>Min Value: <b> -" + DS + "-"
-					+ "</b><br>Max Value: <b> -" + DS + "-"
-					+ "</b><br>Min Display: <b> -" + DS + "-"
-					+ "</b><br>Max Display: <b> -" + DS + "-"
-					+ "<br>To modify Min and Max values for scaling purposes Ctrl+LeftClick</HTML>");
+			this.setToolTipText(labels.getString(Text.FIELD_INFORMATION_PART1) + GDE.getName()
+					+ labels.getString(Text.FIELD_INFORMATION_PART2) + UNKNOWN_NUMBER
+					+ labels.getString(Text.FIELD_INFORMATION_PART3) + UNKNOWN_NUMBER
+					+ labels.getString(Text.FIELD_INFORMATION_PART4) + UNKNOWN_NUMBER
+					+ labels.getString(Text.FIELD_INFORMATION_PART5) + UNKNOWN_NUMBER
+					+ labels.getString(Text.FIELD_INFORMATION_PART6));
 		}
 
 		public GenericDataElement getGDE() {

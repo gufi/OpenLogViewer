@@ -23,6 +23,7 @@
 package org.diyefi.openlogviewer;
 
 import java.awt.BorderLayout;
+import java.util.ResourceBundle;
 
 import javax.swing.JPanel;
 
@@ -31,10 +32,9 @@ public class FooterPanel extends JPanel {
 
 	private final NavBarPanel navBarPanel;
 
-	public FooterPanel() {
-		setName("footerPanel");
+	public FooterPanel(final ResourceBundle labels) {
 		setLayout(new BorderLayout());
-		add(new FramesPerSecondPanel(), BorderLayout.WEST);
+		add(new FramesPerSecondPanel(labels), BorderLayout.WEST);
 		navBarPanel = new NavBarPanel();
 		add(navBarPanel, BorderLayout.EAST);
 	}

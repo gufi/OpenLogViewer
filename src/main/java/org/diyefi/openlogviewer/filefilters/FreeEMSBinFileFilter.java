@@ -25,12 +25,14 @@ package org.diyefi.openlogviewer.filefilters;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+
+import org.diyefi.openlogviewer.FileExtensions;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class FreeEMSBinFileFilter extends FileFilter {
 	@Override
 	public final String getDescription() {
-		return "*.bin";
+		return FileExtensions.STAR_DOT + FileExtensions.BIN;
 	}
 
 	@Override
@@ -41,6 +43,6 @@ public class FreeEMSBinFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		return "bin".equals(extension);
+		return FileExtensions.BIN.equals(extension);
 	}
 }

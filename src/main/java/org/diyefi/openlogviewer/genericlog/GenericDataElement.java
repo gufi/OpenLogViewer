@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.coloring.InitialLineColoring;
 
 /**
@@ -44,6 +45,7 @@ import org.diyefi.openlogviewer.coloring.InitialLineColoring;
 public final class GenericDataElement implements Comparable<GenericDataElement>, Serializable, Transferable {
 	private static final long serialVersionUID = 1L;
 	private static final int NUM_DATA_FLAVORS = 3;
+	private static final String UNSUPPORTED = "Unsupported";
 
 	private static int currentRecord;
 
@@ -131,15 +133,15 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	}
 
 	/**
-	 * sets the splitNumber or division of the graph in the graphing screen
-	 * if its the same a property change event is fired called "Split"
+	 * sets the splitNumber or division of the graph in the graphing screen and
+	 * fires a property change event for other code to catch.
 	 *
 	 * @param newIndex
 	 */
 	public void setTrackIndex(final int newIndex) {
 		final int oldIndex = trackIndex;
 		trackIndex = newIndex;
-		pcs.firePropertyChange("Split", oldIndex, trackIndex);
+		pcs.firePropertyChange(Keys.SPLIT, oldIndex, trackIndex);
 	}
 
 	/**
@@ -173,9 +175,9 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		if (flavor.equals(dataFlavor[0])) {
 			return this;
 		} else if (flavor.equals(dataFlavor[1])) {
-			return "Unsupported";
+			return UNSUPPORTED;
 		} else if (flavor.equals(dataFlavor[2])) {
-			return "Unsupported";
+			return UNSUPPORTED;
 		} else {
 			throw new UnsupportedFlavorException(flavor);
 		}

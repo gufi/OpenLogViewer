@@ -32,6 +32,8 @@ import java.beans.PropertyChangeListener;
 import java.text.DecimalFormatSymbols;
 
 import javax.swing.JPanel;
+
+import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.utils.MathUtils;
@@ -91,7 +93,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 
 	@Override
 	public final void propertyChange(final PropertyChangeEvent evt) {
-		if ("Split".equalsIgnoreCase(evt.getPropertyName())) {
+		if (Keys.SPLIT.equals(evt.getPropertyName())) {
 			sizeGraph();
 		}
 	}
@@ -365,7 +367,7 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	private String getMouseInfoZoomedOut(final int cursorPosition, final int requiredWidth) {
 		String result = UNKNOWN_STATS;
-		int dataPointRangeInfoIndex = cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
+		final int dataPointRangeInfoIndex = cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
 		if ((dataPointRangeInfoIndex >= 0) && (dataPointRangeInfoIndex < dataPointRangeInfo.length)) {
 			final double minData = dataPointRangeInfo[dataPointRangeInfoIndex][0];
 			final double meanData = dataPointRangeInfo[dataPointRangeInfoIndex][1];

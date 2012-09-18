@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.decoder.LogField.types;
@@ -38,7 +39,7 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  * This function takes a binary log file, plucks FreeEMS packets out of it,
  * filters for standard packets and parses them into fields with appropriate scaling.
  */
-public class FreeEMSBin extends AbstractDecoder implements Runnable { // implements runnable to make this class theadable
+public class FreeEMSBin extends AbstractDecoder {
 	private static final int initialLength = 75000;
 	private static final int loadFactor = 2;
 
@@ -55,14 +56,15 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 	private static final short ESCAPED_STOP_BYTE = 0x33;   // Used as an unsigned byte
 
 	private boolean startFound;
-	private File logFile;
-	private short[] packetBuffer; // For use as an unsigned byte
-	private GenericLog decodedLog;
-	private Thread t;
+	private final ResourceBundle labels;
+	private final File logFile;
+	private final short[] packetBuffer; // For use as an unsigned byte
+	private final GenericLog decodedLog;
+	private final Thread t;
 	private int packetLength; // Track packet length
 	private int firstPayloadIDFound = -1;
 
-	private long startTime; // Low tech profiling var
+	private final long startTime; // Low tech profiling var
 
 	// Sequential number for reset detection
 	private int tempClockIndex;
@@ -211,15 +213,16 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 	 * @param path The file system path of the log file.
 	 *
 	 */
-	public FreeEMSBin(final String path) {
-		this(new File(path));
+	public FreeEMSBin(final String path, final ResourceBundle labels) {
+		this(new File(path), labels);
 	}
 
 	/**
 	 * FreeEmsBin Constructor: <code>File</code> object of your Binary log
 	 * @param f The file reference to the log file.
 	 */
-	public FreeEMSBin(final File f) {
+	public FreeEMSBin(final File f, final ResourceBundle labels) {
+		this.labels = labels;
 		startTime = System.currentTimeMillis(); // Let's profile this bitch! OS style :-)
 		logFile = f;
 		startFound = false;
@@ -250,7 +253,7 @@ public class FreeEMSBin extends AbstractDecoder implements Runnable { // impleme
 			}
 		}
 
-		decodedLog = new GenericLog(Arrays.copyOfRange(headers, 0, headersPosition), initialLength, loadFactor);
+		decodedLog = new GenericLog(Arrays.copyOfRange(headers, 0, headersPosition), initialLength, loadFactor, labels);
 
 		t = new Thread(this, "FreeEMSBin Loading");
 		t.setPriority(Thread.MAX_PRIORITY);

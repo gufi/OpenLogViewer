@@ -24,12 +24,14 @@ package org.diyefi.openlogviewer.filefilters;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+
+import org.diyefi.openlogviewer.FileExtensions;
 import org.diyefi.openlogviewer.utils.Utilities;
 
 public class LogFileFilter extends FileFilter {
 	@Override
 	public final String getDescription() {
-		return "*.log";
+		return FileExtensions.STAR_DOT + FileExtensions.LOG;
 	}
 
 	@Override
@@ -40,6 +42,6 @@ public class LogFileFilter extends FileFilter {
 
 		final String extension = Utilities.getExtension(file);
 
-		return "log".equals(extension);
+		return FileExtensions.LOG.equals(extension);
 	}
 }

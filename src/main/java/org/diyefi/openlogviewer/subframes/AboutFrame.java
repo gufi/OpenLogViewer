@@ -63,8 +63,8 @@ public class AboutFrame extends JFrame {
 		}
 	};
 
-	private String appName;
-	
+	private final String appName;
+
 	public AboutFrame(final String newAppName) {
 		appName = newAppName;
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -78,7 +78,7 @@ public class AboutFrame extends JFrame {
 		setTitle("About - " + appName);
 		pack();
 	}
-	
+
 	private void setupNorthPanel() {
 		final JPanel northPanel = new JPanel();
 		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));

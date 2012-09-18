@@ -31,10 +31,12 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
+import org.diyefi.openlogviewer.Text;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.utils.MathUtils;
 
@@ -46,14 +48,18 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private static final int FONT_SIZE = 12;
 	private static final int INFO_DISPLAY_OFFSET = 4;
 	private static final Font HOVER_FONT = new Font(Font.MONOSPACED, Font.PLAIN, FONT_SIZE);
-	private GenericLog genLog;
+
+	private final ResourceBundle labels;
 	private final Color vertBar = new Color(255, 255, 255, 100);
 	private final Color textBackground = new Color(0, 0, 0, 170);
+
+	private GenericLog genLog;
 	private int xMouseCoord;
 	private int yMouseCoord;
 	private boolean shouldDraw;
 
-	public InfoPanel() {
+	public InfoPanel(final ResourceBundle labels) {
+		this.labels = labels;
 		setOpaque(false);
 	}
 
@@ -68,17 +74,17 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 		g.setFont(HOVER_FONT); // Required to keep font consistent when using Mac L&F
 		if (genLog == null) {
 			g.setColor(Color.RED);
-			g.drawString("No log loaded, please select a log from the file menu.", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+			g.drawString(labels.getString(Text.NO_LOG_LOADED), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 		} else {
 			if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADING) {
 				g.setColor(Color.red);
-				g.drawString("Loading log, please wait...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+				g.drawString(labels.getString(Text.LOADING_LOG), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
 				if (genLog.getLogStatusMessage() != null) {
 					g.setColor(Color.RED);
-					g.drawString(":-( The very sad decoder crashed! Last words: ", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+					g.drawString(labels.getString(Text.DECODER_CRASHED_PART1), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 					g.drawString(genLog.getLogStatusMessage(), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 2);
-					g.drawString("Displaying what we managed to read in before the catastrophy anyway...", LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 3);
+					g.drawString(labels.getString(Text.DECODER_CRASHED_PART2), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 3);
 				}
 				if (shouldDraw) {
 					final int dataWidth = getWidestDataWidth();
@@ -102,15 +108,15 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 						if (multigGraph.getComponent(i) instanceof SingleGraphPanel) {
 							final SingleGraphPanel singleGraph = (SingleGraphPanel) multigGraph.getComponent(i);
 							g2d.setColor(textBackground);
-							String mouseDataString = singleGraph.getMouseInfo(snappedDataPosition, dataWidth);
-							mouseDataString = mouseDataString + "  " + singleGraph.getData().getName();
-							final int stringWidth = fm.stringWidth(mouseDataString.toString());
+							String mouseData = singleGraph.getMouseInfo(snappedDataPosition, dataWidth);
+							mouseData = mouseData + "  " + singleGraph.getData().getName();
+							final int stringWidth = fm.stringWidth(mouseData);
 							g2d.fillRect(snappedDataPosition - 2 + INFO_DISPLAY_OFFSET,
 									yMouseCoord + 2 + (fontHeight * i),
 									stringWidth + 4,
 									fontHeight);
 							g2d.setColor(singleGraph.getColor());
-							g2d.drawString(mouseDataString.toString(),
+							g2d.drawString(mouseData,
 									snappedDataPosition + INFO_DISPLAY_OFFSET,
 									yMouseCoord + fontHeight + (fontHeight * i));
 						}
