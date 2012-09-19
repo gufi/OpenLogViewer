@@ -365,10 +365,11 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	 */
 	private String getMouseInfoZoomedOut(final int cursorPosition, final int requiredWidth) {
 		String result = UNKNOWN_STATS;
-		if ((cursorPosition >= 0) && (cursorPosition < dataPointRangeInfo.length)) {
-			final double minData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][0];
-			final double meanData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][1];
-			final double maxData = dataPointRangeInfo[cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT][2];
+		int dataPointRangeInfoIndex = cursorPosition + EntireGraphingPanel.LEFT_OFFSCREEN_POINTS_ZOOMED_OUT;
+		if ((dataPointRangeInfoIndex >= 0) && (dataPointRangeInfoIndex < dataPointRangeInfo.length)) {
+			final double minData = dataPointRangeInfo[dataPointRangeInfoIndex][0];
+			final double meanData = dataPointRangeInfo[dataPointRangeInfoIndex][1];
+			final double maxData = dataPointRangeInfo[dataPointRangeInfoIndex][2];
 			if (minData != -Double.MAX_VALUE) {
 				String resultMin = MathUtils.roundDecimalPlaces(minData, DECIMAL_PLACES);
 				String resultMax = MathUtils.roundDecimalPlaces(maxData, DECIMAL_PLACES);
