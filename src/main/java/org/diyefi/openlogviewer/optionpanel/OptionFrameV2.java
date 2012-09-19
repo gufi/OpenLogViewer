@@ -58,8 +58,8 @@ import org.diyefi.openlogviewer.propertypanel.SingleProperty;
 public class OptionFrameV2 extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private static final int NUMBER_OF_COLS_OF_FREEEMS_FIELDS = 8; // Clearly a hack, but just to clarify and parameterise the existing math...
-	private static final int HEIGHT_IN_FIELDS = 12;
+	private static final int NUMBER_OF_COLS_OF_FREEEMS_FIELDS = 6; // Clearly a hack, but just to clarify and parameterise the existing math...
+	private static final int HEIGHT_IN_FIELDS = 18;
 	private static final int NUMBER_OF_ADD_BUTTONS = 1;
 
 	private static final int WIDTH_OF_BOXES = NUMBER_OF_COLS_OF_FREEEMS_FIELDS;
