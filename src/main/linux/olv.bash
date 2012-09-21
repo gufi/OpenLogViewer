@@ -1,3 +1,3 @@
 #!/bin/bash
-java -jar OpenLogViewer-*-bin.jar
+java -jar OpenLogViewer-*-bin.jar $*
 

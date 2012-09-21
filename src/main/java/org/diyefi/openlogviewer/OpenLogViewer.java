@@ -269,40 +269,44 @@ public final class OpenLogViewer extends JFrame {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
+		final Locale currentLocale = Locale.getDefault();
 
-			@Override
-			public void run() {
-				final Locale currentLocale = Locale.getDefault();
+		labels = ResourceBundle.getBundle(OpenLogViewer.class.getPackage().getName() + ".Labels", currentLocale);
 
-				labels = ResourceBundle.getBundle(getClass().getPackage().getName() + ".Labels", currentLocale);
+		final String lookAndFeel;
+		final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
+		if (IS_MAC_OS_X) {
+			System.setProperty(Keys.APPLE_LAF_USE_SCREEN_MENU_BAR, Boolean.TRUE.toString());
+		}
+		lookAndFeel = systemLookAndFeel;
 
-				final String lookAndFeel;
-				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
-				if (IS_MAC_OS_X) {
-					System.setProperty(Keys.APPLE_LAF_USE_SCREEN_MENU_BAR, Boolean.TRUE.toString());
-				}
-				lookAndFeel = systemLookAndFeel;
+		try {
+			UIManager.setLookAndFeel(lookAndFeel);
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_ONE));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_TWO));
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_THREE));
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
+		}
 
-				try {
-					UIManager.setLookAndFeel(lookAndFeel);
-				} catch (UnsupportedLookAndFeelException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_ONE));
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_TWO));
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_THREE));
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
-				}
 
-				mainAppRef = new OpenLogViewer();
+		mainAppRef = new OpenLogViewer();
+
+		if (args.length > 0) {
+			if (args.length > 1) {
+				System.out.println(args.length + " arguments supplied, attempting to open " + args[0]);
+			} else {
+				System.out.println("Attempting to open " + args[0]);
 			}
-		});
+			mainAppRef.openFile(new File(args[0]), mainAppRef.generateChooser());
+		}
 	}
 
 	public void openChosenFile() {
