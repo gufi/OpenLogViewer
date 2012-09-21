@@ -296,14 +296,13 @@ public final class OpenLogViewer extends JFrame {
 			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
 		}
 
-
 		mainAppRef = new OpenLogViewer();
 
 		if (args.length > 0) {
 			if (args.length > 1) {
-				System.out.println(args.length + " arguments supplied, attempting to open " + args[0]);
+				System.out.println(args.length + labels.getString(Text.TOO_MANY_ARGUMENTS) + args[0]);
 			} else {
-				System.out.println("Attempting to open " + args[0]);
+				System.out.println(labels.getString(Text.ATTEMPTING_TO_OPEN_FILE) + args[0]);
 			}
 			mainAppRef.openFile(new File(args[0]), mainAppRef.generateChooser());
 		}

@@ -17,6 +17,9 @@ public final class Text {
 	public static final String FREEEMS_BINARY_LOGS = "FreeEMSBinaryLogs";
 	public static final String MS_COMPATIBLE_LOGS = "MegaSquirtCompatibleDataLogs";
 
+	public static final String TOO_MANY_ARGUMENTS = "TooManyArguments";
+	public static final String ATTEMPTING_TO_OPEN_FILE = "AttemptingToOpenFile";
+
 	public static final String MEMORY_RESIZE_WARNING = "MemoryResizeWarning";
 	public static final String MEMORY_OLD_CAPACITY = "MemoryOldCapacity";
 	public static final String MEMORY_NEW_CAPACITY = "MemoryNewCapacity";
