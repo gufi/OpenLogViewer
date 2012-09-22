@@ -19,6 +19,8 @@ public final class Text {
 
 	public static final String TOO_MANY_ARGUMENTS = "TooManyArguments";
 	public static final String ATTEMPTING_TO_OPEN_FILE = "AttemptingToOpenFile";
+	public static final String FILE_TYPE_NOT_SUPPORTED = "FileTypeNotSupported";
+	public static final String FILE_ARGUMENT_NOT_GOOD = "FileArgumentNotGood";
 
 	public static final String MEMORY_RESIZE_WARNING = "MemoryResizeWarning";
 	public static final String MEMORY_OLD_CAPACITY = "MemoryOldCapacity";

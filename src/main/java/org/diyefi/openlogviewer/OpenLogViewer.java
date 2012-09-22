@@ -173,8 +173,7 @@ public final class OpenLogViewer extends JFrame {
 		quitFileMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				final WindowEvent wev = new WindowEvent(OpenLogViewer.getInstance(), WindowEvent.WINDOW_CLOSING);
-				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+				OpenLogViewer.getInstance().quit();
 			}
 		});
 
@@ -299,13 +298,31 @@ public final class OpenLogViewer extends JFrame {
 		mainAppRef = new OpenLogViewer();
 
 		if (args.length > 0) {
-			if (args.length > 1) {
-				System.out.println(args.length + labels.getString(Text.TOO_MANY_ARGUMENTS) + args[0]);
+			final File toOpen = new File(args[0]).getAbsoluteFile();
+			if (toOpen.exists() && toOpen.isFile()) {
+				if (args.length > 1) {
+					System.out.println(args.length + labels.getString(Text.TOO_MANY_ARGUMENTS) + args[0]);
+				} else {
+					System.out.println(labels.getString(Text.ATTEMPTING_TO_OPEN_FILE) + args[0]);
+				}
+				final FileFilter ms = new MSTypeFileFilter(labels);
+				final FileFilter fe = new FreeEMSFileFilter(labels);
+				if (fe.accept(toOpen) || ms.accept(toOpen)) {
+					mainAppRef.openFile(toOpen, mainAppRef.generateChooser());
+				} else {
+					System.out.println(labels.getString(Text.FILE_TYPE_NOT_SUPPORTED) + args[0]);
+					mainAppRef.quit();
+				}
 			} else {
-				System.out.println(labels.getString(Text.ATTEMPTING_TO_OPEN_FILE) + args[0]);
+				System.out.println(labels.getString(Text.FILE_ARGUMENT_NOT_GOOD) + args[0]);
+				mainAppRef.quit();
 			}
-			mainAppRef.openFile(new File(args[0]), mainAppRef.generateChooser());
 		}
+	}
+
+	public void quit() {
+		final WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 	}
 
 	public void openChosenFile() {
