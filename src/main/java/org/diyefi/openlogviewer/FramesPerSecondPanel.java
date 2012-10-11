@@ -65,22 +65,23 @@ public class FramesPerSecondPanel extends JPanel implements ActionListener {
 	private Double fps;
 
 	public FramesPerSecondPanel(final ResourceBundle labels) {
+		setName("fpsPanel");
+		setPreferredSize(new Dimension(PREFERRED_WIDTH, PPREFERRED_HEIGHT));
+		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
 		framesPerSecond = labels.getString(Text.FRAMES_PER_SECOND);
 		final String defaultFpsLabel = framesPerSecond + ZERO + DS + ZERO;
+		output = new JLabel(defaultFpsLabel);
+		output.setVerticalTextPosition(JLabel.CENTER);
+		output.setHorizontalTextPosition(JLabel.CENTER);
+		this.add(output);
+
+		// Start timer after objects that it operates on exist...
 		sampleTimer = new Timer(TIMER_RATE, this);
 		sampleTimer.setInitialDelay(0);
 		sampleTimer.start();
 		currentTime = System.currentTimeMillis();
 		thePast = currentTime;
-
-		setName("fpsPanel");
-		setPreferredSize(new Dimension(PREFERRED_WIDTH, PPREFERRED_HEIGHT));
-		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
-		output = new JLabel(defaultFpsLabel);
-		output.setVerticalTextPosition(JLabel.CENTER);
-		output.setHorizontalTextPosition(JLabel.CENTER);
-		this.add(output);
 	}
 
 	public static void increaseFrameCount() {
