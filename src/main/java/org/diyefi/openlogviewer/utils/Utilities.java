@@ -23,7 +23,11 @@
 
 package org.diyefi.openlogviewer.utils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 public final class Utilities {
@@ -43,4 +47,26 @@ public final class Utilities {
 		}
 		return ext;
 	}
+
+	public static int countBytes(final File f, final byte b) throws IOException {
+		InputStream is = new BufferedInputStream(new FileInputStream(f));
+		try {
+			byte[] data = new byte[8192];
+			int lines = 0;
+			int readCount = 0;
+			boolean empty = true;
+			while ((readCount = is.read(data)) != -1) {
+				empty = false;
+				for (int i = 0; i < readCount; ++i) {
+					if (data[i] == b) {
+						lines++;
+					}
+				}
+			}
+			return (lines == 0 && !empty) ? 1 : lines;
+		} finally {
+			is.close();
+		}
+	}
+
 }

@@ -31,10 +31,10 @@ import java.util.Scanner;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.utils.Utilities;
 import org.diyefi.openlogviewer.Text;
 
 public class CSVTypeLog extends AbstractDecoder {
-	private static final int INITIAL_LENGTH = 75000;
 	private static final int LOAD_FACTOR = 2;
 	private static final String[] DELIMITERS = {"\t", ",", ":", "/", "\\\\"};
 	private final ResourceBundle labels;
@@ -87,6 +87,8 @@ public class CSVTypeLog extends AbstractDecoder {
 		String[] splitLine;
 		String[] headers = new String[1];
 
+		int finalAndInitialLength = Utilities.countBytes(getLogFile(), (byte) '\n');
+
 		String line = "";
 		boolean headerSet = false;
 		while (scan.hasNextLine() && !headerSet) {
@@ -95,7 +97,7 @@ public class CSVTypeLog extends AbstractDecoder {
 
 			if (splitLine.length == fieldCount) {
 				headers = splitLine;
-				this.setDecodedLog(new GenericLog(splitLine, INITIAL_LENGTH, LOAD_FACTOR, labels));
+				this.setDecodedLog(new GenericLog(splitLine, finalAndInitialLength, LOAD_FACTOR, labels));
 				headerSet = true;
 			}
 		}
