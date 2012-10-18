@@ -65,7 +65,7 @@ Where "OLV.jar" is replaced with the name of the file that you downloaded.
 If you're using Maven to build from source and run OLV, then the following
 simple command is all you need:
 
-mvn
+mvn -DskipTests
 
 This does the same as "mvn install" and "mvn exec:exec" back to back. You may
 wish to clean the build directory before building and running, as you'd expect
