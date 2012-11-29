@@ -30,6 +30,7 @@ package org.diyefi.openlogviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
@@ -268,56 +269,62 @@ public final class OpenLogViewer extends JFrame {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		final Locale currentLocale = Locale.getDefault();
+		EventQueue.invokeLater(new Runnable() {
 
-		labels = ResourceBundle.getBundle(OpenLogViewer.class.getPackage().getName() + ".Labels", currentLocale);
+			@Override
+			public void run() {
+				final Locale currentLocale = Locale.getDefault();
 
-		final String lookAndFeel;
-		final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
-		if (IS_MAC_OS_X) {
-			System.setProperty(Keys.APPLE_LAF_USE_SCREEN_MENU_BAR, Boolean.TRUE.toString());
-		}
-		lookAndFeel = systemLookAndFeel;
+				labels = ResourceBundle.getBundle(OpenLogViewer.class.getPackage().getName() + ".Labels", currentLocale);
 
-		try {
-			UIManager.setLookAndFeel(lookAndFeel);
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_ONE));
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_TWO));
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_THREE));
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
-		}
-
-		mainAppRef = new OpenLogViewer();
-
-		if (args.length > 0) {
-			final File toOpen = new File(args[0]).getAbsoluteFile();
-			if (toOpen.exists() && toOpen.isFile()) {
-				if (args.length > 1) {
-					System.out.println(args.length + labels.getString(Text.TOO_MANY_ARGUMENTS) + args[0]);
-				} else {
-					System.out.println(labels.getString(Text.ATTEMPTING_TO_OPEN_FILE) + args[0]);
+				final String lookAndFeel;
+				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
+				if (IS_MAC_OS_X) {
+					System.setProperty(Keys.APPLE_LAF_USE_SCREEN_MENU_BAR, Boolean.TRUE.toString());
 				}
-				final FileFilter ms = new MSTypeFileFilter(labels);
-				final FileFilter fe = new FreeEMSFileFilter(labels);
-				if (fe.accept(toOpen) || ms.accept(toOpen)) {
-					mainAppRef.openFile(toOpen, mainAppRef.generateChooser());
-				} else {
-					System.out.println(labels.getString(Text.FILE_TYPE_NOT_SUPPORTED) + args[0]);
-					mainAppRef.quit();
+				lookAndFeel = systemLookAndFeel;
+
+				try {
+					UIManager.setLookAndFeel(lookAndFeel);
+				} catch (UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_ONE));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_TWO));
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_THREE));
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
 				}
-			} else {
-				System.out.println(labels.getString(Text.FILE_ARGUMENT_NOT_GOOD) + args[0]);
-				mainAppRef.quit();
+
+				mainAppRef = new OpenLogViewer();
+
+				if (args.length > 0) {
+					final File toOpen = new File(args[0]).getAbsoluteFile();
+					if (toOpen.exists() && toOpen.isFile()) {
+						if (args.length > 1) {
+							System.out.println(args.length + labels.getString(Text.TOO_MANY_ARGUMENTS) + args[0]);
+						} else {
+							System.out.println(labels.getString(Text.ATTEMPTING_TO_OPEN_FILE) + args[0]);
+						}
+						final FileFilter ms = new MSTypeFileFilter(labels);
+						final FileFilter fe = new FreeEMSFileFilter(labels);
+						if (fe.accept(toOpen) || ms.accept(toOpen)) {
+							mainAppRef.openFile(toOpen, mainAppRef.generateChooser());
+						} else {
+							System.out.println(labels.getString(Text.FILE_TYPE_NOT_SUPPORTED) + args[0]);
+							mainAppRef.quit();
+						}
+					} else {
+						System.out.println(labels.getString(Text.FILE_ARGUMENT_NOT_GOOD) + args[0]);
+						mainAppRef.quit();
+					}
+				}
 			}
-		}
+		});
 	}
 
 	public void quit() {
