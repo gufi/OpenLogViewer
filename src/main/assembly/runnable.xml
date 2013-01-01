@@ -15,7 +15,7 @@
 			<scope>runtime</scope>
 			<unpackOptions>
 				<excludes>
-					<exclude>META-INF/</exclude>
+					<exclude>META-INF/MANIFEST.MF</exclude>
 				</excludes>
 			</unpackOptions>
 			<excludes>
