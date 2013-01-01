@@ -18,6 +18,9 @@
 					<exclude>META-INF/</exclude>
 				</excludes>
 			</unpackOptions>
+			<excludes>
+				<exclude>com.apple.eawt:ui</exclude>
+			</excludes>
 		</dependencySet>
 	</dependencySets>
 </assembly>
