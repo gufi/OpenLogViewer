@@ -267,18 +267,6 @@
 							</archive>
 						</configuration>
 					</execution>
-					<execution>
-						<id>linux</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/linux.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 			<plugin>
