@@ -10,6 +10,12 @@ Gufi, as Bryan is known to his friends, would love for the program to become
 mainstream in the Automotive Datalog area as a tool. We feel that it's well on
 its way to doing just that.
 
+### Where do I get it?
+
+Download the latest release from the official [OLV website](http://olv.diyefi.org)
+or get the latest development version from the [build server!](http://builds.freeems.org)
+. Until 0.0.3 is released, the development version is a far better choice.
+
 ### Prerequisites
 
 #### Running a precompiled version
@@ -19,7 +25,7 @@ For using the precompiled application you only need a Java Runtime Environment
 
 #### Building the latest from source
 
-If you want to build the latest from source in between releases, then you will
+If you want to build the latest from source to make customisations, then you will
 need a Java Development Kit (JDK) version 6 or above AND maven 3. Maven 2 is
 not suitable as the project is configured for a number of plugins which are not
 compatible with maven 2. Additionally maven 2 does not provide the 100% stable
