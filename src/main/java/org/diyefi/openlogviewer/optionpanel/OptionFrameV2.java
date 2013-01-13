@@ -147,7 +147,7 @@ public class OptionFrameV2 extends JFrame {
 		setSize(WIDTH_OF_WINDOW + WTF2, HEIGHT_OF_WINDOW + COMP_HEIGHT + SCROLL_BAR_SIZE + WTF); // why??? comp height, why??? just why???
 		setPreferredSize(this.getSize());
 
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		thisRef = this;
 		activePanelList = new ArrayList<JPanel>();
 		layeredPane = new JLayeredPane();
@@ -348,10 +348,10 @@ public class OptionFrameV2 extends JFrame {
 			j++;
 		}
 
-		this.repaint();
-		this.setDefaultCloseOperation(JFrame.ICONIFIED);
+		repaint();
+		setDefaultCloseOperation(ICONIFIED);
 		OpenLogViewer.getInstance().exitFullScreen();
-		this.setVisible(true);
+		setVisible(true);
 	}
 
 	private boolean checkForProperties(final GenericDataElement GDE) {

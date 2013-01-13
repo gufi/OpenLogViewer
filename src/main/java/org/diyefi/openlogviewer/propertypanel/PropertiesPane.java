@@ -79,7 +79,7 @@ public class PropertiesPane extends JFrame {
 		this.labels = labels;
 		this.settingsDirectory = settingsDirectory;
 
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setPreferredSize(new Dimension(350, 500));
 		setSize(new Dimension(550, 500));
 		setJMenuBar(createMenuBar());
