@@ -52,7 +52,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	/**
 	 * The meat of this object! Previously in a slow fat ArrayList.
 	 */
-	private double[] values;
+	private float[] values;
 
 	// These two fields belong here:
 	private double minValue;
@@ -83,7 +83,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * in order to increase size.
 	 */
 	protected GenericDataElement(final int initialLength) {
-		values = new double[initialLength];
+		values = new float[initialLength];
 
 		pcs = new PropertyChangeSupport(this);
 
@@ -121,7 +121,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * @param value value to add to the array
 	 */
 	public void add(final double value) { //  TODO simplify the shit out of this, and/or remove it.
-		values[currentRecord] = value;
+		values[currentRecord] = (float) value;
 	}
 
 	// TODO maybe make these a direct reference to the array for efficiency sake, and above ^
