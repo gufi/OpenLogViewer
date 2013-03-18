@@ -36,7 +36,7 @@ import org.diyefi.openlogviewer.Text;
 
 public class CSVTypeLog extends AbstractDecoder {
 	private static final int LOAD_FACTOR = 2;
-	private static final String[] DELIMITERS = {"\t", ",", ":", "/", "\\\\"};
+	private static final String[] DELIMITERS = {"\t", ",", ":", "/", "\\\\", ";"};
 	private final ResourceBundle labels;
 	private int fieldCount = -1;
 
