@@ -123,12 +123,12 @@ public class CSVTypeLog extends AbstractDecoder {
 		final FileReader reader = new FileReader(getLogFile());
 		final Scanner scan = new Scanner(reader);
 
-		final int magicNumber = 10; // Remove the MAGIC!
+		final int checkLines = 10; // How many lines to check to find count
 		String delimiterFind = "";
 		String[] split;
 		int index = -1;
 
-		for (int i = 0; i < magicNumber && scan.hasNext(); i++) {
+		for (int i = 0; i < checkLines && scan.hasNext(); i++) {
 			delimiterFind = scan.nextLine();
 			for (int j = 0; j < DELIMITERS.length; j++) {
 				split = delimiterFind.split(DELIMITERS[j]);

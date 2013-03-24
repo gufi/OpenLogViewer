@@ -61,6 +61,7 @@
 			<roles>
 				<role>Founder</role>
 				<role>Hacker</role>
+                                <role>Refactoring</role>
 			</roles>
 		</developer>
 		<developer>

@@ -42,7 +42,7 @@ import org.diyefi.openlogviewer.coloring.InitialLineColoring;
  * displayed are pulled from these objects.
  * @author Bryan Harris
  */
-public final class GenericDataElement implements Comparable<GenericDataElement>, Serializable, Transferable {
+public final class GenericDataElement implements Comparable<GenericDataElement>, Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final int NUM_DATA_FLAVORS = 3;
 	private static final String UNSUPPORTED = "Unsupported";
@@ -74,7 +74,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	 * Division on the Graphing layer
 	 */
 	private int trackIndex;
-	private final PropertyChangeSupport pcs;
+//	private final PropertyChangeSupport pcs;
 	private DataFlavor[] dataFlavor;
 
 	/**
@@ -85,7 +85,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	protected GenericDataElement(final int initialLength) {
 		values = new double[initialLength];
 
-		pcs = new PropertyChangeSupport(this);
+		//pcs = new PropertyChangeSupport(this);
 
 		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
@@ -141,7 +141,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	public void setTrackIndex(final int newIndex) {
 		final int oldIndex = trackIndex;
 		trackIndex = newIndex;
-		pcs.firePropertyChange(Keys.SPLIT, oldIndex, trackIndex);
+		
 	}
 
 	/**
@@ -152,13 +152,9 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		displayMaxValue = getMaxValue();
 	}
 
-	public void addPropertyChangeListener(final String property, final PropertyChangeListener pcl) {
-		pcs.addPropertyChangeListener(property, pcl);
-	}
+	
 
-	public void removePropertyChangeListener(final String property, final PropertyChangeListener pcl) {
-		pcs.removePropertyChangeListener(property, pcl);
-	}
+	
 
 	@Override
 	public String toString() {
@@ -170,34 +166,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		return this.getName().compareToIgnoreCase(otherGDE.getName());
 	}
 
-	@Override
-	public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		if (flavor.equals(dataFlavor[0])) {
-			return this;
-		} else if (flavor.equals(dataFlavor[1])) {
-			return UNSUPPORTED;
-		} else if (flavor.equals(dataFlavor[2])) {
-			return UNSUPPORTED;
-		} else {
-			throw new UnsupportedFlavorException(flavor);
-		}
-	}
-
-	@Override
-	public DataFlavor[] getTransferDataFlavors() {
-		return dataFlavor.clone();
-	}
-
-	@Override
-	public boolean isDataFlavorSupported(final DataFlavor flavor) {
-		for (int i = 0; i < dataFlavor.length; i++) {
-			if (flavor.equals(dataFlavor[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
-
+	
 	/**
 	 * set header name, called during GenericLog construction
 	 * @param name

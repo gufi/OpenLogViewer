@@ -52,11 +52,11 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private static final int TEMP_RESET_OFFSET   = 1;
 	private static final int ELAPSED_TIME_OFFSET = 2;
 	private static final int SIZE_OF_DOUBLE = 8;
-	private static final int NUMBER_OF_BYTES_IN_A_MEG = 1000000;
+	private static final int NUMBER_OF_BYTES_IN_A_MEG = 1048576; // number of bytes is 1024*1024 ( not 1000000 )
 
 	private final ResourceBundle labels;
 	private final GenericDataElement recordCountElement;
-	private final PropertyChangeSupport pcs;
+	//private final PropertyChangeSupport pcs;
 	private final int ourLoadFactor;
 	private final int numberOfInternalHeaders;
 
@@ -67,7 +67,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private int currentCapacity;
 	private int currentPosition = -1;
 	// ^ TODO if we end up limiting memory usage by some configurable amount and recycling positions, for live streaming, then add count
-
+/*
 	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
 			if ((LogState) propertyChangeEvent.getNewValue() == LogState.LOG_LOADING) {
@@ -77,13 +77,13 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 			} else if ((LogState) propertyChangeEvent.getNewValue() == LogState.LOG_LOADED) {
 				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
 				genLog.setLogStatus(LogState.LOG_LOADED);
-				OpenLogViewer.getInstance().setLog(genLog);
-				OpenLogViewer.getInstance().getOptionFrame().updateFromLog(genLog);
+				OpenLogViewer.getInstance().setLog(genLog);// this is how i'm transfering the fucking log??? What the fuck is wrong with me??
+				OpenLogViewer.getInstance().getOptionFrame().updateFromLog(genLog); // this has got to be the most retarded shit i've ever done
 				InitialLineColoring.INSTANCE.giveBackAllColors();
 			}
 		}
 	};
-
+*/
 	/**
 	 * provide a <code>String</code> array of headers<br>
 	 * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
@@ -96,8 +96,8 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 
 		GenericDataElement.resetPosition(); // Kinda ugly, but...
 		logStatus = LogState.LOG_NOT_LOADED;
-		pcs = new PropertyChangeSupport(this);
-		addPropertyChangeListener(Keys.LOG_LOADED, autoLoad);
+		//pcs = new PropertyChangeSupport(this);
+		//addPropertyChangeListener(Keys.LOG_LOADED, autoLoad);
 
 		this.ourLoadFactor = ourLoadFactor;
 		currentCapacity = initialCapacity;
@@ -201,7 +201,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	public final void setLogStatus(final LogState newLogStatus) {
 		final LogState oldLogStatus = this.logStatus;
 		this.logStatus = newLogStatus;
-		pcs.firePropertyChange(Keys.LOG_LOADED, oldLogStatus, newLogStatus);
+	//	pcs.firePropertyChange(Keys.LOG_LOADED, oldLogStatus, newLogStatus);
 	}
 
 	/**
@@ -225,18 +225,18 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	 *       }<br>
 	 *   });</code>
 	 */
-	public final void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(name, listener);
-	}
+	//public final void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
+	//	pcs.addPropertyChangeListener(name, listener);
+	//}
 
 	/**
 	 * Remove a PropertyChangeListener
 	 * @param propertyName name of listener
 	 * @param listener listener
 	 */
-	public final void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(propertyName, listener);
-	}
+	//public final void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
+	//	pcs.removePropertyChangeListener(propertyName, listener);
+	//}
 
 	public final String getLogStatusMessage() {
 		return logStatusMessage;
