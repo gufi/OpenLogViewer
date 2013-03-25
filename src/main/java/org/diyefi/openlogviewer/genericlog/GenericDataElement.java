@@ -24,13 +24,10 @@ package org.diyefi.openlogviewer.genericlog;
 
 import java.awt.Color;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.coloring.InitialLineColoring;
@@ -58,6 +55,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	private double minValue;
 	private double maxValue;
 	private boolean realMinAndMaxFound;
+        private List<GraphTrackChangedListener> trackListeners;
 
 	// These three do not - move them into some graphics object and keep the data separated from the look...
 	private double displayMinValue;
@@ -86,7 +84,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 		values = new double[initialLength];
 
 		//pcs = new PropertyChangeSupport(this);
-
+                trackListeners = new ArrayList<GraphTrackChangedListener>();
 		maxValue = -Double.MAX_VALUE;
 		minValue = Double.MAX_VALUE;
 
@@ -141,7 +139,7 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	public void setTrackIndex(final int newIndex) {
 		final int oldIndex = trackIndex;
 		trackIndex = newIndex;
-		
+                GraphTrackChange(newIndex);
 	}
 
 	/**
@@ -254,4 +252,28 @@ public final class GenericDataElement implements Comparable<GenericDataElement>,
 	public void clearOut() {
 		values = null;
 	}
+        
+        public void addTrackChangeListener(GraphTrackChangedListener gtl)
+        {
+            if(!trackListeners.contains(gtl))
+                trackListeners.add(gtl);
+        }
+        
+        public void RemoveTrackChangeListener(GraphTrackChangedListener gtl)
+        {
+            if(trackListeners.contains(gtl))
+                trackListeners.remove(gtl);
+        }
+        
+        public void removeTrackChangeListener(int index)
+        {
+            if(index < trackListeners.size())
+                trackListeners.remove(index);
+        }
+        
+        protected void GraphTrackChange(int track)
+        {
+            for(GraphTrackChangedListener gtl : trackListeners)
+                gtl.OnGraphTrackChanged(track);
+        }
 }

@@ -55,6 +55,7 @@ public class CSVTypeLog extends AbstractDecoder {
 	public final void run() {
 		try {
 			final long startTime = System.currentTimeMillis();
+                        
 			decodeLog();
 			OpenLogViewer.getInstance().getEntireGraphingPanel().setGraphSize(this.getDecodedLog().getRecordCount());
 			this.getDecodedLog().setLogStatus(GenericLog.LogState.LOG_LOADED);
@@ -101,13 +102,15 @@ public class CSVTypeLog extends AbstractDecoder {
 				headerSet = true;
 			}
 		}
-
+                this.getDecodedLog().setLogStatus(GenericLog.LogState.LOG_LOADING);
 		while (scan.hasNextLine()) {
 			line = scan.nextLine();
 			splitLine = line.split(delimiter);
 			this.getDecodedLog().incrementPosition();
+                        this.decoderLineOfChanged(getDecodedLog().getRecordCount(), finalAndInitialLength);
+                        this.decoderProgressChanged((int)(getDecodedLog().getRecordCount()/(float)finalAndInitialLength*100));
 			if (splitLine.length == fieldCount) {
-				for (int x = 0; x < splitLine.length; x++) {
+				for (int x = 0; x < splitLine.length; x++) { // not reasonable to use foreach loop here
 					this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
 				}
 			}

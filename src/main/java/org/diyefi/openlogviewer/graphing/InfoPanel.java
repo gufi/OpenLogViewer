@@ -37,10 +37,11 @@ import javax.swing.JPanel;
 
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.Text;
+import org.diyefi.openlogviewer.decoder.DecoderProgressListener;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.utils.MathUtils;
 
-public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener {
+public class InfoPanel extends JPanel implements MouseMotionListener, MouseListener, DecoderProgressListener {
 	private static final long serialVersionUID = 1L;
 
 	private static final int LEFT_MARGIN_OFFSET = 10;
@@ -56,6 +57,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	private GenericLog genLog;
 	private int xMouseCoord;
 	private int yMouseCoord;
+        private int lineOf, lineTotal, percentLoaded;
 	private boolean shouldDraw;
 
 	public InfoPanel(final ResourceBundle labels) {
@@ -79,12 +81,15 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 			if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADING) {
 				g.setColor(Color.red);
 				g.drawString(labels.getString(Text.LOADING_LOG), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
+                                g.drawString(labels.getString(Text.PERCENT_LOADED) + Integer.toString(percentLoaded), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT*4);
+                                g.drawString(labels.getString(Text.LINE_OF_LOADED) + Integer.toString(lineOf) + ":" +Integer.toString(lineTotal), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT*5);
 			} else if (genLog.getLogStatus() == GenericLog.LogState.LOG_LOADED) {
 				if (genLog.getLogStatusMessage() != null) {
 					g.setColor(Color.RED);
 					g.drawString(labels.getString(Text.DECODER_CRASHED_PART1), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT);
 					g.drawString(genLog.getLogStatusMessage(), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 2);
 					g.drawString(labels.getString(Text.DECODER_CRASHED_PART2), LEFT_MARGIN_OFFSET, ONE_TEXTUAL_HEIGHT * 3);
+                                       
 				}
 				if (shouldDraw) {
 					final int dataWidth = getWidestDataWidth();
@@ -124,6 +129,7 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 				}
 			}
 		}
+                
 	}
 
 	public final void setLog(final GenericLog log) {
@@ -189,4 +195,17 @@ public class InfoPanel extends JPanel implements MouseMotionListener, MouseListe
 	public void mouseDragged(final MouseEvent e) {
 
 	}
+
+    @Override
+    public void onProgressChanged(int percentage) {
+        percentLoaded = percentage;
+        repaint();
+    }
+
+    @Override
+    public void onProgressLinesOf(int line, int total) {
+        lineOf = line;
+        lineTotal = total;
+        repaint();
+    }
 }

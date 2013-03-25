@@ -24,7 +24,10 @@
 package org.diyefi.openlogviewer.decoder;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.genericlog.GraphTrackChangedListener;
 
 /**
  *  Typical constructor for this class would look like this <br>
@@ -49,6 +52,15 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
  */
 public abstract class AbstractDecoder implements Runnable {
 
+        public AbstractDecoder()
+        {
+            progressListener = new ArrayList<DecoderProgressListener>();
+            lineOfListener = new ArrayList<DecoderProgressListener>();
+        }
+        
+        private List<DecoderProgressListener> progressListener;
+        private List<DecoderProgressListener> lineOfListener;
+        
 	/**
 	 * logFile is the <code>File</code> object that points to the file you are
 	 * attempting to open.
@@ -116,4 +128,57 @@ public abstract class AbstractDecoder implements Runnable {
 	//public final void setT(final Thread t) {
 	//	this.t = t;
 	//}
+        
+        public void addDecoderProgressListener(DecoderProgressListener dpl)
+        {
+            if(!progressListener.contains(dpl))
+                progressListener.add(dpl);
+        }
+        
+        public void removeDecoderProgressListener(DecoderProgressListener dpl)
+        {
+            if(progressListener.contains(dpl))
+                progressListener.remove(dpl);
+        }
+        
+        public void removeDecoderProgressListener(int index)
+        {
+            if(index < progressListener.size())
+                progressListener.remove(index);
+        }
+        
+        protected void decoderProgressChanged(int percent)
+        {
+            
+            for(DecoderProgressListener gtl : progressListener)
+            {
+                gtl.onProgressChanged(percent);
+            }
+        }
+        
+        protected void decoderLineOfChanged(int line, int total)
+        {
+            for(DecoderProgressListener gtl : lineOfListener)
+            {
+                gtl.onProgressLinesOf(line,total);
+            }
+        }
+        
+        public void addDecoderProgressLineOfListener(DecoderProgressListener dpl)
+        {
+            if(!lineOfListener.contains(dpl))
+                lineOfListener.add(dpl);
+        }
+        
+        public void removeDecoderProgressLineOfListener(DecoderProgressListener dpl)
+        {
+            if(lineOfListener.contains(dpl))
+                lineOfListener.remove(dpl);
+        }
+        
+        public void removeDecoderProgressLineOfListener(int index)
+        {
+            if(index < lineOfListener.size())
+                lineOfListener.remove(index);
+        }
 }

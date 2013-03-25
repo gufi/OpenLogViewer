@@ -421,7 +421,8 @@ public final class OpenLogViewer extends JFrame {
 			}
                         executorService.execute(decoderInUse);
                         // add listener
-                        //decoderInUse.AddLogLoadingListener(InfoPanel);
+                        decoderInUse.addDecoderProgressLineOfListener(this.graphingPanel.getMultiGraphLayeredPane().getInfoPanel());
+                        decoderInUse.addDecoderProgressListener(this.graphingPanel.getMultiGraphLayeredPane().getInfoPanel());
 			return true;
 		} else {
 			setTitle(applicationTitle);

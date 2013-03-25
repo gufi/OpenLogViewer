@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
+import org.diyefi.openlogviewer.genericlog.GraphTrackChangedListener;
 import org.diyefi.openlogviewer.utils.MathUtils;
 
 /**
@@ -46,7 +47,7 @@ import org.diyefi.openlogviewer.utils.MathUtils;
  * This layer listens for window resizes and property changes.
  * @author Bryan Harris and Ben Fenner
  */
-public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener, PropertyChangeListener {
+public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener, GraphTrackChangedListener  {
 	public static final int DECIMAL_PLACES = 3;
 
 	private static final long serialVersionUID = 1L;
@@ -87,13 +88,6 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	@Override
 	public final void ancestorResized(final HierarchyEvent e) {
 		if (e.getID() == HierarchyEvent.ANCESTOR_RESIZED) {
-			sizeGraph();
-		}
-	}
-
-	@Override
-	public final void propertyChange(final PropertyChangeEvent evt) {
-		if (Keys.SPLIT.equals(evt.getPropertyName())) {
 			sizeGraph();
 		}
 	}
@@ -671,4 +665,9 @@ public class SingleGraphPanel extends JPanel implements HierarchyBoundsListener,
 	public final int graphSize() {
 		return availableDataRecords;
 	}
+
+    @Override
+    public void OnGraphTrackChanged(int track) {
+        sizeGraph();
+    }
 }

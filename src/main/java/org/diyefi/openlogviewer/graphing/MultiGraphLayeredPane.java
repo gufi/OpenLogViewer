@@ -23,6 +23,7 @@
 package org.diyefi.openlogviewer.graphing;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ResourceBundle;
 
 import javax.swing.JLayeredPane;
@@ -31,8 +32,9 @@ import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericDataElement;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
+import org.diyefi.openlogviewer.genericlog.GraphTrackChangedListener;
 
-public class MultiGraphLayeredPane extends JLayeredPane {
+public class MultiGraphLayeredPane extends JLayeredPane{
 	private static final long serialVersionUID = 1L;
 	private static final int BOTTOM_LAYER = 999;  // Not really the bottom, but plenty far enough
 	private static final int PANEL_WIDTH = 600;
@@ -65,8 +67,9 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 		}
 		boolean found = false;
 		for (int i = 0; i < this.getComponentCount() && !found; i++) {
-			if (this.getComponent(i) instanceof SingleGraphPanel) {
-				final SingleGraphPanel gl = (SingleGraphPanel) this.getComponent(i);
+                for(Component c:this.getComponents())
+			if (c instanceof SingleGraphPanel) {
+				final SingleGraphPanel gl = (SingleGraphPanel) c;
 				if (gl.getName().equals(header)) {
 					found = true;
 				}
@@ -81,7 +84,8 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			layer--;
 			this.add(graph);
 			this.addHierarchyBoundsListener(graph); // updates graph size automatically
-			genLog.get(header).addPropertyChangeListener(Keys.SPLIT, graph);
+			//genLog.get(header).addPropertyChangeListener(Keys.SPLIT, graph);
+                        genLog.get(header).addTrackChangeListener(graph);
 			graph.setData(genLog.get(header));
 			graph.repaint();
 		}
@@ -148,6 +152,8 @@ public class MultiGraphLayeredPane extends JLayeredPane {
 			}
 		}
 	}
+        
+        
 
 	/**
 	 * Graph total size
