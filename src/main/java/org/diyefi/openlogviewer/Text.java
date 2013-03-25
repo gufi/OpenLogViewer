@@ -50,8 +50,8 @@ public final class Text {
 	public static final String LOADING_LOG = "LoadingLog";
 	public static final String DECODER_CRASHED_PART1 = "DecoderCrashedPart1";
 	public static final String DECODER_CRASHED_PART2 = "DecoderCrashedPart2";
-        public static final String LINE_OF_LOADED = "Line Loaded: ";
-        public static final String PERCENT_LOADED = "Percent Loaded: ";
+        public static final String LINE_OF_LOADED = "LineLoaded";
+        public static final String PERCENT_LOADED = "PercentLoaded";
 
 	// Generic button labels
 	public static final String OK_BUTTON = "OkButton";

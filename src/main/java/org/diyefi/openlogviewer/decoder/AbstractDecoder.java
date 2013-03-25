@@ -26,6 +26,7 @@ package org.diyefi.openlogviewer.decoder;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.diyefi.openlogviewer.OpenLogViewer;
 import org.diyefi.openlogviewer.genericlog.GenericLog;
 import org.diyefi.openlogviewer.genericlog.GraphTrackChangedListener;
 
@@ -92,6 +93,8 @@ public abstract class AbstractDecoder implements Runnable {
 	 */
 	public final void setDecodedLog(final GenericLog decodedLog) {
 		this.decodedLog = decodedLog;
+                OpenLogViewer.getInstance().setLog(decodedLog);
+                OpenLogViewer.getInstance().getOptionFrame().updateFromLog(decodedLog);
 	}
 
 	/**
