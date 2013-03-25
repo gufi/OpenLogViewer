@@ -37,6 +37,14 @@ import org.diyefi.openlogviewer.genericlog.GenericLog;
         this.getT().start();<br>
 
     }</code>
+    * 
+    * <br>
+    * Definition of AbstractDecoder<br>
+    * Take a log of some <T> and parse it into a GenericLog<br>
+    * Report<br>
+    * - Loading status<br>
+    * - Errors<br>
+    * 
  * @author Bryan Harris
  */
 public abstract class AbstractDecoder implements Runnable {
@@ -56,7 +64,7 @@ public abstract class AbstractDecoder implements Runnable {
 	/**
 	 * this object is threaded so that the gui does not freeze while parsing
 	 */
-	private Thread t;
+	//private Thread t;
 
 	/**
 	 * used for getting the decided log for injection to the main pieces of the program that will use it
@@ -97,15 +105,15 @@ public abstract class AbstractDecoder implements Runnable {
 	 * this.getT().start();
 	 * @return the thread that this decoder is running in.
 	 */
-	public final Thread getT() {
-		return t;
-	}
+	//public final Thread getT() {
+	//	return t;
+	//}
 
 	/**
 	 * set the Thread
 	 * @param t
 	 */
-	public final void setT(final Thread t) {
-		this.t = t;
-	}
+	//public final void setT(final Thread t) {
+	//	this.t = t;
+	//}
 }

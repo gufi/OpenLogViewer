@@ -60,7 +60,7 @@ public class FreeEMSBin extends AbstractDecoder {
 	private final File logFile;
 	private final short[] packetBuffer; // For use as an unsigned byte
 	private final GenericLog decodedLog;
-	private final Thread t;
+	//private final Thread t;
 	private int packetLength; // Track packet length
 	private int firstPayloadIDFound = -1;
 
@@ -255,9 +255,9 @@ public class FreeEMSBin extends AbstractDecoder {
 
 		decodedLog = new GenericLog(Arrays.copyOfRange(headers, 0, headersPosition), initialLength, loadFactor, labels);
 
-		t = new Thread(this, "FreeEMSBin Loading");
-		t.setPriority(Thread.MAX_PRIORITY);
-		t.start();
+		//t = new Thread(this, "FreeEMSBin Loading");
+		//t.setPriority(Thread.MAX_PRIORITY);
+		//t.start();
 	}
 
 

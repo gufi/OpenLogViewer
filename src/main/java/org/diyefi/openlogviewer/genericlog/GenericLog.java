@@ -22,13 +22,12 @@
  */
 package org.diyefi.openlogviewer.genericlog;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.List;
 
 import org.diyefi.openlogviewer.Keys;
 import org.diyefi.openlogviewer.OpenLogViewer;
@@ -67,23 +66,7 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	private int currentCapacity;
 	private int currentPosition = -1;
 	// ^ TODO if we end up limiting memory usage by some configurable amount and recycling positions, for live streaming, then add count
-/*
-	private final PropertyChangeListener autoLoad = new PropertyChangeListener() {
-		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
-			if ((LogState) propertyChangeEvent.getNewValue() == LogState.LOG_LOADING) {
-				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
-				genLog.setLogStatus(LogState.LOG_LOADING);
-				OpenLogViewer.getInstance().setLog(genLog);
-			} else if ((LogState) propertyChangeEvent.getNewValue() == LogState.LOG_LOADED) {
-				final GenericLog genLog = (GenericLog) propertyChangeEvent.getSource();
-				genLog.setLogStatus(LogState.LOG_LOADED);
-				OpenLogViewer.getInstance().setLog(genLog);// this is how i'm transfering the fucking log??? What the fuck is wrong with me??
-				OpenLogViewer.getInstance().getOptionFrame().updateFromLog(genLog); // this has got to be the most retarded shit i've ever done
-				InitialLineColoring.INSTANCE.giveBackAllColors();
-			}
-		}
-	};
-*/
+        private List<LogStateListener> stateListeners;
 	/**
 	 * provide a <code>String</code> array of headers<br>
 	 * each header will be used as a HashMap key, the data related to each header will be added to an <code>ArrayList</code>.
@@ -93,11 +76,11 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 		super(1 + (headers.length + NUMBER_OF_BUILTIN_FIELDS), 1.0f); // refactor to use (capacityRequired+1, 1.0) for maximum performance (no rehashing)
 
 		this.labels = labels;
-
+                
 		GenericDataElement.resetPosition(); // Kinda ugly, but...
 		logStatus = LogState.LOG_NOT_LOADED;
-		//pcs = new PropertyChangeSupport(this);
-		//addPropertyChangeListener(Keys.LOG_LOADED, autoLoad);
+                
+                stateListeners = new ArrayList<LogStateListener>();
 
 		this.ourLoadFactor = ourLoadFactor;
 		currentCapacity = initialCapacity;
@@ -119,6 +102,30 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 
 		recordCountElement = this.get(RECORD_COUNT_KEY);
 	}
+        
+        public void AddLogStateListener(LogStateListener lsl)
+        {
+            if(!stateListeners.contains(lsl))
+                stateListeners.add(lsl);
+        }
+        
+        public void RemoveLogStateListener(LogStateListener lsl)
+        {
+            if(stateListeners.contains(lsl))
+                stateListeners.remove(lsl);
+        }
+        
+        public void removeLogStateListener(int index)
+        {
+            if(index < stateListeners.size())
+                stateListeners.remove(index);
+        }
+        
+        protected void OnLogStateChange(String state)
+        {
+            for(LogStateListener lsl : stateListeners)
+                lsl.OnLogStateChange(state);
+        }
 
 	/**
 	 * Add a piece of data to the <code>ArrayList</code> associated with the <code>key</code>
@@ -211,32 +218,6 @@ public class GenericLog extends LinkedHashMap<String, GenericDataElement> {
 	public final LogState getLogStatus() {
 		return this.logStatus;
 	}
-
-	/**
-	 * Add a property change listener to the generic log, REQUIRED!!
-	 * GenericLog.LOG_STATUS is the name of the status property
-	 * @param name
-	 * @param listener
-	 * <code>new OBJECT.addPropertyChangeListener("LogLoaded", new PropertyChangeListener() {<br>
-	 *       public void propertyChange( final PropertyChangeEvent propertyChangeEvent) {<br>
-	 *           OpenLogViewerApp.getInstance().setLog((GenericLog) propertyChangeEvent.getSource());
-	 *           ...Insert code here...<br>
-	 *
-	 *       }<br>
-	 *   });</code>
-	 */
-	//public final void addPropertyChangeListener(final String name, final PropertyChangeListener listener) {
-	//	pcs.addPropertyChangeListener(name, listener);
-	//}
-
-	/**
-	 * Remove a PropertyChangeListener
-	 * @param propertyName name of listener
-	 * @param listener listener
-	 */
-	//public final void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-	//	pcs.removePropertyChangeListener(propertyName, listener);
-	//}
 
 	public final String getLogStatusMessage() {
 		return logStatusMessage;

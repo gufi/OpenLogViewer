@@ -46,9 +46,9 @@ public class CSVTypeLog extends AbstractDecoder {
 	public CSVTypeLog(final File f, final ResourceBundle labels) {
 		this.labels = labels;
 		this.setLogFile(f);
-		this.setT(new Thread(this, CSVTypeLog.class.getSimpleName()));
-		this.getT().setPriority(Thread.MAX_PRIORITY);
-		this.getT().start();
+		//this.setT(new Thread(this, CSVTypeLog.class.getSimpleName()));
+		//this.getT().setPriority(Thread.MAX_PRIORITY);
+		//this.getT().start();
 	}
 
 	@Override

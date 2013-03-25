@@ -49,6 +49,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -124,6 +126,10 @@ public final class OpenLogViewer extends JFrame {
 
 	private final List<SingleProperty> properties;
 	private AbstractDecoder decoderInUse;
+        /**
+         * Executor service requires a Runnable object it will begin on execute
+         */
+        private ExecutorService executorService;
 	private final JMenuBar menuBar;
 	private boolean fullscreen;
 
@@ -148,7 +154,8 @@ public final class OpenLogViewer extends JFrame {
 				buildInfo.setProperty(GIT_DESCRIBE_KEY, applicationVersion);
 			}
 		}
-
+                executorService = Executors.newSingleThreadExecutor();
+                
 		applicationTitle = APPLICATION_NAME + " " + applicationVersion;
 		buildInfo.setProperty("application.title", applicationTitle);
 
@@ -412,6 +419,9 @@ public final class OpenLogViewer extends JFrame {
 			} else {
 				decoderInUse = new CSVTypeLog(fileToOpen, labels);
 			}
+                        executorService.execute(decoderInUse);
+                        // add listener
+                        //decoderInUse.AddLogLoadingListener(InfoPanel);
 			return true;
 		} else {
 			setTitle(applicationTitle);
