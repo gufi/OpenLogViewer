@@ -111,8 +111,22 @@ public class CSVTypeLog extends AbstractDecoder {
                         this.decoderProgressChanged((int)(getDecodedLog().getRecordCount()/(float)finalAndInitialLength*100));
 			if (splitLine.length == fieldCount) {
 				for (int x = 0; x < splitLine.length; x++) { // not reasonable to use foreach loop here
-					this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
-				}
+                                    if(splitLine[x].length() > 0)
+                                    {
+                                        try{
+                                            this.getDecodedLog().addValue(headers[x], Double.parseDouble(splitLine[x]));
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            this.getDecodedLog().addValue(headers[x], 0.0);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        this.getDecodedLog().addValue(headers[x], 0.0);
+                                    }
+                                }
+                           // }
 			}
 		}
 	}

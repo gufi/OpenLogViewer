@@ -109,10 +109,7 @@ public final class OpenLogViewer extends JFrame {
 	private static final int GRAPH_PANEL_WIDTH = 600;
 	private static final int GRAPH_PANEL_HEIGHT = 420;
 
-	private static final String OS_NAME = System.getProperty(Keys.OS_NAME);
-	private static final boolean IS_MAC_OS_X = OS_NAME.contains("OS X"); // TN2110
-	private static final boolean IS_WINDOWS = OS_NAME.contains("Windows");
-	private static final boolean IS_LINUX = OS_NAME.contains("Linux");
+
 
 	private static OpenLogViewer mainAppRef;
 	private static ResourceBundle labels;
@@ -154,6 +151,9 @@ public final class OpenLogViewer extends JFrame {
 				buildInfo.setProperty(GIT_DESCRIBE_KEY, applicationVersion);
 			}
 		}
+                /***
+                 * for running the log parsers
+                 */
                 executorService = Executors.newSingleThreadExecutor();
                 
 		applicationTitle = APPLICATION_NAME + " " + applicationVersion;
@@ -164,6 +164,10 @@ public final class OpenLogViewer extends JFrame {
 		prefFrame.setProperties(properties);
 
 		footerPanel = new FooterPanel(labels);
+                
+                /***
+                 * I think i'm going to redo the option frame and use better naming conventions as well
+                 */
 		optionFrame = new OptionFrameV2(labels);
 		graphingPanel = new EntireGraphingPanel(labels);
 		graphingPanel.setPreferredSize(new Dimension(GRAPH_PANEL_WIDTH, GRAPH_PANEL_HEIGHT));
@@ -258,9 +262,9 @@ public final class OpenLogViewer extends JFrame {
 		fileMenu.setName(Text.FILE_MENU_NAME);
 		fileMenu.add(openFileMenuItem);
 		fileMenu.add(reloadFileMenuItem);
-		if (!IS_MAC_OS_X) {
+//		if (!IS_MAC_OS_X) {
 			fileMenu.add(quitFileMenuItem);
-		}
+	//	}
 
 		final JMenu viewMenu = new JMenu(labels.getString(Text.VIEW_MENU_NAME));
 		viewMenu.setName(Text.VIEW_MENU_NAME);
@@ -275,11 +279,11 @@ public final class OpenLogViewer extends JFrame {
 		menuBar = new JMenuBar();
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
-		if (IS_MAC_OS_X) {
-			new MacOSAboutHandler(buildInfo);
-		} else {
+		//if (IS_MAC_OS_X) {
+		//	new MacOSAboutHandler(buildInfo);
+		//} else {
 			menuBar.add(helpMenu);
-		}
+		//}
 		setJMenuBar(menuBar);
 
 		//Listener stuff
@@ -293,69 +297,7 @@ public final class OpenLogViewer extends JFrame {
 		setVisible(true);
 	}
 
-	/**
-	 * The entry point of OLV!
-	 *
-	 * @param args the command line arguments
-	 */
-	public static void main(final String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				final Locale currentLocale = Locale.getDefault();
-
-				labels = ResourceBundle.getBundle(OpenLogViewer.class.getPackage().getName() + ".Labels", currentLocale);
-
-				final String lookAndFeel;
-				final String systemLookAndFeel = UIManager.getSystemLookAndFeelClassName();
-				if (IS_MAC_OS_X) {
-					System.setProperty(Keys.APPLE_LAF_USE_SCREEN_MENU_BAR, Boolean.TRUE.toString());
-				}
-				lookAndFeel = systemLookAndFeel;
-
-				try {
-					UIManager.setLookAndFeel(lookAndFeel);
-				} catch (UnsupportedLookAndFeelException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_ONE));
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_TWO));
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_THREE));
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-					System.out.println(labels.getString(Text.LOOK_AND_FEEL_EXCEPTION_MESSAGE_FOUR));
-				}
-
-				mainAppRef = new OpenLogViewer();
-
-				if (args.length > 0) {
-					final File toOpen = new File(args[0]).getAbsoluteFile();
-					if (toOpen.exists() && toOpen.isFile()) {
-						if (args.length > 1) {
-							System.out.println(args.length + labels.getString(Text.TOO_MANY_ARGUMENTS) + args[0]);
-						} else {
-							System.out.println(labels.getString(Text.ATTEMPTING_TO_OPEN_FILE) + args[0]);
-						}
-						final FileFilter ms = new MSTypeFileFilter(labels);
-						final FileFilter fe = new FreeEMSFileFilter(labels);
-						if (fe.accept(toOpen) || ms.accept(toOpen)) {
-							mainAppRef.openFile(toOpen, mainAppRef.generateChooser());
-						} else {
-							System.out.println(labels.getString(Text.FILE_TYPE_NOT_SUPPORTED) + args[0]);
-							mainAppRef.quit();
-						}
-					} else {
-						System.out.println(labels.getString(Text.FILE_ARGUMENT_NOT_GOOD) + args[0]);
-						mainAppRef.quit();
-					}
-				}
-			}
-		});
-	}
+	
 
 	public void quit() {
 		final WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
@@ -605,16 +547,16 @@ public final class OpenLogViewer extends JFrame {
 		}
 
 		// Close any window
-		if (IS_WINDOWS || IS_LINUX) {
+		//if (IS_WINDOWS || IS_LINUX) {
 			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_W), Keys.CLOSE_WINDOW);
-		} else if (IS_MAC_OS_X) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.COMMAND_W), Keys.CLOSE_WINDOW);
-		}
+		//} else if (IS_MAC_OS_X) {
+		//	window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.COMMAND_W), Keys.CLOSE_WINDOW);
+		//}
 
 		// Just close the main app window
-		if (IS_LINUX && isMainApp) {
-			window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_Q), Keys.CLOSE_WINDOW);
-		}
+		//if (IS_LINUX && isMainApp) {
+		//	window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(Keys.CONTROL_Q), Keys.CLOSE_WINDOW);
+		//}
 
 		window.getRootPane().getActionMap().put(Keys.CLOSE_WINDOW, closeWindow);
 	}
