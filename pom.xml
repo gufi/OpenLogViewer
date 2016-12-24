@@ -363,12 +363,12 @@
 
 	<dependencies>
 		<!-- Dirty hack to help the noobs. Dependency verification occurs before validate phase plugins run. -->
-		<dependency>
+		<!-- No longer resolves OK with 3.3.9, I guess the version is unacceptable, and I CBF putting a new dodgy dep into the repo, so the check can go bye bye... <dependency>
 			<groupId>org.diyefi.test.YouRequireSettingsXmlInYourHomeM2Directory</groupId>
 			<artifactId>Please.Install.settings.xml.From.The.Project.Directory</artifactId>
 			<version>Artifacts.Are.Required.From.The.Repository.That.It.Points.At</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 
 		<!-- Test dependencies -->
 		<dependency>
