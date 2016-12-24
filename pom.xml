@@ -147,27 +147,27 @@
 					<rulesets> <!-- 2.7.1 uses 4.3 which has less rulesets than 5.0 http://pmd.sourceforge.net/pmd-4.3/rules/index.html -->
 						<!-- basic, unusedcode and imports are run by default but not if others are explicitly defined -->
 						<!-- Customise by copying ruleset.xml files from 4.3 release and removing unwanted rules. -->
-						<ruleset>/rulesets/basic.xml</ruleset>
-						<ruleset>/rulesets/braces.xml</ruleset>
-						<ruleset>/rulesets/clone.xml</ruleset>
-						<ruleset>/rulesets/codesize.xml</ruleset>
+						<ruleset>/rulesets/java/basic.xml</ruleset>
+						<ruleset>/rulesets/java/braces.xml</ruleset>
+						<ruleset>/rulesets/java/clone.xml</ruleset>
+						<ruleset>/rulesets/java/codesize.xml</ruleset>
 						<!-- ruleset>/rulesets/comments.xml</ruleset> <!- Not included in 4.3! Available in 5.0 -->
 						<ruleset>${project.basedir}/src/site/pmd/rulesets/controversial.xml</ruleset> <!-- Customise by removing various stupid rules! -->
-						<ruleset>/rulesets/coupling.xml</ruleset>
+						<ruleset>${project.basedir}/src/site/pmd/rulesets/coupling.xml</ruleset> <!-- Some require config, so they've been removed! -->
 						<ruleset>${project.basedir}/src/site/pmd/rulesets/design.xml</ruleset> <!-- Customise by removing ConfusingTernary test! -->
 						<!-- ruleset>/rulesets/empty.xml</ruleset> <!- Not included in 4.3! Available in 5.0 -->
-						<ruleset>/rulesets/finalizers.xml</ruleset>
-						<ruleset>/rulesets/imports.xml</ruleset>
+						<ruleset>/rulesets/java/finalizers.xml</ruleset>
+						<ruleset>/rulesets/java/imports.xml</ruleset>
 						<!-- ruleset>/rulesets/javabeans.xml</ruleset <!- Transient requirement is too aggressive. UID is handled in another plugin. -->
-						<ruleset>/rulesets/junit.xml</ruleset>
+						<ruleset>/rulesets/java/junit.xml</ruleset>
 						<!-- ruleset>/rulesets/naming.xml</ruleset Too aggressive! -->
-						<ruleset>/rulesets/optimizations.xml</ruleset>
-						<ruleset>/rulesets/sunsecure.xml</ruleset>
-						<ruleset>/rulesets/strictexception.xml</ruleset>
-						<ruleset>/rulesets/strings.xml</ruleset>
-						<ruleset>/rulesets/typeresolution.xml</ruleset>
+						<ruleset>/rulesets/java/optimizations.xml</ruleset>
+						<ruleset>/rulesets/java/sunsecure.xml</ruleset>
+						<ruleset>/rulesets/java/strictexception.xml</ruleset>
+						<ruleset>/rulesets/java/strings.xml</ruleset>
+						<ruleset>/rulesets/java/typeresolution.xml</ruleset>
 						<!-- ruleset>/rulesets/unnecessary.xml</ruleset> <!- Not included in 4.3! Available in 5.0 -->
-						<ruleset>/rulesets/unusedcode.xml</ruleset>
+						<ruleset>/rulesets/java/unusedcode.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>
