@@ -1,6 +1,7 @@
 package org.diyefi.openlogviewer;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -15,6 +16,7 @@ import org.diyefi.openlogviewer.Text;
 
 import static org.junit.Assert.*;
 
+
 /**
  * A set of tests to shake down the translations setup. It won't catch defaults pasted into the non-English file, but that shouldn't be done anyway.
  *
@@ -22,7 +24,12 @@ import static org.junit.Assert.*;
  */
 public class LanguageTextTest {
 
-	private final Field[] keys = Text.class.getDeclaredFields();
+	private static final Field[] keys;
+	static {
+		keys = Text.class.getDeclaredFields();
+	}
+
+
 	private final Set<String> keySet = new HashSet<String>();
 
 	/**
@@ -34,15 +41,17 @@ public class LanguageTextTest {
 		Validate.isTrue(keys.length > 0);
 		// System.out.println("Text lookups: " + keys.length);
 		for (Field k : keys) {
-			String key = null;
-			try {
-				key = (String)k.get(null);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				Validate.isTrue(false); // Should never happen
-			}
-			Validate.notBlank(key); // No empties/blanks/nulls
-			Validate.isTrue(keySet.add(key)); // No dupes
+			if (!Modifier.isTransient(k.getModifiers())) {
+				String key = null;
+				try {
+					key = (String)k.get(null);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					Validate.isTrue(false); // Should never happen
+				}
+				Validate.notBlank(key); // No empties/blanks/nulls
+				Validate.isTrue(keySet.add(key)); // No dupes
+			} // Ignore cobertura's implanted field :-p
 		}
 	}
 
